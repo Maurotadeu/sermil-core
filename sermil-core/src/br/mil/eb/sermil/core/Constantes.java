@@ -30,7 +30,7 @@ public final class Constantes {
   /** Expressão regular para validar senha: mínimo 6 e máximo 30 caracteres, ao menos um dígito, ao menos um caracter minúsculo, ao menos um maiúsculo e um caracter especial. */
   public static final String SENHA_REGEXP = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%!&*]).{6,30})";
 
-  public static final String TESTE = "TESTE";
+  public static final String TESTE1 = "TESTE ROLHA";
   public static final String TESTE2 = "usuario: 6975.usa@gmail.com senha: dsm123456";
   
   /** Construtor protegido. */
