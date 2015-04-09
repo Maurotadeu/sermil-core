@@ -2,13 +2,13 @@ package br.mil.eb.sermil.core;
 
 import java.util.Locale;
 
-/** Constantes simbólicas.
+/** Constantes simbólicas do sistema.
  * @author Abreu Lopes
  * @since 3.0
  * @version $Id: Constantes.java 1904 2012-05-15 15:30:14Z wlopes $
  */
 public final class Constantes {
-
+  
   /** Localidade Geográfica. */
   public static final Locale LOCAL = new Locale("pt", "BR");
 
@@ -29,6 +29,8 @@ public final class Constantes {
   
   /** Expressão regular para validar senha: mínimo 6 e máximo 30 caracteres, ao menos um dígito, ao menos um caracter minúsculo, ao menos um maiúsculo e um caracter especial. */
   public static final String SENHA_REGEXP = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%!&*]).{6,30})";
+
+  public static final String TESTE = "TESTE";
   
   /** Construtor protegido. */
   private Constantes() {
