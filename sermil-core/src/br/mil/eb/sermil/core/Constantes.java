@@ -31,6 +31,7 @@ public final class Constantes {
   public static final String SENHA_REGEXP = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%!&*]).{6,30})";
 
   public static final String TESTE = "TESTE";
+  public static final String TESTE2 = "usuario: 6975.usa@gmail.com senha: dsm123456";
   
   /** Construtor protegido. */
   private Constantes() {
