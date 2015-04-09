@@ -1,0 +1,271 @@
+package br.mil.eb.sermil.modelo;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import br.mil.eb.sermil.core.exceptions.SermilException;
+import br.mil.eb.sermil.tipos.Cpf;
+
+/** Usuário.
+ * @author Abreu Lopes, Gardino
+ * @since 3.0
+ * @version $Id: Usuario.java 2523 2014-08-26 10:28:18Z wlopes $
+ */
+@Entity
+@Table(name = "USUARIO")
+@NamedQueries({
+  @NamedQuery(name = "Usuario.listarPorNome", query = "SELECT u FROM Usuario u WHERE u.nome LIKE ?1"),
+  @NamedQuery(name = "Usuario.listarPorEmail", query = "SELECT u FROM Usuario u WHERE u.email = ?1"),
+  @NamedQuery(name = "Usuario.listarPorOm", query = "SELECT u FROM Usuario u WHERE u.om.codigo = ?1"),
+  @NamedQuery(name = "Usuario.listarPorCPF", query = "SELECT u FROM Usuario u WHERE u.cpf = ?1 ")
+})
+public final class Usuario implements Serializable, UserDetails {
+
+  private static final long serialVersionUID = -2282006593152319899L;
+
+  @Id
+  private String cpf;
+
+  private String nome;
+
+  private String email;
+
+  private String senha;
+
+  private String telefone;
+
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "ACESSO_DATA")
+  private Date acessoData;
+
+  @Column(name="ACESSO_IP")
+  private String acessoIp;
+
+  @Column(name="ACESSO_QTD")
+  private Integer acessoQtd;
+
+  @Transient
+  private String confirma;
+
+  @ManyToOne
+  @JoinColumn(name="OM_CODIGO", referencedColumnName="CODIGO")
+  private Om om;
+
+  @ManyToOne
+  @JoinColumn(name="POSTO_GRADUACAO_CODIGO", referencedColumnName="CODIGO")
+  private PostoGraduacao postoGraduacao;
+
+  @OneToMany(mappedBy="usuario", fetch=FetchType.EAGER, orphanRemoval=true)
+  private List<UsuarioPerfil> usuarioPerfilCollection;
+
+  private String ativo;
+
+  @Column(name="TENTATIVAS_LOGIN")
+  private int tentativaslogin;
+
+  public Usuario() {
+    super();
+  }
+
+  @Override
+  public String toString() {
+    return new StringBuilder(this.getCpf() == null ? "CPF" : this.getCpf()).append(" - ").append(this.getNome() == null ? "NOME" : this.getNome()).toString();
+  }
+
+  @Override
+  public Collection<GrantedAuthority> getAuthorities() {
+    final List<GrantedAuthority> lista = new ArrayList<GrantedAuthority>();
+    for(UsuarioPerfil p : this.getUsuarioPerfilCollection()) {
+      //lista.add(new GrantedAuthorityImpl(p.getAuthority()));
+      lista.add(new SimpleGrantedAuthority(p.getPk().getPerfil()));
+    }
+    return lista;
+  }
+
+  @Override
+  public String getPassword() {
+    return this.getSenha();
+  }
+
+  @Override
+  public String getUsername() {
+    return this.getCpf();
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    final Calendar hoje = Calendar.getInstance();
+    final Calendar login = Calendar.getInstance();
+    login.setTime(this.getAcessoData());
+    login.add(Calendar.MONTH, 3);
+    return hoje.before(login);
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return this.tentativaslogin < 5 ;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return "S".equals(ativo) ? true : false;
+  }
+
+  public int getTentativaslogin() {
+    return tentativaslogin;
+  }
+
+  public void setTentativaslogin(int tentativaslogin) {
+    this.tentativaslogin = tentativaslogin;
+  }
+
+  public void setAtivo(String ativo) {
+    this.ativo = ativo;
+  }
+
+  public String getAtivo() {
+    return this.ativo;
+  }
+
+  public Date getAcessoData() {
+    return this.acessoData;
+  }
+
+  public String getAcessoIp() {
+    return this.acessoIp;
+  }
+
+  public Integer getAcessoQtd() {
+    return this.acessoQtd;
+  }
+
+  public String getConfirma() {
+    return confirma;
+  }
+
+  public String getCpf() {
+    return this.cpf;
+  }
+
+  public String getEmail() {
+    return this.email;
+  }
+
+  public String getNome() {
+    return this.nome;
+  }
+
+  public Om getOm() {
+    return om;
+  }
+
+  public PostoGraduacao getPostoGraduacao() {
+    return postoGraduacao;
+  }
+
+  public String getSenha() {
+    return this.senha;
+  }
+
+  public String getTelefone() {
+    return this.telefone;
+  }
+
+  public List<UsuarioPerfil> getUsuarioPerfilCollection() {
+    return this.usuarioPerfilCollection;
+  }
+
+  public void setAcessoData(Date acessoData) {
+    this.acessoData = acessoData;
+  }
+
+  public void setAcessoIp(String acessoIp) {
+    this.acessoIp = acessoIp;
+  }
+
+  public void setAcessoQtd(Integer acessoQtd) {
+    this.acessoQtd = acessoQtd;
+  }
+
+  public void setConfirma(String confirma) {
+    this.confirma = confirma;
+  }
+
+  public void setCpf(String cpf) {
+    this.cpf = (cpf == null || cpf.isEmpty() ? null : cpf.trim());
+    if (this.cpf != null) {
+      if (!Cpf.isCpf(this.cpf)) {
+        throw new IllegalArgumentException("CPF inválido.");
+      }
+    }
+  }
+
+  public void setEmail(String email) {
+    this.email = (email == null || email.trim().isEmpty() ? null : email.trim().toLowerCase());
+  }
+
+  public void setNome(String nome) {
+    this.nome = (nome == null || nome.trim().isEmpty() ? null : nome.trim().toUpperCase());
+  }
+
+  public void setOm(Om om) {
+    this.om = om;
+  }
+
+  public void setPostoGraduacao(PostoGraduacao postoGraduacao) {
+    this.postoGraduacao = postoGraduacao;
+  }
+
+  public void setSenha(String senha) {
+    this.senha = senha;
+  }
+
+  public void setTelefone(String telefone) {
+    this.telefone = (telefone == null || telefone.trim().isEmpty() ? null : telefone.trim());
+  }
+
+  public void setUsuarioPerfilCollection(List<UsuarioPerfil> usuarioPerfilCollection) {
+    this.usuarioPerfilCollection = usuarioPerfilCollection;
+  }
+
+  public void addUsuarioPerfil(final UsuarioPerfil p) throws SermilException {
+    if (this.getUsuarioPerfilCollection() == null) {
+      this.setUsuarioPerfilCollection(new ArrayList<UsuarioPerfil>(1));
+    }
+    if (this.getUsuarioPerfilCollection().contains(p)) {
+      throw new SermilException("Perfil já está incluído");
+    }
+    this.getUsuarioPerfilCollection().add(p);
+    if (p.getUsuario() != this) {
+      p.setUsuario(this);
+    }
+  }
+
+}
