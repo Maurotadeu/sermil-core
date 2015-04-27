@@ -25,6 +25,7 @@ import br.mil.eb.sermil.core.dao.CidCertificadoDao;
 import br.mil.eb.sermil.core.dao.CidEventoDao;
 import br.mil.eb.sermil.core.dao.CidadaoDao;
 import br.mil.eb.sermil.core.exceptions.CertificateNotFoundException;
+import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemEventoException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.EventNotFoundException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
@@ -59,14 +60,11 @@ public class CidadaoServico {
    @Inject
    private CidCertificadoDao cidCertificadoDao;
 
-   @Inject
-   private CidEventoDao cidEventoDao;
-
    public CidadaoServico() {
       logger.debug("CidadaoServico iniciado");
    }
 
-   public boolean isCidadaoCadastrado(final Cidadao cidadao)  {
+   public boolean isCidadaoCadastrado(final Cidadao cidadao) {
       boolean status = false;
       if (!this.cidadaoDao.findByNamedQuery("Cidadao.listarUnico", cidadao.getNome(), cidadao.getMae(), cidadao.getNascimentoData()).isEmpty()) {
          status = true;
@@ -206,25 +204,22 @@ public class CidadaoServico {
       cidadao.addCidQualidadeReserva(cqr);
    }
 
-   /** cidadaoPodeImprimirCdi.
-    * @param cidadao
-    * @return Boolean
-    * @author Anselmo Ribeiro
+   /**
     * 
-    *         O cidadao tem que ter Pelo menos um evento do tipo 3,6,13,14 ou 24 Pelo um certificado
-    *         do tipo 3,4 ou 6 E ele tem que estar em uma das situacoes militares: 3,8, ou 9
+    * O cidadao tem que ter Pelo menos um evento do tipo 3,6,13,14 ou 24 Pelo um certificado do tipo
+    * 3,4 ou 6 E ele tem que estar em uma das situacoes militares: 3,8, ou 9
+    * 
+    * @param cidadao
     * @throws EventNotFoundException
     * @throws CertificateNotFoundException
     * @throws OutOfSituationException
-    * @throws SermilException
+    * @throws CidadaoNaoTemEventoException
     */
    public void cidadaoPodeImprimirCdi(Cidadao cidadao) throws EventNotFoundException, CertificateNotFoundException, OutOfSituationException {
-      List<CidEvento> eventos = cidEventoDao.findByNamedQuery("Evento.cidadaoPodeImprimirCdi", cidadao.getRa());
-      List<CidCertificado> certificados = cidCertificadoDao.findByNamedQuery("Certificado.cidadaoTemCdi", cidadao.getRa());
-      if (eventos.isEmpty()) {
+      if (!cidadaoTemEvento(cidadao, CidEvento.EXCESSO_DE_CONTINGENTE_CODIGO)) {
          throw new EventNotFoundException();
       }
-      if (certificados.isEmpty()) {
+      if (!cidadaoTemPeloMenosUmCertificado(cidadao, new Byte[] { CidCertificado.DISPENSA_DE_INCORPORACAO_COMPUTADOR, CidCertificado.DISPENSA_DE_INCORPORACAO_INFOR, CidCertificado.DISPENSA_DE_INCORPORACAO_PLANO })) {
          throw new CertificateNotFoundException();
       }
       if (!StringUtils.containsAny(cidadao.getSituacaoMilitar().toString(), "389")) {
@@ -232,7 +227,30 @@ public class CidadaoServico {
       }
    }
 
-   /** cidadaoJaTemCdi.
+   public boolean cidadaoTemCertificado(Cidadao cidadao, Byte tipo) {
+      List<CidCertificado> certificados = cidadao.getCidCertificadoCollection();
+      if (certificados != null && certificados.size() > 0) {
+         for (CidCertificado certificado : certificados) {
+            if (certificado.getPk().getTipo() == tipo) {
+               return true;
+            }
+         }
+      }
+      return false;
+   }
+
+   public boolean cidadaoTemPeloMenosUmCertificado(Cidadao cidadao, Byte[] tipos) {
+      for (Byte tipo : tipos) {
+         if (cidadaoTemCertificado(cidadao, tipo)) {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   /**
+    * cidadaoJaTemCdi.
+    * 
     * @param cidadao
     * @return Boolean
     * @author Anselmo Ribeiro
@@ -246,7 +264,19 @@ public class CidadaoServico {
    }
 
    public Boolean cidadaoJaFezEntrevista(Cidadao cidadao) {
-      //TODO: implementar assim que a tabela entrevista for criada
+      // TODO: implementar assim que a tabela entrevista for criada
+      return false;
+   }
+
+   public boolean cidadaoTemEvento(Cidadao cidadao, Byte eventoCodigo) {
+      List<CidEvento> eventos = cidadao.getCidEventoCollection();
+      if (eventos != null && eventos.size() > 0) {
+         for (CidEvento evento : eventos) {
+            if (evento.getPk().getCodigo() == eventoCodigo) {
+               return true;
+            }
+         }
+      }
       return false;
    }
 
