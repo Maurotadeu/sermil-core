@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.dao.MunicipioDao;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
@@ -32,6 +33,9 @@ public class MunicipioServico {
 
   @Inject
   private MunicipioDao municipioDao;
+
+  @Inject
+  private JsmDao jsmDao;
 
   public MunicipioServico() {
     logger.debug("MunicipioServico iniciado");
@@ -56,6 +60,12 @@ public class MunicipioServico {
     return lista;
   }
 
+  @RemoteMethod
+  public Object[] listarJsm(final Integer mun) throws SermilException {
+    final List<Object[]> result = this.jsmDao.findBySQL("SELECT csm_codigo, codigo, descricao FROM jsm WHERE municipio_codigo = ?", mun);
+    return result.toArray(new Object[0]);
+  }
+  
   @RemoteMethod
   public Object[] listarMun(final String uf) throws SermilException {
     final List<Object[]> result = this.municipioDao.findBySQL("SELECT m.descricao, m.latitude, m.longitude, m.microregiao, m.mesoregiao, count(*) FROM municipio_novo m JOIN cidadao c ON c.municipio_residencia_codigo = m.codigo WHERE VINCULACAO_ANO = 2014 AND uf_sigla = ? GROUP BY m.descricao, m.latitude, m.longitude, m.microregiao, m.mesoregiao", uf);
