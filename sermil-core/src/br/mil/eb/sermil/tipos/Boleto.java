@@ -22,8 +22,9 @@ public class Boleto implements Serializable {
   /** Valor Efetivo ou Referência (VER) 7 = Quantidade de moeda (DV Módulo 10) */
   private static final String VER_CEF = "7";
   
-  /** 00.394.411 = CNPJ Casa Civil da Presidência da República.*/
-  private static final String CNPJ_MULTA = "00394411";
+  /** 00.394.411 = CNPJ Casa Civil da Presidência da República. Foi mandado passar para CNPJ FSM (05/05/2015) */
+  //private static final String CNPJ_MULTA = "00394411"; (CNPJ Casa Civil PR)
+  private static final String CNPJ_MULTA = "00894356";
 
   /** 00.894.356 = CNPJ Fundo do Serviço Militar.*/
   private static final String CNPJ_TAXA = "00894356";
