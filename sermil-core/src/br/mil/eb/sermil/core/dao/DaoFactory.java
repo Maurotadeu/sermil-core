@@ -3,7 +3,7 @@ package br.mil.eb.sermil.core.dao;
 /** Fábrica abstrata de DAO. (Padrão GoF Abstract Factory)
  * @author Abreu Lopes
  * @since 4.0
- * @version $Id: DaoFactory.java 2416 2014-05-08 18:06:10Z wlopes $
+ * @version $Id$
  */
 public abstract class DaoFactory {
 
@@ -29,6 +29,8 @@ public abstract class DaoFactory {
 
   // Adicionar os métodos para criar os DAO necessários na aplicação, devem ser instanciados na classe AppConfig definida
   // para a aplicação (classe anotada com @Configuration para inicialização pelo Spring).
+
+  public abstract CepDao getCepDao();
 
   public abstract CidadaoDao getCidadaoDao();
 
