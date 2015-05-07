@@ -1,5 +1,6 @@
 package br.mil.eb.sermil.core.dao;
 
+import br.mil.eb.sermil.modelo.Cep;
 import br.mil.eb.sermil.modelo.CidArrecadacao;
 import br.mil.eb.sermil.modelo.CidAuditoria;
 import br.mil.eb.sermil.modelo.CidAverbacao;
@@ -48,7 +49,7 @@ import br.mil.eb.sermil.modelo.Usuario;
 /** Implementação da fábrica abstrata de DAO para uso com o EclipseLink (JPA).
  * @author Abreu Lopes
  * @since 4.0
- * @version $Id: DaoFactoryJpaImpl.java 2416 2014-05-08 18:06:10Z wlopes $
+ * @version $Id$
  */
 public class DaoFactoryJpaImpl extends DaoFactory {
 
@@ -66,6 +67,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
 
   // Implementar métodos definidos na fábrica abstrata DaoFactory para instanciar o DAO
 
+  @Override
+  public CepDao getCepDao() {
+    return (CepDao) instanciarDao(CepDaoJpa.class);
+  }
+  
   @Override
   public CidadaoDao getCidadaoDao() {
     return (CidadaoDao) instanciarDao(CidadaoDaoJpa.class);
@@ -286,6 +292,8 @@ public class DaoFactoryJpaImpl extends DaoFactory {
 
   // Criar implementações concretas dos DAO a serem instanciados (usando classes internas para evitar criar classes explícitas)
 
+  public static class CepDaoJpa extends GenericDaoJpaImpl<Cep, String> implements CepDao {}
+  
   public static class CidadaoDaoJpa extends GenericDaoJpaImpl<Cidadao, Long> implements CidadaoDao {}
 
   public static class CidArrecadacaoDaoJpa extends GenericDaoJpaImpl<CidArrecadacao, CidArrecadacao.PK> implements CidArrecadacaoDao {}
