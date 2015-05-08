@@ -275,8 +275,7 @@ public class CidadaoServico {
    public CidCertificado getCDIDeCidadao(Cidadao cidadao) {
       List<CidCertificado> certificados = cidadao.getCidCertificadoCollection();
       for (CidCertificado certificado : certificados) {
-         if (certificado.getPk().getTipo() == CidCertificado.DISPENSA_DE_INCORPORACAO_COMPUTADOR 
-               || certificado.getPk().getTipo() == CidCertificado.DISPENSA_DE_INCORPORACAO_INFOR
+         if (certificado.getPk().getTipo() == CidCertificado.DISPENSA_DE_INCORPORACAO_COMPUTADOR || certificado.getPk().getTipo() == CidCertificado.DISPENSA_DE_INCORPORACAO_INFOR
                || certificado.getPk().getTipo() == CidCertificado.DISPENSA_DE_INCORPORACAO_PLANO) {
             return certificado;
          }
