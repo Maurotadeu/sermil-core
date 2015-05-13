@@ -7,12 +7,12 @@ package br.mil.eb.sermil.core.exceptions;
  */
 public class CidadaoCadastradoException extends ConsultaException {
 
-  /** serialVersionUID */
-  private static final long serialVersionUID = 4260391301257943255L;
+    /** serialVersionUID */
+    private static final long serialVersionUID = 4260391301257943255L;
 
-  /** Construtor. */
-  public CidadaoCadastradoException() {
-    super("Cidadão já cadastrado.");
-  }
+    /** Construtor. */
+    public CidadaoCadastradoException() {
+        super("Cidadão já cadastrado.");
+    }
 
 }
