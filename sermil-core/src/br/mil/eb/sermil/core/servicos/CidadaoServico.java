@@ -38,12 +38,10 @@ import br.mil.eb.sermil.modelo.CidQualidadeReserva;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.Usuario;
 
-/**
- * Serviço de Cidadão. (Tabelas CIDADAO e CID_AUDITORIA)
- * 
- * @author Abreu Lopes
+/** Serviço de Cidadão. (Tabelas CIDADAO e CID_AUDITORIA)
+ * @author Abreu Lopes, Anselmo
  * @since 3.0
- * @version $Id: CidadaoServico.java 2426 2014-05-14 15:01:41Z wlopes $
+ * @version $Id$
  */
 @Named("cidadaoServico")
 public class CidadaoServico {
@@ -91,7 +89,7 @@ public class CidadaoServico {
       return lista.isEmpty() ? null : lista.get(0);
    }
 
-   @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob')")
+   @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm')")
    @Transactional
    public Cidadao salvar(final Cidadao cid, final Usuario usr, final String msg) throws SermilException {
       final CidAuditoria aud = new CidAuditoria(cid.getRa(), new Date(), msg.substring(0, msg.length() > 500 ? 500 : msg.length()), usr.getAcessoIp(), usr.getCpf());
@@ -117,7 +115,7 @@ public class CidadaoServico {
       return lista;
    }
 
-   @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob','md','convidado')")
+   @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob','md','cs','convidado')")
    public List<Object[]> listar(final Cidadao cidadao) throws SermilException {
       if (cidadao == null) {
          throw new CriterioException("Informe ao menos um critério de pesquisa de cidadão.");
