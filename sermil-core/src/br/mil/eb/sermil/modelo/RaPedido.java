@@ -29,7 +29,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name = "RA_PEDIDO")
 @NamedQueries({
-  @NamedQuery(name = "RaPedido.listarPorCsm", query = "SELECT p FROM RaPedido p WHERE p.csm.codigo = ?1 AND p.aprovado = ?2 AND p.processado = ?3 order by p.numero desc"),
+  @NamedQuery(name = "RaPedido.listarPorCsm", query = "SELECT p FROM RaPedido p WHERE p.csm.codigo = ?1 AND p.aprovado = ?2 order by p.numero desc"),
   @NamedQuery(name = "RaPedido.listarPorCsmAberto", query = "SELECT p FROM RaPedido p WHERE p.csm.codigo = ?1 AND  p.aprovado = \"N\"  order by p.numero desc"),
   @NamedQuery(name = "RaPedido.listarPorStatus", query = "SELECT p FROM RaPedido p WHERE p.aprovado = ?1  order by p.numero desc"),
   @NamedQuery(name = "RaPedido.excluirItens", query = "DELETE FROM RaItens i WHERE i.pk.raPedidoNumero = ?1"),
