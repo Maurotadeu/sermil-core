@@ -1,18 +1,18 @@
 package br.mil.eb.sermil.core.exceptions;
 
-/** Cidadão já cadastrado no sistema.
+/** Cidadao ja cadastrado no sistema.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CidadaoCadastradoException.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version $Id$
  */
 public class CidadaoNotFoundException extends ConsultaException {
 
-  /** serialVersionUID.*/
-   private static final long serialVersionUID = 8628253173169176401L;
+    /** serialVersionUID. */
+    private static final long serialVersionUID = 8628253173169176401L;
 
-/** Construtor. */
-  public CidadaoNotFoundException() {
-    super("Cidadão não encontrado.");
-  }
+    /** Construtor. */
+    public CidadaoNotFoundException() {
+        super("Cidad�o n�o encontrado.");
+    }
 
 }
