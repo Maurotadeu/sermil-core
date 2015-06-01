@@ -25,6 +25,7 @@ import br.mil.eb.sermil.core.dao.CidCertificadoDao;
 import br.mil.eb.sermil.core.dao.CidadaoDao;
 import br.mil.eb.sermil.core.exceptions.CertificateNotFoundException;
 import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemEventoException;
+import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.EventNotFoundException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
@@ -38,7 +39,7 @@ import br.mil.eb.sermil.modelo.CidQualidadeReserva;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.Usuario;
 
-/** ServiÁo de Cidad„o. (Tabelas CIDADAO e CID_AUDITORIA)
+/** Servi√ßo de Cidad√£o. (Tabelas CIDADAO e CID_AUDITORIA)
  * @author Abreu Lopes, Anselmo
  * @since 3.0
  * @version $Id$
@@ -89,6 +90,26 @@ public class CidadaoServico {
       return lista.isEmpty() ? null : lista.get(0);
    }
 
+
+   public Cidadao retrieve(final Long ra) throws IllegalArgumentException, CidadaoNotFoundException, SermilException {
+
+      // Confere RA
+      if (StringUtils.isBlank(ra.toString()))
+         throw new IllegalArgumentException();
+
+      // Confere Se cidadao eh valido
+      try {
+         Cidadao cid = recuperar(ra);
+         return cid;
+      } catch (SermilException e) {
+         logger.error(e.getMessage());
+         throw new CidadaoNotFoundException();
+      } catch (Exception e) {
+         logger.error(e.getMessage());
+         throw new SermilException(e.getMessage());
+      }
+   }
+   
    @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm')")
    @Transactional
    public Cidadao salvar(final Cidadao cid, final Usuario usr, final String msg) throws SermilException {
@@ -118,7 +139,7 @@ public class CidadaoServico {
    @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob','md','cs','convidado')")
    public List<Object[]> listar(final Cidadao cidadao) throws SermilException {
       if (cidadao == null) {
-         throw new CriterioException("Informe ao menos um critÈrio de pesquisa de cidad„o.");
+         throw new CriterioException("Informe ao menos um crit√©rio de pesquisa de cidad√£o.");
       }
       try {
          final CriteriaBuilder builder = this.cidadaoDao.getEntityManager().getCriteriaBuilder();
@@ -162,7 +183,7 @@ public class CidadaoServico {
    @Transactional
    public Cidadao adicionarApresentacao(final Cidadao cidadao, final CidExar apresentacao, final Usuario usr, String msg) throws SermilException {
       if (cidadao.getSituacaoMilitar() != 15) {
-         throw new SermilException("ERRO: Para cadastrar uma apresentaÁ„o o cidad„o deve estar na situaÁ„o LICENCIADO.");
+         throw new SermilException("ERRO: Para cadastrar uma apresenta√ß√£o o cidad√£o deve estar na situa√ß√£o LICENCIADO.");
       }
       final List<CidExar> lista = new ArrayList<CidExar>(apresentacao.getPk().getApresentacaoQtd());
       for (int i = 1; i <= apresentacao.getPk().getApresentacaoQtd(); i++) {
@@ -211,7 +232,8 @@ public class CidadaoServico {
     * @throws OutOfSituationException
     * @throws CidadaoNaoTemEventoException
     */
-   public void cidadaoPodeImprimirCdi(Cidadao cidadao) throws EventNotFoundException, CertificateNotFoundException, OutOfSituationException {
+   
+   public boolean cidadaoPodeImprimirCdi(Cidadao cidadao) throws EventNotFoundException, CertificateNotFoundException, OutOfSituationException {
       if (!cidadaoTemEvento(cidadao, CidEvento.EXCESSO_DE_CONTINGENTE_CODIGO)) {
          throw new EventNotFoundException();
       }
@@ -221,6 +243,7 @@ public class CidadaoServico {
       if (!StringUtils.containsAny(cidadao.getSituacaoMilitar().toString(), "389")) {
          throw new OutOfSituationException();
       }
+      return true;
    }
 
    public boolean cidadaoTemCertificado(Cidadao cidadao, Byte tipo) {
@@ -280,4 +303,20 @@ public class CidadaoServico {
       return null;
    }
 
+   public boolean cidadaoPodeImprimirCAM(Cidadao cidadao) {
+      if (cidadao == null)
+         return false;
+      return (cidadao.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_ALISTADO || cidadao.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_REFRATARIO);
+   }
+   
+   public boolean isCidadaoLicenciado(Cidadao cidadao){
+      return (cidadao.getSituacaoMilitar()==Cidadao.SITUACAO_MILITAR_LICENCIADO)?true:false;
+   }
+
+   @Transactional
+   public void addCertificateAndSaveCidadao(CidCertificado certificado, Cidadao cidadao, Usuario usuario) throws SermilException{
+      cidadao.addCidCertificado(certificado);
+      salvar(cidadao, usuario, "CERTIFICADO: " + certificado);
+   }
+   
 }
