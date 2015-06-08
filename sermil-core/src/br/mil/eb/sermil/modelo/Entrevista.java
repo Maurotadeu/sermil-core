@@ -1,6 +1,7 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -49,14 +50,14 @@ public final class Entrevista implements Serializable {
    private String F81;
    private String F9;
    
-   private String G10;
+   private List<String> G10;
    private String G11;
    
    private String G12;
    private String G121;
-   private String G13;
+   private List<String> G13;
    private String G13A;
-   private String G14;
+   private List<String> G14;
    private String G14A;
    private String G15;
    private String G15A;
@@ -295,11 +296,11 @@ public final class Entrevista implements Serializable {
       F9 = f9;
    }
 
-   public String getG10() {
+   public List<String> getG10() {
       return G10;
    }
 
-   public void setG10(String g10) {
+   public void setG10(List<String> g10) {
       G10 = g10;
    }
 
@@ -327,19 +328,19 @@ public final class Entrevista implements Serializable {
       G121 = g121;
    }
 
-   public String getG13() {
+   public List<String> getG13() {
       return G13;
    }
 
-   public void setG13(String g13) {
+   public void setG13(List<String> g13) {
       G13 = g13;
    }
 
-   public String getG14() {
+   public List<String> getG14() {
       return G14;
    }
 
-   public void setG14(String g14) {
+   public void setG14(List<String> g14) {
       G14 = g14;
    }
 
