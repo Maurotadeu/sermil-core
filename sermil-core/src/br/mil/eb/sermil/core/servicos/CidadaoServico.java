@@ -109,7 +109,7 @@ public class CidadaoServico {
       }
    }
 
-   @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm')")
+   @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm','mob','om')")
    @Transactional
    public Cidadao salvar(final Cidadao cid, final Usuario usr, final String msg) throws SermilException {
       final CidAuditoria aud = new CidAuditoria(cid.getRa(), new Date(), msg.substring(0, msg.length() > 500 ? 500 : msg.length()), usr.getAcessoIp(), usr.getCpf());
