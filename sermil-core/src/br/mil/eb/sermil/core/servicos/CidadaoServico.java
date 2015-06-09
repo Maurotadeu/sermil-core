@@ -109,7 +109,7 @@ public class CidadaoServico {
       }
    }
 
-   @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm','mob','om')")
+   @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm','mob','om','smr')")
    @Transactional
    public Cidadao salvar(final Cidadao cid, final Usuario usr, final String msg) throws SermilException {
       final CidAuditoria aud = new CidAuditoria(cid.getRa(), new Date(), msg.substring(0, msg.length() > 500 ? 500 : msg.length()), usr.getAcessoIp(), usr.getCpf());
@@ -125,7 +125,6 @@ public class CidadaoServico {
       }
       return res;
    }
-
    @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','om','mob')")
    public List<CidAuditoria> listarAuditoria(final Long ra) throws SermilException {
       final List<CidAuditoria> lista = this.cidAuditoriaDao.findByNamedQuery("CidAuditoria.listarPorRa", ra);
@@ -290,6 +289,7 @@ public class CidadaoServico {
       // TODO: implementar assim que a tabela entrevista for criada
       return false;
    }
+
 
    public CidCertificado getCDIDeCidadao(Cidadao cidadao) {
       List<CidCertificado> certificados = cidadao.getCidCertificadoCollection();
