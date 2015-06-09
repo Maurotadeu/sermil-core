@@ -28,7 +28,7 @@ public final class Entrevista implements Serializable {
 
    private String A1;
    private String A11;
-   private String A2;
+   // private String A2; retirado: cidadao.escolaridade
    
    private String B3;
    private String B4;
@@ -87,19 +87,22 @@ public final class Entrevista implements Serializable {
    private String J223;
    private String J23;
    private String J231;
+   private String J231A;
    private String J232;
+   private String J232A;
    private String J233;
    private String J234;
    private String J235;
    
    private String K24;
-   private String K241;
+   private List<String> K241;
    private String K241A;
    
    private String L1;
    
    private String M25;
    private String M26;
+   private String M27;
    
    private String N27;
    private String N28;
@@ -158,14 +161,6 @@ public final class Entrevista implements Serializable {
 
    public void setA11(String a11) {
       A11 = a11;
-   }
-
-   public String getA2() {
-      return A2;
-   }
-
-   public void setA2(String a2) {
-      A2 = a2;
    }
 
    public String getInd1() {
@@ -544,11 +539,11 @@ public final class Entrevista implements Serializable {
       K24 = k24;
    }
 
-   public String getK241() {
+   public List<String> getK241() {
       return K241;
    }
 
-   public void setK241(String k241) {
+   public void setK241(List<String> k241) {
       K241 = k241;
    }
 
@@ -742,6 +737,30 @@ public final class Entrevista implements Serializable {
 
    public void setInd3A(String ind3a) {
       Ind3A = ind3a;
+   }
+
+   public String getJ232A() {
+      return J232A;
+   }
+
+   public void setJ232A(String j232a) {
+      J232A = j232a;
+   }
+
+   public String getJ231A() {
+      return J231A;
+   }
+
+   public void setJ231A(String j231a) {
+      J231A = j231a;
+   }
+
+   public String getM27() {
+      return M27;
+   }
+
+   public void setM27(String m27) {
+      M27 = m27;
    }
 
 }
