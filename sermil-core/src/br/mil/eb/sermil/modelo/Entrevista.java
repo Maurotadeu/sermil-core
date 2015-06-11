@@ -88,6 +88,7 @@ public final class Entrevista implements Serializable {
    private String J23;
    private String J231;
    private String J231A;
+   private String J231B;
    private String J232;
    private String J232A;
    private String J233;
@@ -761,6 +762,14 @@ public final class Entrevista implements Serializable {
 
    public void setM27(String m27) {
       M27 = m27;
+   }
+
+   public String getJ231B() {
+      return J231B;
+   }
+
+   public void setJ231B(String j231b) {
+      J231B = j231b;
    }
 
 }
