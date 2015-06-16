@@ -31,7 +31,7 @@ public class RaServico {
   }
 
   @Transactional
-  public Long gerar(final Byte csm, final Short jsm) throws SermilException {
+  public Long gerar(final Byte csm, final Short jsm) throws NoDataFoundException  {
     final RaMestre raMestre = raMestreDao.findById(new RaMestre.PK(csm, jsm));
     if (raMestre == null) {
       throw new NoDataFoundException("CSM/JSM não existe na tabela de controle de RA (RA_MESTRE)");
