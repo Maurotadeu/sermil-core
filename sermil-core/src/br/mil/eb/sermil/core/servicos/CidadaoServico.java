@@ -457,10 +457,7 @@ public class CidadaoServico {
    //Este metodo veio do SERMILWEB
    @Transactional
    public Cidadao alistar(final PreAlistamento preAlistamento, final String anotacoes) throws CriterioException, CidadaoCadastradoException , NoDataFoundException, SermilException   {
-      //valida nome, mae e nascimento
-      if (StringUtils.isEmpty(preAlistamento.getNome()) || StringUtils.isEmpty(preAlistamento.getMae()) || preAlistamento.getNascimentoData() == null) {
-         throw new CriterioException();
-      }
+
       // confere se pre alistamento ja existe
       if (isPreAlistamentoCadastrado(preAlistamento)) {
          throw new CidadaoCadastradoException();
