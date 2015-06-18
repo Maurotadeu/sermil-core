@@ -1,5 +1,6 @@
 package br.mil.eb.sermil.core.servicos;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,21 +24,31 @@ import org.springframework.transaction.annotation.Transactional;
 import br.mil.eb.sermil.core.dao.CidAuditoriaDao;
 import br.mil.eb.sermil.core.dao.CidCertificadoDao;
 import br.mil.eb.sermil.core.dao.CidadaoDao;
+import br.mil.eb.sermil.core.dao.MunicipioDao;
+import br.mil.eb.sermil.core.dao.PreAlistamentoDao;
 import br.mil.eb.sermil.core.exceptions.CertificateNotFoundException;
+import br.mil.eb.sermil.core.exceptions.CidadaoCadastradoException;
 import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemEventoException;
 import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.EventNotFoundException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.OutOfSituationException;
+import br.mil.eb.sermil.core.exceptions.PreAlistamentoErroException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
+import br.mil.eb.sermil.core.utils.EmailSender;
 import br.mil.eb.sermil.modelo.CidAuditoria;
 import br.mil.eb.sermil.modelo.CidCertificado;
+import br.mil.eb.sermil.modelo.CidDocApres;
+import br.mil.eb.sermil.modelo.CidDocumento;
 import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.CidExar;
 import br.mil.eb.sermil.modelo.CidQualidadeReserva;
 import br.mil.eb.sermil.modelo.Cidadao;
+import br.mil.eb.sermil.modelo.PreAlistamento;
+import br.mil.eb.sermil.modelo.SituacaoMilitar;
 import br.mil.eb.sermil.modelo.Usuario;
+import br.mil.eb.sermil.tipos.Ra;
 
 /**
  * Serviço de Cidadão. (Tabelas CIDADAO e CID_AUDITORIA)
@@ -59,6 +70,20 @@ public class CidadaoServico {
 
    @Inject
    private CidCertificadoDao cidCertificadoDao;
+
+   @Inject
+   private PreAlistamentoDao preAlistamentoDao;
+
+   @Inject
+   private RaServico raServico;
+   
+   @Inject
+   private EmailSender emailSender;
+
+   private static final int DOC_RG = 3;
+
+   @Inject
+   private MunicipioDao municipioDao;
 
    public CidadaoServico() {
       logger.debug("CidadaoServico iniciado");
@@ -125,6 +150,7 @@ public class CidadaoServico {
       }
       return res;
    }
+
    @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','om','mob')")
    public List<CidAuditoria> listarAuditoria(final Long ra) throws SermilException {
       final List<CidAuditoria> lista = this.cidAuditoriaDao.findByNamedQuery("CidAuditoria.listarPorRa", ra);
@@ -290,7 +316,6 @@ public class CidadaoServico {
       return false;
    }
 
-
    public CidCertificado getCDIDeCidadao(Cidadao cidadao) {
       List<CidCertificado> certificados = cidadao.getCidCertificadoCollection();
       for (CidCertificado certificado : certificados) {
@@ -317,5 +342,204 @@ public class CidadaoServico {
       cidadao.addCidCertificado(certificado);
       salvar(cidadao, usuario, "CERTIFICADO: " + certificado);
    }
+
+   /**
+    * ALISTAMENTO SERVICO (PORTAL)
+    */
+
+   @Transactional
+   public void excluirPreAlistamento(final PreAlistamento cadastro) throws PreAlistamentoErroException {
+      try {
+         this.preAlistamentoDao.delete(cadastro);
+      } catch (Exception e) {
+         logger.error(e.getMessage());
+         throw new PreAlistamentoErroException();
+      }
+   }
+
+   public List<PreAlistamento> pesquisarPreAlistamento(final PreAlistamento cadastro) throws CriterioException, NoDataFoundException {
+      if (cadastro == null || (cadastro.getCodigo() == null && cadastro.getNome() == null)) {
+         throw new CriterioException();
+      }
+      List<PreAlistamento> lista = null;
+      if (cadastro.getCodigo() != null) {
+         lista = new ArrayList<PreAlistamento>(1);
+         lista.add(this.preAlistamentoDao.findById(cadastro.getCodigo()));
+      } else if (cadastro.getNome() != null && !cadastro.getNome().isEmpty()) {
+         lista = this.preAlistamentoDao.findByNamedQuery("PreAlistamento.listarPorNome", cadastro.getNome().toUpperCase().trim().concat("%"));
+      } else {
+         throw new CriterioException();
+      }
+      if (lista == null || lista.isEmpty() || lista.get(0) == null) {
+         lista = null;
+         throw new NoDataFoundException();
+      }
+      return lista;
+   }
+
+   // Esse metodo alistar veio do PORTAL
+   @Transactional
+   public Cidadao alistar(final PreAlistamento alistamento, final Date dataAlist, final Long ra, final Byte situacaoMilitar, final Usuario usr) throws CidadaoCadastradoException, NoDataFoundException , SermilException   {
+      final Cidadao cidadao = new Cidadao();
+      // Verifica se já foi alistado anteriormente
+      cidadao.setNome(alistamento.getNome());
+      cidadao.setMae(alistamento.getMae());
+      cidadao.setNascimentoData(alistamento.getNascimentoData());
+      if (isCidadaoCadastrado(cidadao)) {
+         throw new CidadaoCadastradoException();
+      }
+      // Gerar novo RA
+      if (ra == null) {
+         cidadao.setRa(this.raServico.gerar(alistamento.getJsm().getPk().getCsmCodigo(), alistamento.getJsm().getPk().getCodigo()));
+      } else {
+         cidadao.setRa(new Ra(ra).getValor());
+      }
+      // Configurar informações
+      cidadao.setPai(alistamento.getPai());
+      cidadao.setDispensa(alistamento.getTipo());
+      cidadao.setMunicipioNascimento(alistamento.getMunicipioNascimento());
+      cidadao.setPaisNascimento(alistamento.getPaisNascimento());
+      cidadao.setEstadoCivil(alistamento.getEstadoCivil());
+      cidadao.setSexo(alistamento.getSexo());
+      cidadao.setEscolaridade(alistamento.getEscolaridade());
+      cidadao.setOcupacao(alistamento.getOcupacao());
+      cidadao.setVinculacaoAno(Calendar.getInstance().get(Calendar.YEAR));
+      cidadao.setJsm(alistamento.getJsm());
+      cidadao.getJsm().setCsm(alistamento.getJsm().getCsm());
+      cidadao.setZonaResidencial(alistamento.getZonaResidencial());
+      cidadao.setMunicipioResidencia(alistamento.getMunicipioResidencia());
+      cidadao.setPaisResidencia(alistamento.getPaisResidencia());
+      cidadao.setEndereco(alistamento.getEndereco());
+      cidadao.setBairro(alistamento.getBairro());
+      cidadao.setCep(alistamento.getCep());
+      cidadao.setRg(alistamento.getRgNr() == null ? null : new StringBuilder(alistamento.getRgUf()).append(alistamento.getRgNr()).toString());
+      cidadao.setEmail(alistamento.getEmail());
+      cidadao.setTelefone(alistamento.getTelefone());
+      cidadao.setSituacaoMilitar(situacaoMilitar);
+      cidadao.setDesejaServir(alistamento.getDesejaServir());
+      cidadao.setAtualizacaoData(new Date());
+      // Documento apresentado
+      final CidDocApres cda = new CidDocApres();
+      cda.getPk().setCidadaoRa(cidadao.getRa());
+      cda.getPk().setNumero(alistamento.getDocApresNr());
+      cda.setTipo(alistamento.getDocApresTipo());
+      cda.setEmissaoData(alistamento.getDocApresEmissaoData());
+      cda.setLivro(alistamento.getDocApresLivro());
+      cda.setFolha(alistamento.getDocApresFolha());
+      cda.setMunicipioCodigo(alistamento.getDocApresMunicipio() == null ? null : alistamento.getDocApresMunicipio().getCodigo());
+      cda.setCartorio(alistamento.getDocApresCartorio());
+      cidadao.addCidDocApres(cda);
+      // Documento do sistema (FAMCO)
+      final CidDocumento cd = new CidDocumento();
+      cd.setServico(new StringBuilder("100").append(new DecimalFormat("00").format(alistamento.getJsm().getCsmCodigo())).append(new DecimalFormat("000").format(alistamento.getJsm().getCodigo())).append("888").toString());
+      cd.setTarefa(Short.parseShort("0"));
+      cd.setDocumento(Byte.parseByte("0"));
+      cd.getPk().setCidadaoRa(cidadao.getRa());
+      cd.getPk().setData(dataAlist);
+      cd.getPk().setTipo(Byte.parseByte("1"));
+      cidadao.addCidDocumento(cd);
+
+      // Evento de alistamento
+      addEvento(cidadao, CidEvento.ALISTAMENTO, dataAlist, "Alistado pela Internet");
+      
+      // Salvar cidadão
+      this.salvar(cidadao, usr, "ALISTAMENTO");
+      return cidadao;
+   }
+
+   /**
+    * ALISTAMENTO SERVICO (SERMILWEB)
+    * @throws CriterioException, CidadaoCadastradoException , NoDataFoundException 
+    * @throws SermilException 
+    */
+
+
+   //Este metodo veio do SERMILWEB
+   @Transactional
+   public Cidadao alistar(final PreAlistamento preAlistamento, final String anotacoes) throws CriterioException, CidadaoCadastradoException , NoDataFoundException, SermilException   {
+
+      // confere se pre alistamento ja existe
+      if (isPreAlistamentoCadastrado(preAlistamento)) {
+         throw new CidadaoCadastradoException();
+      }
+
+      // Configura PRE_ALISTAMENTO
+      if (preAlistamento.getDocApresTipo() == DOC_RG) {
+         if (StringUtils.isEmpty(preAlistamento.getRgNr())) {
+            preAlistamento.setRgNr(preAlistamento.getDocApresNr());
+            preAlistamento.setDocApresMunicipio(this.municipioDao.findById(preAlistamento.getDocApresMunicipio().getCodigo()));
+            preAlistamento.setRgUf(preAlistamento.getDocApresMunicipio().getUf().getSigla());
+         }
+      }
+      preAlistamento.setProtocoloData(new Date());
+      
+      //salvar cidadao
+      final Usuario usr = new Usuario();
+      usr.setCpf("99999999999");
+      Cidadao cidadao = alistar(preAlistamento, new Date() , null, SituacaoMilitar.ALISTADO, usr);
+      cidadao.setAnotacoes(anotacoes);
+      cidadaoDao.save(cidadao);
+      
+      //salvar preAlistamento
+      preAlistamentoDao.save(preAlistamento);
+      
+      //Enviar email de confirmacao de alistamento online
+      emailSender.enviarEmailConfirmacaoAlistamentoOnLine(cidadao);
+      
+      return cidadao;
+   }
+
+   public boolean isPreAlistamentoCadastrado(final PreAlistamento alistamento) {
+      boolean status = false;
+      List<PreAlistamento> lista = this.preAlistamentoDao.findByNamedQuery("PreAlistamento.listarUnico", alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
+      if (lista != null && lista.size() > 0 && lista.get(0) != null) {
+         status = true;
+      }
+      lista = this.preAlistamentoDao.findByNamedQuery("PreAlistamento.listarPorCpf", alistamento.getCpf());
+      if (lista != null && lista.size() > 0 && lista.get(0) != null) {
+         status = true;
+      }
+      lista = null;
+      return status;
+   }
+
+
+
+   public boolean isForaPrazo(Date data) {
+      boolean status = false;
+      final Calendar dtNasc = Calendar.getInstance();
+      dtNasc.setTime(data);
+      final Calendar hoje = Calendar.getInstance();
+      final Calendar jul = Calendar.getInstance();
+      final Calendar dez = Calendar.getInstance();
+      int anoAtual = hoje.get(Calendar.YEAR);
+      jul.set(anoAtual, 6, 1); // 1 jul
+      dez.set(anoAtual, 11, 31); // 31 dez
+      if (dtNasc.get(Calendar.YEAR) < anoAtual - 18) {
+         status = true;
+      } else if (dtNasc.get(Calendar.YEAR) < anoAtual - 17) {
+         if (hoje.getTimeInMillis() >= jul.getTimeInMillis() && hoje.getTimeInMillis() <= dez.getTimeInMillis()) {
+            status = true;
+         }
+      }
+      logger.debug("Classe={}, Ano={}, Inicio={}, Fim={}", dtNasc.get(Calendar.YEAR), anoAtual, jul, dez);
+      return status;
+   }
+   
+   /**
+    * Metodos incluidos depois que alistamentoServico (do portal e do sermilweb) foram trazidos pra ca.
+    * @throws SermilException 
+    */
+   
+
+   public void addEvento(Cidadao cidadao, Byte eventoCodigo, Date data, String anotacao) throws SermilException{
+      final CidEvento ce = new CidEvento();
+      ce.getPk().setCidadaoRa(cidadao.getRa());
+      ce.getPk().setCodigo(eventoCodigo);
+      ce.getPk().setData(data);
+      ce.setAnotacao(anotacao);
+      cidadao.addCidEvento(ce);
+   }
+   
 
 }

@@ -33,6 +33,7 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
    /** serialVersionUID. */
    private static final long serialVersionUID = -8698276787632308527L;
 
+   public final static Byte ALISTAMENTO = 1; 
    public final static Byte EXCESSO_DE_CONTINGENTE_CODIGO = 6; 
 
    @EmbeddedId
