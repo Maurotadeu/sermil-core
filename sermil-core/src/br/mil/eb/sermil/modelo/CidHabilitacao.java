@@ -24,9 +24,10 @@ public class CidHabilitacao implements Comparable<CidHabilitacao>, Serializable 
   @EmbeddedId
   private CidHabilitacao.PK pk;
 
-  @ManyToOne
-  @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
-  private Cidadao cidadao;
+//TODO: verificar se é melhor relacionamento unidirecional em CIDADAO
+//  @ManyToOne
+//  @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
+//  private Cidadao cidadao;
 
   @ManyToOne
   @JoinColumn(name = "HABILITACAO_CODIGO", insertable = false, updatable = false, nullable = false)
@@ -74,17 +75,9 @@ public class CidHabilitacao implements Comparable<CidHabilitacao>, Serializable 
       return false;
     return true;
   }
-
+/*
   public Cidadao getCidadao() {
     return this.cidadao;
-  }
-
-  public Habilitacao getHabilitacao() {
-    return habilitacao;
-  }
-
-  public CidHabilitacao.PK getPk() {
-    return this.pk;
   }
 
   public void setCidadao(Cidadao cid) {
@@ -93,10 +86,18 @@ public class CidHabilitacao implements Comparable<CidHabilitacao>, Serializable 
       cid.getCidHabilitacaoCollection().add(this);
     }
   }
+*/
+  public Habilitacao getHabilitacao() {
+    return habilitacao;
+  }
 
   public void setHabilitacao(Habilitacao habilitacao) {
     this.habilitacao = habilitacao;
   }
+
+  public CidHabilitacao.PK getPk() {
+      return this.pk;
+    }
 
   public void setPk(CidHabilitacao.PK pk) {
     this.pk = pk;

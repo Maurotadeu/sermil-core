@@ -130,8 +130,9 @@ public final class Cidadao implements Serializable {
 
     @OneToOne(mappedBy="cidadao", fetch=FetchType.EAGER, cascade=CascadeType.PERSIST, orphanRemoval=true)
     private CidFoto cidFoto;
-
-    @OneToMany(mappedBy="cidadao", fetch=FetchType.EAGER, orphanRemoval=true)
+    //TODO: usando notação de relacionamento unidirecional, analisar também em CidHabilitacao
+    @OneToMany(fetch=FetchType.EAGER, orphanRemoval=true)
+    @JoinColumn(name="CIDADAO_RA", referencedColumnName="RA")
     private List<CidHabilitacao> cidHabilitacaoCollection;
 
     @OneToMany(mappedBy="cidadao", fetch=FetchType.EAGER, orphanRemoval=true)
@@ -1305,16 +1306,16 @@ public final class Cidadao implements Serializable {
     }
 
     public void addCidHabilitacao(final CidHabilitacao ch) throws SermilException {
-        if (this.getCidExarCollection() == null) {
+        if (this.getCidHabilitacaoCollection() == null) {
             this.setCidHabilitacaoCollection(new ArrayList<CidHabilitacao>(1));
         }
         if (this.getCidHabilitacaoCollection().contains(ch)) {
-            throw new SermilException("HabilitaÃ§Ã£o jÃ¡ existe");
+            throw new SermilException("Habilitação já existe");
         }
         this.getCidHabilitacaoCollection().add(ch);
-        if (ch.getCidadao() != this) {
-            ch.setCidadao(this);
-        }
+//        if (ch.getCidadao() != this) {
+//            ch.setCidadao(this);
+//        }
     }
 
     public void addCidMobilizacao(final CidMobilizacao cm) throws SermilException {
