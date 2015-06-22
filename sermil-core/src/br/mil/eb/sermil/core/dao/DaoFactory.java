@@ -54,6 +54,8 @@ public abstract class DaoFactory {
 
   public abstract DstbBolNecDao getDstbBolNecDao();
 
+  public abstract DstbExclusaoDao getDstbExclusaoDao();
+  
   public abstract DstbGdDao getDstbGdDao();
 
   public abstract DstbParametroDao getDstbParametroDao();
