@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.RaMestreDao;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
-import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.RaMestre;
 import br.mil.eb.sermil.tipos.Ra;
 
