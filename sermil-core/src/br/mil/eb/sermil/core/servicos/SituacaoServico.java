@@ -33,7 +33,7 @@ public class SituacaoServico {
     private CidEventoDao eventoDao;
 
     public SituacaoServico() {
-        logger.info("SituacaoServico iniciado.");
+        logger.debug("SituacaoServico iniciado.");
     }
 
     public Cidadao verificar(final Cidadao cidadao) throws SermilException {
