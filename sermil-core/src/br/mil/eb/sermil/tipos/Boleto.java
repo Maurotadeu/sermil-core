@@ -8,6 +8,7 @@ import java.math.BigDecimal;
  * @since 5.1
  * @version $Id$
  */
+@SuppressWarnings("unused")
 public class Boleto implements Serializable {
 
   /** serialVersionUID.*/
@@ -17,17 +18,16 @@ public class Boleto implements Serializable {
   private static final String SEQ = "86";
 
   /** Valor Efetivo ou Referência (VER) 6 = valor em reais (DV módulo 10) */
-  private static final String VER_EBCT = "6";
+  private static final String VER_EFETIVO = "6";
 
   /** Valor Efetivo ou Referência (VER) 7 = Quantidade de moeda (DV Módulo 10) */
-  private static final String VER_CEF = "7";
+  private static final String VER_REF = "7";
   
   /** 00.394.411 = CNPJ Casa Civil da Presidência da República. Foi mandado passar para CNPJ FSM (05/05/2015) */
-  //private static final String CNPJ_MULTA = "00394411"; (CNPJ Casa Civil PR)
-  private static final String CNPJ_MULTA = "00894356";
+  private static final String CNPJ_PR = "00394411";
 
   /** 00.894.356 = CNPJ Fundo do Serviço Militar.*/
-  private static final String CNPJ_TAXA = "00894356";
+  private static final String CNPJ_FSM = "00894356";
 
   private String cpf;
 
@@ -53,9 +53,37 @@ public class Boleto implements Serializable {
 
   private Banco banco;
   
-  public enum Tipo {MULTA, TAXA};
+  public enum Tipo {
+      
+      MULTA("1"), TAXA("2");
+      
+      private final String codigo;
 
-  public enum Banco {CEF, EBCT};
+      Tipo(String cod) {
+          codigo = cod;
+      };
+
+      public String getCodigo() {
+          return codigo;
+      }
+      
+  }  
+
+  public enum Banco {
+      
+      CEF("1"), ECT("2");
+      
+      private final String codigo;
+
+      Banco(String cod) {
+          codigo = cod;
+      };
+
+      public String getCodigo() {
+          return codigo;
+      }
+      
+  };
   
   public Boleto() {
     super();
@@ -68,21 +96,30 @@ public class Boleto implements Serializable {
     this.nome = nome;
     this.valor = valor;
     this.tarifa = tarifa;
-    final String VER = (banco == Banco.CEF ? VER_CEF : VER_EBCT);
-    final String CNPJ = (tipo == Tipo.TAXA ? CNPJ_TAXA : CNPJ_MULTA);
     final BigDecimal total = new BigDecimal(valor.replace(",",".")).add(new BigDecimal(tarifa.replace(",",".")));
-    final String vlr = String.format("%011d", Integer.valueOf(total.toString().replace(".","")));
-    final String dv = String.valueOf(Utils.calculaModulo10(SEQ + VER + vlr + CNPJ + this.cpf));
-    this.bloco1 = SEQ + VER + dv + vlr.substring(0,7) + "-" + Utils.calculaModulo10(SEQ + VER + dv + vlr.substring(0,7));
-    this.bloco2 = vlr.substring(7,11) + CNPJ.substring(0,7) + "-" + Utils.calculaModulo10(vlr.substring(7,11) + CNPJ.substring(0,7));
-    this.bloco3 = CNPJ.substring(7) + "0000000000" + "-" + Utils.calculaModulo10(CNPJ.substring(7) + "0000000000");
-    this.bloco4 = this.cpf + "-" + Utils.calculaModulo10(this.cpf);
-    this.blocoGeral = SEQ + VER + dv + vlr + CNPJ + "0000000000" + this.cpf;
+    //TODO: verificar se a CEF aceita valor efetivo no boleto
+    //final String VER = (banco == Banco.CEF ? VER_REF : VER_EFETIVO);
+    final String VER = VER_EFETIVO;
+    //TODO: verificar se o CNPJ igual funciona na taxa e multa
+    //final String CNPJ = (tipo == Tipo.TAXA ? CNPJ_FSM : CNPJ_PR);
+    final String CNPJ = CNPJ_FSM;
+    final String CAMPO_LIVRE = new StringBuilder(this.tipo.getCodigo()).append(this.banco.getCodigo()).append("00000000").toString();
+    final String VALOR = String.format("%011d", Integer.valueOf(total.toString().replace(".","")));
+    final String DV = String.valueOf(Utils.calculaModulo10(SEQ + VER + VALOR + CNPJ + CAMPO_LIVRE + this.cpf));
+    this.bloco1 = new StringBuilder(SEQ).append(VER).append(DV).append(VALOR.substring(0,7)).toString();
+    this.bloco2 = new StringBuilder(VALOR.substring(7,11)).append(CNPJ.substring(0,7)).toString();
+    this.bloco3 = new StringBuilder(CNPJ.substring(7)).append(CAMPO_LIVRE).toString();
+    this.bloco4 = new StringBuilder(this.cpf).toString();
+    this.blocoGeral = new StringBuilder(SEQ).append(VER).append(DV).append(VALOR).append(CNPJ).append(CAMPO_LIVRE).append(this.cpf).toString();
   }
 
   @Override
   public String toString() {
-    return new StringBuilder(this.bloco1).append(" ").append(this.bloco2).append(" ").append(this.bloco3).append(" ").append(this.bloco4).toString();
+    return new StringBuilder(this.bloco1).append("-").append(Utils.calculaModulo10(this.bloco1)).append(" ")
+                     .append(this.bloco2).append("-").append(Utils.calculaModulo10(this.bloco2)).append(" ")
+                     .append(this.bloco3).append("-").append(Utils.calculaModulo10(this.bloco3)).append(" ")
+                     .append(this.bloco4).append("-").append(Utils.calculaModulo10(this.bloco4)).append(" ")
+                     .toString();
   }
 
   @Override
@@ -226,7 +263,7 @@ public class Boleto implements Serializable {
 
   public static void main(String[] args) {
     try {
-      Boleto b = new Boleto("98106546772","Teste","1,38","2,04",Tipo.MULTA,Banco.CEF);
+      Boleto b = new Boleto("98106546772","Teste","1,38","2,04",Tipo.MULTA,Banco.ECT);
       System.out.println(b);
     } catch (Exception e) {
       e.printStackTrace();
