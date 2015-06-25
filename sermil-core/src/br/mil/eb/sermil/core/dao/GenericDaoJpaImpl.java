@@ -8,15 +8,18 @@ import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 
+import br.mil.eb.sermil.core.exceptions.SermilException;
+
 /** Implementação JPA (EclipseLink) de GenericDao.
  * @author Abreu Lopes
- * @version $Id: GenericDaoJpaImpl.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version $Id$
  * @since 4.0
  * @param <T> Tipo da entidade
  * @param <ID> Tipo da chave primária
@@ -99,8 +102,12 @@ public class GenericDaoJpaImpl<T, ID extends Serializable> implements GenericDao
    * @see br.mil.eb.sermil.core.dao.GenericDao#delete(java.lang.Object)
    */
   @Override
-  public void delete(T entity) {
-    this.getEntityManager().remove(this.getEntityManager().contains(entity) ? entity : this.getEntityManager().merge(entity));
+  public void delete(T entity) throws SermilException {
+      try {
+          this.getEntityManager().remove(this.getEntityManager().contains(entity) ? entity : this.getEntityManager().merge(entity));
+      } catch(PersistenceException e) {
+          throw new SermilException(e);
+      }
   }
 
   /** Executa um comando (UPDATE, DELETE ou Procedure).
@@ -132,7 +139,6 @@ public class GenericDaoJpaImpl<T, ID extends Serializable> implements GenericDao
   @Override
   public List<T> findByExample(final T exemplo) {
     final CriteriaBuilder cb = this.getEntityManager().getCriteriaBuilder();
-    //cb.equals(exemplo);
     final CriteriaQuery<T> query = cb.createQuery(this.classe);
     return this.getEntityManager().createQuery(query).getResultList();
   }
@@ -211,8 +217,12 @@ public class GenericDaoJpaImpl<T, ID extends Serializable> implements GenericDao
    * @see br.mil.eb.sermil.core.dao.GenericDao#save(java.lang.Object)
    */
   @Override
-  public T save(T entidade) {
-    return this.getEntityManager().merge(entidade);
+  public T save(T entidade) throws SermilException {
+      try {
+          return this.getEntityManager().merge(entidade);
+      } catch (PersistenceException e) {
+          throw new SermilException(e);
+      }
   }
 
   /** Busca pelos critérios informados. (método auxiliar)

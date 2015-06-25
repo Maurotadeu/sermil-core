@@ -2,7 +2,7 @@ package br.mil.eb.sermil.core.exceptions;
 
 public class RaMestreException extends SermilException {
 
-    /** serialVersionUID */
+    /** serialVersionUID. */
     private static final long serialVersionUID = 363373619060616283L;
 
     /** Construtor. */
