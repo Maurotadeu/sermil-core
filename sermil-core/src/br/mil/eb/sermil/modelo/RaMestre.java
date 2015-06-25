@@ -1,6 +1,7 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -8,105 +9,138 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-/** Sequência de RA.
+/** Entidade controle de RA (RA_MESTRE).
  * @author Abreu Lopes
  * @since 3.3
- * @version $Id: RaMestre.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version $Id$
  */
 @Entity
 @Table(name="RA_MESTRE")
-public final class RaMestre implements Serializable {
-	
-  private static final long serialVersionUID = 3538898577883823486L;
+public final class RaMestre implements Comparable<RaMestre>, Serializable {
 
-  @EmbeddedId
-	private PK pk;
+    /** serialVersionUID. */
+    private static final long serialVersionUID = 1016352332770793993L;
 
-	private Integer sequencial;
+    @EmbeddedId
+    private PK pk;
 
-	public RaMestre() {
-		this.setPk(new RaMestre.PK());
-	}
+    private Integer sequencial;
 
-	public PK getPk() {
-		return this.pk;
-	}
+    public RaMestre() {
+        this.setPk(new RaMestre.PK());
+    }
 
-	public void setPk(PK pk) {
-		this.pk = pk;
-	}
+    public RaMestre(final Byte csm, final Short jsm) {
+        this.setPk(new RaMestre.PK(csm, jsm));
+    }
 
-	public Integer getSequencial() {
-		return this.sequencial;
-	}
+    @Override
+    public String toString() {
+        return new StringBuilder(this.getPk().toString())
+            .append(" - ")
+            .append(this.getSequencial() == null ? "000000" : this.getSequencial())
+            .toString();
+    }
 
-	public void setSequencial(Integer sequencial) {
-		this.sequencial = sequencial;
-	}
+    @Override
+    public int compareTo(RaMestre o) {
+        return this.getPk().compareTo(o.getPk());
+    }
 
-  /** Chave primária (PK) de RaMestre.
-   * @author Abreu Lopes
-   * @since 3.3
-   * @version $Id: RaMestre.java 1637 2011-11-25 13:52:11Z wlopes $
-   */
-	@Embeddable
-	public static class PK implements Serializable {
-		
-		/** serialVersionUID. */
-    private static final long serialVersionUID = 7686725811239638906L;
+    public PK getPk() {
+        return this.pk;
+    }
 
-    @Column(name="CSM_CODIGO")
-		private Byte csmCodigo;
+    public void setPk(PK pk) {
+        this.pk = pk;
+    }
 
-		@Column(name="JSM_CODIGO")
-		private Short jsmCodigo;
+    public Integer getSequencial() {
+        return this.sequencial;
+    }
 
-		public PK() {
-			super();
-		}
+    public void setSequencial(Integer sequencial) {
+        this.sequencial = sequencial;
+    }
 
-		public PK(final Byte csm, final Short jsm) {
-			this.setCsmCodigo(csm);
-			this.setJsmCodigo(jsm);
-		}
-		
-		public Byte getCsmCodigo() {
-			return this.csmCodigo;
-		}
+    /** Chave primária (PK) de RaMestre.
+     * @author Abreu Lopes
+     * @since 3.3
+     * @version $Id$
+     */
+    @Embeddable
+    public static class PK implements Comparable<RaMestre.PK>, Serializable {
 
-		public void setCsmCodigo(Byte csmCodigo) {
-			this.csmCodigo = csmCodigo;
-		}
+        /** serialVersionUID. */
+        private static final long serialVersionUID = -1835332668247036168L;
 
-		public Short getJsmCodigo() {
-			return this.jsmCodigo;
-		}
+        @Column(name="CSM_CODIGO")
+        private Byte csmCodigo;
 
-		public void setJsmCodigo(Short jsmCodigo) {
-			this.jsmCodigo = jsmCodigo;
-		}
+        @Column(name="JSM_CODIGO")
+        private Short jsmCodigo;
 
-		@Override
-		public boolean equals(Object o) {
-			if (o == this) {
-				return true;
-			}
-			if ( ! (o instanceof PK)) {
-				return false;
-			}
-			PK other = (PK) o;
-			return (this.csmCodigo == other.csmCodigo)
-				&& (this.jsmCodigo == other.jsmCodigo);
-		}
+        public PK() {
+            super();
+        }
 
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int hash = 17;
-			hash = hash * prime + ((int) (this.csmCodigo ^ (this.csmCodigo >>> 32)));
-			hash = hash * prime + ((int) (this.jsmCodigo ^ (this.jsmCodigo >>> 32)));
-			return hash;
-		}
-	}
-	
+        public PK(final Byte csm, final Short jsm) {
+            this.setCsmCodigo(csm);
+            this.setJsmCodigo(jsm);
+        }
+
+        @Override
+        public String toString() {
+            return new StringBuilder()
+            .append(this.getCsmCodigo() == null ? "00" : new DecimalFormat("00").format(this.getCsmCodigo()))
+            .append("/")
+            .append(this.getJsmCodigo() == null ? "000" : new DecimalFormat("000").format(this.getJsmCodigo()))
+            .toString();
+        }
+
+        @Override
+        public int compareTo(PK o) {
+            return this.getCsmCodigo().compareTo(o.getCsmCodigo()) == 0 ? this.getJsmCodigo().compareTo(o.getJsmCodigo()) : this.getCsmCodigo().compareTo(o.getCsmCodigo());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == this) {
+                return true;
+            }
+            if ( ! (o instanceof PK)) {
+                return false;
+            }
+            PK other = (PK) o;
+            return (this.csmCodigo == other.csmCodigo)
+                    && (this.jsmCodigo == other.jsmCodigo);
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int hash = 17;
+            hash = hash * prime + ((int) (this.csmCodigo ^ (this.csmCodigo >>> 32)));
+            hash = hash * prime + ((int) (this.jsmCodigo ^ (this.jsmCodigo >>> 32)));
+            return hash;
+        }
+
+        public Byte getCsmCodigo() {
+            return this.csmCodigo;
+        }
+
+        public void setCsmCodigo(Byte csmCodigo) {
+            this.csmCodigo = csmCodigo;
+        }
+
+        public Short getJsmCodigo() {
+            return this.jsmCodigo;
+        }
+
+        public void setJsmCodigo(Short jsmCodigo) {
+            this.jsmCodigo = jsmCodigo;
+        }
+
+    }
+
 }

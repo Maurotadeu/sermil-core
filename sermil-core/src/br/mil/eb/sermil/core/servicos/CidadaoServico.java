@@ -50,9 +50,7 @@ import br.mil.eb.sermil.modelo.SituacaoMilitar;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.Ra;
 
-/**
- * Serviço de Cidadão. (Tabelas CIDADAO e CID_AUDITORIA)
- * 
+/** Serviço de Cidadão. (Tabelas CIDADAO e CID_AUDITORIA)
  * @author Abreu Lopes, Anselmo
  * @since 3.0
  * @version $Id$
@@ -440,7 +438,12 @@ public class CidadaoServico {
       cidadao.addCidDocumento(cd);
 
       // Evento de alistamento
-      addEvento(cidadao, CidEvento.ALISTAMENTO, dataAlist, "Alistado pela Internet");
+      final CidEvento ce = new CidEvento();
+      ce.getPk().setCidadaoRa(cidadao.getRa());
+      ce.getPk().setCodigo(CidEvento.ALISTAMENTO);
+      ce.getPk().setData(dataAlist);
+      ce.setAnotacao("Alistado pela Internet");
+      cidadao.addCidEvento(ce);
       
       // Salvar cidadão
       this.salvar(cidadao, usr, "ALISTAMENTO");
@@ -503,8 +506,6 @@ public class CidadaoServico {
       return status;
    }
 
-
-
    public boolean isForaPrazo(Date data) {
       boolean status = false;
       final Calendar dtNasc = Calendar.getInstance();
@@ -526,20 +527,4 @@ public class CidadaoServico {
       return status;
    }
    
-   /**
-    * Metodos incluidos depois que alistamentoServico (do portal e do sermilweb) foram trazidos pra ca.
-    * @throws SermilException 
-    */
-   
-
-   public void addEvento(Cidadao cidadao, Byte eventoCodigo, Date data, String anotacao) throws SermilException{
-      final CidEvento ce = new CidEvento();
-      ce.getPk().setCidadaoRa(cidadao.getRa());
-      ce.getPk().setCodigo(eventoCodigo);
-      ce.getPk().setData(data);
-      ce.setAnotacao(anotacao);
-      cidadao.addCidEvento(ce);
-   }
-   
-
 }

@@ -25,7 +25,7 @@ import br.mil.eb.sermil.modelo.RaItens;
 import br.mil.eb.sermil.modelo.RaPedido;
 
 /** Serviços do processo de Pedido de RA.
- * @author Abreu Lopes, dsmanselmo
+ * @author Abreu Lopes, Anselmo
  * @since 3.0
  * @version $Id$
  */
@@ -92,12 +92,12 @@ public class JsmRaPedidoServico {
         if ("S".equals(pedido.getProcessado())) {
             throw new SermilException("Pedido já foi processado, não pode ser excluído.");
         }
-        pedidoDao.delete(pedido);
+        this.pedidoDao.delete(pedido);
     }
 
     @PreAuthorize("hasAnyRole('adm','dsm')")
     @Transactional
-    public void aprovar(final Integer id) throws RaPedidoJaProcessadoException, RaPedidoJaAprovadoException {
+    public void aprovar(final Integer id) throws SermilException {
         final RaPedido pedido = pedidoDao.findById(id);
         if ("S".equals(pedido.getProcessado())) {
             throw new RaPedidoJaProcessadoException();
@@ -105,12 +105,12 @@ public class JsmRaPedidoServico {
             throw new RaPedidoJaAprovadoException();
         }
         pedido.setAprovado("S");
-        pedidoDao.save(pedido);
+        this.pedidoDao.save(pedido);
     }
 
     @PreAuthorize("hasAnyRole('adm','dsm','csm')")
     @Transactional
-    public RaPedido salvar(final RaPedido pedido) throws CriterioException, RaPedidoJaProcessadoException, RaPedidoJaAprovadoException {
+    public RaPedido salvar(final RaPedido pedido) throws SermilException {
         // Verificar se pedido ja foi processado ou aprovado.
         if (pedido == null)
             throw new CriterioException();

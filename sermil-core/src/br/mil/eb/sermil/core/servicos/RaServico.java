@@ -8,36 +8,44 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.RaMestreDao;
-import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
+import br.mil.eb.sermil.core.exceptions.RaMestreException;
+import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.RaMestre;
 import br.mil.eb.sermil.tipos.Ra;
 
-/** Serviço de RA.
+/** Controle de emissão de RA.
  * @author Abreu Lopes
  * @since 5.0
- * @version $Id: RaServico.java 2467 2014-06-12 14:17:52Z wlopes $
+ * @version $Id$
  */
 @Named("raServico")
 public class RaServico {
 
-  protected static final Logger logger = LoggerFactory.getLogger(RaServico.class);
+    protected static final Logger logger = LoggerFactory.getLogger(RaServico.class);
 
-  @Inject
-  private RaMestreDao raMestreDao;
+    @Inject
+    private RaMestreDao raMestreDao;
 
-  public RaServico() {
-    logger.debug("RaServico iniciado");
-  }
-
-  @Transactional
-  public Long gerar(final Byte csm, final Short jsm) throws NoDataFoundException  {
-    final RaMestre raMestre = raMestreDao.findById(new RaMestre.PK(csm, jsm));
-    if (raMestre == null) {
-      throw new NoDataFoundException("CSM/JSM não existe na tabela de controle de RA (RA_MESTRE)");
+    public RaServico() {
+        logger.debug("RaServico iniciado");
     }
-    raMestre.setSequencial(raMestre.getSequencial() + 1);
-    this.raMestreDao.save(raMestre);
-    return new Ra.Builder().csm(csm).jsm(jsm).sequencial(raMestre.getSequencial()).build().getValor();
-  }
 
+    @Transactional
+    public Long gerar(final Byte csm, final Short jsm) throws SermilException {
+        final RaMestre raMestre = this.raMestreDao.findById(new RaMestre.PK(csm, jsm));
+        if (raMestre == null) {
+            throw new RaMestreException("CSM/JSM não existe na tabela de controle de RA (RA_MESTRE)");
+        }
+        raMestre.setSequencial(raMestre.getSequencial() + 1);
+        this.raMestreDao.save(raMestre);
+        return new Ra.Builder().csm(csm).jsm(jsm).sequencial(raMestre.getSequencial()).build().getValor();
+    }
+
+    public RaMestre recuperar(final RaMestre.PK pk) {
+        return this.raMestreDao.findById(pk);
+    }
+
+    public void salvar(final RaMestre obj) throws SermilException {
+        this.raMestreDao.save(obj);
+    }
 }
