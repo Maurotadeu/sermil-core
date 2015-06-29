@@ -1,7 +1,6 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,7 +33,6 @@ import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.EventNotFoundException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.OutOfSituationException;
-import br.mil.eb.sermil.core.exceptions.PreAlistamentoErroException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.utils.EmailSender;
 import br.mil.eb.sermil.modelo.CidAuditoria;
@@ -42,8 +40,6 @@ import br.mil.eb.sermil.modelo.CidCertificado;
 import br.mil.eb.sermil.modelo.CidDocApres;
 import br.mil.eb.sermil.modelo.CidDocumento;
 import br.mil.eb.sermil.modelo.CidEvento;
-import br.mil.eb.sermil.modelo.CidExar;
-import br.mil.eb.sermil.modelo.CidQualidadeReserva;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.PreAlistamento;
 import br.mil.eb.sermil.modelo.SituacaoMilitar;
@@ -107,29 +103,19 @@ public class CidadaoServico {
    }
 
    public Cidadao recuperar(final Long ra) throws SermilException {
-      return this.cidadaoDao.findById(ra);
+       if (ra == null) {
+           throw new SermilException("Informe o RA do cidad„o.");
+       }
+       final Cidadao cid = this.cidadaoDao.findById(ra);
+       if (cid == null) {
+           throw new CidadaoNotFoundException();
+       }
+       return cid;
    }
 
    public Cidadao recuperar(final String cpf) throws SermilException {
-      List<Cidadao> lista = this.cidadaoDao.findByNamedQuery("Cidadao.listarPorCpf", cpf);
+      final List<Cidadao> lista = this.cidadaoDao.findByNamedQuery("Cidadao.listarPorCpf", cpf);
       return lista.isEmpty() ? null : lista.get(0);
-   }
-
-   public Cidadao retrieve(final Long ra) throws IllegalArgumentException, CidadaoNotFoundException, SermilException {
-      // Confere RA
-      if (ra == null)
-         throw new IllegalArgumentException();
-      // Confere Se cidadao eh valido
-      try {
-         Cidadao cid = recuperar(ra);
-         return cid;
-      } catch (SermilException e) {
-         logger.error(e.getMessage());
-         throw new CidadaoNotFoundException();
-      } catch (Exception e) {
-         logger.error(e.getMessage());
-         throw new SermilException(e.getMessage());
-      }
    }
 
    @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm','mob','om','smr')")
@@ -201,60 +187,14 @@ public class CidadaoServico {
       }
    }
 
-   @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob')")
-   @Transactional
-   public Cidadao adicionarApresentacao(final Cidadao cidadao, final CidExar apresentacao, final Usuario usr, String msg) throws SermilException {
-      if (cidadao.getSituacaoMilitar() != 15) {
-         throw new SermilException("ERRO: Para cadastrar uma apresenta√ß√£o o cidad√£o deve estar na situa√ß√£o LICENCIADO.");
-      }
-      final List<CidExar> lista = new ArrayList<CidExar>(apresentacao.getPk().getApresentacaoQtd());
-      for (int i = 1; i <= apresentacao.getPk().getApresentacaoQtd(); i++) {
-         final CidExar apr = new CidExar();
-         apr.getPk().setApresentacaoQtd((byte) i);
-         apr.getPk().setCidadaoRa(apresentacao.getPk().getCidadaoRa());
-         apr.setApresentacaoData(apresentacao.getApresentacaoData());
-         apr.setApresentacaoForma(apresentacao.getApresentacaoTipo());
-         apr.setApresentacaoTipo(apresentacao.getApresentacaoTipo());
-         apr.setMunicipio(apresentacao.getMunicipio());
-         apr.setOm(apresentacao.getOm());
-         apr.setPais(apresentacao.getPais());
-         apr.setIp(apresentacao.getIp());
-         lista.add(apr);
-      }
-      if (cidadao.getCidExarCollection().size() > 0) {
-         for (int i = 0; i < cidadao.getCidExarCollection().size(); i++) {
-            lista.remove(cidadao.getCidExarCollection().get(i));
-         }
-      }
-      for (CidExar ce : lista) {
-         cidadao.addCidExar(ce);
-      }
-      return this.salvar(cidadao, usr, msg);
-   }
-
-   public void pesquisaQualidadeReserva(final Cidadao cidadao) throws SermilException {
-      final Calendar cal = Calendar.getInstance();
-      final CidQualidadeReserva cqr = new CidQualidadeReserva(cidadao.getRa(), cal.get(Calendar.YEAR));
-      cqr.setAreaAtividade((byte) 1);
-      cqr.setEmpregoNivel((byte) 1);
-      cqr.setEmpregoTipo((byte) 1);
-      cqr.setEscolaridade(cidadao.getEscolaridade());
-      cqr.setMissaoPaz("2");
-      cqr.setRenda((byte) 1);
-      cidadao.addCidQualidadeReserva(cqr);
-   }
-
-   /**
-    * O cidadao tem que ter Pelo menos um evento do tipo 3,6,13,14 ou 24 Pelo um certificado do tipo
-    * 3,4 ou 6 E ele tem que estar em uma das situacoes militares: 3,8, ou 9
-    * 
+   /** O cidadao tem que ter Pelo menos um evento do tipo 3,6,13,14 ou 24 e pelo menos um certificado
+    *  do tipo 3, 4 ou 6 e tem que estar em uma das situacoes militares: 3, 8, ou 9.
     * @param cidadao
     * @throws EventNotFoundException
     * @throws CertificateNotFoundException
     * @throws OutOfSituationException
     * @throws CidadaoNaoTemEventoException
     */
-
    public boolean cidadaoPodeImprimirCdi(Cidadao cidadao) throws EventNotFoundException, CertificateNotFoundException, OutOfSituationException {
       if (!cidadaoTemEvento(cidadao, CidEvento.EXCESSO_DE_CONTINGENTE_CODIGO)) {
          throw new EventNotFoundException();
@@ -315,64 +255,24 @@ public class CidadaoServico {
    }
 
    public CidCertificado getCDIDeCidadao(Cidadao cidadao) {
-      List<CidCertificado> certificados = cidadao.getCidCertificadoCollection();
+      final List<CidCertificado> certificados = cidadao.getCidCertificadoCollection();
       for (CidCertificado certificado : certificados) {
-         if (certificado.getPk().getTipo() == CidCertificado.DISPENSA_DE_INCORPORACAO_COMPUTADOR || certificado.getPk().getTipo() == CidCertificado.DISPENSA_DE_INCORPORACAO_INFOR
-               || certificado.getPk().getTipo() == CidCertificado.DISPENSA_DE_INCORPORACAO_PLANO) {
+         if (certificado.getPk().getTipo() == CidCertificado.DISPENSA_DE_INCORPORACAO_COMPUTADOR ||
+             certificado.getPk().getTipo() == CidCertificado.DISPENSA_DE_INCORPORACAO_INFOR ||
+             certificado.getPk().getTipo() == CidCertificado.DISPENSA_DE_INCORPORACAO_PLANO) {
             return certificado;
          }
       }
       return null;
    }
 
-   public boolean cidadaoPodeImprimirCAM(Cidadao cidadao) {
-      if (cidadao == null)
-         return false;
-      return (cidadao.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_ALISTADO || cidadao.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_REFRATARIO);
-   }
-
-   public boolean isCidadaoLicenciado(Cidadao cidadao) {
-      return (cidadao.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_LICENCIADO) ? true : false;
-   }
-
-   @Transactional
-   public void addCertificateAndSaveCidadao(CidCertificado certificado, Cidadao cidadao, Usuario usuario) throws SermilException {
-      cidadao.addCidCertificado(certificado);
-      salvar(cidadao, usuario, "CERTIFICADO: " + certificado);
-   }
-
-   /**
-    * ALISTAMENTO SERVICO (PORTAL)
-    */
-
-   @Transactional
-   public void excluirPreAlistamento(final PreAlistamento cadastro) throws PreAlistamentoErroException {
-      try {
-         this.preAlistamentoDao.delete(cadastro);
-      } catch (Exception e) {
-         logger.error(e.getMessage());
-         throw new PreAlistamentoErroException();
+   public void cidadaoPodeImprimirCAM(Cidadao cidadao) throws SermilException {
+      if (cidadao == null) {
+         throw new SermilException("Cidad„o n„o foi informado.");
       }
-   }
-
-   public List<PreAlistamento> pesquisarPreAlistamento(final PreAlistamento cadastro) throws CriterioException, NoDataFoundException {
-      if (cadastro == null || (cadastro.getCodigo() == null && cadastro.getNome() == null)) {
-         throw new CriterioException();
-      }
-      List<PreAlistamento> lista = null;
-      if (cadastro.getCodigo() != null) {
-         lista = new ArrayList<PreAlistamento>(1);
-         lista.add(this.preAlistamentoDao.findById(cadastro.getCodigo()));
-      } else if (cadastro.getNome() != null && !cadastro.getNome().isEmpty()) {
-         lista = this.preAlistamentoDao.findByNamedQuery("PreAlistamento.listarPorNome", cadastro.getNome().toUpperCase().trim().concat("%"));
-      } else {
-         throw new CriterioException();
-      }
-      if (lista == null || lista.isEmpty() || lista.get(0) == null) {
-         lista = null;
-         throw new NoDataFoundException();
-      }
-      return lista;
+      if (cidadao.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_ALISTADO || cidadao.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_REFRATARIO) {
+          throw new SermilException("Para imprimir o CAM, o cidad„o dever estar na SituaÁ„o de 'Alistado' ou 'Refrat·rio'.");
+      }      
    }
 
    // Esse metodo alistar veio do PORTAL
@@ -455,9 +355,6 @@ public class CidadaoServico {
     * @throws CriterioException, CidadaoCadastradoException , NoDataFoundException 
     * @throws SermilException 
     */
-
-
-   //Este metodo veio do SERMILWEB
    @Transactional
    public Cidadao alistar(final PreAlistamento preAlistamento, final String anotacoes) throws CriterioException, CidadaoCadastradoException , NoDataFoundException, SermilException   {
 
