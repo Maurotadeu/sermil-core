@@ -13,7 +13,7 @@ import javax.persistence.Table;
 /** Habilitação militar ou civil.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CidHabilitacao.java 2426 2014-05-14 15:01:41Z wlopes $
+ * @version $Id$
  */
 @Entity
 @Table(name = "CID_HABILITACAO")
@@ -75,18 +75,7 @@ public class CidHabilitacao implements Comparable<CidHabilitacao>, Serializable 
       return false;
     return true;
   }
-/*
-  public Cidadao getCidadao() {
-    return this.cidadao;
-  }
-
-  public void setCidadao(Cidadao cid) {
-    this.cidadao = cid;
-    if (!cid.getCidHabilitacaoCollection().contains(this)) {
-      cid.getCidHabilitacaoCollection().add(this);
-    }
-  }
-*/
+  
   public Habilitacao getHabilitacao() {
     return habilitacao;
   }
@@ -106,7 +95,7 @@ public class CidHabilitacao implements Comparable<CidHabilitacao>, Serializable 
   /** Chave primária (PK) de CidHabilitacao.
    * @author Abreu Lopes
    * @since 3.0
-   * @version $Id: CidHabilitacao.java 2426 2014-05-14 15:01:41Z wlopes $
+   * @version $Id$
    */
   @Embeddable
   public static class PK implements Comparable<CidHabilitacao.PK>, Serializable {

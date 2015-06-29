@@ -60,8 +60,8 @@ public class ExarServico {
 
   @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob')")
   @Transactional
-  public Cidadao adicionarApresentacao(final Cidadao cidadao, final CidExar apresentacao, final Usuario usr) throws SermilException {
-      final Cidadao cid = this.cidadaoServico.recuperar(cidadao.getRa());
+  public Cidadao adicionarApresentacao(final CidExar apresentacao, final Usuario usr) throws SermilException {
+      final Cidadao cid = this.cidadaoServico.recuperar(apresentacao.getPk().getCidadaoRa());
       if (cid.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_LICENCIADO) {
         throw new SermilException("ERRO: Para cadastrar uma apresentação o cidadão deve estar na situação LICENCIADO.");
      }
@@ -92,8 +92,8 @@ public class ExarServico {
 
   @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob')")
   @Transactional
-  public Cidadao excluirApresentacao(final Cidadao cidadao, final CidExar apresentacao, final Usuario usr) throws SermilException {
-      final Cidadao cid = this.cidadaoServico.recuperar(cidadao.getRa());
+  public Cidadao excluirApresentacao(final CidExar apresentacao, final Usuario usr) throws SermilException {
+      final Cidadao cid = this.cidadaoServico.recuperar(apresentacao.getPk().getCidadaoRa());
       cid.getCidExarCollection().remove(apresentacao);
       return this.cidadaoServico.salvar(cid, usr, new StringBuilder("APRESENTAÇÃO EXCLUÍDA: ").append(apresentacao).toString());
   }
