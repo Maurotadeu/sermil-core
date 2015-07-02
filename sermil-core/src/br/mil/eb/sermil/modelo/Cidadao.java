@@ -119,8 +119,13 @@ public final class Cidadao implements Serializable {
     @OneToMany(mappedBy="cidadao", fetch=FetchType.EAGER, orphanRemoval=true)
     private List<CidEvento> cidEventoCollection;
 
-    @OneToMany(mappedBy="cidadao", fetch=FetchType.EAGER, orphanRemoval=true)
+    //TODO: usando notaÁ„o de relacionamento unidirecional, analisar tambÈm em CidExar
+    @OneToMany(fetch=FetchType.EAGER, orphanRemoval=true)
+    @JoinColumn(name="CIDADAO_RA", referencedColumnName="RA")
     private List<CidExar> cidExarCollection;
+
+    //@OneToMany(mappedBy="cidadao", fetch=FetchType.EAGER, orphanRemoval=true)
+    //private List<CidExar> cidExarCollection;
 
     @OneToMany(mappedBy="cidadao", fetch=FetchType.EAGER, orphanRemoval=true)
     private List<CidEmpresa> cidEmpresaCollection;
@@ -130,6 +135,7 @@ public final class Cidadao implements Serializable {
 
     @OneToOne(mappedBy="cidadao", fetch=FetchType.EAGER, cascade=CascadeType.PERSIST, orphanRemoval=true)
     private CidFoto cidFoto;
+
     //TODO: usando notaÁ„o de relacionamento unidirecional, analisar tambÈm em CidHabilitacao
     @OneToMany(fetch=FetchType.EAGER, orphanRemoval=true)
     @JoinColumn(name="CIDADAO_RA", referencedColumnName="RA")
@@ -1167,7 +1173,7 @@ public final class Cidadao implements Serializable {
             this.setCidAdiamentoCollection(new ArrayList<CidAdiamento>(1));
         }
         if (this.getCidAdiamentoCollection().contains(ca)) {
-            throw new SermilException("Adiamente j√° existe");
+            throw new SermilException("Adiamente j· existe");
         }
         this.getCidAdiamentoCollection().add(ca);
         if (ca.getCidadao() != this) {
@@ -1180,7 +1186,7 @@ public final class Cidadao implements Serializable {
             this.setCidArrecadacaoCollection(new ArrayList<CidArrecadacao>(1));
         }
         if (this.getCidArrecadacaoCollection().contains(ca)) {
-            throw new SermilException("Arrecada√ß√£o j√° existe");
+            throw new SermilException("ArrecadaÁ„o j· existe");
         }
         this.getCidArrecadacaoCollection().add(ca);
         if (ca.getCidadao() != this) {
@@ -1193,7 +1199,7 @@ public final class Cidadao implements Serializable {
             this.setCidAuditoriaCollection(new ArrayList<CidAuditoria>(1));
         }
         if (this.getCidAuditoriaCollection().contains(ca)) {
-            throw new SermilException("Auditoria j√° existe");
+            throw new SermilException("Auditoria j· existe");
         }
         this.getCidAuditoriaCollection().add(ca);
         if (ca.getCidadao() != this) {
@@ -1206,7 +1212,7 @@ public final class Cidadao implements Serializable {
             this.setCidAverbacaoCollection(new ArrayList<CidAverbacao>(1));
         }
         if (this.getCidAverbacaoCollection().contains(cv)) {
-            throw new SermilException("Averba√ß√£o j√° existe");
+            throw new SermilException("AverbaÁ„o j· existe");
         }
         this.getCidAverbacaoCollection().add(cv);
         if (cv.getCidadao() != this) {
@@ -1219,7 +1225,7 @@ public final class Cidadao implements Serializable {
             this.setCidCertificadoCollection(new ArrayList<CidCertificado>(1));
         }
         if (this.getCidCertificadoCollection().contains(cc)) {
-            throw new SermilException("Certificado j√° existe");
+            throw new SermilException("Certificado j· existe");
         }
         this.getCidCertificadoCollection().add(cc);
         if (cc.getCidadao() != this) {
@@ -1232,7 +1238,7 @@ public final class Cidadao implements Serializable {
             this.setCidContatoCollection(new ArrayList<CidContato>(1));
         }
         if (this.getCidContatoCollection().contains(cc)) {
-            throw new SermilException("Contato j√° existe");
+            throw new SermilException("Contato j· existe");
         }
         this.getCidContatoCollection().add(cc);
         if (cc.getCidadao() != this) {
@@ -1245,7 +1251,7 @@ public final class Cidadao implements Serializable {
             this.setCidDocApresColletion(new ArrayList<CidDocApres>(1));
         }
         if (this.getCidDocApresColletion().contains(cda)) {
-            throw new SermilException("Documento j√° existe");
+            throw new SermilException("Documento j· existe");
         }
         this.getCidDocApresColletion().add(cda);
         if (cda.getCidadao() != this) {
@@ -1258,7 +1264,7 @@ public final class Cidadao implements Serializable {
             this.setCidDocumentoCollection(new ArrayList<CidDocumento>(1));
         }
         if (this.getCidDocumentoCollection().contains(cd)) {
-            throw new SermilException("Documento j√° existe");
+            throw new SermilException("Documento j· existe");
         }
         this.getCidDocumentoCollection().add(cd);
         if (cd.getCidadao() != this) {
@@ -1284,7 +1290,7 @@ public final class Cidadao implements Serializable {
             this.setCidEventoCollection(new ArrayList<CidEvento>(1));
         }
         if (this.getCidEventoCollection().contains(ce)) {
-            throw new SermilException("Evento j√° existe");
+            throw new SermilException("Evento j· existe");
         }
         this.getCidEventoCollection().add(ce);
         if (ce.getCidadao() != this) {
@@ -1297,12 +1303,12 @@ public final class Cidadao implements Serializable {
             this.setCidExarCollection(new ArrayList<CidExar>(1));
         }
         if (this.getCidExarCollection().contains(cx)) {
-            throw new SermilException("Apresenta√ß√£o j√° existe");
+            throw new SermilException("ApresentaÁ„o j· existe");
         }
         this.getCidExarCollection().add(cx);
-        if (cx.getCidadao() != this) {
-            cx.setCidadao(this);
-        }
+//        if (cx.getCidadao() != this) {
+//            cx.setCidadao(this);
+//        }
     }
 
     public void addCidHabilitacao(final CidHabilitacao ch) throws SermilException {
@@ -1323,7 +1329,7 @@ public final class Cidadao implements Serializable {
             this.setCidMobilizacaoCollection(new ArrayList<CidMobilizacao>(1));
         }
         if (this.getCidMobilizacaoCollection().contains(cm)) {
-            throw new SermilException("Mobiliza√ß√£o j√° existe");
+            throw new SermilException("MobilizaÁ„o j· existe");
         }
         this.getCidMobilizacaoCollection().add(cm);
         if (cm.getCidadao() != this) {
@@ -1336,7 +1342,7 @@ public final class Cidadao implements Serializable {
             this.setCidMovimentacaoCollection(new ArrayList<CidMovimentacao>(1));
         }
         if (this.getCidMovimentacaoCollection().contains(cm)) {
-            throw new SermilException("Movimenta√ß√£o j√° existe");
+            throw new SermilException("MovimentaÁ„o j· existe");
         }
         this.getCidMovimentacaoCollection().add(cm);
         if (cm.getCidadao() != this) {
@@ -1349,7 +1355,7 @@ public final class Cidadao implements Serializable {
             this.setCidPromocaoCollection(new ArrayList<CidPromocao>(1));
         }
         if (this.getCidPromocaoCollection().contains(cp)) {
-            throw new SermilException("Promo√ß√£o j√° existe");
+            throw new SermilException("PromoÁ„o j· existe");
         }
         this.getCidPromocaoCollection().add(cp);
         if (cp.getCidadao() != this) {
@@ -1362,7 +1368,7 @@ public final class Cidadao implements Serializable {
             this.setCidQualidadeReservaCollection(new ArrayList<CidQualidadeReserva>(1));
         }
         if (this.getCidQualidadeReservaCollection().contains(cqr)) {
-            throw new SermilException("Pesquisa do EXAR j√° existe");
+            throw new SermilException("Pesquisa do EXAR j· existe");
         }
         this.getCidQualidadeReservaCollection().add(cqr);
         if (cqr.getCidadao() != this) {
@@ -1375,7 +1381,7 @@ public final class Cidadao implements Serializable {
             this.setCidRequerimentoCollection(new ArrayList<CidRequerimento>(1));
         }
         if (this.getCidRequerimentoCollection().contains(cr)) {
-            throw new SermilException("Requerimento j√° existe");
+            throw new SermilException("Requerimento j· existe");
         }
         this.getCidRequerimentoCollection().add(cr);
         if (cr.getCidadao() != this) {
