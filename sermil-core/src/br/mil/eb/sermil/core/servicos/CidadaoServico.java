@@ -40,7 +40,7 @@ import br.mil.eb.sermil.modelo.SituacaoMilitar;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.Ra;
 
-/** Serviço de Cidadão. (Tabelas CIDADAO e CID_AUDITORIA)
+/** Gerenciamento de informações de Cidadão.
  * @author Abreu Lopes, Anselmo
  * @since 3.0
  * @version $Id$
@@ -196,8 +196,9 @@ public class CidadaoServico {
     }
    
    // Esse metodo alistar veio do PORTAL
+   // TODO: melhorar o método para receber Cidadao ao invés de PreAlistamento
    @Transactional
-   public Cidadao alistar(final PreAlistamento alistamento, final Date dataAlist, final Long ra, final Byte situacaoMilitar, final Usuario usr) throws CidadaoCadastradoException, NoDataFoundException , SermilException   {
+   public Cidadao alistar(final PreAlistamento alistamento, final Date dataAlist, final Long ra, final Byte situacaoMilitar, final Usuario usr, final String anotacoes) throws SermilException {
       final Cidadao cidadao = new Cidadao();
       // Verifica se já foi alistado anteriormente
       cidadao.setNome(alistamento.getNome());
@@ -266,24 +267,22 @@ public class CidadaoServico {
       cidadao.addCidEvento(ce);
       
       // Salvar cidadão
-      this.salvar(cidadao, usr, "ALISTAMENTO");
+      this.salvar(cidadao, usr, "ALISTAMENTO " + anotacoes);
       return cidadao;
    }
 
-   /**
-    * ALISTAMENTO SERVICO (SERMILWEB)
-    * @throws CriterioException, CidadaoCadastradoException , NoDataFoundException 
+   /** ALISTAMENTO SERVICO (SERMILWEB).
     * @throws SermilException 
     */
    @Transactional
-   public Cidadao alistar(final PreAlistamento alistamento, final String anotacoes) throws CriterioException, CidadaoCadastradoException , NoDataFoundException, SermilException   {
+   public Cidadao alistar(final PreAlistamento alistamento, final String anotacoes) throws SermilException {
 
       // confere se pre alistamento ja existe
       if (isPreAlistamentoCadastrado(alistamento)) {
          throw new CidadaoCadastradoException();
       }
 
-      // Configura PRE_ALISTAMENTO
+      // Configura PreAlistamento
       if (alistamento.getDocApresTipo() == DOC_RG) {
          if (StringUtils.isEmpty(alistamento.getRgNr())) {
             alistamento.setRgNr(alistamento.getDocApresNr());
@@ -292,16 +291,13 @@ public class CidadaoServico {
          }
       }
       alistamento.setProtocoloData(new Date());
-      
-      //salvar cidadao
-      final Usuario usr = new Usuario();
-      usr.setCpf("99999999999");
-      final Cidadao cidadao = this.alistar(alistamento, new Date() , null, SituacaoMilitar.ALISTADO, usr);
-      cidadao.setAnotacoes(anotacoes);
-      this.cidadaoDao.save(cidadao);
-      
-      //salvar preAlistamento
+      alistamento.setTipo(Byte.decode("0"));
+
+      //PreAlistamento - somente para controle
       this.preAlistamentoDao.save(alistamento);
+      
+      //Cidadao - alistamento real
+      final Cidadao cidadao = this.alistar(alistamento, new Date() , null, SituacaoMilitar.ALISTADO, new Usuario("99999999999"), anotacoes);
       
       //Enviar email de confirmacao de alistamento online
       this.emailSender.enviarEmailConfirmacaoAlistamentoOnLine(cidadao);
