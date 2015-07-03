@@ -232,6 +232,7 @@ public class CidadaoServico {
       cidadao.setBairro(alistamento.getBairro());
       cidadao.setCep(alistamento.getCep());
       cidadao.setRg(alistamento.getRgNr() == null ? null : new StringBuilder(alistamento.getRgUf()).append(alistamento.getRgNr()).toString());
+      cidadao.setCpf(alistamento.getCpf());
       cidadao.setEmail(alistamento.getEmail());
       cidadao.setTelefone(alistamento.getTelefone());
       cidadao.setSituacaoMilitar(situacaoMilitar);
