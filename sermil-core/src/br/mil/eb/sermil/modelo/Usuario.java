@@ -89,6 +89,10 @@ public final class Usuario implements Serializable, UserDetails {
     super();
   }
 
+  public Usuario(String cpf) {
+      this.cpf = cpf;
+  }
+
   @Override
   public String toString() {
     return new StringBuilder(this.getCpf() == null ? "CPF" : this.getCpf()).append(" - ").append(this.getNome() == null ? "NOME" : this.getNome()).toString();
