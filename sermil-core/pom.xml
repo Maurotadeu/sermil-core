@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.mil.eb.sermil</groupId>
   <artifactId>sermil-core</artifactId>
-  <version>5.1.17</version>
+  <version>5.2.0</version>
   <name>SERMIL CORE</name>
   <description>SERMIL CORE SERVICES</description>
   <dependencies>
