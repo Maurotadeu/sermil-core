@@ -27,14 +27,14 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "CID_EVENTO")
 @NamedQueries({ @NamedQuery(name = "Evento.cidadaoPodeImprimirCdi", query = "SELECT e.cidadao.ra FROM CidEvento e WHERE e.cidadao.ra = ?1 and e.pk.codigo in (3,6,13,14,24)"),
-      @NamedQuery(name = "Evento.listarPorCodigo", query = "SELECT e FROM CidEvento e WHERE e.cidadao.ra = ?1 and e.pk.codigo = ?2") })
+                @NamedQuery(name = "Evento.listarPorCodigo", query = "SELECT e FROM CidEvento e WHERE e.cidadao.ra = ?1 and e.pk.codigo = ?2") })
 public final class CidEvento implements Comparable<CidEvento>, Serializable {
 
-   /** serialVersionUID. */
-   private static final long serialVersionUID = -8698276787632308527L;
+   private static final long serialVersionUID = -9003467429456295200L;
 
-   public final static Byte ALISTAMENTO = 1; 
-   public final static Byte EXCESSO_DE_CONTINGENTE_CODIGO = 6; 
+   public final static Byte ALISTAMENTO = 1;
+   public final static Byte DISPENSA_SELECAO = 3; 
+   public final static Byte EXCESSO_CONTINGENTE = 6; 
 
    @EmbeddedId
    private CidEvento.PK pk;
