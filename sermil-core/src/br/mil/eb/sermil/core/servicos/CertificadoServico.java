@@ -72,7 +72,7 @@ public class CertificadoServico {
         }      
      }
 
-    /** O cidadao tem que ter Pelo menos um evento do tipo 3,6,13,14 ou 24 e pelo menos um certificado
+    /** O cidadao tem que ter Pelo menos um evento do tipo 3, 6, 13, 14 ou 24 e pelo menos um certificado
      *  do tipo 3, 4 ou 6 e tem que estar em uma das situacoes militares: 3, 8, ou 9.
      * @param cidadao
      * @throws EventNotFoundException
@@ -81,7 +81,7 @@ public class CertificadoServico {
      * @throws CidadaoNaoTemEventoException
      */
     public boolean podeImprimirCDI(final Cidadao cidadao) throws EventNotFoundException, CertificateNotFoundException, OutOfSituationException {
-       if (!this.servico.cidadaoTemEvento(cidadao, CidEvento.EXCESSO_DE_CONTINGENTE_CODIGO)) {
+       if (!this.servico.cidadaoTemEvento(cidadao, CidEvento.EXCESSO_CONTINGENTE) && !this.servico.cidadaoTemEvento(cidadao, CidEvento.DISPENSA_SELECAO)) {
           throw new EventNotFoundException();
        }
        if (!temPeloMenosUmCertificado(cidadao, new Byte[] { CidCertificado.DISPENSA_DE_INCORPORACAO_COMPUTADOR, CidCertificado.DISPENSA_DE_INCORPORACAO_INFOR, CidCertificado.DISPENSA_DE_INCORPORACAO_PLANO })) {
