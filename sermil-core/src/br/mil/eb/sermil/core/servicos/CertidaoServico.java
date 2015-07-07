@@ -23,7 +23,7 @@ public class CertidaoServico {
     private CidadaoServico servico;
 
     public CertidaoServico() {
-        logger.info("CertidaoServico iniciado.");
+        logger.debug("CertidaoServico iniciado.");
     }
 
     public Cidadao verificar(final Cidadao cidadao) throws SermilException {

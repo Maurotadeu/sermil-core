@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.mil.eb.sermil</groupId>
   <artifactId>sermil-core</artifactId>
-  <version>5.1.17</version>
+  <version>5.2.0</version>
   <name>SERMIL CORE</name>
   <description>SERMIL CORE SERVICES</description>
   <dependencies>
@@ -28,8 +28,8 @@
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>log4j-over-slf4j</artifactId>
-      <version>1.7.10</version>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.12</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

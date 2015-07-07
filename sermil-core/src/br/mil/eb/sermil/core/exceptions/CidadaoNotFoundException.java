@@ -1,6 +1,6 @@
 package br.mil.eb.sermil.core.exceptions;
 
-/** Cidadao ja cadastrado no sistema.
+/** Cidadao não cadastrado no sistema.
  * @author Abreu Lopes
  * @since 3.0
  * @version $Id$
@@ -12,7 +12,7 @@ public class CidadaoNotFoundException extends ConsultaException {
 
     /** Construtor. */
     public CidadaoNotFoundException() {
-        super("Cidadão não encontrado.");
+        super("Cidadão não foi encontrado.");
     }
 
 }

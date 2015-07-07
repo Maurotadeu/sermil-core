@@ -20,7 +20,7 @@ public class AutenticadorServico {
     protected static final Logger logger = LoggerFactory.getLogger(AutenticadorServico.class);
 
     public AutenticadorServico() {
-        logger.info("AutenticadorServico iniciado.");
+        logger.debug("AutenticadorServico iniciado.");
     }
 
     public String gerar(final Cidadao cid) throws SermilException {

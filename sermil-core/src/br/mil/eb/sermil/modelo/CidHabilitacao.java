@@ -13,7 +13,7 @@ import javax.persistence.Table;
 /** Habilitação militar ou civil.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CidHabilitacao.java 2426 2014-05-14 15:01:41Z wlopes $
+ * @version $Id$
  */
 @Entity
 @Table(name = "CID_HABILITACAO")
@@ -24,9 +24,10 @@ public class CidHabilitacao implements Comparable<CidHabilitacao>, Serializable 
   @EmbeddedId
   private CidHabilitacao.PK pk;
 
-  @ManyToOne
-  @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
-  private Cidadao cidadao;
+//TODO: verificar se é melhor relacionamento unidirecional em CIDADAO
+//  @ManyToOne
+//  @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
+//  private Cidadao cidadao;
 
   @ManyToOne
   @JoinColumn(name = "HABILITACAO_CODIGO", insertable = false, updatable = false, nullable = false)
@@ -74,29 +75,18 @@ public class CidHabilitacao implements Comparable<CidHabilitacao>, Serializable 
       return false;
     return true;
   }
-
-  public Cidadao getCidadao() {
-    return this.cidadao;
-  }
-
+  
   public Habilitacao getHabilitacao() {
     return habilitacao;
-  }
-
-  public CidHabilitacao.PK getPk() {
-    return this.pk;
-  }
-
-  public void setCidadao(Cidadao cid) {
-    this.cidadao = cid;
-    if (!cid.getCidHabilitacaoCollection().contains(this)) {
-      cid.getCidHabilitacaoCollection().add(this);
-    }
   }
 
   public void setHabilitacao(Habilitacao habilitacao) {
     this.habilitacao = habilitacao;
   }
+
+  public CidHabilitacao.PK getPk() {
+      return this.pk;
+    }
 
   public void setPk(CidHabilitacao.PK pk) {
     this.pk = pk;
@@ -105,7 +95,7 @@ public class CidHabilitacao implements Comparable<CidHabilitacao>, Serializable 
   /** Chave primária (PK) de CidHabilitacao.
    * @author Abreu Lopes
    * @since 3.0
-   * @version $Id: CidHabilitacao.java 2426 2014-05-14 15:01:41Z wlopes $
+   * @version $Id$
    */
   @Embeddable
   public static class PK implements Comparable<CidHabilitacao.PK>, Serializable {

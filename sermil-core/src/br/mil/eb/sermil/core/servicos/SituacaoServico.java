@@ -33,7 +33,7 @@ public class SituacaoServico {
     private CidEventoDao eventoDao;
 
     public SituacaoServico() {
-        logger.info("SituacaoServico iniciado.");
+        logger.debug("SituacaoServico iniciado.");
     }
 
     public Cidadao verificar(final Cidadao cidadao) throws SermilException {
@@ -46,6 +46,10 @@ public class SituacaoServico {
             }
         }
         if (cid != null) {
+            //TODO: desativar após o período de validação do alistamento online na 19 CSM.
+            if (cid.getJsm().getPk().getCsmCodigo() != 19) {
+                throw new SermilException("Verifique no seu documento de alistamento (CAM) a data de comparecimento no Órgão de Serviço Militar.");
+            }
             switch (cid.getSituacaoMilitar()) {
             case 1:
                 cid.setAnotacoes("Verifique a partir de 10 de julho a sua situação no Serviço Militar no sistema.");

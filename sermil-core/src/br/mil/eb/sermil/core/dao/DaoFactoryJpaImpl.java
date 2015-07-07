@@ -13,6 +13,7 @@ import br.mil.eb.sermil.modelo.Csm;
 import br.mil.eb.sermil.modelo.Delegacia;
 import br.mil.eb.sermil.modelo.Dominios;
 import br.mil.eb.sermil.modelo.DstbBolNec;
+import br.mil.eb.sermil.modelo.DstbExclusao;
 import br.mil.eb.sermil.modelo.DstbGd;
 import br.mil.eb.sermil.modelo.DstbParametro;
 import br.mil.eb.sermil.modelo.Empresa;
@@ -125,6 +126,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   @Override
   public DstbBolNecDao getDstbBolNecDao() {
     return (DstbBolNecDao) instanciarDao(DstbBolNecDaoJpa.class);
+  }
+
+  @Override
+  public DstbExclusaoDao getDstbExclusaoDao() {
+    return (DstbExclusaoDao) instanciarDao(DstbExclusaoDaoJpa.class);
   }
 
   @Override
@@ -306,6 +312,8 @@ public class DaoFactoryJpaImpl extends DaoFactory {
 
   public static class CidContatoDaoJpa extends GenericDaoJpaImpl<CidContato, CidContato.PK> implements CidContatoDao {}
 
+  public static class CidEventoJpa extends GenericDaoJpaImpl<CidEvento,  CidEvento.PK> implements CidEventoDao{}
+
   public static class CidFotoDaoJpa extends GenericDaoJpaImpl<CidFoto, Long> implements CidFotoDao {}
 
   public static class CsmDaoJpa extends GenericDaoJpaImpl<Csm, Byte> implements CsmDao {}
@@ -315,6 +323,8 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   public static class DominiosDaoJpa extends GenericDaoJpaImpl<Dominios, Dominios.PK> implements DominiosDao {}
 
   public static class DstbBolNecDaoJpa extends GenericDaoJpaImpl<DstbBolNec, DstbBolNec.PK> implements DstbBolNecDao {}
+
+  public static class DstbExclusaoDaoJpa extends GenericDaoJpaImpl<DstbExclusao, Long> implements DstbExclusaoDao {}
 
   public static class DstbGdDaoJpa extends GenericDaoJpaImpl<DstbGd, DstbGd.PK> implements DstbGdDao {}
 
@@ -380,6 +390,4 @@ public class DaoFactoryJpaImpl extends DaoFactory {
 
   public static class UfDaoJpa extends GenericDaoJpaImpl<Uf, String> implements UfDao {}
   
-  public static class CidEventoJpa extends GenericDaoJpaImpl<CidEvento,  CidEvento.PK> implements CidEventoDao{}
-
 }
