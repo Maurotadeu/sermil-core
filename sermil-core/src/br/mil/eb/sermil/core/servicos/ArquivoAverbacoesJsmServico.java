@@ -94,7 +94,8 @@ public class ArquivoAverbacoesJsmServico {
       }
       final Path arquivoCripto = Paths.get(tempDir.toString(), arquivoTexto.getFileName().toString().replace(".txt", ".cta"));
       CriptoSermil.executar(arquivoTexto.toFile(), arquivoCripto.toFile(), Integer.parseInt(String.valueOf(String.format("%02d", jsm.getPk().getCsmCodigo())) + String.valueOf(String.format("%03d", jsm.getPk().getCodigo()))));
-      final Path zip = ZlibHelper.compactar(arquivoCripto);
+      final Path zip = Paths.get(arquivoCripto.toString().substring(0, arquivoCripto.toString().lastIndexOf(".")).concat(".zip"));
+      ZlibHelper.compactar(zip, arquivoCripto);
       Files.delete(arquivoTexto);
       Files.delete(arquivoCripto);
       return zip;

@@ -269,7 +269,7 @@ public class Boleto implements Serializable {
 
   public static void main(String[] args) {
     try {
-      Boleto b = new Boleto("98106546772","Teste","0,10","0,10",Tipo.TAXA,Banco.CEF);
+      Boleto b = new Boleto("00001443710", "Teste", "0,00", "0,00", Tipo.TAXA, Banco.ECT);
       System.out.println(b);
     } catch (Exception e) {
       e.printStackTrace();
