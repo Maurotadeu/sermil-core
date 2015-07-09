@@ -97,28 +97,34 @@ public class Boleto implements Serializable {
     this.valor = valor;
     this.tarifa = tarifa;
     final BigDecimal total = new BigDecimal(valor.replace(",",".")).add(new BigDecimal(tarifa.replace(",",".")));
-    //TODO: verificar se a CEF aceita valor efetivo no boleto
-    //final String VER = (banco == Banco.CEF ? VER_REF : VER_EFETIVO);
-    final String VER = VER_EFETIVO;
-    //TODO: verificar se o CNPJ igual funciona na taxa e multa
+    final String VER = (banco == Banco.CEF ? VER_REF : VER_EFETIVO);
+    //TODO: verificar se o CNPJ igual funciona na taxa e multa, CEF OK.
     //final String CNPJ = (tipo == Tipo.TAXA ? CNPJ_FSM : CNPJ_PR);
     final String CNPJ = CNPJ_FSM;
     final String CAMPO_LIVRE = new StringBuilder(this.tipo.getCodigo()).append(this.banco.getCodigo()).append("00000000").toString();
     final String VALOR = String.format("%011d", Integer.valueOf(total.toString().replace(".","")));
     final String DV = String.valueOf(Utils.calculaModulo10(SEQ + VER + VALOR + CNPJ + CAMPO_LIVRE + this.cpf));
     this.bloco1 = new StringBuilder(SEQ).append(VER).append(DV).append(VALOR.substring(0,7)).toString();
+    this.bloco1 = adicionaDv(this.bloco1);
     this.bloco2 = new StringBuilder(VALOR.substring(7,11)).append(CNPJ.substring(0,7)).toString();
+    this.bloco2 = adicionaDv(this.bloco2);
     this.bloco3 = new StringBuilder(CNPJ.substring(7)).append(CAMPO_LIVRE).toString();
+    this.bloco3 = adicionaDv(this.bloco3);
     this.bloco4 = new StringBuilder(this.cpf).toString();
+    this.bloco4 = adicionaDv(this.bloco4);
     this.blocoGeral = new StringBuilder(SEQ).append(VER).append(DV).append(VALOR).append(CNPJ).append(CAMPO_LIVRE).append(this.cpf).toString();
+  }
+
+  private String adicionaDv(final String bloco) {
+    return new StringBuilder(bloco).append("-").append(Utils.calculaModulo10(bloco)).append(" ").toString();
   }
 
   @Override
   public String toString() {
-    return new StringBuilder(this.bloco1).append("-").append(Utils.calculaModulo10(this.bloco1)).append(" ")
-                     .append(this.bloco2).append("-").append(Utils.calculaModulo10(this.bloco2)).append(" ")
-                     .append(this.bloco3).append("-").append(Utils.calculaModulo10(this.bloco3)).append(" ")
-                     .append(this.bloco4).append("-").append(Utils.calculaModulo10(this.bloco4)).append(" ")
+    return new StringBuilder(this.bloco1).append(" ")
+                     .append(this.bloco2).append(" ")
+                     .append(this.bloco3).append(" ")
+                     .append(this.bloco4).append(" ")
                      .toString();
   }
 
@@ -263,7 +269,7 @@ public class Boleto implements Serializable {
 
   public static void main(String[] args) {
     try {
-      Boleto b = new Boleto("98106546772","Teste","1,38","2,04",Tipo.MULTA,Banco.ECT);
+      Boleto b = new Boleto("00001443710", "Teste", "0,00", "0,00", Tipo.TAXA, Banco.ECT);
       System.out.println(b);
     } catch (Exception e) {
       e.printStackTrace();
