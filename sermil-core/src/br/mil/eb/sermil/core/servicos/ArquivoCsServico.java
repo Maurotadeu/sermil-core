@@ -25,7 +25,7 @@ import br.mil.eb.sermil.core.utils.ZlibHelper;
 /** Serviço de arquivo de dados de seleção para o Módulo CS.
  * @author Abreu Lopes, Gardino
  * @since 4.0
- * @version $Id: ArquivoCsServico.java 2498 2014-08-01 12:22:11Z wlopes $
+ * @version $Id$
  */
 @Named("arquivoCsServico")
 public class ArquivoCsServico {
@@ -39,12 +39,14 @@ public class ArquivoCsServico {
   private static final String SQL_SELECIONADOS = "SELECT DISTINCT TO_CHAR(c.ra,'FM000000000000') " +
   "||RPAD(c.nome,70)||RPAD(c.pai,70)||RPAD(c.mae,70)||TO_CHAR(c.nascimento_data,'DDMMYYYY')||TO_CHAR(c.municipio_nascimento_codigo,'FM00000000')" +
   "||TO_CHAR(c.pais_nascimento_codigo,'FM0000')||TO_CHAR(c.estado_civil,'FM0')||TO_CHAR(c.sexo,'FM0')||TO_CHAR(c.escolaridade,'FM00')"+
-  "||RPAD(NVL(c.ocupacao_codigo,CHR(32)),6)||TO_CHAR(c.csm_codigo,'FM00')||TO_CHAR(c.jsm_codigo,'FM000')||TO_CHAR(c.zona_residencial,'FM0')" +
+  "||'X1010'||TO_CHAR(c.csm_codigo,'FM00')||TO_CHAR(c.jsm_codigo,'FM000')||TO_CHAR(c.zona_residencial,'FM0')" +
+  //TODO: manter enquanto Módulo CS não usar tabela de ocupações nova, enviando código antigo X1010.
+  //"||RPAD(NVL(c.ocupacao_codigo,CHR(32)),6)||TO_CHAR(c.csm_codigo,'FM00')||TO_CHAR(c.jsm_codigo,'FM000')||TO_CHAR(c.zona_residencial,'FM0')" +
   "||TO_CHAR(c.municipio_residencia_codigo,'FM00000000')||TO_CHAR(c.pais_residencia_codigo,'FM0000')||RPAD(NVL(c.endereco,CHR(32)),70)" +
   "||RPAD(NVL(c.bairro,CHR(32)),70)||RPAD(NVL(c.cep,CHR(32)),8)||RPAD(NVL(c.telefone,CHR(32)),9)||RPAD(NVL(c.cpf,CHR(32)),11)" +
   "||RPAD(NVL(c.rg,CHR(32)),30)||RPAD(NVL(c.email,CHR(32)),70)||TO_CHAR(e.data,'DDMMYYYY') " +
   "FROM cidadao c, cid_evento e, jsm j, csm s " +
-  "WHERE c.ra = e.cidadao_ra AND c.vinculacao_ano = EXTRACT(YEAR FROM SYSDATE) AND e.data BETWEEN TO_DATE('0106'||(EXTRACT(YEAR FROM SYSDATE)-1),'DDMMYYYY') AND TO_DATE('3006'||EXTRACT(YEAR FROM SYSDATE),'DDMMYYYY') "+
+  "WHERE c.ra = e.cidadao_ra AND c.vinculacao_ano = EXTRACT(YEAR FROM SYSDATE) AND e.data BETWEEN TO_DATE('0107'||(EXTRACT(YEAR FROM SYSDATE)-1),'DDMMYYYY') AND TO_DATE('3006'||EXTRACT(YEAR FROM SYSDATE),'DDMMYYYY') "+
   "AND e.codigo = 1 AND situacao_militar = 2 AND c.csm_codigo = j.csm_codigo AND c.jsm_codigo = j.codigo AND s.codigo = j.csm_codigo AND s.rm_codigo= ? AND j.cs= ? ";
 
   /* Excluído do Módulo CS por não ter utilidade
@@ -62,7 +64,7 @@ public class ArquivoCsServico {
   private static final String SQL_DISPENSADOS = "SELECT DISTINCT TO_CHAR(c.ra,'FM000000000000')||RPAD(c.nome,70)||TO_CHAR(c.situacao_militar,'FM00') " +
   "FROM cidadao c, cid_evento e, jsm j, csm s " +
   "WHERE c.ra = e.cidadao_ra AND c.vinculacao_ano = EXTRACT(YEAR FROM SYSDATE) " +
-  "AND e.data BETWEEN TO_DATE('0106'||(EXTRACT(YEAR FROM SYSDATE)-1),'DDMMYYYY') AND TO_DATE('3006'||EXTRACT(YEAR FROM SYSDATE),'DDMMYYYY') " +
+  "AND e.data BETWEEN TO_DATE('0107'||(EXTRACT(YEAR FROM SYSDATE)-1),'DDMMYYYY') AND TO_DATE('3006'||EXTRACT(YEAR FROM SYSDATE),'DDMMYYYY') " +
   "AND e.codigo = 1 AND c.situacao_militar = 3 AND c.csm_codigo = j.csm_codigo AND c.jsm_codigo = j.codigo AND s.codigo = j.csm_codigo AND s.rm_codigo = ? AND j.cs = ?";
 
   private static final String SQL_DISTRIBUIDOS = "SELECT DISTINCT TO_CHAR(c.ra,'FM000000000000')||RPAD(c.nome,70)||RPAD(c.pai,70)||RPAD(c.mae,70)||TO_CHAR(c.nascimento_data,'DDMMYYYY')||" +
@@ -149,11 +151,15 @@ public class ArquivoCsServico {
       } catch (IOException e) {
         throw new SermilException(e);
       }
-      final Path arquivoCripto = Paths.get(tempDir.toString(), arquivoTexto.getFileName().toString().replace(".txt", ".dat"));
+      final Path arquivoCripto = Paths.get(tempDir.toString(), arquivoTexto.getFileName().toString().replace(".txt", ".cta"));
       CriptoSermil.executar(arquivoTexto.toFile(), arquivoCripto.toFile(), 2007);
-      final Path zip = ZlibHelper.compactar(arquivoCripto);
+      final Path zip1 = Paths.get(arquivoCripto.toString().substring(0, arquivoCripto.toString().lastIndexOf(".")).concat(".zip"));
+      ZlibHelper.compactar(zip1, arquivoCripto);
       Files.delete(arquivoTexto);
       Files.delete(arquivoCripto);
+      //TODO: gambiarra enquanto Módulo CS não aceitar arquivo com extensão diferente de .cta
+      final Path zip = Paths.get(arquivoCripto.toString().substring(0, arquivoCripto.toString().lastIndexOf(".")).concat(".cta"));
+      Files.move(zip1, zip);
       return zip;
     } catch (Exception e) {
       throw new SermilException(e.getMessage());

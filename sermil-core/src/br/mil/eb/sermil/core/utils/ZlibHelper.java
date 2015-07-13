@@ -56,20 +56,22 @@ public final class ZlibHelper {
         return cripto;
     }
 
-    public static final Path compactar(final Path arquivo) throws IOException {
-        if (arquivo == null) {
-            throw new IOException("Nome do arquivo não foi informado.");
+    public static final Path compactar(final Path saida, final Path entrada) throws IOException {
+        if (saida == null) {
+            throw new IOException("Nome do arquivo de saída não foi informado.");
         }
-        final Path zip = Paths.get(arquivo.toString().substring(0, arquivo.toString().lastIndexOf(".")).concat(".zip"));
-        try (InputStream fis = Files.newInputStream(arquivo); ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zip.toFile()))) {
-            zos.putNextEntry(new ZipEntry(arquivo.getFileName().toString()));
+        if (entrada == null) {
+            throw new IOException("Nome do arquivo de entrada não foi informado.");
+        }
+        try (InputStream fis = Files.newInputStream(entrada); ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(saida.toFile()))) {
+            zos.putNextEntry(new ZipEntry(entrada.getFileName().toString()));
             byte[] buf = new byte[BUFSIZ];
             int len = 0;
             while((len = fis.read(buf)) > 0) {
                 zos.write(buf, 0, len);
             }
             zos.closeEntry();
-            return zip;
+            return saida;
         }
     }
 
