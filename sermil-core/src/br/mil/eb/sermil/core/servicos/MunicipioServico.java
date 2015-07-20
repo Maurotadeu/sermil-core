@@ -68,7 +68,7 @@ public class MunicipioServico {
   
   @RemoteMethod
   public Object[] listarMun(final String uf) throws SermilException {
-    final List<Object[]> result = this.municipioDao.findBySQL("SELECT m.descricao, m.latitude, m.longitude, m.microregiao, m.mesoregiao, count(*) FROM municipio_novo m JOIN cidadao c ON c.municipio_residencia_codigo = m.codigo WHERE VINCULACAO_ANO = 2014 AND uf_sigla = ? GROUP BY m.descricao, m.latitude, m.longitude, m.microregiao, m.mesoregiao", uf);
+    final List<Object[]> result = this.municipioDao.findBySQL("SELECT m.descricao, m.latitude, m.longitude, m.microregiao, m.mesoregiao, count(*) FROM municipio_novo m JOIN cidadao c ON c.municipio_residencia_codigo = m.codigo WHERE VINCULACAO_ANO = 2015 AND uf_sigla = ? GROUP BY m.descricao, m.latitude, m.longitude, m.microregiao, m.mesoregiao", uf);
     return result.toArray(new Object[0]);
   }
 
