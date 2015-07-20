@@ -3,6 +3,7 @@ package br.mil.eb.sermil.modelo;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -16,19 +17,19 @@ import org.eclipse.persistence.annotations.PrimaryKey;
  * @since 3.0
  * @version $Id: Csm.java 1637 2011-11-25 13:52:11Z wlopes $
  */
-@Entity
+@Entity(name = "ENTREVISTA_CS")
 @PrimaryKey(validation = IdValidation.NULL)
-public final class Entrevista implements Serializable {
+public final class EntrevistaCs implements Serializable {
 
    /** serialVersionUID. */
    private static final long serialVersionUID = 1408657925141269864L;
 
    @Id
-   private Byte codigo;
+   @Column(name = "CIDADAO_RA")
+   private Long ra;
 
    private String A1;
    private String A11;
-   // private String A2; retirado: cidadao.escolaridade
 
    private String B3;
    private String B4;
@@ -122,30 +123,28 @@ public final class Entrevista implements Serializable {
    private String Ind8;
    private String Ind9;
 
-   public Entrevista() {
+   public EntrevistaCs() {
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((this.codigo == null) ? 0 : this.codigo.hashCode());
+      result = prime * result + ((this.ra == null) ? 0 : this.ra.hashCode());
       return result;
    }
 
    @Override
    public String toString() {
-      // return this.getSigla() == null ? "SIGLA" : this.getSigla();
-      // TODO: implementar método novo?
-      return codigo.toString();
+      return "Entrevista " + ra.toString();
    }
 
-   public Byte getCodigo() {
-      return codigo;
+   public Long getRa() {
+      return ra;
    }
 
-   public void setCodigo(Byte codigo) {
-      this.codigo = codigo;
+   public void setRa(Long ra) {
+      this.ra = ra;
    }
 
    public String getA1() {
