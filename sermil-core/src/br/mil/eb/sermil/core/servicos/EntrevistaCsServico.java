@@ -27,6 +27,11 @@ public class EntrevistaCsServico {
 
    @Inject
    EntrevistaCsDao dao;
+   
+   
+   public EntrevistaCs recuperar ( Long ra){
+      return dao.findById(ra);
+   }
 
    @Transactional
    public EntrevistaCs salvar(EntrevistaCs entrevista, Cidadao cidadao, String ra, Usuario usu) throws EntrevistaCsPersistenseFailException {
