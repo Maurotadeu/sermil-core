@@ -3,6 +3,7 @@ package br.mil.eb.sermil.modelo;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -16,20 +17,20 @@ import org.eclipse.persistence.annotations.PrimaryKey;
  * @since 3.0
  * @version $Id: Csm.java 1637 2011-11-25 13:52:11Z wlopes $
  */
-@Entity
+@Entity(name = "ENTREVISTA_CS")
 @PrimaryKey(validation = IdValidation.NULL)
-public final class Entrevista implements Serializable {
+public final class EntrevistaCs implements Serializable {
 
    /** serialVersionUID. */
    private static final long serialVersionUID = 1408657925141269864L;
 
    @Id
-   private Byte codigo;
+   @Column(name = "CIDADAO_RA")
+   private Long ra;
 
    private String A1;
    private String A11;
-   // private String A2; retirado: cidadao.escolaridade
-   
+
    private String B3;
    private String B4;
    private String B5;
@@ -37,22 +38,22 @@ public final class Entrevista implements Serializable {
    private String C5;
    private String C6;
    private String C61;
-   
+
    private String D7;
    private String D71;
    private String D72;
-   
+
    private String EA;
    private String EB;
-   
+
    private String F8;
    private String F8A;
    private String F81;
    private String F9;
-   
+
    private List<String> G10;
    private String G11;
-   
+
    private String G12;
    private String G121;
    private List<String> G13;
@@ -61,9 +62,9 @@ public final class Entrevista implements Serializable {
    private String G14A;
    private String G15;
    private String G15A;
-   
+
    private String H1;
-   
+
    private String I16;
 
    private String J17;
@@ -94,22 +95,22 @@ public final class Entrevista implements Serializable {
    private String J233;
    private String J234;
    private String J235;
-   
+
    private String K24;
    private List<String> K241;
    private String K241A;
-   
+
    private String L1;
-   
+
    private String M25;
    private String M26;
    private String M27;
-   
+
    private String N27;
    private String N28;
-   
+
    private String O29;
-   
+
    private String Ind1;
    private String Ind2;
    private String Ind3;
@@ -122,30 +123,28 @@ public final class Entrevista implements Serializable {
    private String Ind8;
    private String Ind9;
 
-   public Entrevista() {
+   public EntrevistaCs() {
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((this.codigo == null) ? 0 : this.codigo.hashCode());
+      result = prime * result + ((this.ra == null) ? 0 : this.ra.hashCode());
       return result;
    }
 
    @Override
    public String toString() {
-      // return this.getSigla() == null ? "SIGLA" : this.getSigla();
-      // TODO: implementar método novo?
-      return codigo.toString();
+      return "Entrevista " + ra.toString();
    }
 
-   public Byte getCodigo() {
-      return codigo;
+   public Long getRa() {
+      return ra;
    }
 
-   public void setCodigo(Byte codigo) {
-      this.codigo = codigo;
+   public void setRa(Long ra) {
+      this.ra = ra;
    }
 
    public String getA1() {
