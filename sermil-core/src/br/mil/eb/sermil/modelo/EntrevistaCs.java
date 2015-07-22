@@ -1,12 +1,15 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
@@ -17,7 +20,8 @@ import org.eclipse.persistence.annotations.PrimaryKey;
  * @since 3.0
  * @version $Id: Csm.java 1637 2011-11-25 13:52:11Z wlopes $
  */
-@Entity(name = "ENTREVISTA_CS")
+@Entity
+@Table(name = "ENTREVISTA_CS")
 @PrimaryKey(validation = IdValidation.NULL)
 public final class EntrevistaCs implements Serializable {
 
@@ -51,14 +55,13 @@ public final class EntrevistaCs implements Serializable {
    private String F81;
    private String F9;
 
-   private List<String> G10;
+   private String G10;
    private String G11;
-
    private String G12;
    private String G121;
-   private List<String> G13;
+   private String G13;
    private String G13A;
-   private List<String> G14;
+   private String G14;
    private String G14A;
    private String G15;
    private String G15A;
@@ -97,7 +100,7 @@ public final class EntrevistaCs implements Serializable {
    private String J235;
 
    private String K24;
-   private List<String> K241;
+   private String K241;
    private String K241A;
 
    private String L1;
@@ -292,11 +295,12 @@ public final class EntrevistaCs implements Serializable {
    }
 
    public List<String> getG10() {
-      return G10;
+      List<String> val = Arrays.asList(G10.split(","));
+      return val;
    }
 
    public void setG10(List<String> g10) {
-      G10 = g10;
+      G10 = StringUtils.join(g10, ",").toString();
    }
 
    public String getG11() {
@@ -324,19 +328,19 @@ public final class EntrevistaCs implements Serializable {
    }
 
    public List<String> getG13() {
-      return G13;
+      return Arrays.asList(G13.split(","));
    }
 
    public void setG13(List<String> g13) {
-      G13 = g13;
+      G13 = StringUtils.join(g13, ",").toString();
    }
 
    public List<String> getG14() {
-      return G14;
+      return Arrays.asList(G14.split(","));
    }
 
    public void setG14(List<String> g14) {
-      G14 = g14;
+      G14 = StringUtils.join(g14, ",").toString();
    }
 
    public String getG15() {
@@ -540,11 +544,11 @@ public final class EntrevistaCs implements Serializable {
    }
 
    public List<String> getK241() {
-      return K241;
+      return Arrays.asList(K241.split(","));
    }
 
    public void setK241(List<String> k241) {
-      K241 = k241;
+      K241 = StringUtils.join(k241, ",").toString();
    }
 
    public String getL1() {
