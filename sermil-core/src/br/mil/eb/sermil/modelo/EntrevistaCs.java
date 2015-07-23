@@ -29,7 +29,7 @@ public final class EntrevistaCs implements Serializable {
    private static final long serialVersionUID = 1408657925141269864L;
 
    @Id
-   @Column(name = "CIDADAO_RA")
+   @Column(name = "CIDADAO_RA") 
    private Long ra;
 
    private String A1;

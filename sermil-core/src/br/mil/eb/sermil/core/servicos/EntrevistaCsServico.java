@@ -28,7 +28,7 @@ public class EntrevistaCsServico {
    EntrevistaCsDao dao;
    
    
-   public EntrevistaCs recuperar ( Long ra){
+   public EntrevistaCs recuperar ( Long ra){ 
       return dao.findById(ra);
    }
 
