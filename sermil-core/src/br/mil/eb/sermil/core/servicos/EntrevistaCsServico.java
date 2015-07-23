@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.mil.eb.sermil.core.dao.EntrevistaCsDao;
 import br.mil.eb.sermil.core.exceptions.EntrevistaCsPersistenseFailException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
-import br.mil.eb.sermil.modelo.CidAuditoria;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.EntrevistaCs;
 import br.mil.eb.sermil.modelo.Usuario;
@@ -29,12 +28,12 @@ public class EntrevistaCsServico {
    EntrevistaCsDao dao;
    
    
-   public EntrevistaCs recuperar ( Long ra){
+   public EntrevistaCs recuperar ( Long ra){ 
       return dao.findById(ra);
    }
 
    @Transactional
-   public EntrevistaCs salvar(EntrevistaCs entrevista, Cidadao cidadao, String ra, Usuario usu) throws EntrevistaCsPersistenseFailException {
+   public EntrevistaCs salvarEntrevistaECidadao(EntrevistaCs entrevista, Cidadao cidadao, String ra, Usuario usu) throws EntrevistaCsPersistenseFailException {
       try {
 
          //recuperando o cidadao completo do banco
