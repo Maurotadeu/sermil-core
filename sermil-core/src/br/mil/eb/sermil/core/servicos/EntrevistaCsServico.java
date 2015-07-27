@@ -47,6 +47,7 @@ public class EntrevistaCsServico {
             cid.setReligiao(cidadao.getReligiao());
             cid.setOcupacao(cidadao.getOcupacao());
             cid.setEstadoCivil(cidadao.getEstadoCivil());
+            cid.setEscolaridade(cidadao.getEscolaridade());
 
             //salvando cidadao
             this.cidadaoServico.salvar(cid, usu, "Salvando cidadão que foi alterado na Entrevista CS.");
@@ -59,5 +60,47 @@ public class EntrevistaCsServico {
             throw new EntrevistaCsPersistenseFailException();
         }
     }
+    
+    public boolean entrevistaJaExisteParaRA(Long ra){
+       EntrevistaCs ent = dao.findById(ra);
+       return (ent!=null);
+               
+    }
 
+    
+    public EntrevistaCs recuperarEntrevistaNaoArrimo(Long ra, EntrevistaCs ent){
+       EntrevistaCs entrevista = dao.findById(ra);
+       entrevista.setG10(ent.getG10());
+       entrevista.setG12(ent.getG12());
+       entrevista.setG121(ent.getG121());
+       entrevista.setG13(ent.getG13());
+       entrevista.setG13A(ent.getG13A());
+       entrevista.setG14(ent.getG14());
+       entrevista.setG14A(ent.getG14A());
+       entrevista.setG15(ent.getG15());
+       entrevista.setG15A(ent.getG15A());
+       entrevista.setH1(ent.getH1());
+       return entrevista;
+    }
+    
+    public EntrevistaCs recuperarEntrevistaIndicadores(Long ra, EntrevistaCs entrevista){
+       EntrevistaCs ent = dao.findById(ra);
+       entrevista.setL1(ent.getL1());
+       entrevista.setM27(ent.getM27());
+       entrevista.setN27(ent.getN27());
+       entrevista.setN28(ent.getN28());
+       entrevista.setO29(ent.getO29());
+       entrevista.setInd1(ent.getInd1());
+       entrevista.setInd2(ent.getInd2());
+       entrevista.setInd3(ent.getInd3());
+       entrevista.setInd3A(ent.getInd3A());
+       entrevista.setInd4(ent.getInd4());
+       entrevista.setInd5(ent.getInd5());
+       entrevista.setInd5A(ent.getInd5A());
+       entrevista.setInd6(ent.getInd6());
+       entrevista.setInd7(ent.getInd7());
+       entrevista.setInd8(ent.getInd8());
+       entrevista.setInd9(ent.getInd9());
+       return entrevista;
+    }
 }
