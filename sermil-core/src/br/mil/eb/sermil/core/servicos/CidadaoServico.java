@@ -25,6 +25,8 @@ import br.mil.eb.sermil.core.dao.CidadaoDao;
 import br.mil.eb.sermil.core.dao.MunicipioDao;
 import br.mil.eb.sermil.core.dao.PreAlistamentoDao;
 import br.mil.eb.sermil.core.exceptions.CidadaoCadastradoException;
+import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemDocApresException;
+import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemEventoException;
 import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
@@ -40,7 +42,9 @@ import br.mil.eb.sermil.modelo.SituacaoMilitar;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.Ra;
 
-/** Gerenciamento de informações de Cidadão.
+/**
+ * Gerenciamento de informações de Cidadão.
+ * 
  * @author Abreu Lopes, Anselmo
  * @since 3.0
  * @version $Id$
@@ -61,7 +65,7 @@ public class CidadaoServico {
 
    @Inject
    private RaServico raServico;
-   
+
    @Inject
    private EmailSender emailSender;
 
@@ -94,14 +98,14 @@ public class CidadaoServico {
    }
 
    public Cidadao recuperar(final Long ra) throws SermilException {
-       if (ra == null) {
-           throw new SermilException("Informe o RA do cidadão.");
-       }
-       final Cidadao cid = this.cidadaoDao.findById(ra);
-       if (cid == null) {
-           throw new CidadaoNotFoundException();
-       }
-       return cid;
+      if (ra == null) {
+         throw new SermilException("Informe o RA do cidadão.");
+      }
+      final Cidadao cid = this.cidadaoDao.findById(ra);
+      if (cid == null) {
+         throw new CidadaoNotFoundException();
+      }
+      return cid;
    }
 
    public Cidadao recuperar(final String cpf) throws SermilException {
@@ -184,17 +188,17 @@ public class CidadaoServico {
    }
 
    public boolean cidadaoTemEvento(final Cidadao cidadao, final Byte eventoCodigo) {
-       final List<CidEvento> eventos = cidadao.getCidEventoCollection();
-       if (eventos != null && eventos.size() > 0) {
-          for (CidEvento evento : eventos) {
-             if (evento.getPk().getCodigo() == eventoCodigo) {
-                return true;
-             }
-          }
-       }
-       return false;
-    }
-   
+      final List<CidEvento> eventos = cidadao.getCidEventoCollection();
+      if (eventos != null && eventos.size() > 0) {
+         for (CidEvento evento : eventos) {
+            if (evento.getPk().getCodigo() == eventoCodigo) {
+               return true;
+            }
+         }
+      }
+      return false;
+   }
+
    // Esse metodo alistar veio do PORTAL
    // TODO: melhorar o método para receber Cidadao ao invés de PreAlistamento
    @Transactional
@@ -266,14 +270,16 @@ public class CidadaoServico {
       ce.getPk().setData(dataAlist);
       ce.setAnotacao("Alistado pela Internet");
       cidadao.addCidEvento(ce);
-      
+
       // Salvar cidadão
       this.salvar(cidadao, usr, "ALISTAMENTO " + anotacoes);
       return cidadao;
    }
 
-   /** ALISTAMENTO SERVICO (SERMILWEB).
-    * @throws SermilException 
+   /**
+    * ALISTAMENTO SERVICO (SERMILWEB).
+    * 
+    * @throws SermilException
     */
    @Transactional
    public Cidadao alistar(final PreAlistamento alistamento, final String anotacoes) throws SermilException {
@@ -294,15 +300,15 @@ public class CidadaoServico {
       alistamento.setProtocoloData(new Date());
       alistamento.setTipo(Byte.decode("0"));
 
-      //PreAlistamento - somente para controle
+      // PreAlistamento - somente para controle
       this.preAlistamentoDao.save(alistamento);
-      
-      //Cidadao - alistamento real
-      final Cidadao cidadao = this.alistar(alistamento, new Date() , null, SituacaoMilitar.ALISTADO, new Usuario("99999999999"), anotacoes);
-      
-      //Enviar email de confirmacao de alistamento online
+
+      // Cidadao - alistamento real
+      final Cidadao cidadao = this.alistar(alistamento, new Date(), null, SituacaoMilitar.ALISTADO, new Usuario("99999999999"), anotacoes);
+
+      // Enviar email de confirmacao de alistamento online
       this.emailSender.enviarEmailConfirmacaoAlistamentoOnLine(cidadao);
-      
+
       return cidadao;
    }
 
@@ -340,5 +346,37 @@ public class CidadaoServico {
       logger.debug("Classe={}, Ano={}, Inicio={}, Fim={}", dtNasc.get(Calendar.YEAR), anoAtual, jul, dez);
       return status;
    }
-   
+
+   public boolean temEvento(Cidadao cidadao, Byte codigo) {
+      List<CidEvento> eventos = cidadao.getCidEventoCollection();
+      for (CidEvento ev : eventos) {
+         if (ev.getPk().getCodigo() == codigo) {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   public boolean podeImprimirCertSitMilitar(Long ra) throws CidadaoNotFoundException, CidadaoCadastradoException, CidadaoNaoTemEventoException, CidadaoNaoTemDocApresException {
+      // Recuperar cidadao
+      Cidadao cid = null;
+      try {
+         cid = recuperar(ra);
+      } catch (SermilException e) {
+         throw new CidadaoNotFoundException();
+      }
+      /**
+       * REGRAS DE NEGOCIO
+       */
+      // Situacao Militar = licenciado
+      if (cid.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_LICENCIADO)
+         throw new CidadaoCadastradoException();
+      // Tem que ter evento licenciando
+      if (!temEvento(cid, CidEvento.LICENCIAMENTO))
+         throw new CidadaoNaoTemEventoException();
+      // Pelo menos um documento apresentado.
+      if (cid.getCidDocApresColletion().size() <= 0)
+         throw new CidadaoNaoTemDocApresException();
+      return true;
+   }
 }
