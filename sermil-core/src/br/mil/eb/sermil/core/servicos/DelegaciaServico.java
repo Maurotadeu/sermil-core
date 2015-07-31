@@ -1,5 +1,6 @@
 package br.mil.eb.sermil.core.servicos;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
