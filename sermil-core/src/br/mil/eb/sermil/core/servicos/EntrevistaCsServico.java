@@ -103,4 +103,15 @@ public class EntrevistaCsServico {
        entrevista.setInd9(ent.getInd9());
        return entrevista;
     }
+    
+    /**
+     * Regra de Negocio: se qq indicador == false o cidadao se torna inapto para servir.
+     * @param e
+     */
+    public void defineAvaliacaoFinal(EntrevistaCs e){
+       if(e.getInd1().equals("true") || e.getInd2().equals("true") || e.getInd3().equals("true") || e.getInd4().equals("true") || e.getInd5().equals("true") || e.getInd6().equals("true") || e.getInd7().equals("true") || e.getInd8().equals("true") )
+          e.setInd9("false");
+       else
+          e.setInd9("true");
+    }
 }
