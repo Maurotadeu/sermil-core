@@ -80,16 +80,24 @@ public final class Utils {
    }
 
    /**
-    * @param Path file
-    * @return List<String>
+    * Retorna a uma lista em que cada item é uma linha do arquivo lido.
+    * Mantem a identacao do arquivo dado.
+    * Um numero maximo de linhas a serem lidas deve ser informado.
+    * 
+    * @param file arquivo a ser lido
+    * @param maxLines numero maximo de linhas que deve ser listado.
+    * @return Lista de linhas do arquivo
     * @throws IOException
-    * @author Anselmo S Ribeiro (anselmo.sr@gmail.com)
     */
-   public static List<String> readFile(Path file) throws IOException {
+   public static List<String> readFile(Path file, int maxLines) throws IOException {
       ArrayList<String> lines = new ArrayList<String>();
       try (BufferedReader br = Files.newBufferedReader(file, Charset.forName("ISO-8859-1"))) {
+         int line=0;
          while (br.ready()) {
+            if(line>=maxLines)
+               break;
             lines.add(br.readLine());
+            line++;
          }
          br.close();
       }
