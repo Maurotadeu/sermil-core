@@ -34,7 +34,8 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
 
    public final static Byte ALISTAMENTO = 1;
    public final static Byte DISPENSA_SELECAO = 3; 
-   public final static Byte EXCESSO_CONTINGENTE = 6; 
+   public final static Byte EXCESSO_CONTINGENTE = 6;
+   public final static Byte LICENCIAMENTO = 12; 
 
    @EmbeddedId
    private CidEvento.PK pk;

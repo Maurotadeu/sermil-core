@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.mil.eb.sermil.core.dao.CidEventoDao;
+import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.Cidadao;
@@ -37,6 +38,9 @@ public class SituacaoServico {
     }
 
     public Cidadao verificar(final Cidadao cidadao) throws SermilException {
+        if (cidadao == null || (cidadao.getRa() == null && cidadao.getCpf() == null)) {
+            throw new CidadaoNotFoundException();
+        }
         Cidadao cid = null;
         if (cidadao.getRa() != null) {
             cid = this.servico.recuperar(cidadao.getRa());
@@ -47,18 +51,24 @@ public class SituacaoServico {
         }
         if (cid != null) {
             //TODO: desativar após o período de validação do alistamento online na 19 CSM.
-            if (cid.getJsm().getPk().getCsmCodigo() != 19) {
+            //if (cid.getJsm().getPk().getCsmCodigo() != 19) {
+            if ("N".equalsIgnoreCase(cid.getJsm().getJsmInfo().getInternet())) {
                 throw new SermilException("Verifique no seu documento de alistamento (CAM) a data de comparecimento no Órgão de Serviço Militar.");
             }
             switch (cid.getSituacaoMilitar()) {
             case 1:
-                cid.setAnotacoes("Verifique a partir de 10 de julho a sua situação no Serviço Militar no sistema.");
+                if (Calendar.getInstance().get(Calendar.MONTH) > 5) {
+                    cid.setAnotacoes("Verifique a partir do próximo ANO a data de comparecimento no Órgão de Serviço Militar.");
+                } else {
+                    cid.setAnotacoes("Verifique a partir de 10 de julho a sua situação no Serviço Militar no sistema.");
+                }
                 break;
             case 2:
                 //cid.setAnotacoes("Comparecer na Comissão de Seleção " + (cid.getCs() == null ? "" : cid.getCs()) + ", na data agendada, para realizar a Seleção Geral. <br>Em caso de falta será considerado REFRATÁRIO e ficará sujeito as penas previstas na Lei de Serviço Militar.");
-                //break;
+                cid.setAnotacoes("Comparecer na Junta de Serviço Militar " + cid.getJsm() + ", em " + DateFormat.getDateInstance(DateFormat.MEDIUM).format(definirRetorno(cid.getRa()))  + " (final de semana ou feriado, no dia útil seguinte), para ser encaminhado à Seleção Geral.");
+                break;
             case 3:
-                cid.setAnotacoes("Comparecer na Junta de Serviço Militar " + cid.getJsm() + ", em " + DateFormat.getDateInstance(DateFormat.MEDIUM).format(definirRetorno(cid.getRa()))  + " (final de semana ou feriado, no dia útil seguinte), para solicitar o Certificado de Dispensa de Incorporação (CDI) ou ser encaminhado a seleção geral.");
+                cid.setAnotacoes("Comparecer na Junta de Serviço Militar " + cid.getJsm() + ", em " + DateFormat.getDateInstance(DateFormat.MEDIUM).format(definirRetorno(cid.getRa()))  + " (final de semana ou feriado, no dia útil seguinte), para solicitar o Certificado de Dispensa de Incorporação (CDI). Caso já tenha data de retorno agendada, compareça na data informada pela Junta.");
                 break;
             case 4:
                 cid.setAnotacoes("Verifique no período de 2 a 10 de janeiro novamente a sua situação no Serviço Militar.");

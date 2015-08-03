@@ -1,11 +1,15 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
@@ -17,19 +21,20 @@ import org.eclipse.persistence.annotations.PrimaryKey;
  * @version $Id: Csm.java 1637 2011-11-25 13:52:11Z wlopes $
  */
 @Entity
+@Table(name = "ENTREVISTA_CS")
 @PrimaryKey(validation = IdValidation.NULL)
-public final class Entrevista implements Serializable {
+public final class EntrevistaCs implements Serializable {
 
    /** serialVersionUID. */
    private static final long serialVersionUID = 1408657925141269864L;
 
    @Id
-   private Byte codigo;
+   @Column(name = "CIDADAO_RA") 
+   private Long ra;
 
    private String A1;
    private String A11;
-   // private String A2; retirado: cidadao.escolaridade
-   
+
    private String B3;
    private String B4;
    private String B5;
@@ -37,33 +42,32 @@ public final class Entrevista implements Serializable {
    private String C5;
    private String C6;
    private String C61;
-   
+
    private String D7;
    private String D71;
    private String D72;
-   
+
    private String EA;
    private String EB;
-   
+
    private String F8;
    private String F8A;
    private String F81;
    private String F9;
-   
-   private List<String> G10;
+
+   private String G10;
    private String G11;
-   
    private String G12;
    private String G121;
-   private List<String> G13;
+   private String G13;
    private String G13A;
-   private List<String> G14;
+   private String G14;
    private String G14A;
    private String G15;
    private String G15A;
-   
+
    private String H1;
-   
+
    private String I16;
 
    private String J17;
@@ -94,22 +98,22 @@ public final class Entrevista implements Serializable {
    private String J233;
    private String J234;
    private String J235;
-   
+
    private String K24;
-   private List<String> K241;
+   private String K241;
    private String K241A;
-   
+
    private String L1;
-   
+
    private String M25;
    private String M26;
    private String M27;
-   
+
    private String N27;
    private String N28;
-   
+
    private String O29;
-   
+
    private String Ind1;
    private String Ind2;
    private String Ind3;
@@ -122,30 +126,28 @@ public final class Entrevista implements Serializable {
    private String Ind8;
    private String Ind9;
 
-   public Entrevista() {
+   public EntrevistaCs() {
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((this.codigo == null) ? 0 : this.codigo.hashCode());
+      result = prime * result + ((this.ra == null) ? 0 : this.ra.hashCode());
       return result;
    }
 
    @Override
    public String toString() {
-      // return this.getSigla() == null ? "SIGLA" : this.getSigla();
-      // TODO: implementar método novo?
-      return codigo.toString();
+      return "Entrevista " + ra.toString();
    }
 
-   public Byte getCodigo() {
-      return codigo;
+   public Long getRa() {
+      return ra;
    }
 
-   public void setCodigo(Byte codigo) {
-      this.codigo = codigo;
+   public void setRa(Long ra) {
+      this.ra = ra;
    }
 
    public String getA1() {
@@ -293,11 +295,12 @@ public final class Entrevista implements Serializable {
    }
 
    public List<String> getG10() {
-      return G10;
+      List<String> val = Arrays.asList(G10.split(","));
+      return val;
    }
 
    public void setG10(List<String> g10) {
-      G10 = g10;
+      G10 = StringUtils.join(g10, ",").toString();
    }
 
    public String getG11() {
@@ -325,19 +328,19 @@ public final class Entrevista implements Serializable {
    }
 
    public List<String> getG13() {
-      return G13;
+      return Arrays.asList(G13.split(","));
    }
 
    public void setG13(List<String> g13) {
-      G13 = g13;
+      G13 = StringUtils.join(g13, ",").toString();
    }
 
    public List<String> getG14() {
-      return G14;
+      return Arrays.asList(G14.split(","));
    }
 
    public void setG14(List<String> g14) {
-      G14 = g14;
+      G14 = StringUtils.join(g14, ",").toString();
    }
 
    public String getG15() {
@@ -541,11 +544,11 @@ public final class Entrevista implements Serializable {
    }
 
    public List<String> getK241() {
-      return K241;
+      return Arrays.asList(K241.split(","));
    }
 
    public void setK241(List<String> k241) {
-      K241 = k241;
+      K241 = StringUtils.join(k241, ",").toString();
    }
 
    public String getL1() {

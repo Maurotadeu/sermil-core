@@ -121,5 +121,7 @@ public abstract class DaoFactory {
   public abstract UfDao getUfDao();
   
   public abstract CidEventoDao getCidEventoDao();
+  
+  public abstract EntrevistaCsDao getEntrevistaCsDao();
 
 }

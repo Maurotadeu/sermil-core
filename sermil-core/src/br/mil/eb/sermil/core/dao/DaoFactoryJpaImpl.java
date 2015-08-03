@@ -17,6 +17,7 @@ import br.mil.eb.sermil.modelo.DstbExclusao;
 import br.mil.eb.sermil.modelo.DstbGd;
 import br.mil.eb.sermil.modelo.DstbParametro;
 import br.mil.eb.sermil.modelo.Empresa;
+import br.mil.eb.sermil.modelo.EntrevistaCs;
 import br.mil.eb.sermil.modelo.EstatAlistamentoEsc;
 import br.mil.eb.sermil.modelo.EstatArrecadacao;
 import br.mil.eb.sermil.modelo.EstatExar;
@@ -296,6 +297,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
      return (CidEventoDao) instanciarDao(CidEventoJpa.class);
    }
 
+  @Override
+  public EntrevistaCsDao getEntrevistaCsDao() {
+    return (EntrevistaCsDao) instanciarDao(EntrevistaCsDaoJpa.class);
+  }
+
   // Criar implementações concretas dos DAO a serem instanciados (usando classes internas para evitar criar classes explícitas)
 
   public static class CepDaoJpa extends GenericDaoJpaImpl<Cep, String> implements CepDao {}
@@ -389,5 +395,7 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   public static class UsuarioDaoJpa extends GenericDaoJpaImpl<Usuario, String> implements UsuarioDao {}
 
   public static class UfDaoJpa extends GenericDaoJpaImpl<Uf, String> implements UfDao {}
+  
+  public static class EntrevistaCsDaoJpa extends GenericDaoJpaImpl<EntrevistaCs, Long> implements EntrevistaCsDao {}
   
 }
