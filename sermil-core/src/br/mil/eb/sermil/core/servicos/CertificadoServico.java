@@ -23,7 +23,7 @@ import br.mil.eb.sermil.modelo.Usuario;
 /** Processamento de certificados do serviço militar.
  * @author Abreu lopes
  * @since 5.1
- * @version $Id$
+ * @version 5.2.3
  */
 @Named("certificadoServico")
 public class CertificadoServico {
@@ -33,8 +33,6 @@ public class CertificadoServico {
     @Inject
     private CidadaoServico servico;
     
-    //private CidCertificadoDao certDao;
-
     public CertificadoServico() {
         logger.debug("CertificadoServico iniciado.");
     }
@@ -67,8 +65,10 @@ public class CertificadoServico {
         if (cidadao == null) {
            throw new SermilException("Cidadão não foi informado.");
         }
-        if (cidadao.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_ALISTADO && cidadao.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_REFRATARIO) {
-            throw new SermilException("Para imprimir o CAM, o cidadão dever estar na Situação de 'Alistado' ou 'Refratário'.");
+        if (cidadao.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_EXCLUIDO &&
+        	cidadao.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_INCORPORADO &&
+        	cidadao.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_LICENCIADO) {
+            throw new SermilException("Para imprimir o CAM, o cidadão NÃO pode já ter sido incorporado nas Forças Armadas.");
         }      
      }
 
@@ -125,7 +125,7 @@ public class CertificadoServico {
         return false;
      }
 
-/*     
+     /*     
      private Boolean cidadaoJaTemCdi(final Cidadao cidadao) {
          final List<CidCertificado> certificados = this.certDao.findByNamedQuery("Certificado.cidadaoTemCdi", cidadao.getRa());
          if (certificados.isEmpty()) {
@@ -133,6 +133,6 @@ public class CertificadoServico {
          }
          return true;
       }
-*/
+      */
      
 }

@@ -54,14 +54,18 @@ import br.mil.eb.sermil.tipos.Utils;
 public final class Cidadao implements Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = 8720401083381551234L;
+   private static final long serialVersionUID = -5980871656919801572L;
 
    private static final String EMAIL_REGEXP = "^([a-zA-Z0-9_\\.\\-\\+])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";
+
+   public static final Byte SITUACAO_MILITAR_EXCLUIDO = 0;
 
    public static final Byte SITUACAO_MILITAR_ALISTADO = 1;
 
    public static final Byte SITUACAO_MILITAR_REFRATARIO = 11;
 
+   public static final Byte SITUACAO_MILITAR_INCORPORADO = 12;
+   
    public static final Byte SITUACAO_MILITAR_LICENCIADO = 15;
 
    @Column(name = "ACUIDADE_AUDITIVA")
