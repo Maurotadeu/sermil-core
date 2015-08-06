@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.mil.eb.sermil</groupId>
   <artifactId>sermil-core</artifactId>
-  <version>5.2.2</version>
+  <version>5.2.3</version>
   <name>SERMIL CORE</name>
   <description>SERMIL CORE SERVICES</description>
   <dependencies>
@@ -86,10 +86,10 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
+        <version>3.3</version>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
     </plugins>

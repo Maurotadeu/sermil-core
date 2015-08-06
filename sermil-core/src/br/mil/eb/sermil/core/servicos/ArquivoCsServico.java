@@ -22,10 +22,10 @@ import br.mil.eb.sermil.core.security.CriptoSermil;
 import br.mil.eb.sermil.core.utils.Configurador;
 import br.mil.eb.sermil.core.utils.ZlibHelper;
 
-/** Serviço de arquivo de dados de seleção para o Módulo CS.
+/** Geração do arquivo de seleção para carregamento no Módulo CS.
  * @author Abreu Lopes, Gardino
  * @since 4.0
- * @version $Id$
+ * @version 5.2.3
  */
 @Named("arquivoCsServico")
 public class ArquivoCsServico {
