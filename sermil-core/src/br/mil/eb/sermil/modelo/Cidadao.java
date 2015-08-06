@@ -47,21 +47,24 @@ import br.mil.eb.sermil.tipos.Utils;
       @NamedQuery(name = "Cidadao.contarPorMaeNasc", query = "SELECT COUNT(c.ra) FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc"),
       @NamedQuery(name = "Cidadao.contarPorMaeNascNome", query = "SELECT COUNT(c.ra) FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc AND c.nome LIKE :nome"),
       @NamedQuery(name = "Cidadao.listarPorCsmJsm", query = "SELECT c FROM Cidadao c WHERE c.jsm.pk.csmCodigo = ?1 AND c.jsm.pk.codigo = ?2"),
-      @NamedQuery(name = "Cidadao.listarPorCsmJsmPeriodo", query = "SELECT c FROM Cidadao c JOIN c.cidEventoCollection e WHERE c.jsm.pk.csmCodigo = ?1 AND c.jsm.pk.codigo = ?2 AND e.pk.codigo = 1 AND e.pk.data BETWEEN ?3 AND ?4"),
       @NamedQuery(name = "Cidadao.listarPorFracao", query = "SELECT c FROM Cidadao c WHERE c.qcp.pk.omCodigo = ?1 AND c.qcp.pk.fracaoId = ?2 ORDER BY c.nome"),
       @NamedQuery(name = "Cidadao.limpaEmail", query = "UPDATE Cidadao c SET c.email = null WHERE c.ra = ?1"), @NamedQuery(name = "Cidadao.listarUnico", query = "SELECT c FROM Cidadao c WHERE c.nome = ?1 AND c.mae = ?2 AND c.nascimentoData = ?3"),
       @NamedQuery(name = "Cidadao.listarPorCpf", query = "SELECT c FROM Cidadao c WHERE c.cpf = ?1") })
 public final class Cidadao implements Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = 8720401083381551234L;
+   private static final long serialVersionUID = -5980871656919801572L;
 
    private static final String EMAIL_REGEXP = "^([a-zA-Z0-9_\\.\\-\\+])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";
+
+   public static final Byte SITUACAO_MILITAR_EXCLUIDO = 0;
 
    public static final Byte SITUACAO_MILITAR_ALISTADO = 1;
 
    public static final Byte SITUACAO_MILITAR_REFRATARIO = 11;
 
+   public static final Byte SITUACAO_MILITAR_INCORPORADO = 12;
+   
    public static final Byte SITUACAO_MILITAR_LICENCIADO = 15;
 
    @Column(name = "ACUIDADE_AUDITIVA")
