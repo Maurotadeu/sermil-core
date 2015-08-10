@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 /** Guia de Recolhimento para CEF ou EBCT.
  * @author Abreu Lopes
  * @since 5.1
- * @version $Id$
+ * @version 5.2.3
  */
 @SuppressWarnings("unused")
 public class Boleto implements Serializable {
@@ -98,7 +98,7 @@ public class Boleto implements Serializable {
     this.tarifa = tarifa;
     final BigDecimal total = new BigDecimal(valor.replace(",",".")).add(new BigDecimal(tarifa.replace(",",".")));
     final String VER = (banco == Banco.CEF ? VER_REF : VER_EFETIVO);
-    //TODO: verificar se o CNPJ igual funciona na taxa e multa, CEF OK.
+    //Usando mesmo CNPJ para taxas/multas.
     //final String CNPJ = (tipo == Tipo.TAXA ? CNPJ_FSM : CNPJ_PR);
     final String CNPJ = CNPJ_FSM;
     final String CAMPO_LIVRE = new StringBuilder(this.tipo.getCodigo()).append(this.banco.getCodigo()).append("00000000").toString();
