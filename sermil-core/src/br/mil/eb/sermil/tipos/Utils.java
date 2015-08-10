@@ -101,7 +101,7 @@ public final class Utils {
          }
          br.close();
       }
-      return lines.isEmpty() ? null : lines;
+      return lines;
    }
    
       
