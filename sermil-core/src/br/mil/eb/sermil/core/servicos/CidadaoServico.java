@@ -47,7 +47,7 @@ import br.mil.eb.sermil.tipos.Ra;
  * 
  * @author Abreu Lopes, Anselmo
  * @since 3.0
- * @version $Id$
+ * @version 5.2.3
  */
 @Named("cidadaoServico")
 public class CidadaoServico {
@@ -180,11 +180,6 @@ public class CidadaoServico {
       } catch (Exception e) {
          throw new CriterioException();
       }
-   }
-
-   public Boolean cidadaoJaFezEntrevista(final Cidadao cidadao) {
-      // TODO: implementar assim que a tabela entrevista for criada
-      return false;
    }
 
    public boolean cidadaoTemEvento(final Cidadao cidadao, final Byte eventoCodigo) {
