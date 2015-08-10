@@ -352,7 +352,7 @@ public class CidadaoServico {
       return false;
    }
 
-   public boolean podeImprimirCertSitMilitar(Long ra) throws CidadaoNotFoundException, CidadaoCadastradoException, CidadaoNaoTemEventoException, CidadaoNaoTemDocApresException {
+   public boolean podeImprimirCertSitMilitar(Long ra) throws CidadaoNotFoundException, CidadaoCadastradoException, CidadaoNaoTemEventoException, CidadaoNaoTemDocApresException  {
       // Recuperar cidadao
       Cidadao cid = null;
       try {
@@ -360,13 +360,17 @@ public class CidadaoServico {
       } catch (SermilException e) {
          throw new CidadaoNotFoundException();
       }
+      return this.podeImprimirCertSitMilitar(cid);
+   }
+   
+   public boolean podeImprimirCertSitMilitar(Cidadao cid) throws CidadaoCadastradoException, CidadaoNaoTemEventoException, CidadaoNaoTemDocApresException{
       /**
        * REGRAS DE NEGOCIO
        */
       // Situacao Militar = licenciado
       if (cid.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_LICENCIADO)
          throw new CidadaoCadastradoException();
-      // Tem que ter evento licenciando
+      // Tem que ter evento licenciamento
       if (!temEvento(cid, CidEvento.LICENCIAMENTO))
          throw new CidadaoNaoTemEventoException();
       // Pelo menos um documento apresentado.
