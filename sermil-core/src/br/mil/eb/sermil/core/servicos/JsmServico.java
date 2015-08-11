@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.JsmDao;
+import br.mil.eb.sermil.core.exceptions.CSException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
@@ -111,6 +112,17 @@ public class JsmServico {
          return j;
       }
       return null;
+   }
+
+   public boolean estaCSDefinidoCerto(Jsm jsm) throws CriterioException, CSException {
+      /**
+       * REGRAS DE NEGOCIO
+       */
+      if (jsm.getTributacao() == null)
+         throw new CriterioException();
+      if ((jsm.getTributacao() == Jsm.OM_Ativa_OFOR || jsm.getTributacao() == Jsm.OM_Ativa_TG || jsm.getTributacao() == Jsm.Tiro_de_Guerra || jsm.getTributacao() == Jsm.OM_Ativa) && (jsm.getCs() == null))
+         throw new CSException();
+      return true;
    }
 
 }

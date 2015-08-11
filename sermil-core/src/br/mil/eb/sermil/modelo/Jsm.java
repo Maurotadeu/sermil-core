@@ -39,6 +39,13 @@ import br.mil.eb.sermil.tipos.Utils;
 public final class Jsm implements Comparable<Jsm>, Serializable {
 
   private static final long serialVersionUID = 4679681065677830381L;
+  
+   public static final byte OM_Ativa_OFOR = 1;
+   public static final byte OM_Ativa_TG = 2;
+   public static final byte Tiro_de_Guerra = 3;
+   public static final byte OM_Ativa = 4;
+   public static final byte JSM_Desativada = 5;        
+        
 
   @EmbeddedId
   private PK pk;
