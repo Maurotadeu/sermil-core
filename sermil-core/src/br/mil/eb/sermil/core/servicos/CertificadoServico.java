@@ -54,6 +54,9 @@ public class CertificadoServico {
             cidadao.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_LICENCIADO) {
             throw new SermilException("Somente LICENCIADOS possuem Certificado de Reservista.");
         }
+        certificado.setSituacaoEspecial("false".equals(certificado.getSituacaoEspecial()) ? "N" : "S");
+        certificado.setEntregue("false".equals(certificado.getEntregue()) ? "N" : "S");
+        certificado.setAnulado("false".equals(certificado.getAnulado()) ? "N" : "S");
         cidadao.addCidCertificado(certificado);
         logger.debug("CERTIFICADO: {}", certificado);
         logger.debug("USUARIO: {}", usuario);
