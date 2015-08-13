@@ -5,6 +5,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.functors.EqualPredicate;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,28 @@ public class CertificadoServico {
     
     public CertificadoServico() {
         logger.debug("CertificadoServico iniciado.");
+    }
+
+    @Transactional
+    public Cidadao anular(final CidCertificado certificado, final Usuario usuario) throws SermilException {
+        final Cidadao cidadao = this.servico.recuperar(certificado.getPk().getCidadaoRa());
+        final CidCertificado cert = (CidCertificado) CollectionUtils.find(cidadao.getCidCertificadoCollection(), new EqualPredicate(certificado));
+        cert.setAnulado("S");
+        logger.debug("CERTIFICADO: {}", cert);
+        logger.debug("USUARIO: {}", usuario);
+        logger.debug("CIDADAO: {}", cidadao);
+        return this.servico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO ANULADO: ").append(certificado).toString());
+    }
+
+    @Transactional
+    public Cidadao entregar(final CidCertificado certificado, final Usuario usuario) throws SermilException {
+        final Cidadao cidadao = this.servico.recuperar(certificado.getPk().getCidadaoRa());
+        final CidCertificado cert = (CidCertificado) CollectionUtils.find(cidadao.getCidCertificadoCollection(), new EqualPredicate(certificado));
+        cert.setEntregue("S");
+        logger.debug("CERTIFICADO: {}", cert);
+        logger.debug("USUARIO: {}", usuario);
+        logger.debug("CIDADAO: {}", cidadao);
+        return this.servico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO ENTREGUE: ").append(certificado).toString());
     }
 
     @Transactional
