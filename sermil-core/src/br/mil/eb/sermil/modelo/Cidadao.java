@@ -42,7 +42,7 @@ import br.mil.eb.sermil.tipos.Utils;
       @NamedQuery(name = "Cidadao.gruparPorSituacao", query = "SELECT c.situacaoMilitar, c.vinculacaoAno, COUNT(c) FROM Cidadao c WHERE c.vinculacaoAno BETWEEN ?1 AND ?2 GROUP BY c.situacaoMilitar, c.vinculacaoAno"),
       @NamedQuery(name = "Cidadao.gruparPorForca", query = "SELECT c.desejaServir, c.forcaArmada, COUNT(c) FROM Cidadao c JOIN c.cidEventoCollection e WHERE c.vinculacaoAno = ?1 AND c.jsm.csm.rm.codigo = ?2 AND e.pk.codigo = 7 AND e.pk.data BETWEEN ?3 AND ?4 AND c.desejaServir IS NOT NULL AND c.forcaArmada IS NOT NULL GROUP BY c.desejaServir, c.forcaArmada"),
       @NamedQuery(name = "Cidadao.listarPorMaeNasc", query = "SELECT c FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc ORDER BY c.mae ASC"),
-      @NamedQuery(name = "Cidadao.listarPorMaeNascNome", query = "SELECT c FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc AND c.nome LIKE :nome ORDER BY c.mae ASC"),
+      @NamedQuery(name = "Cidadao.listarPorMaeNascNome", query = "SELECT c FROM Cidadao c WHERE c.mae = ?1 AND c.nascimentoData = ?2 AND c.nome = ?3 ORDER BY c.mae ASC"),
       @NamedQuery(name = "Cidadao.contarPorMae", query = "SELECT COUNT(c.ra) FROM Cidadao c WHERE c.mae LIKE :mae"),
       @NamedQuery(name = "Cidadao.contarPorMaeNasc", query = "SELECT COUNT(c.ra) FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc"),
       @NamedQuery(name = "Cidadao.contarPorMaeNascNome", query = "SELECT COUNT(c.ra) FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc AND c.nome LIKE :nome"),
