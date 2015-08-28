@@ -142,7 +142,7 @@ public class CidadaoServico {
    @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob','md','cs','convidado')")
    public List<Object[]> listar(final Cidadao cidadao) throws SermilException {
       if (cidadao == null) {
-         throw new CriterioException("Informe ao menos um crit√©rio de pesquisa de cidad√£o.");
+         throw new CriterioException("Informe ao menos um critÈrio de pesquisa de cidad„o.");
       }
       try {
          final CriteriaBuilder builder = this.cidadaoDao.getEntityManager().getCriteriaBuilder();
