@@ -22,7 +22,7 @@ import br.mil.eb.sermil.modelo.Delegacia;
 /** Serviços de Delegacia de Serviço Militar (DelSM).
  * @author Abreu Lopes
  * @since 5.0
- * @version $Id: DelegaciaServico.java 2427 2014-05-15 13:23:38Z wlopes $
+ * @version 5.2.3
  */
 @Named("delegaciaServico")
 @RemoteProxy(name="delegaciaServico")

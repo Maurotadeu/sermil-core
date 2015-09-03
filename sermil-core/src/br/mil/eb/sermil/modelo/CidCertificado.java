@@ -17,12 +17,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import br.mil.eb.sermil.tipos.SimNao;
-
 /** Certificado Militar.
  * @author Abreu Lopes, Anselmo
  * @since 3.0
- * @version $Id$
+ * @version 5.2.3
  */
 @Entity
 @Table(name = "CID_CERTIFICADO")
@@ -33,7 +31,7 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
 
     /** serialVersionUID. */
     private static final long serialVersionUID = -891971755849986133L;
-    
+
     public final static Byte RESERVISTA_1_CATEGORIA_TIPO = 1;
     public final static Byte RESERVISTA_2_CATEGORIA_TIPO = 2;
     public final static Byte DISPENSA_DE_INCORPORACAO_PLANO = 3;
@@ -55,9 +53,9 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
     @Column(name = "SITUACAO_ESPECIAL")
     private String situacaoEspecial;
 
-    private SimNao entregue;
+    private String entregue;
 
-    private SimNao anulado;
+    private String anulado;
 
     @ManyToOne
     @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
@@ -188,26 +186,26 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
         this.situacaoEspecial = situacaoEspecial;
     }
 
-    public SimNao getEntregue() {
+    public String getEntregue() {
         return entregue;
     }
 
-    public void setEntregue(SimNao entregue) {
+    public void setEntregue(String entregue) {
         this.entregue = entregue;
     }
 
-    public SimNao getAnulado() {
+    public String getAnulado() {
         return anulado;
     }
 
-    public void setAnulado(SimNao anulado) {
+    public void setAnulado(String anulado) {
         this.anulado = anulado;
     }
 
     /** Chave primária (PK) de CidCertificado.
      * @author Abreu Lopes
      * @since 3.0
-     * @version $Id: CidCertificado.java 2428 2014-05-15 13:23:47Z wlopes $
+     * @version 5.2.3
      */
     @Embeddable
     public static class PK implements Comparable<CidCertificado.PK>, Serializable {
@@ -251,9 +249,9 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
         @Override
         public String toString() {
             return new StringBuilder(this.getCidadaoRa() == null ? "RA" : this.getCidadaoRa().toString())
-            .append(" - ").append(this.getTipo() == null ? "TIPO" : this.getTipo())
-            .append(" - ").append(this.getData() == null ? "DATA" : DateFormat.getDateInstance(DateFormat.MEDIUM).format(this.getData()))
-            .toString();
+                    .append(" - ").append(this.getTipo() == null ? "TIPO" : this.getTipo())
+                    .append(" - ").append(this.getData() == null ? "DATA" : DateFormat.getDateInstance(DateFormat.MEDIUM).format(this.getData()))
+                    .toString();
         }
 
         @Override

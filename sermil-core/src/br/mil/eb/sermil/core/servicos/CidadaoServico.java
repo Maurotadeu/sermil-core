@@ -47,7 +47,7 @@ import br.mil.eb.sermil.tipos.Ra;
  * 
  * @author Abreu Lopes, Anselmo
  * @since 3.0
- * @version $Id$
+ * @version 5.2.3
  */
 @Named("cidadaoServico")
 public class CidadaoServico {
@@ -142,7 +142,7 @@ public class CidadaoServico {
    @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob','md','cs','convidado')")
    public List<Object[]> listar(final Cidadao cidadao) throws SermilException {
       if (cidadao == null) {
-         throw new CriterioException("Informe ao menos um crit√©rio de pesquisa de cidad√£o.");
+         throw new CriterioException("Informe ao menos um critÈrio de pesquisa de cidad„o.");
       }
       try {
          final CriteriaBuilder builder = this.cidadaoDao.getEntityManager().getCriteriaBuilder();
@@ -180,11 +180,6 @@ public class CidadaoServico {
       } catch (Exception e) {
          throw new CriterioException();
       }
-   }
-
-   public Boolean cidadaoJaFezEntrevista(final Cidadao cidadao) {
-      // TODO: implementar assim que a tabela entrevista for criada
-      return false;
    }
 
    public boolean cidadaoTemEvento(final Cidadao cidadao, final Byte eventoCodigo) {
@@ -357,7 +352,7 @@ public class CidadaoServico {
       return false;
    }
 
-   public boolean podeImprimirCertSitMilitar(Long ra) throws CidadaoNotFoundException, CidadaoCadastradoException, CidadaoNaoTemEventoException, CidadaoNaoTemDocApresException {
+   public boolean podeImprimirCertSitMilitar(Long ra) throws CidadaoNotFoundException, CidadaoCadastradoException, CidadaoNaoTemEventoException, CidadaoNaoTemDocApresException  {
       // Recuperar cidadao
       Cidadao cid = null;
       try {
@@ -365,13 +360,17 @@ public class CidadaoServico {
       } catch (SermilException e) {
          throw new CidadaoNotFoundException();
       }
+      return this.podeImprimirCertSitMilitar(cid);
+   }
+   
+   public boolean podeImprimirCertSitMilitar(Cidadao cid) throws CidadaoCadastradoException, CidadaoNaoTemEventoException, CidadaoNaoTemDocApresException{
       /**
        * REGRAS DE NEGOCIO
        */
       // Situacao Militar = licenciado
       if (cid.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_LICENCIADO)
          throw new CidadaoCadastradoException();
-      // Tem que ter evento licenciando
+      // Tem que ter evento licenciamento
       if (!temEvento(cid, CidEvento.LICENCIAMENTO))
          throw new CidadaoNaoTemEventoException();
       // Pelo menos um documento apresentado.

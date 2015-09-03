@@ -44,7 +44,7 @@ import br.mil.eb.sermil.modelo.UsuarioPerfil;
  * 
  * @author Abreu Lopes, Anselmo Ribeiro <anselmo.sr@gmail.com>
  * @since 3.0
- * @version $Id: UsuarioServico.java 2524 2014-08-26 12:04:21Z wlopes $
+ * @version 5.2.3
  */
 @Named("usuarioServico")
 public class UsuarioServico {
@@ -247,26 +247,28 @@ public class UsuarioServico {
    }
 
    private void enviarEmail(final Usuario usr, final String template, final String senha) throws SermilException {
-      try {
-         final MimeMessagePreparator preparator = new MimeMessagePreparator() {
-            public void prepare(MimeMessage mimeMessage) throws Exception {
-               final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-               message.setTo(usr.getEmail());
-               message.setFrom(cfg.getConfiguracao(SUPORTE_CONTA_EMAIL));
-               message.setSubject("SERMILWEB - Alteração de Usuário");
-               final Map<String, Object> model = new HashMap<String, Object>(4);
-               model.put("cpf", usr.getCpf());
-               model.put("nome", usr.getNome());
-               if (senha != null && !senha.isEmpty())
-                  model.put("senha", senha);
-               model.put("data", DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date()));
-               final String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, template, "utf-8", model);
-               message.setText(text, true);
-            }
-         };
-         this.mailSender.send(preparator);
-      } catch (MailException e) {
-         logger.error("Erro ao tentar enviar e-mail {}", e);
+      if (usr != null && usr.getEmail() != null) { 
+         try {
+            final MimeMessagePreparator preparator = new MimeMessagePreparator() {
+               public void prepare(MimeMessage mimeMessage) throws Exception {
+                  final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+                  message.setTo(usr.getEmail());
+                  message.setFrom(cfg.getConfiguracao(SUPORTE_CONTA_EMAIL));
+                  message.setSubject("SERMILWEB - Alteração de Usuário");
+                  final Map<String, Object> model = new HashMap<String, Object>(4);
+                  model.put("cpf", usr.getCpf());
+                  model.put("nome", usr.getNome());
+                  if (senha != null && !senha.isEmpty())
+                     model.put("senha", senha);
+                  model.put("data", DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date()));
+                  final String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, template, "utf-8", model);
+                  message.setText(text, true);
+               }
+            };
+            this.mailSender.send(preparator);
+         } catch (MailException e) {
+            logger.error("Erro ao tentar enviar e-mail {}", e);
+         }
       }
    }
 

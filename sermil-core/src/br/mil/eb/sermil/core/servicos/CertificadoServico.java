@@ -5,6 +5,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.functors.EqualPredicate;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,7 @@ import br.mil.eb.sermil.modelo.Usuario;
 /** Processamento de certificados do serviço militar.
  * @author Abreu lopes
  * @since 5.1
- * @version $Id$
+ * @version 5.2.3
  */
 @Named("certificadoServico")
 public class CertificadoServico {
@@ -33,10 +35,30 @@ public class CertificadoServico {
     @Inject
     private CidadaoServico servico;
     
-    //private CidCertificadoDao certDao;
-
     public CertificadoServico() {
         logger.debug("CertificadoServico iniciado.");
+    }
+
+    @Transactional
+    public Cidadao anular(final CidCertificado certificado, final Usuario usuario) throws SermilException {
+        final Cidadao cidadao = this.servico.recuperar(certificado.getPk().getCidadaoRa());
+        final CidCertificado cert = (CidCertificado) CollectionUtils.find(cidadao.getCidCertificadoCollection(), new EqualPredicate(certificado));
+        cert.setAnulado("S");
+        logger.debug("CERTIFICADO: {}", cert);
+        logger.debug("USUARIO: {}", usuario);
+        logger.debug("CIDADAO: {}", cidadao);
+        return this.servico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO ANULADO: ").append(certificado).toString());
+    }
+
+    @Transactional
+    public Cidadao entregar(final CidCertificado certificado, final Usuario usuario) throws SermilException {
+        final Cidadao cidadao = this.servico.recuperar(certificado.getPk().getCidadaoRa());
+        final CidCertificado cert = (CidCertificado) CollectionUtils.find(cidadao.getCidCertificadoCollection(), new EqualPredicate(certificado));
+        cert.setEntregue("S");
+        logger.debug("CERTIFICADO: {}", cert);
+        logger.debug("USUARIO: {}", usuario);
+        logger.debug("CIDADAO: {}", cidadao);
+        return this.servico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO ENTREGUE: ").append(certificado).toString());
     }
 
     @Transactional
@@ -56,6 +78,9 @@ public class CertificadoServico {
             cidadao.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_LICENCIADO) {
             throw new SermilException("Somente LICENCIADOS possuem Certificado de Reservista.");
         }
+        certificado.setSituacaoEspecial("false".equals(certificado.getSituacaoEspecial()) ? "N" : "S");
+        certificado.setEntregue("false".equals(certificado.getEntregue()) ? "N" : "S");
+        certificado.setAnulado("false".equals(certificado.getAnulado()) ? "N" : "S");
         cidadao.addCidCertificado(certificado);
         logger.debug("CERTIFICADO: {}", certificado);
         logger.debug("USUARIO: {}", usuario);
@@ -67,8 +92,10 @@ public class CertificadoServico {
         if (cidadao == null) {
            throw new SermilException("Cidadão não foi informado.");
         }
-        if (cidadao.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_ALISTADO && cidadao.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_REFRATARIO) {
-            throw new SermilException("Para imprimir o CAM, o cidadão dever estar na Situação de 'Alistado' ou 'Refratário'.");
+        if (cidadao.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_EXCLUIDO &&
+        	cidadao.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_INCORPORADO &&
+        	cidadao.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_LICENCIADO) {
+            throw new SermilException("Para imprimir o CAM, o cidadão NÃO pode já ter sido incorporado nas Forças Armadas.");
         }      
      }
 
@@ -125,7 +152,7 @@ public class CertificadoServico {
         return false;
      }
 
-/*     
+     /*     
      private Boolean cidadaoJaTemCdi(final Cidadao cidadao) {
          final List<CidCertificado> certificados = this.certDao.findByNamedQuery("Certificado.cidadaoTemCdi", cidadao.getRa());
          if (certificados.isEmpty()) {
@@ -133,6 +160,6 @@ public class CertificadoServico {
          }
          return true;
       }
-*/
+      */
      
 }
