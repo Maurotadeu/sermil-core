@@ -1,5 +1,6 @@
 package br.mil.eb.sermil.core.dao;
 
+import br.mil.eb.sermil.modelo.CS;
 import br.mil.eb.sermil.modelo.Cep;
 import br.mil.eb.sermil.modelo.CidArrecadacao;
 import br.mil.eb.sermil.modelo.CidAuditoria;
@@ -302,6 +303,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
     return (EntrevistaCsDao) instanciarDao(EntrevistaCsDaoJpa.class);
   }
 
+  @Override
+  public CsDao getCsDao() {
+    return (CsDao) instanciarDao(CsDaoJpa.class);
+  }
+
   // Criar implementações concretas dos DAO a serem instanciados (usando classes internas para evitar criar classes explícitas)
 
   public static class CepDaoJpa extends GenericDaoJpaImpl<Cep, String> implements CepDao {}
@@ -397,5 +403,7 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   public static class UfDaoJpa extends GenericDaoJpaImpl<Uf, String> implements UfDao {}
   
   public static class EntrevistaCsDaoJpa extends GenericDaoJpaImpl<EntrevistaCs, Long> implements EntrevistaCsDao {}
+  
+  public static class CsDaoJpa extends GenericDaoJpaImpl<CS, Integer> implements CsDao {}
   
 }
