@@ -1,6 +1,6 @@
 package br.mil.eb.sermil.core.dao;
 
-import br.mil.eb.sermil.modelo.CS;
+import br.mil.eb.sermil.modelo.Csel;
 import br.mil.eb.sermil.modelo.Cep;
 import br.mil.eb.sermil.modelo.CidArrecadacao;
 import br.mil.eb.sermil.modelo.CidAuditoria;
@@ -404,6 +404,6 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   
   public static class EntrevistaCsDaoJpa extends GenericDaoJpaImpl<EntrevistaCs, Long> implements EntrevistaCsDao {}
   
-  public static class CsDaoJpa extends GenericDaoJpaImpl<CS, Integer> implements CsDao {}
+  public static class CsDaoJpa extends GenericDaoJpaImpl<Csel, Integer> implements CsDao {}
   
 }

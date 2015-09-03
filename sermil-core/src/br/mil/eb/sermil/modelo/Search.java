@@ -11,7 +11,7 @@ public class Search {
    private Csm csm;
 
    @Inject
-   CS cs;
+   Csel csel;
    
    @Inject
    Rm rm ;
@@ -32,12 +32,12 @@ public class Search {
       this.csm = csm;
    }
 
-   public CS getCs() {
-      return cs;
+   public Csel getCs() {
+      return csel;
    }
 
-   public void setCs(CS cs) {
-      this.cs = cs;
+   public void setCs(Csel csel) {
+      this.csel = csel;
    }
 
    public Rm getRm() {
