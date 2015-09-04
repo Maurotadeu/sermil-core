@@ -1,5 +1,6 @@
 package br.mil.eb.sermil.core.servicos;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,58 +13,96 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.mil.eb.sermil.core.dao.CsDao;
+import br.mil.eb.sermil.core.dao.RmDao;
 import br.mil.eb.sermil.core.exceptions.CsPersistErrorException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Csel;
+import br.mil.eb.sermil.modelo.Rm;
+import br.mil.eb.sermil.modelo.Usuario;
 
-/** Serviço de informações de CEP. (View CEP)
+/**
+ * Serviço de informações de CEP. (View CEP)
+ * 
  * @author Abreu Lopes
  * @since 5.1
  * @version $Id$
- */ 
+ */
 @Named("csServico")
-@RemoteProxy(name="csServico")
+@RemoteProxy(name = "csServico")
 public class CsServico {
 
-  protected static final Logger logger = LoggerFactory.getLogger(CsServico.class);
+   protected static final Logger logger = LoggerFactory.getLogger(CsServico.class);
 
-  @Inject
-  private CsDao dao;
+   @Inject
+   CsDao dao;
 
-  public CsServico() {
-    logger.debug("CsServico iniciado");
-  }
-  
-  public List<Csel> listarPorRM(Byte rm_codigo){
-     return (List<Csel>) dao.findByNamedQuery("Csel.listarPorRM", rm_codigo );
-  }
-  
-  public List<Csel> ListarPorNome (String nome){
-     return (List<Csel>) dao.findByNamedQuery("Csel.listarPorNome", nome);
-  }
-  
-  public void persistir(Csel cs) throws CsPersistErrorException{
-     try {
-      dao.save(cs);
-   } catch (SermilException e) {
-      logger.error(e.getMessage());
-      throw new CsPersistErrorException();
+   @Inject
+   RmDao rmDao;
+
+   public CsServico() {
+      logger.debug("CsServico iniciado");
    }
-  }
-  
-  public Csel recuperar(Integer cs_codigo){
-     return dao.findById(cs_codigo);
-  }
 
-  
+   public List<Csel> listarPorRM(Byte rm_codigo) {
+      return (List<Csel>) dao.findByNamedQuery("Csel.listarPorRM", rm_codigo);
+   }
 
-  public Map<String, String> getTributacoes() {
-     HashMap<String, String> tributacoes = new HashMap<String, String>();
-     tributacoes.put(Csel.TRIBUTACAO_EB, Csel.TRIBUTACAO_EB);
-     tributacoes.put(Csel.TRIBUTACAO_FAB, Csel.TRIBUTACAO_FAB);
-     tributacoes.put(Csel.TRIBUTACAO_MAR, Csel.TRIBUTACAO_MAR);
-     tributacoes.put(Csel.TRIBUTACAO_TG, Csel.TRIBUTACAO_TG);
-     return tributacoes;
-  }
-  
+   public List<Csel> listarPorRmDoUsuario(Byte rm_codigo, Usuario usu) {
+      List<Csel> ret = new ArrayList<Csel>();
+      if (usu.getAuthorities().stream().anyMatch(x -> x.getAuthority().contains("adm")))
+         ret =  dao.findByNamedQuery("Csel.listarPorRM", rm_codigo);
+      else
+         ret = dao.findByNamedQuery("Csel.listarPorRM", usu.getOm().getRm().getCodigo());
+      return ret;
+   }
+
+   public List<Csel> ListarPorNome(String nome) {
+      return (List<Csel>) dao.findByNamedQuery("Csel.listarPorNome", nome);
+   }
+
+   public void persistir(Csel cs) throws CsPersistErrorException {
+      try {
+         dao.save(cs);
+      } catch (SermilException e) {
+         logger.error(e.getMessage());
+         throw new CsPersistErrorException();
+      }
+   }
+
+   public Csel recuperar(Integer cs_codigo) {
+      return dao.findById(cs_codigo);
+   }
+
+   public Map<String, String> getTributacoes() {
+      HashMap<String, String> tributacoes = new HashMap<String, String>();
+      tributacoes.put(Csel.TRIBUTACAO_EB, Csel.TRIBUTACAO_EB);
+      tributacoes.put(Csel.TRIBUTACAO_FAB, Csel.TRIBUTACAO_FAB);
+      tributacoes.put(Csel.TRIBUTACAO_MAR, Csel.TRIBUTACAO_MAR);
+      tributacoes.put(Csel.TRIBUTACAO_TG, Csel.TRIBUTACAO_TG);
+      return tributacoes;
+   }
+
+   /**
+    * 
+    * @param usuRm Rm a rm do usuario. Tente: Rm rm = ((Usuario) ((SecurityContext)
+    *           this.session.get("SPRING_SECURITY_CONTEXT")).getAuthentication().getPrincipal()).
+    *           getOm().getRm();
+    * 
+    * @param isAdm se o usuario é ou nao administrador Tente: boolean isAdm =
+    *           ServletActionContext.getRequest().isUserInRole("adm");
+    * 
+    * @return Map codigo -> sigla
+    */
+   public Map<Byte, String> getRms(Rm usuRm, boolean isAdm) {
+      Map<Byte, String> mappedRms = new HashMap<Byte, String>();
+      List<Rm> rms = rmDao.findAll();
+      for (Rm rm2 : rms) {
+         if (isAdm)
+            mappedRms.put(rm2.getCodigo(), rm2.getSigla());
+         else if (usuRm.getCodigo() == rm2.getCodigo())
+            mappedRms.put(rm2.getCodigo(), rm2.getSigla());
+      }
+      return mappedRms;
+   }
+
 }

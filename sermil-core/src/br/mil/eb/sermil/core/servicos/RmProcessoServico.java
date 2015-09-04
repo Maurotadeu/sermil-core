@@ -1,8 +1,6 @@
 package br.mil.eb.sermil.core.servicos;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -13,10 +11,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.InfoLocalDao;
-import br.mil.eb.sermil.core.dao.RmDao;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.InfoLocal;
-import br.mil.eb.sermil.modelo.Rm;
 import br.mil.eb.sermil.modelo.Usuario;
 
 /**
@@ -33,9 +29,6 @@ public class RmProcessoServico {
 
    @Inject
    private InfoLocalDao infoLocalDao;
-
-   @Inject
-   RmDao rmDao;
 
    public RmProcessoServico() {
       logger.debug("RmProcessoServico iniciado");
@@ -54,15 +47,6 @@ public class RmProcessoServico {
    @PreAuthorize("hasRole('adm')")
    public List<InfoLocal> listar() throws SermilException {
       return infoLocalDao.findByNamedQuery("InfoLocal.listar");
-   }
-
-   public Map<Byte, String> getRms() {
-      Map<Byte, String> mappedRms = new HashMap<Byte, String>();
-      List<Rm> rms = rmDao.findAll();
-      for (Rm rm : rms) {
-         mappedRms.put(rm.getCodigo(), rm.getSigla());
-      }
-      return mappedRms;
    }
 
 }
