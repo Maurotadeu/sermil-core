@@ -65,6 +65,7 @@ public class CsServico {
          dao.save(cs);
       } catch (SermilException e) {
          logger.error(e.getMessage());
+         e.printStackTrace();
          throw new CsPersistErrorException();
       }
    }
@@ -96,6 +97,12 @@ public class CsServico {
    public Map<Byte, String> getRms(Rm usuRm, boolean isAdm) {
       Map<Byte, String> mappedRms = new HashMap<Byte, String>();
       List<Rm> rms = rmDao.findAll();
+      for (int i = 0; i < rms.size(); i++) {
+         if(rms.get(i).getCodigo()==0){
+            rms.remove(i);
+            break;
+         }
+      }
       for (Rm rm2 : rms) {
          if (isAdm)
             mappedRms.put(rm2.getCodigo(), rm2.getSigla());

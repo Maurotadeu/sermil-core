@@ -15,16 +15,17 @@ import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
 /**
- * Comando Militar de Área.
+ * Comissao de Selecao
  * 
- * @author Abreu Lopes
- * @since 3.0
- * @version $Id: Cma.java 1637 2011-11-25 13:52:11Z wlopes $
- */
+ * @author Anselmo Ribeiro
+ * @since 5.2.3
+ */ 
 @Entity
 @PrimaryKey(validation = IdValidation.NEGATIVE)
 @Table(name = "CSEL")
-@NamedQueries({ @NamedQuery(name = "Csel.listarPorRM", query = "select c from Csel c where c.rm.codigo = ?1 "), @NamedQuery(name = "Csel.listarPorNome", query = "select c from Csel c where c.nome = ?1 ") })
+@NamedQueries({ 
+   @NamedQuery(name = "Csel.listarPorRM", query = "select c from Csel c where c.rm.codigo = ?1 "), 
+   @NamedQuery(name = "Csel.listarPorNome", query = "select c from Csel c where c.nome = ?1 ") })
 public final class Csel implements Serializable {
 
    /** serialVersionUID. */
