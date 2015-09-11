@@ -3,14 +3,17 @@ package br.mil.eb.sermil.modelo;
 import java.io.Serializable;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -52,9 +55,25 @@ public final class CselFuncionamento implements Serializable {
    @Temporal(TemporalType.DATE)
    private Date ternimoData;
 
+   @Column(length = 100, nullable = false)
+   private String endereco;
+
+   @Column(length = 100, nullable = true)
+   private String bairro;
+
+   @Column(length = 8)
+   private String cep;
+
    @ManyToOne
-   @JoinColumn(name = "endereco_id", nullable = false, insertable = false, updatable = false)
-   private CselEndereco endereco;
+   @JoinColumn(name = "municipio_id", nullable = false, insertable = false, updatable = false)
+   private Municipio municipio;
+
+   @ManyToOne
+   @JoinColumn(name = "pais_codigo", nullable = false, insertable = false, updatable = false)
+   private Pais pais;
+
+   @OneToMany(mappedBy = "cselFeriado", fetch = FetchType.EAGER, orphanRemoval = true)
+   private List<CselFeriado> feriados;
 
    public CselFuncionamento() {
       super();
@@ -105,12 +124,52 @@ public final class CselFuncionamento implements Serializable {
       this.ternimoData = ternimoData;
    }
 
-   public CselEndereco getEndereco() {
+   public String getEndereco() {
       return endereco;
    }
 
-   public void setEndereco(CselEndereco endereco) {
+   public void setEndereco(String endereco) {
       this.endereco = endereco;
+   }
+
+   public String getBairro() {
+      return bairro;
+   }
+
+   public void setBairro(String bairro) {
+      this.bairro = bairro;
+   }
+
+   public String getCep() {
+      return cep;
+   }
+
+   public void setCep(String cep) {
+      this.cep = cep;
+   }
+
+   public Municipio getMunicipio() {
+      return municipio;
+   }
+
+   public void setMunicipio(Municipio municipio) {
+      this.municipio = municipio;
+   }
+
+   public Pais getPais() {
+      return pais;
+   }
+
+   public void setPais(Pais pais) {
+      this.pais = pais;
+   }
+
+   public List<CselFeriado> getFeriados() {
+      return feriados;
+   }
+
+   public void setFeriados(List<CselFeriado> feriados) {
+      this.feriados = feriados;
    }
 
 }

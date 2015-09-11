@@ -1,14 +1,17 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.eclipse.persistence.annotations.IdValidation;
@@ -52,6 +55,10 @@ public final class Csel implements Serializable {
 
    @Column
    private int atendimentos;
+   
+   @OneToMany(mappedBy = "cselFuncionamento", fetch = FetchType.EAGER, orphanRemoval = true)
+   private List<CselFuncionamento> funcionamentos;
+   
 
    public Csel() {
       super();
@@ -104,6 +111,14 @@ public final class Csel implements Serializable {
 
    public void setRm(Rm rm) {
       this.rm = rm;
+   }
+
+   public List<CselFuncionamento> getFuncionamentos() {
+      return funcionamentos;
+   }
+
+   public void setFuncionamentos(List<CselFuncionamento> funcionamentos) {
+      this.funcionamentos = funcionamentos;
    }
 
 }
