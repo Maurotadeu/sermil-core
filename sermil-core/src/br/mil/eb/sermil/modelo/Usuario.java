@@ -23,7 +23,7 @@ import javax.persistence.Transient;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.User;
 
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.tipos.Cpf;
@@ -31,7 +31,7 @@ import br.mil.eb.sermil.tipos.Cpf;
 /** Usuário.
  * @author Abreu Lopes, Gardino
  * @since 3.0
- * @version $Id: Usuario.java 2523 2014-08-26 10:28:18Z wlopes $
+ * @version 5.2.4
  */
 @Entity
 @Table(name = "USUARIO")
@@ -41,7 +41,7 @@ import br.mil.eb.sermil.tipos.Cpf;
   @NamedQuery(name = "Usuario.listarPorOm", query = "SELECT u FROM Usuario u WHERE u.om.codigo = ?1"),
   @NamedQuery(name = "Usuario.listarPorCPF", query = "SELECT u FROM Usuario u WHERE u.cpf = ?1 ")
 })
-public final class Usuario implements Serializable, UserDetails {
+public final class Usuario extends User implements Serializable {
 
   private static final long serialVersionUID = -2282006593152319899L;
 
@@ -86,11 +86,12 @@ public final class Usuario implements Serializable, UserDetails {
   private int tentativaslogin;
 
   public Usuario() {
-    super();
+     super("N/A", "N/A", new ArrayList<GrantedAuthority>(1));
   }
 
   public Usuario(String cpf) {
-      this.cpf = cpf;
+     this();
+     this.cpf = cpf;
   }
 
   @Override
@@ -102,7 +103,6 @@ public final class Usuario implements Serializable, UserDetails {
   public Collection<GrantedAuthority> getAuthorities() {
     final List<GrantedAuthority> lista = new ArrayList<GrantedAuthority>();
     for(UsuarioPerfil p : this.getUsuarioPerfilCollection()) {
-      //lista.add(new GrantedAuthorityImpl(p.getAuthority()));
       lista.add(new SimpleGrantedAuthority(p.getPk().getPerfil()));
     }
     return lista;
