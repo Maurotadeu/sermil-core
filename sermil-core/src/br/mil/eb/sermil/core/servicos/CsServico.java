@@ -11,13 +11,13 @@ import javax.inject.Named;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.CselDao;
 import br.mil.eb.sermil.core.dao.CselEnderecoDao;
 import br.mil.eb.sermil.core.dao.CselFuncionamentoDao;
 import br.mil.eb.sermil.core.dao.RmDao;
 import br.mil.eb.sermil.core.exceptions.CsPersistErrorException;
-import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Csel;
 import br.mil.eb.sermil.modelo.CselEndereco;
 import br.mil.eb.sermil.modelo.CselFuncionamento;
@@ -85,10 +85,11 @@ public class CsServico {
       return (List<Csel>) cselDao.findByNamedQuery("Csel.listarPorNome", nome);
    }
 
+   @Transactional
    public void persistir(Csel cs) throws CsPersistErrorException {
       try {
          cselDao.save(cs);
-      } catch (SermilException e) {
+      } catch (Exception e) {
          logger.error(e.getMessage());
          e.printStackTrace();
          throw new CsPersistErrorException();

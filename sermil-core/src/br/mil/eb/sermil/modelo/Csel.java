@@ -15,9 +15,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.eclipse.persistence.annotations.IdValidation;
-import org.eclipse.persistence.annotations.PrimaryKey;
-
 import br.mil.eb.sermil.core.exceptions.FuncionamentoJaExisteException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
 
@@ -28,9 +25,7 @@ import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
  * @since 5.2.3
  */
 @Entity
-@PrimaryKey(validation = IdValidation.NEGATIVE)
 @Table(name = "CSEL")
-
 @NamedQueries({
       @NamedQuery(name = "Csel.listarPorRM", query = "select c from Csel c where c.rm.codigo = ?1 "),
       @NamedQuery(name = "Csel.listarPorNome", query = "select c from Csel c where c.nome = ?1 ") 
