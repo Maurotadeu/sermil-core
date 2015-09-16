@@ -1,8 +1,10 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -24,8 +26,12 @@ import org.eclipse.persistence.annotations.PrimaryKey;
  */
 @Entity
 @PrimaryKey(validation = IdValidation.NEGATIVE)
-@Table(name = "CSEL_ENDERECO")
-@NamedQueries({ @NamedQuery(name = "Endereco.listar", query = "select f from CselFuncionamento f where f.anoBase = ?1 and f.csel.codigo = ?2 ") })
+@Table(name = "CSEL_FERIADO")
+
+@NamedQueries({ 
+   @NamedQuery(name = "Endereco.listarPorFuncionamento", query = "select f from CselFeriado f where f.funcionamento.codigo = ?1 ") 
+   })
+
 public final class CselFeriado implements Serializable {
 
    /** serialVersionUID. */
@@ -35,9 +41,10 @@ public final class CselFeriado implements Serializable {
    private Integer codigo;
 
    @ManyToOne
-   @JoinColumn(name = "csel_funcionamento_codigo", nullable = false, insertable = false, updatable = false)
+   @JoinColumn(name = "csel_funcionamento_codigo", referencedColumnName = "codigo", insertable = false, updatable = false, nullable = false)
    private CselFuncionamento funcionamento;
 
+   @Column(nullable = false)
    @Temporal(TemporalType.DATE)
    private Date data;
 
@@ -47,15 +54,7 @@ public final class CselFeriado implements Serializable {
 
    @Override
    public String toString() {
-      return new StringBuilder(codigo).toString();
-   }
-
-   public Integer getCodigo() {
-      return codigo;
-   }
-
-   public void setCodigo(Integer codigo) {
-      this.codigo = codigo;
+      return new StringBuilder(new SimpleDateFormat("dd/mm/yyyy").format(data)).toString();
    }
 
    public CselFuncionamento getFuncionamento() {
@@ -66,12 +65,8 @@ public final class CselFeriado implements Serializable {
       this.funcionamento = funcionamento;
    }
 
-   public Date getData() {
-      return data;
-   }
-
-   public void setData(Date data) {
-      this.data = data;
+   public Integer getCodigo() {
+      return codigo;
    }
 
 }

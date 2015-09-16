@@ -124,6 +124,10 @@ public abstract class DaoFactory {
   
   public abstract EntrevistaCsDao getEntrevistaCsDao();
   
-  public abstract CsDao getCsDao();
+  public abstract CselDao getCselDao();
+  
+  public abstract CselFuncionamentoDao getCselFuncionamentoDao();
+  
+  public abstract CselEnderecoDao getCselEnderecoDao();
 
 }

@@ -1,6 +1,7 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -17,18 +18,24 @@ import javax.persistence.Table;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
+import br.mil.eb.sermil.core.exceptions.FuncionamentoJaExisteException;
+import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
+
 /**
  * Comissao de Selecao
  * 
  * @author Anselmo Ribeiro
  * @since 5.2.3
- */ 
+ */
 @Entity
 @PrimaryKey(validation = IdValidation.NEGATIVE)
 @Table(name = "CSEL")
-@NamedQueries({ 
-   @NamedQuery(name = "Csel.listarPorRM", query = "select c from Csel c where c.rm.codigo = ?1 "), 
-   @NamedQuery(name = "Csel.listarPorNome", query = "select c from Csel c where c.nome = ?1 ") })
+
+@NamedQueries({
+      @NamedQuery(name = "Csel.listarPorRM", query = "select c from Csel c where c.rm.codigo = ?1 "),
+      @NamedQuery(name = "Csel.listarPorNome", query = "select c from Csel c where c.nome = ?1 ") 
+      })
+
 public final class Csel implements Serializable {
 
    /** serialVersionUID. */
@@ -44,21 +51,17 @@ public final class Csel implements Serializable {
    private Integer codigo;
 
    @ManyToOne
-   @JoinColumn(name = "RM_CODIGO", insertable = false, updatable = false, nullable = false)
+   @JoinColumn(name = "rm_codigo", referencedColumnName = "codigo", insertable = false, updatable = false, nullable = false)
    private Rm rm;
 
-   @Column(name = "NOME", length = 30)
+   @Column(length = 60, nullable = false)
    private String nome;
 
-   @Column(name = "TRIBUTACAO", length = 30)
+   @Column(nullable = false)
    private String tributacao;
 
-   @Column
-   private int atendimentos;
-   
-   @OneToMany(mappedBy = "cselFuncionamento", fetch = FetchType.EAGER, orphanRemoval = true)
-   private List<CselFuncionamento> funcionamentos;
-   
+   @Column(nullable = false)
+   private Integer atendimentos;
 
    public Csel() {
       super();
@@ -66,12 +69,8 @@ public final class Csel implements Serializable {
 
    @Override
    public String toString() {
-      return new StringBuilder(codigo).append(" Csel").toString();
+      return new StringBuilder(nome).append(" (").append(codigo).append(" CS / ").append(rm.getCodigo()).append(" RM)").toString();
    }
-
-   /**
-    * GETTERS AND SETTERS
-    */
 
    public Integer getCodigo() {
       return codigo;
@@ -79,6 +78,14 @@ public final class Csel implements Serializable {
 
    public void setCodigo(Integer codigo) {
       this.codigo = codigo;
+   }
+
+   public Rm getRm() {
+      return rm;
+   }
+
+   public void setRm(Rm rm) {
+      this.rm = rm;
    }
 
    public String getNome() {
@@ -90,28 +97,26 @@ public final class Csel implements Serializable {
    }
 
    public String getTributacao() {
-      return tributacao;
+      return this.tributacao;
    }
 
    public void setTributacao(String tributacao) {
       this.tributacao = tributacao;
    }
 
-   public int getAtendimentos() {
+   public Integer getAtendimentos() {
       return atendimentos;
    }
 
-   public void setAtendimentos(int atendimentos) {
+   public void setAtendimentos(Integer atendimentos) {
       this.atendimentos = atendimentos;
    }
 
-   public Rm getRm() {
-      return rm;
-   }
-
-   public void setRm(Rm rm) {
-      this.rm = rm;
-   }
+   /*
+    * FUNCIONAMENTOS
+    */
+   @OneToMany(mappedBy = "csel", fetch = FetchType.LAZY)
+   private List<CselFuncionamento> funcionamentos;
 
    public List<CselFuncionamento> getFuncionamentos() {
       return funcionamentos;
@@ -119,6 +124,23 @@ public final class Csel implements Serializable {
 
    public void setFuncionamentos(List<CselFuncionamento> funcionamentos) {
       this.funcionamentos = funcionamentos;
+   }
+
+   public void addFuncionamento(CselFuncionamento funcionamento) throws FuncionamentoJaExisteException {
+      if (this.funcionamentos.contains(funcionamento))
+         throw new FuncionamentoJaExisteException();
+      if (this.funcionamentos == null)
+         this.funcionamentos = new ArrayList<CselFuncionamento>();
+      this.funcionamentos.add(funcionamento);
+      if (funcionamento.getCsel() == null || funcionamento.getCsel() != this)
+         funcionamento.setCsel(this);
+   }
+
+   public void removeFuncionamento(CselFuncionamento funcionamento) throws FuncionamentoNaoExisteException {
+      if (!this.funcionamentos.contains(funcionamento))
+         throw new FuncionamentoNaoExisteException();
+      this.funcionamentos.remove(funcionamento);
+      funcionamento.setCsel(null);
    }
 
 }

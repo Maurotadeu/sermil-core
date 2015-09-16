@@ -1,6 +1,5 @@
 package br.mil.eb.sermil.core.dao;
 
-import br.mil.eb.sermil.modelo.Csel;
 import br.mil.eb.sermil.modelo.Cep;
 import br.mil.eb.sermil.modelo.CidArrecadacao;
 import br.mil.eb.sermil.modelo.CidAuditoria;
@@ -10,6 +9,9 @@ import br.mil.eb.sermil.modelo.CidContato;
 import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.CidFoto;
 import br.mil.eb.sermil.modelo.Cidadao;
+import br.mil.eb.sermil.modelo.Csel;
+import br.mil.eb.sermil.modelo.CselEndereco;
+import br.mil.eb.sermil.modelo.CselFuncionamento;
 import br.mil.eb.sermil.modelo.Csm;
 import br.mil.eb.sermil.modelo.Delegacia;
 import br.mil.eb.sermil.modelo.Dominios;
@@ -304,8 +306,18 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   }
 
   @Override
-  public CsDao getCsDao() {
-    return (CsDao) instanciarDao(CsDaoJpa.class);
+  public CselDao getCselDao() {
+    return (CselDao) instanciarDao(CselDaoJpa.class);
+  }
+
+  @Override
+  public CselFuncionamentoDao getCselFuncionamentoDao() {
+    return (CselFuncionamentoDao) instanciarDao(CselFuncionamentoDaoJpa.class);
+  }
+
+  @Override
+  public CselEnderecoDao getCselEnderecoDao() {
+    return (CselEnderecoDao) instanciarDao(CselEnderecoDaoJpa.class);
   }
 
   // Criar implementações concretas dos DAO a serem instanciados (usando classes internas para evitar criar classes explícitas)
@@ -404,6 +416,10 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   
   public static class EntrevistaCsDaoJpa extends GenericDaoJpaImpl<EntrevistaCs, Long> implements EntrevistaCsDao {}
   
-  public static class CsDaoJpa extends GenericDaoJpaImpl<Csel, Integer> implements CsDao {}
+  public static class CselDaoJpa extends GenericDaoJpaImpl<Csel, Integer> implements CselDao {}
+  
+  public static class CselFuncionamentoDaoJpa extends GenericDaoJpaImpl<CselFuncionamento, Integer> implements CselFuncionamentoDao {}
+  
+  public static class CselEnderecoDaoJpa extends GenericDaoJpaImpl<CselEndereco, Integer> implements CselEnderecoDao {}
   
 }

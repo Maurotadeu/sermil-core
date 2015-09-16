@@ -12,11 +12,15 @@ import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.mil.eb.sermil.core.dao.CsDao;
+import br.mil.eb.sermil.core.dao.CselDao;
+import br.mil.eb.sermil.core.dao.CselEnderecoDao;
+import br.mil.eb.sermil.core.dao.CselFuncionamentoDao;
 import br.mil.eb.sermil.core.dao.RmDao;
 import br.mil.eb.sermil.core.exceptions.CsPersistErrorException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Csel;
+import br.mil.eb.sermil.modelo.CselEndereco;
+import br.mil.eb.sermil.modelo.CselFuncionamento;
 import br.mil.eb.sermil.modelo.Rm;
 import br.mil.eb.sermil.modelo.Usuario;
 
@@ -34,35 +38,56 @@ public class CsServico {
    protected static final Logger logger = LoggerFactory.getLogger(CsServico.class);
 
    @Inject
-   CsDao dao;
+   CselDao cselDao;
+
+   @Inject
+   CselFuncionamentoDao funcionamentoDao;
 
    @Inject
    RmDao rmDao;
+
+   @Inject
+   CselEnderecoDao enderecoDao;
+
+   public Map<Integer, String> getCselEnderecos(Integer cselCodigo) {
+      Map<Integer, String> ret = new HashMap<Integer, String>();
+      List<CselEndereco> enderecos = enderecoDao.findByNamedQuery("listarEnderecosDeCselNative", cselCodigo);
+
+      for (int i = 0; i < enderecos.size(); i++) {
+         ret.put(enderecos.get(i).getCodigo(), enderecos.get(i).toString());
+      }
+
+      return ret;
+   }
+
+   public List<CselFuncionamento> listarFuncionamentosDeCsel(Integer cselCodigo) {
+      return funcionamentoDao.findByNamedQuery("Funcionamento.listarFuncionamentosDeCsel", cselCodigo);
+   }
 
    public CsServico() {
       logger.debug("CsServico iniciado");
    }
 
    public List<Csel> listarPorRM(Byte rm_codigo) {
-      return (List<Csel>) dao.findByNamedQuery("Csel.listarPorRM", rm_codigo);
+      return (List<Csel>) cselDao.findByNamedQuery("Csel.listarPorRM", rm_codigo);
    }
 
    public List<Csel> listarPorRmDoUsuario(Byte rm_codigo, Usuario usu) {
       List<Csel> ret = new ArrayList<Csel>();
       if (usu.getAuthorities().stream().anyMatch(x -> x.getAuthority().contains("adm")))
-         ret =  dao.findByNamedQuery("Csel.listarPorRM", rm_codigo);
+         ret = cselDao.findByNamedQuery("Csel.listarPorRM", rm_codigo);
       else
-         ret = dao.findByNamedQuery("Csel.listarPorRM", usu.getOm().getRm().getCodigo());
+         ret = cselDao.findByNamedQuery("Csel.listarPorRM", usu.getOm().getRm().getCodigo());
       return ret;
    }
 
    public List<Csel> ListarPorNome(String nome) {
-      return (List<Csel>) dao.findByNamedQuery("Csel.listarPorNome", nome);
+      return (List<Csel>) cselDao.findByNamedQuery("Csel.listarPorNome", nome);
    }
 
    public void persistir(Csel cs) throws CsPersistErrorException {
       try {
-         dao.save(cs);
+         cselDao.save(cs);
       } catch (SermilException e) {
          logger.error(e.getMessage());
          e.printStackTrace();
@@ -71,7 +96,7 @@ public class CsServico {
    }
 
    public Csel recuperar(Integer cs_codigo) {
-      return dao.findById(cs_codigo);
+      return cselDao.findById(cs_codigo);
    }
 
    public Map<String, String> getTributacoes() {
@@ -98,7 +123,7 @@ public class CsServico {
       Map<Byte, String> mappedRms = new HashMap<Byte, String>();
       List<Rm> rms = rmDao.findAll();
       for (int i = 0; i < rms.size(); i++) {
-         if(rms.get(i).getCodigo()==0){
+         if (rms.get(i).getCodigo() == 0) {
             rms.remove(i);
             break;
          }
