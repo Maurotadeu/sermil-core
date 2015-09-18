@@ -36,240 +36,246 @@ import br.mil.eb.sermil.tipos.Cpf;
 @Entity
 @Table(name = "USUARIO")
 @NamedQueries({
-  @NamedQuery(name = "Usuario.listarPorNome", query = "SELECT u FROM Usuario u WHERE u.nome LIKE ?1"),
-  @NamedQuery(name = "Usuario.listarPorEmail", query = "SELECT u FROM Usuario u WHERE u.email = ?1"),
-  @NamedQuery(name = "Usuario.listarPorOm", query = "SELECT u FROM Usuario u WHERE u.om.codigo = ?1"),
-  @NamedQuery(name = "Usuario.listarPorCPF", query = "SELECT u FROM Usuario u WHERE u.cpf = ?1 ")
+   @NamedQuery(name = "Usuario.listarPorNome", query = "SELECT u FROM Usuario u WHERE u.nome LIKE ?1"),
+   @NamedQuery(name = "Usuario.listarPorEmail", query = "SELECT u FROM Usuario u WHERE u.email = ?1"),
+   @NamedQuery(name = "Usuario.listarPorOm", query = "SELECT u FROM Usuario u WHERE u.om.codigo = ?1"),
+   @NamedQuery(name = "Usuario.listarPorCPF", query = "SELECT u FROM Usuario u WHERE u.cpf = ?1 ")
 })
 public final class Usuario extends User implements Serializable {
 
-  private static final long serialVersionUID = -2282006593152319899L;
+   private static final long serialVersionUID = 418847745648841370L;
 
-  @Id
-  private String cpf;
+   @Id
+   private String cpf;
 
-  private String nome;
+   private String nome;
 
-  private String email;
+   private String email;
 
-  private String senha;
+   private String senha;
 
-  private String telefone;
+   private String telefone;
 
-  @Temporal(TemporalType.TIMESTAMP)
-  @Column(name = "ACESSO_DATA")
-  private Date acessoData;
+   @Temporal(TemporalType.TIMESTAMP)
+   @Column(name = "ACESSO_DATA")
+   private Date acessoData;
 
-  @Column(name="ACESSO_IP")
-  private String acessoIp;
+   @Column(name="ACESSO_IP")
+   private String acessoIp;
 
-  @Column(name="ACESSO_QTD")
-  private Integer acessoQtd;
+   @Column(name="ACESSO_QTD")
+   private Integer acessoQtd;
 
-  @Transient
-  private String confirma;
+   @Transient
+   private String confirma;
 
-  @ManyToOne
-  @JoinColumn(name="OM_CODIGO", referencedColumnName="CODIGO")
-  private Om om;
+   @ManyToOne
+   @JoinColumn(name="OM_CODIGO", referencedColumnName="CODIGO")
+   private Om om;
 
-  @ManyToOne
-  @JoinColumn(name="POSTO_GRADUACAO_CODIGO", referencedColumnName="CODIGO")
-  private PostoGraduacao postoGraduacao;
+   @ManyToOne
+   @JoinColumn(name="POSTO_GRADUACAO_CODIGO", referencedColumnName="CODIGO")
+   private PostoGraduacao postoGraduacao;
 
-  @OneToMany(mappedBy="usuario", fetch=FetchType.EAGER, orphanRemoval=true)
-  private List<UsuarioPerfil> usuarioPerfilCollection;
+   @OneToMany(mappedBy="usuario", fetch=FetchType.EAGER, orphanRemoval=true)
+   private List<UsuarioPerfil> usuarioPerfilCollection;
 
-  private String ativo;
+   private String ativo;
 
-  @Column(name="TENTATIVAS_LOGIN")
-  private int tentativaslogin;
+   @Column(name="TENTATIVAS_LOGIN")
+   private int tentativaslogin;
 
-  public Usuario() {
-     super("N/A", "N/A", new ArrayList<GrantedAuthority>(1));
-  }
+   public Usuario() {
+      super("N/A","N/D", new ArrayList<GrantedAuthority>(1)); 
+   }
 
-  public Usuario(String cpf) {
-     this();
-     this.cpf = cpf;
-  }
+   public Usuario(String cpf) {
+      this();
+      this.cpf = cpf;
+   }
 
-  @Override
-  public String toString() {
-    return new StringBuilder(this.getCpf() == null ? "CPF" : this.getCpf()).append(" - ").append(this.getNome() == null ? "NOME" : this.getNome()).toString();
-  }
+   public Usuario(String cpf, String senha, Collection<GrantedAuthority> roles) {
+      super(cpf, senha, roles);
+      this.cpf = cpf;
+      this.senha = senha;
+   }
 
-  @Override
-  public Collection<GrantedAuthority> getAuthorities() {
-    final List<GrantedAuthority> lista = new ArrayList<GrantedAuthority>();
-    for(UsuarioPerfil p : this.getUsuarioPerfilCollection()) {
-      lista.add(new SimpleGrantedAuthority(p.getPk().getPerfil()));
-    }
-    return lista;
-  }
+   @Override
+   public String toString() {
+      return new StringBuilder(this.getCpf() == null ? "CPF" : this.getCpf()).append(" - ").append(this.getNome() == null ? "NOME" : this.getNome()).toString();
+   }
 
-  @Override
-  public String getPassword() {
-    return this.getSenha();
-  }
-
-  @Override
-  public String getUsername() {
-    return this.getCpf();
-  }
-
-  @Override
-  public boolean isAccountNonExpired() {
-    final Calendar hoje = Calendar.getInstance();
-    final Calendar login = Calendar.getInstance();
-    login.setTime(this.getAcessoData());
-    login.add(Calendar.MONTH, 3);
-    return hoje.before(login);
-  }
-
-  @Override
-  public boolean isAccountNonLocked() {
-    return this.tentativaslogin < 5 ;
-  }
-
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return true;
-  }
-
-  @Override
-  public boolean isEnabled() {
-    return "S".equals(ativo) ? true : false;
-  }
-
-  public int getTentativaslogin() {
-    return tentativaslogin;
-  }
-
-  public void setTentativaslogin(int tentativaslogin) {
-    this.tentativaslogin = tentativaslogin;
-  }
-
-  public void setAtivo(String ativo) {
-    this.ativo = ativo;
-  }
-
-  public String getAtivo() {
-    return this.ativo;
-  }
-
-  public Date getAcessoData() {
-    return this.acessoData;
-  }
-
-  public String getAcessoIp() {
-    return this.acessoIp;
-  }
-
-  public Integer getAcessoQtd() {
-    return this.acessoQtd;
-  }
-
-  public String getConfirma() {
-    return confirma;
-  }
-
-  public String getCpf() {
-    return this.cpf;
-  }
-
-  public String getEmail() {
-    return this.email;
-  }
-
-  public String getNome() {
-    return this.nome;
-  }
-
-  public Om getOm() {
-    return om;
-  }
-
-  public PostoGraduacao getPostoGraduacao() {
-    return postoGraduacao;
-  }
-
-  public String getSenha() {
-    return this.senha;
-  }
-
-  public String getTelefone() {
-    return this.telefone;
-  }
-
-  public List<UsuarioPerfil> getUsuarioPerfilCollection() {
-    return this.usuarioPerfilCollection;
-  }
-
-  public void setAcessoData(Date acessoData) {
-    this.acessoData = acessoData;
-  }
-
-  public void setAcessoIp(String acessoIp) {
-    this.acessoIp = acessoIp;
-  }
-
-  public void setAcessoQtd(Integer acessoQtd) {
-    this.acessoQtd = acessoQtd;
-  }
-
-  public void setConfirma(String confirma) {
-    this.confirma = confirma;
-  }
-
-  public void setCpf(String cpf) {
-    this.cpf = (cpf == null || cpf.isEmpty() ? null : cpf.trim());
-    if (this.cpf != null) {
-      if (!Cpf.isCpf(this.cpf)) {
-        throw new IllegalArgumentException("CPF inválido.");
+   @Override
+   public Collection<GrantedAuthority> getAuthorities() {
+      final List<GrantedAuthority> lista = new ArrayList<GrantedAuthority>();
+      for(UsuarioPerfil p : this.getUsuarioPerfilCollection()) {
+         lista.add(new SimpleGrantedAuthority(p.getPk().getPerfil()));
       }
-    }
-  }
+      return lista;
+   }
 
-  public void setEmail(String email) {
-    this.email = (email == null || email.trim().isEmpty() ? null : email.trim().toLowerCase());
-  }
+   @Override
+   public String getPassword() {
+      return this.getSenha();
+   }
 
-  public void setNome(String nome) {
-    this.nome = (nome == null || nome.trim().isEmpty() ? null : nome.trim().toUpperCase());
-  }
+   @Override
+   public String getUsername() {
+      return this.getCpf();
+   }
 
-  public void setOm(Om om) {
-    this.om = om;
-  }
+   @Override
+   public boolean isAccountNonExpired() {
+      final Calendar hoje = Calendar.getInstance();
+      final Calendar login = Calendar.getInstance();
+      login.setTime(this.getAcessoData());
+      login.add(Calendar.MONTH, 3);
+      return hoje.before(login);
+   }
 
-  public void setPostoGraduacao(PostoGraduacao postoGraduacao) {
-    this.postoGraduacao = postoGraduacao;
-  }
+   @Override
+   public boolean isAccountNonLocked() {
+      return this.tentativaslogin < 5 ;
+   }
 
-  public void setSenha(String senha) {
-    this.senha = senha;
-  }
+   @Override
+   public boolean isCredentialsNonExpired() {
+      return true;
+   }
 
-  public void setTelefone(String telefone) {
-    this.telefone = (telefone == null || telefone.trim().isEmpty() ? null : telefone.trim());
-  }
+   @Override
+   public boolean isEnabled() {
+      return "S".equals(ativo) ? true : false;
+   }
 
-  public void setUsuarioPerfilCollection(List<UsuarioPerfil> usuarioPerfilCollection) {
-    this.usuarioPerfilCollection = usuarioPerfilCollection;
-  }
+   public int getTentativaslogin() {
+      return tentativaslogin;
+   }
 
-  public void addUsuarioPerfil(final UsuarioPerfil p) throws SermilException {
-    if (this.getUsuarioPerfilCollection() == null) {
-      this.setUsuarioPerfilCollection(new ArrayList<UsuarioPerfil>(1));
-    }
-    if (this.getUsuarioPerfilCollection().contains(p)) {
-      throw new SermilException("Perfil já está incluído");
-    }
-    this.getUsuarioPerfilCollection().add(p);
-    if (p.getUsuario() != this) {
-      p.setUsuario(this);
-    }
-  }
+   public void setTentativaslogin(int tentativaslogin) {
+      this.tentativaslogin = tentativaslogin;
+   }
+
+   public void setAtivo(String ativo) {
+      this.ativo = ativo;
+   }
+
+   public String getAtivo() {
+      return this.ativo;
+   }
+
+   public Date getAcessoData() {
+      return this.acessoData;
+   }
+
+   public String getAcessoIp() {
+      return this.acessoIp;
+   }
+
+   public Integer getAcessoQtd() {
+      return this.acessoQtd;
+   }
+
+   public String getConfirma() {
+      return confirma;
+   }
+
+   public String getCpf() {
+      return this.cpf;
+   }
+
+   public String getEmail() {
+      return this.email;
+   }
+
+   public String getNome() {
+      return this.nome;
+   }
+
+   public Om getOm() {
+      return om;
+   }
+
+   public PostoGraduacao getPostoGraduacao() {
+      return postoGraduacao;
+   }
+
+   public String getSenha() {
+      return this.senha;
+   }
+
+   public String getTelefone() {
+      return this.telefone;
+   }
+
+   public List<UsuarioPerfil> getUsuarioPerfilCollection() {
+      return this.usuarioPerfilCollection;
+   }
+
+   public void setAcessoData(Date acessoData) {
+      this.acessoData = acessoData;
+   }
+
+   public void setAcessoIp(String acessoIp) {
+      this.acessoIp = acessoIp;
+   }
+
+   public void setAcessoQtd(Integer acessoQtd) {
+      this.acessoQtd = acessoQtd;
+   }
+
+   public void setConfirma(String confirma) {
+      this.confirma = confirma;
+   }
+
+   public void setCpf(String cpf) {
+      this.cpf = (cpf == null || cpf.isEmpty() ? null : cpf.trim());
+      if (this.cpf != null) {
+         if (!Cpf.isCpf(this.cpf)) {
+            throw new IllegalArgumentException("CPF inválido.");
+         }
+      }
+   }
+
+   public void setEmail(String email) {
+      this.email = (email == null || email.trim().isEmpty() ? null : email.trim().toLowerCase());
+   }
+
+   public void setNome(String nome) {
+      this.nome = (nome == null || nome.trim().isEmpty() ? null : nome.trim().toUpperCase());
+   }
+
+   public void setOm(Om om) {
+      this.om = om;
+   }
+
+   public void setPostoGraduacao(PostoGraduacao postoGraduacao) {
+      this.postoGraduacao = postoGraduacao;
+   }
+
+   public void setSenha(String senha) {
+      this.senha = senha;
+   }
+
+   public void setTelefone(String telefone) {
+      this.telefone = (telefone == null || telefone.trim().isEmpty() ? null : telefone.trim());
+   }
+
+   public void setUsuarioPerfilCollection(List<UsuarioPerfil> usuarioPerfilCollection) {
+      this.usuarioPerfilCollection = usuarioPerfilCollection;
+   }
+
+   public void addUsuarioPerfil(final UsuarioPerfil p) throws SermilException {
+      if (this.getUsuarioPerfilCollection() == null) {
+         this.setUsuarioPerfilCollection(new ArrayList<UsuarioPerfil>(1));
+      }
+      if (this.getUsuarioPerfilCollection().contains(p)) {
+         throw new SermilException("Perfil já está incluído");
+      }
+      this.getUsuarioPerfilCollection().add(p);
+      if (p.getUsuario() != this) {
+         p.setUsuario(this);
+      }
+   }
 
 }
