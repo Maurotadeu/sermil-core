@@ -206,7 +206,7 @@ public final class ImpServico implements Comparable<ImpServico>, Serializable {
 
   public void setVersao(String versao) throws SermilException {
     if (!VERSAO.equals(versao)) {
-      throw new SermilException("ERRO: versão do arquivo inválida, atualize a versão do SASM ou Módulo CS.");
+      throw new SermilException("ERRO: versão do arquivo inválida, atualize a versão do SASM ou Módulo Cs.");
     }
     this.versao = versao;
   }

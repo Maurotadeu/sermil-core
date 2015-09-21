@@ -22,7 +22,7 @@ import br.mil.eb.sermil.core.security.CriptoSermil;
 import br.mil.eb.sermil.core.utils.Configurador;
 import br.mil.eb.sermil.core.utils.ZlibHelper;
 
-/** Geração do arquivo de seleção para carregamento no Módulo CS.
+/** Geração do arquivo de seleção para carregamento no Módulo Csel.
  * @author Abreu Lopes, Gardino
  * @since 4.0
  * @version 5.2.3
@@ -40,7 +40,7 @@ public class ArquivoCsServico {
   "||RPAD(c.nome,70)||RPAD(c.pai,70)||RPAD(c.mae,70)||TO_CHAR(c.nascimento_data,'DDMMYYYY')||TO_CHAR(c.municipio_nascimento_codigo,'FM00000000')" +
   "||TO_CHAR(c.pais_nascimento_codigo,'FM0000')||TO_CHAR(c.estado_civil,'FM0')||TO_CHAR(c.sexo,'FM0')||TO_CHAR(c.escolaridade,'FM00')"+
   "||'X1010'||TO_CHAR(c.csm_codigo,'FM00')||TO_CHAR(c.jsm_codigo,'FM000')||TO_CHAR(c.zona_residencial,'FM0')" +
-  //TODO: manter enquanto Módulo CS não usar tabela de ocupações nova, enviando código antigo X1010.
+  //TODO: manter enquanto Módulo Csel não usar tabela de ocupações nova, enviando código antigo X1010.
   //"||RPAD(NVL(c.ocupacao_codigo,CHR(32)),6)||TO_CHAR(c.csm_codigo,'FM00')||TO_CHAR(c.jsm_codigo,'FM000')||TO_CHAR(c.zona_residencial,'FM0')" +
   "||TO_CHAR(c.municipio_residencia_codigo,'FM00000000')||TO_CHAR(c.pais_residencia_codigo,'FM0000')||RPAD(NVL(c.endereco,CHR(32)),70)" +
   "||RPAD(NVL(c.bairro,CHR(32)),70)||RPAD(NVL(c.cep,CHR(32)),8)||RPAD(NVL(c.telefone,CHR(32)),9)||RPAD(NVL(c.cpf,CHR(32)),11)" +
@@ -49,7 +49,7 @@ public class ArquivoCsServico {
   "WHERE c.ra = e.cidadao_ra AND c.vinculacao_ano = EXTRACT(YEAR FROM SYSDATE) AND e.data BETWEEN TO_DATE('0107'||(EXTRACT(YEAR FROM SYSDATE)-1),'DDMMYYYY') AND TO_DATE('3006'||EXTRACT(YEAR FROM SYSDATE),'DDMMYYYY') "+
   "AND e.codigo = 1 AND situacao_militar = 2 AND c.csm_codigo = j.csm_codigo AND c.jsm_codigo = j.codigo AND s.codigo = j.csm_codigo AND s.rm_codigo= ? AND j.cs= ? ";
 
-  /* Excluído do Módulo CS por não ter utilidade
+  /* Excluído do Módulo Csel por não ter utilidade
   private static final String SQL_REFRATARIOS = "SELECT DISTINCT TO_CHAR(c.ra,'FM000000000000')||RPAD(c.nome,70)||RPAD(c.pai,70)||RPAD(c.mae,70)||TO_CHAR(c.nascimento_data,'DDMMYYYY')" +
   "||TO_CHAR(c.municipio_nascimento_codigo,'FM00000000')||TO_CHAR(c.pais_nascimento_codigo,'FM0000')||TO_CHAR(c.estado_civil,'FM0')||TO_CHAR(c.sexo,'FM0')||TO_CHAR(c.escolaridade,'FM00')" +
   "||RPAD(NVL(c.ocupacao_codigo,CHR(32)),6)||TO_CHAR(c.csm_codigo,'FM00')||TO_CHAR(c.jsm_codigo,'FM000')||TO_CHAR(c.zona_residencial,'FM0')||TO_CHAR(c.municipio_residencia_codigo,'FM00000000')" +
@@ -90,9 +90,9 @@ public class ArquivoCsServico {
       case 1: // Seleção
         lista = this.jsmDao.findBySQL(SQL_SELECIONADOS, rm, cs);
         if (lista == null || lista.isEmpty()) {
-          throw new Exception("Não há dados para gerar o arquivo de seleção do Módulo CS.");
+          throw new Exception("Não há dados para gerar o arquivo de seleção do Módulo Csel.");
         } else {
-          //listaRefratarios = this.jsmDao.findBySQL(SQL_REFRATARIOS, rm, cs);
+          //listaRefratarios = this.jsmDao.findBySQL(SQL_REFRATARIOS, rm, csel);
           listaDispensados = this.jsmDao.findBySQL(SQL_DISPENSADOS, rm, cs);
           CAB = "2";
         }
@@ -100,7 +100,7 @@ public class ArquivoCsServico {
       case 2: // Distribuição
         lista = this.jsmDao.findBySQL(SQL_DISTRIBUIDOS, ano, rm, cs);
         if (lista == null || lista.isEmpty()) {
-          throw new Exception("Não há dados para gerar o arquivo de distribuição do Módulo CS.");
+          throw new Exception("Não há dados para gerar o arquivo de distribuição do Módulo Csel.");
         }
         CAB = "7";
         break;
@@ -157,7 +157,7 @@ public class ArquivoCsServico {
       ZlibHelper.compactar(zip1, arquivoCripto);
       Files.delete(arquivoTexto);
       Files.delete(arquivoCripto);
-      //TODO: gambiarra enquanto Módulo CS não aceitar arquivo com extensão diferente de .cta
+      //TODO: gambiarra enquanto Módulo Csel não aceitar arquivo com extensão diferente de .cta
       final Path zip = Paths.get(arquivoCripto.toString().substring(0, arquivoCripto.toString().lastIndexOf(".")).concat(".cta"));
       Files.move(zip1, zip);
       return zip;
