@@ -30,7 +30,7 @@ import br.mil.eb.sermil.modelo.ImpDocumento;
 import br.mil.eb.sermil.modelo.ImpServico;
 import br.mil.eb.sermil.modelo.Usuario;
 
-/** Processamento da entrada de dados de arquivos do Módulo JSM (FAMCO) e Módulo CS (FS e FAMSEL).
+/** Processamento da entrada de dados de arquivos do Módulo JSM (FAMCO) e Módulo Cs (FS e FAMSEL).
  * As informações dos arquivos são armazenadas nas tabelas IMP_SERVICO (cabeçalho do arquivo) e IMP_DOCUMENTO (linhas).
  * Os arquivos devem estar criptografados e compactados com a extensão .cta antes de serem processados.
  * Somente são aceitos arquivos com o identificador de versão 00003 na linha de cabeçalho (primeira linha).
