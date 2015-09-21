@@ -11,6 +11,7 @@ import javax.inject.Named;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.CselDao;
@@ -18,8 +19,10 @@ import br.mil.eb.sermil.core.dao.CselEnderecoDao;
 import br.mil.eb.sermil.core.dao.CselFuncionamentoDao;
 import br.mil.eb.sermil.core.dao.RmDao;
 import br.mil.eb.sermil.core.exceptions.CsPersistErrorException;
+import br.mil.eb.sermil.core.exceptions.FuncionamentoJaExisteException;
 import br.mil.eb.sermil.modelo.Csel;
 import br.mil.eb.sermil.modelo.CselEndereco;
+import br.mil.eb.sermil.modelo.CselFeriado;
 import br.mil.eb.sermil.modelo.CselFuncionamento;
 import br.mil.eb.sermil.modelo.Rm;
 import br.mil.eb.sermil.modelo.Usuario;
@@ -52,11 +55,7 @@ public class CsServico {
    public Map<Integer, String> getCselEnderecos(Integer cselCodigo) {
       Map<Integer, String> ret = new HashMap<Integer, String>();
       List<CselEndereco> enderecos = enderecoDao.findByNamedQuery("listarEnderecosDeCselNative", cselCodigo);
-
-      for (int i = 0; i < enderecos.size(); i++) {
-         ret.put(enderecos.get(i).getCodigo(), enderecos.get(i).toString());
-      }
-
+      enderecos.forEach(end -> ret.put(end.getCodigo(), end.toString()));
       return ret;
    }
 
@@ -86,14 +85,15 @@ public class CsServico {
    }
 
    @Transactional
-   public void persistir(Csel cs) throws CsPersistErrorException {
+   public Csel persistir(Csel cs) throws CsPersistErrorException {
       try {
-         cselDao.save(cs);
+         cs = cselDao.save(cs);
       } catch (Exception e) {
          logger.error(e.getMessage());
-         e.printStackTrace();
+         e.printStackTrace(); // TODO tirar stacktrace antes de entrar em producao
          throw new CsPersistErrorException();
       }
+      return cs;
    }
 
    public Csel recuperar(Integer cs_codigo) {
@@ -136,6 +136,27 @@ public class CsServico {
             mappedRms.put(rm2.getCodigo(), rm2.getSigla());
       }
       return mappedRms;
+   }
+
+   public CselEndereco getEndereco(Integer enderecoCodigo) {
+      return enderecoDao.findById(enderecoCodigo);
+   }
+
+   @Transactional(propagation = Propagation.NESTED)
+   public Csel salvarCselEFuncionamento(Csel cs, CselFuncionamento funcionamento, List<CselFeriado> feriados, CselEndereco endereco) throws FuncionamentoJaExisteException, CsPersistErrorException {
+
+      if (endereco.getCodigo() != null)
+         endereco = enderecoDao.findById(endereco.getCodigo());
+      funcionamento.setEndereco(endereco);
+
+      feriados.forEach(fer -> fer.setFuncionamento(funcionamento));
+      cs.addFuncionamento(funcionamento);
+      persistir(cs);
+      return cs;
+   }
+
+   public List<CselFuncionamento> getFuncionamentosDeCsel(Integer cselCodigo) {
+      return funcionamentoDao.findByNamedQuery("listarFuncionamentosDeCsel", cselCodigo);
    }
 
 }

@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -16,6 +18,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
@@ -32,18 +35,17 @@ import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
 @Entity
 @PrimaryKey(validation = IdValidation.NEGATIVE)
 @Table(name = "CSEL_ENDERECO")
-@NamedQueries({ 
-   @NamedQuery(name = "Endereco.listarPorMunicipio", query = "select e from CselEndereco e where e.municipio.codigo = ?1 ") 
-})
+@NamedQueries({ @NamedQuery(name = "Endereco.listarPorMunicipio", query = "select e from CselEndereco e, CselFuncionamento f, Csel cs where cs.codigo = ?1 ") })
 @NamedNativeQueries({
-      @NamedNativeQuery(name = "listarEnderecosDeCselNative", query = "SELECT e.* from csel inner join CSEL_FUNCIONAMENTO f on f.csel_codigo = csel.codigo inner join CSEL_ENDERECO e on f.CSEL_ENDERECO_CODIGO = e.CODIGO where csel.CODIGO = ?1 ") 
-})
+      @NamedNativeQuery(resultClass = CselEndereco.class, name = "listarEnderecosDeCselNative", query = "SELECT e.* from csel inner join CSEL_FUNCIONAMENTO f on f.csel_codigo = csel.codigo inner join CSEL_ENDERECO e on f.CSEL_ENDERECO_CODIGO = e.CODIGO where csel.CODIGO = ?1 ") })
 public final class CselEndereco implements Serializable {
 
    /** serialVersionUID. */
    private static final long serialVersionUID = -1323553766132510978L;
 
    @Id
+   @GeneratedValue(strategy = GenerationType.TABLE, generator = "CSEL_ENDERECO")
+   @TableGenerator(name = "CSEL_ENDERECO", allocationSize = 1)
    private Integer codigo;
 
    @Column(length = 100, nullable = false)
@@ -56,7 +58,7 @@ public final class CselEndereco implements Serializable {
    private String cep;
 
    @ManyToOne
-   @JoinColumn(name = "municipio_codigo", referencedColumnName = "codigo", insertable = false, updatable = false, nullable = false)
+   @JoinColumn(name = "municipio_codigo", referencedColumnName = "codigo", insertable = true, updatable = true, nullable = false)
    private Municipio municipio;
 
    public CselEndereco() {
@@ -64,7 +66,10 @@ public final class CselEndereco implements Serializable {
    }
 
    public String toString() {
-      return new StringBuilder().append(endereco).append(", ").append(bairro).append(", ").append(municipio.getSigla()).append(", ").append(municipio.getUf().getSigla()).append(", CEP: ").append(cep).toString();
+      StringBuilder end = new StringBuilder().append(endereco).append(", ").append(bairro).append(", ").append(municipio.getDescricao()).append(", ").append(municipio.getUf().getSigla());
+      if (cep != null)
+         end.append(", CEP: ").append(cep);
+      return end.toString();
    }
 
    public Municipio getMunicipio() {
