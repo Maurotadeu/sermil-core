@@ -7,6 +7,8 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -14,6 +16,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import br.mil.eb.sermil.core.exceptions.FuncionamentoJaExisteException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
@@ -27,7 +30,7 @@ import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
 @Entity
 @Table(name = "CSEL")
 @NamedQueries({
-      @NamedQuery(name = "Csel.listarPorRM", query = "select c from Csel c where c.rm.codigo = ?1 "),
+   @NamedQuery(name = "Csel.listarPorRM", query = "select c from Csel c where c.rm.codigo = ?1 "),
       @NamedQuery(name = "Csel.listarPorNome", query = "select c from Csel c where c.nome = ?1 ") 
       })
 
@@ -43,11 +46,16 @@ public final class Csel implements Serializable {
    public static final String TRIBUTACAO_TG = "TG";
 
    @Id
+   @GeneratedValue(strategy=GenerationType.TABLE, generator="CSEL")
+   @TableGenerator(name="CSEL", allocationSize=1)
    private Integer codigo;
 
    @ManyToOne
-   @JoinColumn(name = "rm_codigo", referencedColumnName = "codigo", insertable = false, updatable = false, nullable = false)
+   @JoinColumn(name = "rm_codigo", referencedColumnName = "codigo", insertable = true, updatable = true, nullable = false)
    private Rm rm;
+   
+   @Column(nullable=false)
+   private Integer numero;
 
    @Column(length = 60, nullable = false)
    private String nome;
@@ -64,7 +72,7 @@ public final class Csel implements Serializable {
 
    @Override
    public String toString() {
-      return new StringBuilder(nome).append(" (").append(codigo).append(" CS / ").append(rm.getCodigo()).append(" RM)").toString();
+      return new StringBuilder(nome).append(" (").append("CS").append(numero).append("/").append(rm.getCodigo()).append("RM)").toString();
    }
 
    public Integer getCodigo() {
@@ -105,6 +113,14 @@ public final class Csel implements Serializable {
 
    public void setAtendimentos(Integer atendimentos) {
       this.atendimentos = atendimentos;
+   }
+
+   public Integer getNumero() {
+      return numero;
+   }
+
+   public void setNumero(Integer numero) {
+      this.numero = numero;
    }
 
    /*

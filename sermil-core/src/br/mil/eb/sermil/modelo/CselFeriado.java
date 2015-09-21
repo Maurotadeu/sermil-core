@@ -6,12 +6,15 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -28,9 +31,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation = IdValidation.NEGATIVE)
 @Table(name = "CSEL_FERIADO")
 
-@NamedQueries({ 
-   @NamedQuery(name = "Endereco.listarPorFuncionamento", query = "select f from CselFeriado f where f.funcionamento.codigo = ?1 ") 
-   })
+@NamedQueries({ @NamedQuery(name = "Endereco.listarPorFuncionamento", query = "select f from CselFeriado f where f.funcionamento.codigo = ?1 ") })
 
 public final class CselFeriado implements Serializable {
 
@@ -38,15 +39,17 @@ public final class CselFeriado implements Serializable {
    private static final long serialVersionUID = 2174684503038866912L;
 
    @Id
+   @GeneratedValue(strategy = GenerationType.TABLE, generator = "CSEL_FERIADO")
+   @TableGenerator(name = "CSEL_FERIADO", allocationSize = 1)
    private Integer codigo;
 
    @ManyToOne
-   @JoinColumn(name = "csel_funcionamento_codigo", referencedColumnName = "codigo", insertable = false, updatable = false, nullable = false)
+   @JoinColumn(name = "csel_funcionamento_codigo", referencedColumnName = "codigo", insertable = true, updatable = true, nullable = false)
    private CselFuncionamento funcionamento;
 
-   @Column(nullable = false)
+   @Column(nullable = false, name = "FER_DATA")
    @Temporal(TemporalType.DATE)
-   private Date data;
+   private Date feriadoData;
 
    public CselFeriado() {
       super();
@@ -54,7 +57,7 @@ public final class CselFeriado implements Serializable {
 
    @Override
    public String toString() {
-      return new StringBuilder(new SimpleDateFormat("dd/mm/yyyy").format(data)).toString();
+      return new StringBuilder(new SimpleDateFormat("dd/mm/yyyy").format(feriadoData)).toString();
    }
 
    public CselFuncionamento getFuncionamento() {
@@ -67,6 +70,14 @@ public final class CselFeriado implements Serializable {
 
    public Integer getCodigo() {
       return codigo;
+   }
+
+   public Date getFeriadoData() {
+      return feriadoData;
+   }
+
+   public void setFeriadoData(Date feriadoData) {
+      this.feriadoData = feriadoData;
    }
 
 }
