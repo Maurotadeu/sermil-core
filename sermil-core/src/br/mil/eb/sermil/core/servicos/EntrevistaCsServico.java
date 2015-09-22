@@ -51,7 +51,7 @@ public class EntrevistaCsServico {
          cid.setEscolaridade(cidadao.getEscolaridade());
 
          // salvando cidadao
-         this.cidadaoServico.salvar(cid, usu, "Salvando cidadão que foi alterado na Entrevista CS.");
+         this.cidadaoServico.salvar(cid, usu, "Salvando cidadão que foi alterado na Entrevista Cs.");
 
          // preparando e salvando entrevista
          entrevista.setRa(Long.valueOf(ra));
