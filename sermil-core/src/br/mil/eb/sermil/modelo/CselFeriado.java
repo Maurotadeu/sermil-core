@@ -44,7 +44,7 @@ public final class CselFeriado implements Serializable {
    private Integer codigo;
 
    @ManyToOne
-   @JoinColumn(name = "csel_funcionamento_codigo", referencedColumnName = "codigo", insertable = true, updatable = true, nullable = false)
+   @JoinColumn(name = "csel_funcionamento_codigo", referencedColumnName = "codigo", insertable = true, updatable = true, nullable = false )
    private CselFuncionamento funcionamento;
 
    @Column(nullable = false, name = "FER_DATA")
