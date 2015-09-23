@@ -11,6 +11,7 @@ import br.mil.eb.sermil.modelo.CidFoto;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.Csel;
 import br.mil.eb.sermil.modelo.CselEndereco;
+import br.mil.eb.sermil.modelo.CselFeriado;
 import br.mil.eb.sermil.modelo.CselFuncionamento;
 import br.mil.eb.sermil.modelo.Csm;
 import br.mil.eb.sermil.modelo.Delegacia;
@@ -320,6 +321,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
     return (CselEnderecoDao) instanciarDao(CselEnderecoDaoJpa.class);
   }
 
+  @Override
+  public CselFeriadoDao getCselFeriadoDao() {
+    return (CselFeriadoDao) instanciarDao(CselFeriadoDaoJpa.class);
+  }
+
   // Criar implementações concretas dos DAO a serem instanciados (usando classes internas para evitar criar classes explícitas)
 
   public static class CepDaoJpa extends GenericDaoJpaImpl<Cep, String> implements CepDao {}
@@ -421,5 +427,7 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   public static class CselFuncionamentoDaoJpa extends GenericDaoJpaImpl<CselFuncionamento, Integer> implements CselFuncionamentoDao {}
   
   public static class CselEnderecoDaoJpa extends GenericDaoJpaImpl<CselEndereco, Integer> implements CselEnderecoDao {}
+  
+  public static class CselFeriadoDaoJpa extends GenericDaoJpaImpl<CselFeriado, Integer> implements CselFeriadoDao {}
   
 }
