@@ -1,133 +1,140 @@
 package br.mil.eb.sermil.core.dao;
 
-/** Fábrica abstrata de DAO. (Padrão GoF Abstract Factory)
+/**
+ * Fábrica abstrata de DAO. (Padrão GoF Abstract Factory)
+ * 
  * @author Abreu Lopes
  * @since 4.0
  * @version $Id$
  */
 public abstract class DaoFactory {
 
-  /** Constante do nome da implementação JPA (EclipseLink). */
-  public static final Class<? extends DaoFactory> JPA = DaoFactoryJpaImpl.class;
+   /** Constante do nome da implementação JPA (EclipseLink). */
+   public static final Class<? extends DaoFactory> JPA = DaoFactoryJpaImpl.class;
 
-  /** Retorna a fábrica apropriada para a implementação solicitada.
-   * @param factory Classe de implementação da fábrica
-   * @return Fábrica de DAO apropriada
-   */
-  public static DaoFactory getInstance(Class<? extends DaoFactory> factory) {
-    try {
-      return factory.newInstance();
-    } catch (Exception erro) {
-      throw new RuntimeException("Erro ao criar a DaoFactory: " + factory, erro);
-    }
-  }
+   /**
+    * Retorna a fábrica apropriada para a implementação solicitada.
+    * 
+    * @param factory Classe de implementação da fábrica
+    * @return Fábrica de DAO apropriada
+    */
+   public static DaoFactory getInstance(Class<? extends DaoFactory> factory) {
+      try {
+         return factory.newInstance();
+      } catch (Exception erro) {
+         throw new RuntimeException("Erro ao criar a DaoFactory: " + factory, erro);
+      }
+   }
 
-  /** Construtor com acesso restrito, usar o método getInstance() para obter uma fábrica. */
-  protected DaoFactory() {
-    // Construtor default.
-  }
+   /** Construtor com acesso restrito, usar o método getInstance() para obter uma fábrica. */
+   protected DaoFactory() {
+      // Construtor default.
+   }
 
-  // Adicionar os métodos para criar os DAO necessários na aplicação, devem ser instanciados na classe AppConfig definida
-  // para a aplicação (classe anotada com @Configuration para inicialização pelo Spring).
+   // Adicionar os métodos para criar os DAO necessários na aplicação, devem ser instanciados na
+   // classe AppConfig definida
+   // para a aplicação (classe anotada com @Configuration para inicialização pelo Spring).
 
-  public abstract CepDao getCepDao();
+   public abstract CepDao getCepDao();
 
-  public abstract CidadaoDao getCidadaoDao();
+   public abstract CidadaoDao getCidadaoDao();
 
-  public abstract CidArrecadacaoDao getCidArrecadacaoDao();
+   public abstract CidArrecadacaoDao getCidArrecadacaoDao();
 
-  public abstract CidAuditoriaDao getCidAuditoriaDao();
+   public abstract CidAuditoriaDao getCidAuditoriaDao();
 
-  public abstract CidAverbacaoDao getCidAverbacaoDao();
+   public abstract CidAverbacaoDao getCidAverbacaoDao();
 
-  public abstract CidCertificadoDao getCidCertificadoDao();
+   public abstract CidCertificadoDao getCidCertificadoDao();
 
-  public abstract CidContatoDao getCidContatoDao();
+   public abstract CidContatoDao getCidContatoDao();
 
-  public abstract CidFotoDao getCidFotoDao();
+   public abstract CidFotoDao getCidFotoDao();
 
-  public abstract CsmDao getCsmDao();
+   public abstract CsmDao getCsmDao();
 
-  public abstract DelegaciaDao getDelegaciaDao();
+   public abstract DelegaciaDao getDelegaciaDao();
 
-  public abstract DominiosDao getDominiosDao();
+   public abstract DominiosDao getDominiosDao();
 
-  public abstract DstbBolNecDao getDstbBolNecDao();
+   public abstract DstbBolNecDao getDstbBolNecDao();
 
-  public abstract DstbExclusaoDao getDstbExclusaoDao();
-  
-  public abstract DstbGdDao getDstbGdDao();
+   public abstract DstbExclusaoDao getDstbExclusaoDao();
 
-  public abstract DstbParametroDao getDstbParametroDao();
+   public abstract DstbGdDao getDstbGdDao();
 
-  public abstract EmpresaDao getEmpresaDao();
+   public abstract DstbParametroDao getDstbParametroDao();
 
-  public abstract EstatAlistamentoEscDao getEstatAlistamentoEscDao();
+   public abstract EmpresaDao getEmpresaDao();
 
-  public abstract EstatArrecadacaoDao getEstatArrecadacaoDao();
+   public abstract EstatAlistamentoEscDao getEstatAlistamentoEscDao();
 
-  public abstract EstatExarDao getEstatExarDao();
+   public abstract EstatArrecadacaoDao getEstatArrecadacaoDao();
 
-  public abstract HabilitacaoDao getHabilitacaoDao();
+   public abstract EstatExarDao getEstatExarDao();
 
-  public abstract ImpServicoDao getImpServicoDao();
+   public abstract HabilitacaoDao getHabilitacaoDao();
 
-  public abstract InfoLocalDao getInfoLocalDao();
+   public abstract ImpServicoDao getImpServicoDao();
 
-  public abstract JsmDao getJsmDao();
+   public abstract InfoLocalDao getInfoLocalDao();
 
-  public abstract MunicipioDao getMunicipioDao();
+   public abstract JsmDao getJsmDao();
 
-  public abstract OcupacaoDao getOcupacaoDao();
+   public abstract MunicipioDao getMunicipioDao();
 
-  public abstract OmBoletimDao getOmBoletimDao();
+   public abstract OcupacaoDao getOcupacaoDao();
 
-  public abstract OmDao getOmDao();
+   public abstract OmBoletimDao getOmBoletimDao();
 
-  public abstract PadraoDao getPadraoDao();
+   public abstract OmDao getOmDao();
 
-  public abstract PaisDao getPaisDao();
+   public abstract PadraoDao getPadraoDao();
 
-  public abstract PerfilDao getPerfilDao();
+   public abstract PaisDao getPaisDao();
 
-  public abstract PortalMensagemDao getPortalMensagemDao();
+   public abstract PerfilDao getPerfilDao();
 
-  public abstract PostoGraduacaoDao getPostoGraduacaoDao();
+   public abstract PortalMensagemDao getPortalMensagemDao();
 
-  public abstract PreAlistamentoDao getPreAlistamentoDao();
+   public abstract PostoGraduacaoDao getPostoGraduacaoDao();
 
-  public abstract QcpDao getQcpDao();
+   public abstract PreAlistamentoDao getPreAlistamentoDao();
 
-  public abstract QmDao getQmDao();
+   public abstract QcpDao getQcpDao();
 
-  public abstract RaItensDao getRaItensDao();
+   public abstract QmDao getQmDao();
 
-  public abstract RaPedidoDao getRaPedidoDao();
+   public abstract RaItensDao getRaItensDao();
 
-  public abstract RaMestreDao getRaMestreDao();
+   public abstract RaPedidoDao getRaPedidoDao();
 
-  public abstract RmDao getRmDao();
+   public abstract RaMestreDao getRaMestreDao();
 
-  public abstract SelBccDao getSelBccDao();
+   public abstract RmDao getRmDao();
 
-  public abstract SelJsmDao getSelJsmDao();
+   public abstract SelBccDao getSelBccDao();
 
-  public abstract SelTributacaoDao getSelTributacaoDao();
+   public abstract SelJsmDao getSelJsmDao();
 
-  public abstract TaxaMultaDao getTaxaMultaDao();
+   public abstract SelTributacaoDao getSelTributacaoDao();
 
-  public abstract UsuarioDao getUsuarioDao();
+   public abstract TaxaMultaDao getTaxaMultaDao();
 
-  public abstract UfDao getUfDao();
-  
-  public abstract CidEventoDao getCidEventoDao();
-  
-  public abstract EntrevistaCsDao getEntrevistaCsDao();
-  
-  public abstract CselDao getCselDao();
-  
-  public abstract CselFuncionamentoDao getCselFuncionamentoDao();
-  
-  public abstract CselEnderecoDao getCselEnderecoDao();
+   public abstract UsuarioDao getUsuarioDao();
+
+   public abstract UfDao getUfDao();
+
+   public abstract CidEventoDao getCidEventoDao();
+
+   public abstract EntrevistaCsDao getEntrevistaCsDao();
+
+   public abstract CselDao getCselDao();
+
+   public abstract CselFuncionamentoDao getCselFuncionamentoDao();
+
+   public abstract CselEnderecoDao getCselEnderecoDao();
+
+   public abstract CselFeriadoDao getCselFeriadoDao();
 
 }
