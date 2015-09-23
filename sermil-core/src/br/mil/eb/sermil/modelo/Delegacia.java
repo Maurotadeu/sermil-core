@@ -135,7 +135,7 @@ public class Delegacia implements Serializable {
   }
   
   public Float getLatitude() {
-    return latitude;
+     return latitude;
   }
 
   public void setLatitude(Float latitude) {
@@ -143,7 +143,7 @@ public class Delegacia implements Serializable {
   }
 
   public Float getLongitude() {
-    return longitude;
+     return longitude;
   }
 
   public void setLongitude(Float longitude) {
@@ -172,9 +172,9 @@ public class Delegacia implements Serializable {
     @Override
     public String toString() {
       return new StringBuilder()
-        .append(this.getCsmCodigo() == null ? "00" : new DecimalFormat("00").format(this.getCsmCodigo()))
+        .append(getCsmCodigo())
         .append("/")
-        .append(this.getCodigo() == null ? "000" : new DecimalFormat("000").format(this.getCodigo()))
+        .append(getCodigo())
         .toString();
     }
 
