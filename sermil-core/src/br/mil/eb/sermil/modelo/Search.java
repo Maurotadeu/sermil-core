@@ -1,25 +1,28 @@
 package br.mil.eb.sermil.modelo;
 
+import javax.inject.Named;
+
+@Named
 public class Search {
-  
-  private RaPedido pedido;
-  
-  private Csm csm;
 
-  public RaPedido getPedido() {
-    return pedido;
-  }
+   private RaPedido pedido;
 
-  public void setPedido(RaPedido pedido) {
-    this.pedido = pedido;
-  }
+   private Csm csm;
 
-  public Csm getCsm() {
-    return csm;
-  }
+   public RaPedido getPedido() {
+      return pedido;
+   }
 
-  public void setCsm(Csm csm) {
-    this.csm = csm;
-  }
-  
+   public void setPedido(RaPedido pedido) {
+      this.pedido = pedido;
+   }
+
+   public Csm getCsm() {
+      return csm;
+   }
+
+   public void setCsm(Csm csm) {
+      this.csm = csm;
+   }
+
 }

@@ -44,7 +44,7 @@ public class RmSelecaoServico {
   @PreAuthorize("hasAnyRole('adm','dsm','smr')")
   @RemoteMethod
   public Object[] listarCs(final Byte rm){
-    final List<Object[]> lista = selJsmDao.findBySQL("SELECT distinct(cs) FROM CS where rm = ? order by cs", rm);
+    final List<Object[]> lista = selJsmDao.findBySQL("SELECT distinct(cs) FROM Cs where rm = ? order by cs", rm);
     return lista.toArray();
   }
 
