@@ -1,7 +1,6 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,7 +18,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Delegacia de Serviço Militar.
  * @author Abreu Lopes
  * @since 4.0
- * @version $Id: Delegacia.java 2419 2014-05-09 12:28:27Z wlopes $
+ * @version 5.2.4
  */
 @Entity
 @NamedQueries({
