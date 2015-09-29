@@ -55,7 +55,7 @@ import br.mil.eb.sermil.modelo.Usuario;
 /** Implementação da fábrica abstrata de DAO para uso com o EclipseLink (JPA).
  * @author Abreu Lopes
  * @since 4.0
- * @version $Id$
+ * @version 5.2.4
  */
 public class DaoFactoryJpaImpl extends DaoFactory {
 
@@ -109,6 +109,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   }
 
   @Override
+  public CidEventoDao getCidEventoDao() {
+    return (CidEventoDao) instanciarDao(CidEventoJpa.class);
+  }
+
+  @Override
   public CidFotoDao getCidFotoDao() {
     return (CidFotoDao) instanciarDao(CidFotoDaoJpa.class);
   }
@@ -116,6 +121,26 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   @Override
   public CsmDao getCsmDao() {
     return (CsmDao) instanciarDao(CsmDaoJpa.class);
+  }
+
+  @Override
+  public CselDao getCselDao() {
+    return (CselDao) instanciarDao(CselDaoJpa.class);
+  }
+
+  @Override
+  public CselFeriadoDao getCselFeriadoDao() {
+    return (CselFeriadoDao) instanciarDao(CselFeriadoJpa.class);
+  }
+
+  @Override
+  public CselFuncionamentoDao getCselFuncionamentoDao() {
+    return (CselFuncionamentoDao) instanciarDao(CselFuncionamentoDaoJpa.class);
+  }
+
+  @Override
+  public CselEnderecoDao getCselEnderecoDao() {
+    return (CselEnderecoDao) instanciarDao(CselEnderecoDaoJpa.class);
   }
 
   @Override
@@ -151,6 +176,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   @Override
   public EmpresaDao getEmpresaDao() {
     return (EmpresaDao) instanciarDao(EmpresaDaoJpa.class);
+  }
+
+  @Override
+  public EntrevistaCsDao getEntrevistaCsDao() {
+   return (EntrevistaCsDao) instanciarDao(EntrevistaCsDaoJpa.class);
   }
 
   @Override
@@ -296,6 +326,8 @@ public class DaoFactoryJpaImpl extends DaoFactory {
     return (UsuarioDao) instanciarDao(UsuarioDaoJpa.class);
   }
   
+<<<<<<< HEAD
+=======
   @Override
    public CidEventoDao getCidEventoDao() {
      return (CidEventoDao) instanciarDao(CidEventoJpa.class);
@@ -348,6 +380,14 @@ public class DaoFactoryJpaImpl extends DaoFactory {
 
   public static class CsmDaoJpa extends GenericDaoJpaImpl<Csm, Byte> implements CsmDao {}
 
+  public static class CselDaoJpa extends GenericDaoJpaImpl<Csel, Integer> implements CselDao {}
+  
+  public static class CselFeriadoJpa extends GenericDaoJpaImpl<CselFeriado, Integer> implements CselFeriadoDao {}
+  
+  public static class CselFuncionamentoDaoJpa extends GenericDaoJpaImpl<CselFuncionamento, Integer> implements CselFuncionamentoDao {}
+  
+  public static class CselEnderecoDaoJpa extends GenericDaoJpaImpl<CselEndereco, Integer> implements CselEnderecoDao {}
+  
   public static class DelegaciaDaoJpa extends GenericDaoJpaImpl<Delegacia, Delegacia.PK> implements DelegaciaDao {}
 
   public static class DominiosDaoJpa extends GenericDaoJpaImpl<Dominios, Dominios.PK> implements DominiosDao {}
@@ -362,6 +402,8 @@ public class DaoFactoryJpaImpl extends DaoFactory {
 
   public static class EmpresaDaoJpa extends GenericDaoJpaImpl<Empresa, String> implements EmpresaDao {}
 
+  public static class EntrevistaCsDaoJpa extends GenericDaoJpaImpl<EntrevistaCs, Long> implements EntrevistaCsDao {}
+  
   public static class EstatAlistamentoEscDaoJpa extends GenericDaoJpaImpl<EstatAlistamentoEsc,Integer> implements EstatAlistamentoEscDao {}
 
   public static class EstatArrecadacaoDaoJpa extends GenericDaoJpaImpl<EstatArrecadacao, Integer> implements EstatArrecadacaoDao {}
@@ -419,15 +461,5 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   public static class UsuarioDaoJpa extends GenericDaoJpaImpl<Usuario, String> implements UsuarioDao {}
 
   public static class UfDaoJpa extends GenericDaoJpaImpl<Uf, String> implements UfDao {}
-  
-  public static class EntrevistaCsDaoJpa extends GenericDaoJpaImpl<EntrevistaCs, Long> implements EntrevistaCsDao {}
-  
-  public static class CselDaoJpa extends GenericDaoJpaImpl<Csel, Integer> implements CselDao {}
-  
-  public static class CselFuncionamentoDaoJpa extends GenericDaoJpaImpl<CselFuncionamento, Integer> implements CselFuncionamentoDao {}
-  
-  public static class CselEnderecoDaoJpa extends GenericDaoJpaImpl<CselEndereco, Integer> implements CselEnderecoDao {}
-  
-  public static class CselFeriadoDaoJpa extends GenericDaoJpaImpl<CselFeriado, Integer> implements CselFeriadoDao {}
   
 }
