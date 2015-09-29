@@ -3,7 +3,7 @@ package br.mil.eb.sermil.core.dao;
 /** Fábrica abstrata de DAO. (Padrão GoF Abstract Factory)
  * @author Abreu Lopes
  * @since 4.0
- * @version $Id$
+ * @version 5.2.4
  */
 public abstract class DaoFactory {
 
@@ -44,10 +44,20 @@ public abstract class DaoFactory {
 
   public abstract CidContatoDao getCidContatoDao();
 
+  public abstract CidEventoDao getCidEventoDao();
+
   public abstract CidFotoDao getCidFotoDao();
 
   public abstract CsmDao getCsmDao();
 
+  public abstract CselDao getCselDao();
+  
+  public abstract CselEnderecoDao getCselEnderecoDao();
+
+  public abstract CselFeriadoDao getCselFeriadoDao();
+  
+  public abstract CselFuncionamentoDao getCselFuncionamentoDao();
+  
   public abstract DelegaciaDao getDelegaciaDao();
 
   public abstract DominiosDao getDominiosDao();
@@ -61,6 +71,8 @@ public abstract class DaoFactory {
   public abstract DstbParametroDao getDstbParametroDao();
 
   public abstract EmpresaDao getEmpresaDao();
+
+  public abstract EntrevistaCsDao getEntrevistaCsDao();
 
   public abstract EstatAlistamentoEscDao getEstatAlistamentoEscDao();
 
@@ -120,14 +132,4 @@ public abstract class DaoFactory {
 
   public abstract UfDao getUfDao();
   
-  public abstract CidEventoDao getCidEventoDao();
-  
-  public abstract EntrevistaCsDao getEntrevistaCsDao();
-  
-  public abstract CselDao getCselDao();
-  
-  public abstract CselFuncionamentoDao getCselFuncionamentoDao();
-  
-  public abstract CselEnderecoDao getCselEnderecoDao();
-
 }
