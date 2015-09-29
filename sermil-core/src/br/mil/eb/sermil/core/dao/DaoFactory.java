@@ -53,8 +53,6 @@ public abstract class DaoFactory {
 
    public abstract CidFotoDao getCidFotoDao();
 
-   public abstract CsmDao getCsmDao();
-
    public abstract CselDao getCselDao();
   
    public abstract CselEnderecoDao getCselEnderecoDao();
@@ -63,6 +61,8 @@ public abstract class DaoFactory {
   
    public abstract CselFuncionamentoDao getCselFuncionamentoDao();
   
+   public abstract CsmDao getCsmDao();
+
    public abstract DelegaciaDao getDelegaciaDao();
 
    public abstract DominiosDao getDominiosDao();
@@ -135,4 +135,6 @@ public abstract class DaoFactory {
 
    public abstract UfDao getUfDao();
   
+   public abstract UsuarioDao getUsuarioDao();
+   
 }

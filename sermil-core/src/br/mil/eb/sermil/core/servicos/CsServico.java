@@ -1,18 +1,15 @@
 package br.mil.eb.sermil.core.servicos;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.ToIntFunction;
 import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.directwebremoting.annotations.RemoteProxy;
-import org.directwebremoting.util.SystemOutLoggingOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,11 +29,11 @@ import br.mil.eb.sermil.modelo.Rm;
 import br.mil.eb.sermil.modelo.Usuario;
 
 /**
- * Serviço de informações de CEP. (View CEP)
+ * Gerenciamento de CS.
  * 
- * @author Abreu Lopes
- * @since 5.1
- * @version $Id$
+ * @author Anselmo Ribeiro
+ * @version 5.2.4
+ * @since 5.2.4
  */
 @Named("csServico")
 @RemoteProxy(name = "csServico")
@@ -94,7 +91,7 @@ public class CsServico {
          cs = cselDao.save(cs);
       } catch (Exception e) {
          logger.error(e.getMessage());
-         e.printStackTrace(); // TODO tirar stacktrace antes de entrar em producao
+         e.printStackTrace(); // TODO: tirar stacktrace antes de entrar em producao
          throw new CsPersistErrorException();
       }
       return cs;
@@ -149,8 +146,7 @@ public class CsServico {
    @Transactional(propagation = Propagation.NESTED)
    public Csel salvarCselEFuncionamento(Csel cs, CselFuncionamento funcionamento, List<CselFeriado> feriados, CselEndereco endereco) throws FuncionamentoJaExisteException, CsPersistErrorException {
 
-      // Feriados TODO
-      
+      // TODO: Feriados
       
       IntStream.range(0, feriados.size()).mapToObj(i -> feriados.get(i)).forEach(fer -> System.out.println(""));
       funcionamento.setFeriados(feriados);
