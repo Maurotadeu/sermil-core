@@ -135,7 +135,7 @@ public final class CselFuncionamento implements Serializable {
    /*
     * FERIADOS
     */
-   @OneToMany(mappedBy = "funcionamento", fetch = FetchType.EAGER)
+   @OneToMany(mappedBy = "funcionamento", fetch = FetchType.EAGER, orphanRemoval=true)
    private List<CselFeriado> feriados;
 
    public List<CselFeriado> getFeriados() {

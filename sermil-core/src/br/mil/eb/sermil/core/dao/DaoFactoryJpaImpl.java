@@ -326,6 +326,38 @@ public class DaoFactoryJpaImpl extends DaoFactory {
     return (UsuarioDao) instanciarDao(UsuarioDaoJpa.class);
   }
   
+<<<<<<< HEAD
+=======
+  @Override
+   public CidEventoDao getCidEventoDao() {
+     return (CidEventoDao) instanciarDao(CidEventoJpa.class);
+   }
+
+  @Override
+  public EntrevistaCsDao getEntrevistaCsDao() {
+    return (EntrevistaCsDao) instanciarDao(EntrevistaCsDaoJpa.class);
+  }
+
+  @Override
+  public CselDao getCselDao() {
+    return (CselDao) instanciarDao(CselDaoJpa.class);
+  }
+
+  @Override
+  public CselFuncionamentoDao getCselFuncionamentoDao() {
+    return (CselFuncionamentoDao) instanciarDao(CselFuncionamentoDaoJpa.class);
+  }
+
+  @Override
+  public CselEnderecoDao getCselEnderecoDao() {
+    return (CselEnderecoDao) instanciarDao(CselEnderecoDaoJpa.class);
+  }
+
+  @Override
+  public CselFeriadoDao getCselFeriadoDao() {
+    return (CselFeriadoDao) instanciarDao(CselFeriadoDaoJpa.class);
+  }
+
   // Criar implementações concretas dos DAO a serem instanciados (usando classes internas para evitar criar classes explícitas)
 
   public static class CepDaoJpa extends GenericDaoJpaImpl<Cep, String> implements CepDao {}
