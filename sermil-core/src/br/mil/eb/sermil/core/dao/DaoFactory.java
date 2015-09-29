@@ -49,29 +49,21 @@ public abstract class DaoFactory {
 
    public abstract CidContatoDao getCidContatoDao();
 
-<<<<<<< HEAD
-  public abstract CidEventoDao getCidEventoDao();
+   public abstract CidEventoDao getCidEventoDao();
 
-  public abstract CidFotoDao getCidFotoDao();
-=======
    public abstract CidFotoDao getCidFotoDao();
->>>>>>> 6d14ac3b0eb46a015291302ba958cac6cd35d85e
 
    public abstract CsmDao getCsmDao();
 
-<<<<<<< HEAD
-  public abstract CselDao getCselDao();
+   public abstract CselDao getCselDao();
   
-  public abstract CselEnderecoDao getCselEnderecoDao();
+   public abstract CselEnderecoDao getCselEnderecoDao();
 
-  public abstract CselFeriadoDao getCselFeriadoDao();
+   public abstract CselFeriadoDao getCselFeriadoDao();
   
-  public abstract CselFuncionamentoDao getCselFuncionamentoDao();
+   public abstract CselFuncionamentoDao getCselFuncionamentoDao();
   
-  public abstract DelegaciaDao getDelegaciaDao();
-=======
    public abstract DelegaciaDao getDelegaciaDao();
->>>>>>> 6d14ac3b0eb46a015291302ba958cac6cd35d85e
 
    public abstract DominiosDao getDominiosDao();
 
@@ -83,15 +75,11 @@ public abstract class DaoFactory {
 
    public abstract DstbParametroDao getDstbParametroDao();
 
-<<<<<<< HEAD
-  public abstract EntrevistaCsDao getEntrevistaCsDao();
-
-  public abstract EstatAlistamentoEscDao getEstatAlistamentoEscDao();
-=======
-   public abstract EmpresaDao getEmpresaDao();
->>>>>>> 6d14ac3b0eb46a015291302ba958cac6cd35d85e
+   public abstract EntrevistaCsDao getEntrevistaCsDao();
 
    public abstract EstatAlistamentoEscDao getEstatAlistamentoEscDao();
+
+   public abstract EmpresaDao getEmpresaDao();
 
    public abstract EstatArrecadacaoDao getEstatArrecadacaoDao();
 
@@ -145,25 +133,6 @@ public abstract class DaoFactory {
 
    public abstract TaxaMultaDao getTaxaMultaDao();
 
-<<<<<<< HEAD
-  public abstract UfDao getUfDao();
-  
-=======
-   public abstract UsuarioDao getUsuarioDao();
-
    public abstract UfDao getUfDao();
-
-   public abstract CidEventoDao getCidEventoDao();
-
-   public abstract EntrevistaCsDao getEntrevistaCsDao();
-
-   public abstract CselDao getCselDao();
-
-   public abstract CselFuncionamentoDao getCselFuncionamentoDao();
-
-   public abstract CselEnderecoDao getCselEnderecoDao();
-
-   public abstract CselFeriadoDao getCselFeriadoDao();
-
->>>>>>> 6d14ac3b0eb46a015291302ba958cac6cd35d85e
+  
 }
