@@ -5,7 +5,7 @@ package br.mil.eb.sermil.core.dao;
  * 
  * @author Abreu Lopes
  * @since 4.0
- * @version $Id$
+ * @version 5.2.4
  */
 public abstract class DaoFactory {
 
@@ -49,8 +49,18 @@ public abstract class DaoFactory {
 
    public abstract CidContatoDao getCidContatoDao();
 
+   public abstract CidEventoDao getCidEventoDao();
+
    public abstract CidFotoDao getCidFotoDao();
 
+   public abstract CselDao getCselDao();
+  
+   public abstract CselEnderecoDao getCselEnderecoDao();
+
+   public abstract CselFeriadoDao getCselFeriadoDao();
+  
+   public abstract CselFuncionamentoDao getCselFuncionamentoDao();
+  
    public abstract CsmDao getCsmDao();
 
    public abstract DelegaciaDao getDelegaciaDao();
@@ -65,9 +75,11 @@ public abstract class DaoFactory {
 
    public abstract DstbParametroDao getDstbParametroDao();
 
-   public abstract EmpresaDao getEmpresaDao();
+   public abstract EntrevistaCsDao getEntrevistaCsDao();
 
    public abstract EstatAlistamentoEscDao getEstatAlistamentoEscDao();
+
+   public abstract EmpresaDao getEmpresaDao();
 
    public abstract EstatArrecadacaoDao getEstatArrecadacaoDao();
 
@@ -121,20 +133,8 @@ public abstract class DaoFactory {
 
    public abstract TaxaMultaDao getTaxaMultaDao();
 
-   public abstract UsuarioDao getUsuarioDao();
-
    public abstract UfDao getUfDao();
-
-   public abstract CidEventoDao getCidEventoDao();
-
-   public abstract EntrevistaCsDao getEntrevistaCsDao();
-
-   public abstract CselDao getCselDao();
-
-   public abstract CselFuncionamentoDao getCselFuncionamentoDao();
-
-   public abstract CselEnderecoDao getCselEnderecoDao();
-
-   public abstract CselFeriadoDao getCselFeriadoDao();
-
+  
+   public abstract UsuarioDao getUsuarioDao();
+   
 }

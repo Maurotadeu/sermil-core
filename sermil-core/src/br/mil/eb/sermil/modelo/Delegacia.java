@@ -1,7 +1,6 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -19,7 +18,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Delegacia de Serviço Militar.
  * @author Abreu Lopes
  * @since 4.0
- * @version $Id: Delegacia.java 2419 2014-05-09 12:28:27Z wlopes $
+ * @version 5.2.4
  */
 @Entity
 @NamedQueries({
@@ -135,7 +134,7 @@ public class Delegacia implements Serializable {
   }
   
   public Float getLatitude() {
-    return latitude;
+     return latitude;
   }
 
   public void setLatitude(Float latitude) {
@@ -143,7 +142,7 @@ public class Delegacia implements Serializable {
   }
 
   public Float getLongitude() {
-    return longitude;
+     return longitude;
   }
 
   public void setLongitude(Float longitude) {
@@ -172,9 +171,9 @@ public class Delegacia implements Serializable {
     @Override
     public String toString() {
       return new StringBuilder()
-        .append(this.getCsmCodigo() == null ? "00" : new DecimalFormat("00").format(this.getCsmCodigo()))
+        .append(getCsmCodigo())
         .append("/")
-        .append(this.getCodigo() == null ? "000" : new DecimalFormat("000").format(this.getCodigo()))
+        .append(getCodigo())
         .toString();
     }
 
