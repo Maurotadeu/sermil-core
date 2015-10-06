@@ -1,18 +1,21 @@
 package br.mil.eb.sermil.core.exceptions;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /** Cidadão já cadastrado no sistema.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CidadaoCadastradoException.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.2.5
  */
 public class CidadaoCadastradoException extends ConsultaException {
 
-    /** serialVersionUID */
-    private static final long serialVersionUID = 4260391301257943255L;
+   /** serialVersionUID */
+   private static final long serialVersionUID = 238975662596173010L;
 
-    /** Construtor. */
-    public CidadaoCadastradoException() {
-        super("Cidadão já cadastrado.");
-    }
+   /** Construtor. */
+   public CidadaoCadastradoException(final String nome, final String mae, final Date nasc) {
+      super(String.format("Cidadão já consta da base de dados. (%s, %s, %s)", nome, mae, new SimpleDateFormat("dd/MM/yyyy").format(nasc)));
+   }
 
 }
