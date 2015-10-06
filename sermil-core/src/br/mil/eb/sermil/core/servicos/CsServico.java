@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.mil.eb.sermil.core.dao.CselDao;
 import br.mil.eb.sermil.core.dao.CselEnderecoDao;
 import br.mil.eb.sermil.core.dao.CselFuncionamentoDao;
+import br.mil.eb.sermil.core.dao.PgcDao;
 import br.mil.eb.sermil.core.dao.RmDao;
 import br.mil.eb.sermil.core.exceptions.CsPersistErrorException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoDeletarErroException;
@@ -54,6 +55,9 @@ public class CsServico {
 
    @Inject
    CselEnderecoDao enderecoDao;
+   
+   @Inject 
+   PgcDao pgcDao;
 
    public Map<Integer, String> getCselEnderecos(Integer cselCodigo) {
       Map<Integer, String> ret = new HashMap<Integer, String>();

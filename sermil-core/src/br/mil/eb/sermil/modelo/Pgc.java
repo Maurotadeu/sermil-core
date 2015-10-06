@@ -91,6 +91,14 @@ public final class Pgc implements Serializable {
    /**
     * SELECAO
     */
+   @Column(name = "SELECAO_GERAL_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralInicio;
+
+   @Column(name = "SELECAO_GERAL_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralTermino;
+   
    @Column(name = "SELECAO_GERAL_OMA_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date selecaoGeralOmaInicio;
@@ -130,6 +138,10 @@ public final class Pgc implements Serializable {
    @Column(name = "SELECAO_GERAL_MFDV_TERMINO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date selecaoGeralMfdvTermino;
+   
+   /**
+    * SELECAO COMPLEMENTAR
+    */
 
    @Column(name = "SELECAO_COMPLEMENTAR_GPTA_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
