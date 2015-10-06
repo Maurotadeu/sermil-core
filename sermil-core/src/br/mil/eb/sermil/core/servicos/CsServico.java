@@ -147,6 +147,8 @@ public class CsServico {
 
    @Transactional(propagation = Propagation.NESTED)
    public Csel salvarCselEFuncionamento(Csel cs, CselFuncionamento funcionamento, List<CselFeriado> feriados, CselEndereco endereco) throws FuncionamentoJaExisteException, CsPersistErrorException {
+      
+      this.funcionamentoPodeSerSalvo(funcionamento);
 
       feriados.forEach(fer -> {
          if (fer == null)
@@ -167,6 +169,11 @@ public class CsServico {
       // Csel
       persistir(cs);
       return cs;
+   }
+   
+   public boolean funcionamentoPodeSerSalvo(CselFuncionamento func){
+      //TODO aplicar as regras de negocio para criacao de periodo de funcionamento
+      return false;
    }
 
    public List<CselFuncionamento> getFuncionamentosDeCsel(Integer cselCodigo) {
