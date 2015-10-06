@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,7 +19,10 @@ import br.mil.eb.sermil.core.dao.CselEnderecoDao;
 import br.mil.eb.sermil.core.dao.CselFuncionamentoDao;
 import br.mil.eb.sermil.core.dao.RmDao;
 import br.mil.eb.sermil.core.exceptions.CsPersistErrorException;
+import br.mil.eb.sermil.core.exceptions.FuncionamentoDeletarErroException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoJaExisteException;
+import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
+import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Csel;
 import br.mil.eb.sermil.modelo.CselEndereco;
 import br.mil.eb.sermil.modelo.CselFeriado;
@@ -146,9 +148,12 @@ public class CsServico {
    @Transactional(propagation = Propagation.NESTED)
    public Csel salvarCselEFuncionamento(Csel cs, CselFuncionamento funcionamento, List<CselFeriado> feriados, CselEndereco endereco) throws FuncionamentoJaExisteException, CsPersistErrorException {
 
-      // TODO: Feriados
-      
-      IntStream.range(0, feriados.size()).mapToObj(i -> feriados.get(i)).forEach(fer -> System.out.println(""));
+      feriados.forEach(fer -> {
+         if (fer == null)
+            feriados.remove(fer);
+         else
+            fer.setFuncionamento(funcionamento);
+      });
       funcionamento.setFeriados(feriados);
 
       // Endereco
@@ -166,6 +171,21 @@ public class CsServico {
 
    public List<CselFuncionamento> getFuncionamentosDeCsel(Integer cselCodigo) {
       return funcionamentoDao.findByNamedQuery("listarFuncionamentosDeCsel", cselCodigo);
+   }
+
+   @Transactional
+   public void deletarFuncionamento(Integer codigo) throws FuncionamentoNaoExisteException, FuncionamentoDeletarErroException {
+      CselFuncionamento func = funcionamentoDao.findById(codigo);
+      if (func == null) {
+         logger.error(new StringBuilder("Usuario tentou deletar Funcionamento de CS que nao existe. Funcionamento codigo =  ").append(codigo).toString());
+         throw new FuncionamentoNaoExisteException();
+      }
+      try {
+         funcionamentoDao.delete(func);
+      } catch (SermilException e) {
+         logger.error("Erro ao deletar funcionamento: " + func.toString());
+         throw new FuncionamentoDeletarErroException();
+      }
    }
 
 }
