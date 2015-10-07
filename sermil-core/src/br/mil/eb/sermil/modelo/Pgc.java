@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
@@ -21,6 +23,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "PGC")
+@NamedQuery(name = "findByAnoBase", query = "select p from pgc p where p.anoBase = ?1 ")
 public final class Pgc implements Serializable {
 
    /** serialVersionUID. */
@@ -33,6 +36,9 @@ public final class Pgc implements Serializable {
 
    @Column(name = "classe", nullable = false, length = 4)
    private String classe;
+
+   @Column(name = "ANO_BASE", unique = true)
+   private String anoBase;
 
    /**
     * ALISTAMENTO
@@ -91,6 +97,14 @@ public final class Pgc implements Serializable {
    /**
     * SELECAO
     */
+   @Column(name = "SELECAO_GERAL_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralInicio;
+
+   @Column(name = "SELECAO_GERAL_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralTermino;
+
    @Column(name = "SELECAO_GERAL_OMA_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date selecaoGeralOmaInicio;
@@ -130,6 +144,10 @@ public final class Pgc implements Serializable {
    @Column(name = "SELECAO_GERAL_MFDV_TERMINO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date selecaoGeralMfdvTermino;
+
+   /**
+    * SELECAO COMPLEMENTAR
+    */
 
    @Column(name = "SELECAO_COMPLEMENTAR_GPTA_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
@@ -819,6 +837,30 @@ public final class Pgc implements Serializable {
 
    public void setIncorporacaoEic(Date incorporacaoEic) {
       this.incorporacaoEic = incorporacaoEic;
+   }
+
+   public String getAnoBase() {
+      return anoBase;
+   }
+
+   public void setAnoBase(String anoBase) {
+      this.anoBase = anoBase;
+   }
+
+   public Date getSelecaoGeralInicio() {
+      return selecaoGeralInicio;
+   }
+
+   public void setSelecaoGeralInicio(Date selecaoGeralInicio) {
+      this.selecaoGeralInicio = selecaoGeralInicio;
+   }
+
+   public Date getSelecaoGeralTermino() {
+      return selecaoGeralTermino;
+   }
+
+   public void setSelecaoGeralTermino(Date selecaoGeralTermino) {
+      this.selecaoGeralTermino = selecaoGeralTermino;
    }
 
 }

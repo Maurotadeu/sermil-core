@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -18,13 +17,24 @@ import org.springframework.transaction.annotation.Transactional;
 import br.mil.eb.sermil.core.dao.CselDao;
 import br.mil.eb.sermil.core.dao.CselEnderecoDao;
 import br.mil.eb.sermil.core.dao.CselFuncionamentoDao;
+import br.mil.eb.sermil.core.dao.PgcDao;
 import br.mil.eb.sermil.core.dao.RmDao;
+import br.mil.eb.sermil.core.exceptions.AnoBaseNaoEhUnicoException;
 import br.mil.eb.sermil.core.exceptions.CsPersistErrorException;
+import br.mil.eb.sermil.core.exceptions.FuncionamentoAnoBaseException;
+import br.mil.eb.sermil.core.exceptions.FuncionamentoDataInicioErroException;
+import br.mil.eb.sermil.core.exceptions.FuncionamentoDataTerminoErroException;
+import br.mil.eb.sermil.core.exceptions.FuncionamentoDeletarErroException;
+import br.mil.eb.sermil.core.exceptions.FuncionamentoFeriadoErroException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoJaExisteException;
+import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
+import br.mil.eb.sermil.core.exceptions.FuncionamentosSobrepostosException;
+import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Csel;
 import br.mil.eb.sermil.modelo.CselEndereco;
 import br.mil.eb.sermil.modelo.CselFeriado;
 import br.mil.eb.sermil.modelo.CselFuncionamento;
+import br.mil.eb.sermil.modelo.Pgc;
 import br.mil.eb.sermil.modelo.Rm;
 import br.mil.eb.sermil.modelo.Usuario;
 
@@ -52,6 +62,9 @@ public class CsServico {
 
    @Inject
    CselEnderecoDao enderecoDao;
+
+   @Inject
+   PgcDao pgcDao;
 
    public Map<Integer, String> getCselEnderecos(Integer cselCodigo) {
       Map<Integer, String> ret = new HashMap<Integer, String>();
@@ -144,11 +157,15 @@ public class CsServico {
    }
 
    @Transactional(propagation = Propagation.NESTED)
-   public Csel salvarCselEFuncionamento(Csel cs, CselFuncionamento funcionamento, List<CselFeriado> feriados, CselEndereco endereco) throws FuncionamentoJaExisteException, CsPersistErrorException {
+   public Csel salvarCselEFuncionamento(Csel cs, CselFuncionamento funcionamento, List<CselFeriado> feriados, CselEndereco endereco) throws FuncionamentoJaExisteException, CsPersistErrorException, AnoBaseNaoEhUnicoException,
+         FuncionamentoDataInicioErroException, FuncionamentoDataTerminoErroException, FuncionamentoFeriadoErroException, FuncionamentosSobrepostosException, FuncionamentoAnoBaseException {
 
-      // TODO: Feriados
-      
-      IntStream.range(0, feriados.size()).mapToObj(i -> feriados.get(i)).forEach(fer -> System.out.println(""));
+      feriados.forEach(fer -> {
+         if (fer == null)
+            feriados.remove(fer);
+         else
+            fer.setFuncionamento(funcionamento);
+      });
       funcionamento.setFeriados(feriados);
 
       // Endereco
@@ -159,13 +176,86 @@ public class CsServico {
       // Funcionamento
       cs.addFuncionamento(funcionamento);
 
-      // Csel
-      persistir(cs);
+      // persistir
+      if (isFuncionamentoDeCsCorreto(funcionamento) && isFeriadosDeFuncionamentoCorretos(feriados, funcionamento))
+         persistir(cs);
       return cs;
+   }
+
+   /**
+    * Regras de Negocio para Funcionamento de CS
+    * @return boolean
+    */
+   public boolean isFuncionamentoDeCsCorreto(CselFuncionamento func)
+         throws AnoBaseNaoEhUnicoException, FuncionamentoDataInicioErroException, FuncionamentoDataTerminoErroException, FuncionamentoFeriadoErroException, FuncionamentosSobrepostosException, FuncionamentoAnoBaseException {
+
+      // ano base de PGC tem que ser unico
+      if (!this.anoBaseDePgcEhUnico(func.getAnoBase())) {  
+         logger.error("Exite um PGC com dois lancamento de ano base. Ano base: " + func.getAnoBase());
+         throw new AnoBaseNaoEhUnicoException();
+      }
+      List<Pgc> pgcs = pgcDao.findByNamedQuery("pgc.findByAnoBase", func.getAnoBase());
+      Pgc p = pgcs.get(0);
+
+      // O inicio da CS nao pode ser antes do inicio no PGC
+      if (func.getInicioData().before(p.getSelecaoGeralInicio()))
+         throw new FuncionamentoDataInicioErroException();
+
+      // O termino da CS nao pode ser depois do PGC
+      if (func.getTerminoData().after(p.getSelecaoGeralTermino()))
+         throw new FuncionamentoDataTerminoErroException();
+
+      // Os blocos de cada inicio e termino de funcionamento para o mesmo ano base nao podem se
+      // sobrepor
+      List<CselFuncionamento> funcs = cselDao.findById(func.getCsel().getCodigo()).getFuncionamentos();
+      for (CselFuncionamento f : funcs) {
+         if (func.getInicioData().before(f.getTerminoData()) || func.getTerminoData().after(f.getInicioData()))
+            throw new FuncionamentosSobrepostosException();
+      }
+
+      // A CS so pode cadastrar funcionamento com ano base ja cadastrado no PGC
+      List<Pgc> ps = pgcDao.findByNamedQuery("pgc.findByAnoBase", func.getAnoBase());
+      if (ps.size() == 0)
+         throw new FuncionamentoAnoBaseException();
+
+      return true;
+   }
+
+   /**
+    * Regras de Negocio para Feriados de Funcionamento de CS
+    * @return boolean
+    */
+   public boolean isFeriadosDeFuncionamentoCorretos(List<CselFeriado> feriados, CselFuncionamento func) throws FuncionamentoFeriadoErroException{
+      // Os feriados tem que estar dentro do periodo declarado
+      for (CselFeriado fer : feriados) {
+         if (fer.getFeriadoData().before(func.getInicioData()) || fer.getFeriadoData().after(func.getTerminoData()))
+            throw new FuncionamentoFeriadoErroException();
+      }
+      return true;
+   }
+
+   public boolean anoBaseDePgcEhUnico(String anoBase) {
+      List<Pgc> pgcs = pgcDao.findByNamedQuery("findByAnoBase", anoBase);
+      return pgcs.size() == 1?true:false;
    }
 
    public List<CselFuncionamento> getFuncionamentosDeCsel(Integer cselCodigo) {
       return funcionamentoDao.findByNamedQuery("listarFuncionamentosDeCsel", cselCodigo);
+   }
+
+   @Transactional
+   public void deletarFuncionamento(Integer codigo) throws FuncionamentoNaoExisteException, FuncionamentoDeletarErroException {
+      CselFuncionamento func = funcionamentoDao.findById(codigo);
+      if (func == null) {
+         logger.error(new StringBuilder("Usuario tentou deletar Funcionamento de CS mas funcionamento nao existe. Funcionamento codigo =  ").append(codigo).toString());
+         throw new FuncionamentoNaoExisteException();
+      }
+      try {
+         funcionamentoDao.delete(func);
+      } catch (SermilException e) {
+         logger.error("Erro ao deletar funcionamento: " + func.toString());
+         throw new FuncionamentoDeletarErroException();
+      }
    }
 
 }
