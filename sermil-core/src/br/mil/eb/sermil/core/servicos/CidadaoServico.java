@@ -48,7 +48,7 @@ import br.mil.eb.sermil.tipos.Ra;
  * 
  * @author Abreu Lopes, Anselmo
  * @since 3.0
- * @version 5.2.3
+ * @version 5.2.5
  */
 @Named("cidadaoServico")
 public class CidadaoServico {
@@ -345,30 +345,27 @@ public class CidadaoServico {
       return false;
    }
 
-   public boolean podeImprimirCertSitMilitar(Long ra) throws SermilException {
-      // Recuperar cidadao
+   public boolean podeImprimirCertSitMilitar(final Long ra) throws SermilException {
+      /* Recuperar cidadão */
       Cidadao cid = null;
       try {
-         cid = recuperar(ra);
+         cid = this.recuperar(ra);
       } catch (SermilException e) {
          throw new CidadaoNotFoundException();
       }
-      return this.podeImprimirCertSitMilitar(cid);
-   }
-   
-   public boolean podeImprimirCertSitMilitar(Cidadao cid) throws SermilException{
-      /**
-       * REGRAS DE NEGOCIO
-       */
+      /* REGRAS DE NEGOCIO */
       // Situacao Militar = licenciado
-      if (cid.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_LICENCIADO)
+      if (cid.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_LICENCIADO) {
          throw new SermilException("Cidadão não está na situação LICENCIADO (15).");
+      }
       // Tem que ter evento licenciamento
-      if (!temEvento(cid, CidEvento.LICENCIAMENTO))
+      if (!temEvento(cid, CidEvento.LICENCIAMENTO)) {
          throw new CidadaoNaoTemEventoException();
+      }
       // Pelo menos um documento apresentado.
-      if (cid.getCidDocApresColletion().size() <= 0)
+      if (cid.getCidDocApresColletion().size() <= 0) {
          throw new CidadaoNaoTemDocApresException();
+      }
       return true;
    }
 }
