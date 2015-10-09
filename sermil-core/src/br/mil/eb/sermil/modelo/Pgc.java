@@ -166,60 +166,16 @@ public final class Pgc implements Serializable {
    private Date selecaoGeralMfdvTermino;
 
    /**
-    * SELECAO COMPLEMENTAR
-    */
-
-   @Column(name = "SELECAO_COMPLEMENTAR_GPTA_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarGptaInicio;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_GPTA_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarGptaTermino;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_GPTB_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarGptbInicio;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_GPTB_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarGptbTermino;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_NPOR_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarNporInicio;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_NPOR_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarNporTermino;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_TG_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarTgInicio;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_TG_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarTgTermino;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_ESIM_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarEsimInicio;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_ESIM_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarEsimTermino;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_MFDV_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarMfdvInicio;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_MFDV_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarMfdvTermino;
-
-   /**
     * DISTRIBUICAO
     */
+   @Column(name = "DISTRIBUICAO_PROCESSAMENTO_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoProcessamentoInicio;
+
+   @Column(name = "DISTRIBUICAO_PROCESSAMENTO_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoProcessamentoTermino;
+
    @Column(name = "DISTRIBUICAO_CONHECIMENTO_GPTA_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date distribuicaoConhecimentoGptaInicio;
@@ -270,7 +226,7 @@ public final class Pgc implements Serializable {
 
    @Column(name = "DISTRIBUICAO_BOLNEC_LANCAMENTO_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date distribuicaoBolnedLancamentoInicio;
+   private Date distribuicaoBolnecLancamentoInicio;
 
    @Column(name = "DISTRIBUICAO_BOLNEC_LANCAMENTO_TERMINO", nullable = false)
    @Temporal(TemporalType.DATE)
@@ -299,14 +255,6 @@ public final class Pgc implements Serializable {
    @Column(name = "DISTRIBUICAO_BOLNEC_CONSOLIDACAO_TERMINO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date distribuicaoBolnecConsolidacaoTermino;
-
-   @Column(name = "DISTRIBUICAO_PROCESSAMENTO_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoProcessamentoInicio;
-
-   @Column(name = "DISTRIBUICAO_PROCESSAMENTO_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoProcessamentoTermino;
 
    /**
     * SELECAO COMPLEMENTAR
@@ -338,6 +286,54 @@ public final class Pgc implements Serializable {
    @Column(name = "INCORPORACAO_EIC", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date incorporacaoEic;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_GPTA_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarGptaInicio;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_GPTA_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarGptaTermino;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_GPTB_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarGptbInicio;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_GPTB_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarGptbTermino;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_NPOR_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarNporInicio;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_NPOR_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarNporTermino;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_TG_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarTgInicio;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_TG_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarTgTermino;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_ESIM_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarEsimInicio;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_ESIM_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarEsimTermino;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_MFDV_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarMfdvInicio;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_MFDV_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarMfdvTermino;
 
    public Integer getCodigo() {
       return codigo;
@@ -707,12 +703,12 @@ public final class Pgc implements Serializable {
       this.distribuicaoConhecimentoEsimTermino = distribuicaoConhecimentoEsimTermino;
    }
 
-   public Date getDistribuicaoBolnedLancamentoInicio() {
-      return distribuicaoBolnedLancamentoInicio;
+   public Date getDistribuicaoBolnecLancamentoInicio() {
+      return distribuicaoBolnecLancamentoInicio;
    }
 
-   public void setDistribuicaoBolnedLancamentoInicio(Date distribuicaoBolnedLancamentoInicio) {
-      this.distribuicaoBolnedLancamentoInicio = distribuicaoBolnedLancamentoInicio;
+   public void setDistribuicaoBolnecLancamentoInicio(Date distribuicaoBolnecLancamentoInicio) {
+      this.distribuicaoBolnecLancamentoInicio = distribuicaoBolnecLancamentoInicio;
    }
 
    public Date getDistribuicaoBolnecLancamentoTermino() {
