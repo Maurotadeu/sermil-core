@@ -177,7 +177,7 @@ public class CsServico {
       cs.addFuncionamento(funcionamento);
 
       // persistir
-      if (isFuncionamentoDeCsCorreto(funcionamento) && isFeriadosDeFuncionamentoCorretos(feriados, funcionamento))
+     // if (isFuncionamentoDeCsCorreto(funcionamento) && isFeriadosDeFuncionamentoCorretos(feriados, funcionamento))
          persistir(cs);
       return cs;
    }
