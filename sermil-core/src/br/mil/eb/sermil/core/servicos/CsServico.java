@@ -177,20 +177,21 @@ public class CsServico {
       cs.addFuncionamento(funcionamento);
 
       // persistir
-      if (isFuncionamentoDeCsCorreto(funcionamento) && isFeriadosDeFuncionamentoCorretos(feriados, funcionamento))
+     // if (isFuncionamentoDeCsCorreto(funcionamento) && isFeriadosDeFuncionamentoCorretos(feriados, funcionamento))
          persistir(cs);
       return cs;
    }
 
    /**
     * Regras de Negocio para Funcionamento de CS
+    * 
     * @return boolean
     */
    public boolean isFuncionamentoDeCsCorreto(CselFuncionamento func)
          throws AnoBaseNaoEhUnicoException, FuncionamentoDataInicioErroException, FuncionamentoDataTerminoErroException, FuncionamentoFeriadoErroException, FuncionamentosSobrepostosException, FuncionamentoAnoBaseException {
 
       // ano base de PGC tem que ser unico
-      if (!this.anoBaseDePgcEhUnico(func.getAnoBase())) {  
+      if (!this.anoBaseDePgcEhUnico(func.getAnoBase())) {
          logger.error("Exite um PGC com dois lancamento de ano base. Ano base: " + func.getAnoBase());
          throw new AnoBaseNaoEhUnicoException();
       }
@@ -223,9 +224,10 @@ public class CsServico {
 
    /**
     * Regras de Negocio para Feriados de Funcionamento de CS
+    * 
     * @return boolean
     */
-   public boolean isFeriadosDeFuncionamentoCorretos(List<CselFeriado> feriados, CselFuncionamento func) throws FuncionamentoFeriadoErroException{
+   public boolean isFeriadosDeFuncionamentoCorretos(List<CselFeriado> feriados, CselFuncionamento func) throws FuncionamentoFeriadoErroException {
       // Os feriados tem que estar dentro do periodo declarado
       for (CselFeriado fer : feriados) {
          if (fer.getFeriadoData().before(func.getInicioData()) || fer.getFeriadoData().after(func.getTerminoData()))
@@ -236,7 +238,7 @@ public class CsServico {
 
    public boolean anoBaseDePgcEhUnico(String anoBase) {
       List<Pgc> pgcs = pgcDao.findByNamedQuery("findByAnoBase", anoBase);
-      return pgcs.size() == 1?true:false;
+      return pgcs.size() == 1 ? true : false;
    }
 
    public List<CselFuncionamento> getFuncionamentosDeCsel(Integer cselCodigo) {
@@ -256,6 +258,10 @@ public class CsServico {
          logger.error("Erro ao deletar funcionamento: " + func.toString());
          throw new FuncionamentoDeletarErroException();
       }
+   }
+
+   public List<Pgc> getPgcList() {
+      return pgcDao.findAll();
    }
 
 }

@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -43,21 +42,42 @@ public final class Pgc implements Serializable {
    /**
     * ALISTAMENTO
     */
-   @Column(name = "ALISTAMENTO_INICIO", nullable = false)
+   @Column(name = "ALISTAMENTO_DENTRO_PRAZO_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date alistamentoInicio;
+   private Date alistamentoDentroPrazoInicio;
 
-   @Column(name = "ALISTAMENTO_TERMINO", nullable = false)
+   @Column(name = "ALISTAMENTO_DENTRO_PRAZO_TERMINO", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date alistamentoTermino;
+   private Date alistamentoDentroPrazoTermino;
 
+   @Column(name = "ALISTAMENTO_FORA_PRAZO_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date alistamentoForaPrazoInicio;
+
+   @Column(name = "ALISTAMENTO_FORA_PRAZO_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date alistamentoForaPrazoTermino;
+
+   /* CA = CLASSES ANTERIORES */
+   // Alistados de janeiro a junho
    @Column(name = "ALISTAMENTO_CA_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date alistamentoCaInicio;
 
+   // Alistados de janeiro a junho
    @Column(name = "ALISTAMENTO_CA_TERMINO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date alistamentoCaTermino;
+
+   // Alistados de julho a dezembro
+   @Column(name = "ALISTAMENTO_CA_2PERIODO_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date alistamentoCa2PeriodoInicio;
+
+   // Alistados de julho a dezembro
+   @Column(name = "ALISTAMENTO_CA_2PERIODO_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date alistamentoCa2PeriodoTermino;
 
    /**
     * PRE DISPENSA
@@ -146,60 +166,16 @@ public final class Pgc implements Serializable {
    private Date selecaoGeralMfdvTermino;
 
    /**
-    * SELECAO COMPLEMENTAR
-    */
-
-   @Column(name = "SELECAO_COMPLEMENTAR_GPTA_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarGptaInicio;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_GPTA_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarGptaTermino;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_GPTB_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarGptbInicio;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_GPTB_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarGptbTermino;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_NPOR_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarNporInicio;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_NPOR_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarNporTermino;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_TG_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarTgInicio;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_TG_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarTgTermino;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_ESIM_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarEsimInicio;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_ESIM_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarEsimTermino;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_MFDV_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarMfdvInicio;
-
-   @Column(name = "SELECAO_COMPLEMENTAR_MFDV_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date selecaoComplementarMfdvTermino;
-
-   /**
     * DISTRIBUICAO
     */
+   @Column(name = "DISTRIBUICAO_PROCESSAMENTO_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoProcessamentoInicio;
+
+   @Column(name = "DISTRIBUICAO_PROCESSAMENTO_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoProcessamentoTermino;
+
    @Column(name = "DISTRIBUICAO_CONHECIMENTO_GPTA_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date distribuicaoConhecimentoGptaInicio;
@@ -250,7 +226,7 @@ public final class Pgc implements Serializable {
 
    @Column(name = "DISTRIBUICAO_BOLNEC_LANCAMENTO_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date distribuicaoBolnedLancamentoInicio;
+   private Date distribuicaoBolnecLancamentoInicio;
 
    @Column(name = "DISTRIBUICAO_BOLNEC_LANCAMENTO_TERMINO", nullable = false)
    @Temporal(TemporalType.DATE)
@@ -279,14 +255,6 @@ public final class Pgc implements Serializable {
    @Column(name = "DISTRIBUICAO_BOLNEC_CONSOLIDACAO_TERMINO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date distribuicaoBolnecConsolidacaoTermino;
-
-   @Column(name = "DISTRIBUICAO_PROCESSAMENTO_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoProcessamentoInicio;
-
-   @Column(name = "DISTRIBUICAO_PROCESSAMENTO_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoProcessamentoTermino;
 
    /**
     * SELECAO COMPLEMENTAR
@@ -319,6 +287,54 @@ public final class Pgc implements Serializable {
    @Temporal(TemporalType.DATE)
    private Date incorporacaoEic;
 
+   @Column(name = "SELECAO_COMPLEMENTAR_GPTA_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarGptaInicio;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_GPTA_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarGptaTermino;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_GPTB_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarGptbInicio;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_GPTB_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarGptbTermino;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_NPOR_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarNporInicio;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_NPOR_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarNporTermino;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_TG_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarTgInicio;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_TG_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarTgTermino;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_ESIM_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarEsimInicio;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_ESIM_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarEsimTermino;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_MFDV_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarMfdvInicio;
+
+   @Column(name = "SELECAO_COMPLEMENTAR_MFDV_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoComplementarMfdvTermino;
+
    public Integer getCodigo() {
       return codigo;
    }
@@ -333,22 +349,6 @@ public final class Pgc implements Serializable {
 
    public void setClasse(String classe) {
       this.classe = classe;
-   }
-
-   public Date getAlistamentoInicio() {
-      return alistamentoInicio;
-   }
-
-   public void setAlistamentoInicio(Date alistamentoInicio) {
-      this.alistamentoInicio = alistamentoInicio;
-   }
-
-   public Date getAlistamentoTermino() {
-      return alistamentoTermino;
-   }
-
-   public void setAlistamentoTermino(Date alistamentoTermino) {
-      this.alistamentoTermino = alistamentoTermino;
    }
 
    public Date getAlistamentoCaInicio() {
@@ -703,12 +703,12 @@ public final class Pgc implements Serializable {
       this.distribuicaoConhecimentoEsimTermino = distribuicaoConhecimentoEsimTermino;
    }
 
-   public Date getDistribuicaoBolnedLancamentoInicio() {
-      return distribuicaoBolnedLancamentoInicio;
+   public Date getDistribuicaoBolnecLancamentoInicio() {
+      return distribuicaoBolnecLancamentoInicio;
    }
 
-   public void setDistribuicaoBolnedLancamentoInicio(Date distribuicaoBolnedLancamentoInicio) {
-      this.distribuicaoBolnedLancamentoInicio = distribuicaoBolnedLancamentoInicio;
+   public void setDistribuicaoBolnecLancamentoInicio(Date distribuicaoBolnecLancamentoInicio) {
+      this.distribuicaoBolnecLancamentoInicio = distribuicaoBolnecLancamentoInicio;
    }
 
    public Date getDistribuicaoBolnecLancamentoTermino() {
@@ -861,6 +861,54 @@ public final class Pgc implements Serializable {
 
    public void setSelecaoGeralTermino(Date selecaoGeralTermino) {
       this.selecaoGeralTermino = selecaoGeralTermino;
+   }
+
+   public Date getAlistamentoDentroPrazoInicio() {
+      return alistamentoDentroPrazoInicio;
+   }
+
+   public void setAlistamentoDentroPrazoInicio(Date alistamentoDentroPrazoInicio) {
+      this.alistamentoDentroPrazoInicio = alistamentoDentroPrazoInicio;
+   }
+
+   public Date getAlistamentoDentroPrazoTermino() {
+      return alistamentoDentroPrazoTermino;
+   }
+
+   public void setAlistamentoDentroPrazoTermino(Date alistamentoDentroPrazoTermino) {
+      this.alistamentoDentroPrazoTermino = alistamentoDentroPrazoTermino;
+   }
+
+   public Date getAlistamentoForaPrazoInicio() {
+      return alistamentoForaPrazoInicio;
+   }
+
+   public void setAlistamentoForaPrazoInicio(Date alistamentoForaPrazoInicio) {
+      this.alistamentoForaPrazoInicio = alistamentoForaPrazoInicio;
+   }
+
+   public Date getAlistamentoForaPrazoTermino() {
+      return alistamentoForaPrazoTermino;
+   }
+
+   public void setAlistamentoForaPrazoTermino(Date alistamentoForaPrazoTermino) {
+      this.alistamentoForaPrazoTermino = alistamentoForaPrazoTermino;
+   }
+
+   public Date getAlistamentoCa2PeriodoInicio() {
+      return alistamentoCa2PeriodoInicio;
+   }
+
+   public void setAlistamentoCa2PeriodoInicio(Date alistamentoCa2PeriodoInicio) {
+      this.alistamentoCa2PeriodoInicio = alistamentoCa2PeriodoInicio;
+   }
+
+   public Date getAlistamentoCa2PeriodoTermino() {
+      return alistamentoCa2PeriodoTermino;
+   }
+
+   public void setAlistamentoCa2PeriodoTermino(Date alistamentoCa2PeriodoTermino) {
+      this.alistamentoCa2PeriodoTermino = alistamentoCa2PeriodoTermino;
    }
 
 }
