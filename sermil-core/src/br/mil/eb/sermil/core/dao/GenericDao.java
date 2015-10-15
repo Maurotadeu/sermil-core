@@ -11,11 +11,11 @@ import javax.persistence.criteria.Predicate;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 
 /** DAO genérico que define as operações CRUD básicas de uma entidade do modelo.
- * @author Abreu Lopes
- * @version $Id$
- * @since 4.0
  * @param <T> Tipo da entidade
  * @param <ID> Tipo da chave primária
+ * @author Abreu Lopes
+ * @since 4.0
+ * @version 5.2.5
  */
 public interface GenericDao<T, ID extends Serializable> {
 
