@@ -9,6 +9,7 @@ import br.mil.eb.sermil.modelo.CidContato;
 import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.CidFoto;
 import br.mil.eb.sermil.modelo.Cidadao;
+import br.mil.eb.sermil.modelo.CsAnamnese;
 import br.mil.eb.sermil.modelo.Csel;
 import br.mil.eb.sermil.modelo.CselEndereco;
 import br.mil.eb.sermil.modelo.CselFeriado;
@@ -55,7 +56,7 @@ import br.mil.eb.sermil.modelo.Usuario;
 /** Implementação da fábrica abstrata de DAO para uso com o EclipseLink (JPA).
  * @author Abreu Lopes
  * @since 4.0
- * @version 5.2.4
+ * @version 5.2.5
  */
 public class DaoFactoryJpaImpl extends DaoFactory {
 
@@ -116,6 +117,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   @Override
   public CidFotoDao getCidFotoDao() {
     return (CidFotoDao) instanciarDao(CidFotoDaoJpa.class);
+  }
+
+  @Override
+  public CsAnamneseDao getCsAnamneseDao() {
+    return (CsAnamneseDao) instanciarDao(CsAnamneseDaoJpa.class);
   }
 
   @Override
@@ -346,6 +352,8 @@ public class DaoFactoryJpaImpl extends DaoFactory {
 
   public static class CidFotoDaoJpa extends GenericDaoJpaImpl<CidFoto, Long> implements CidFotoDao {}
 
+  public static class CsAnamneseDaoJpa extends GenericDaoJpaImpl<CsAnamnese, Long> implements CsAnamneseDao {}
+  
   public static class CselDaoJpa extends GenericDaoJpaImpl<Csel, Integer> implements CselDao {}
   
   public static class CselFeriadoJpa extends GenericDaoJpaImpl<CselFeriado, Integer> implements CselFeriadoDao {}

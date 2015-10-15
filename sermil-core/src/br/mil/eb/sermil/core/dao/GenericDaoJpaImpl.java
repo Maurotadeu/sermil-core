@@ -18,11 +18,11 @@ import javax.persistence.criteria.Predicate;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 
 /** Implementação JPA (EclipseLink) de GenericDao.
- * @author Abreu Lopes
- * @version $Id$
- * @since 4.0
  * @param <T> Tipo da entidade
  * @param <ID> Tipo da chave primária
+ * @author Abreu Lopes
+ * @since 4.0
+ * @version 5.2.5
  */
 public class GenericDaoJpaImpl<T, ID extends Serializable> implements GenericDao<T, ID> {
 

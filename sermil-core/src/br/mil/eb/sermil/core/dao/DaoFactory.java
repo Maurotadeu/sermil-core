@@ -1,11 +1,9 @@
 package br.mil.eb.sermil.core.dao;
 
-/**
- * Fábrica abstrata de DAO. (Padrão GoF Abstract Factory)
- * 
+/** Fábrica abstrata de DAO. (Padrão GoF Abstract Factory)
  * @author Abreu Lopes
  * @since 4.0
- * @version 5.2.4
+ * @version 5.2.5
  */
 public abstract class DaoFactory {
 
@@ -53,6 +51,8 @@ public abstract class DaoFactory {
 
    public abstract CidFotoDao getCidFotoDao();
 
+   public abstract CsAnamneseDao getCsAnamneseDao();
+   
    public abstract CselDao getCselDao();
   
    public abstract CselEnderecoDao getCselEnderecoDao();
