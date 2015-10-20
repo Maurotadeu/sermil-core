@@ -266,6 +266,7 @@ public class CsServico {
    }
 
    public int rodarDistribuicao() {
+      //TODO retornar de 0 a 100
       return 0;
    }
 
