@@ -278,11 +278,16 @@ public class CidadaoServico {
    public Cidadao alistar(final PreAlistamento alistamento, final String anotacoes) throws SermilException {
 
       // Configura PreAlistamento
+      if (alistamento.getDocApresMunicipio().getCodigo() == -1) {
+         alistamento.setDocApresMunicipio(null);
+      }
       if (alistamento.getDocApresTipo() == DOC_RG) {
          if (StringUtils.isEmpty(alistamento.getRgNr())) {
             alistamento.setRgNr(alistamento.getDocApresNr());
-            alistamento.setDocApresMunicipio(this.municipioDao.findById(alistamento.getDocApresMunicipio().getCodigo()));
-            alistamento.setRgUf(alistamento.getDocApresMunicipio().getUf().getSigla());
+            if (alistamento.getDocApresMunicipio() != null && alistamento.getDocApresMunicipio().getCodigo() != 99999) {
+              alistamento.setDocApresMunicipio(this.municipioDao.findById(alistamento.getDocApresMunicipio().getCodigo()));
+              alistamento.setRgUf(alistamento.getDocApresMunicipio().getUf().getSigla());
+            }
          }
       }
       alistamento.setProtocoloData(new Date());
