@@ -2,8 +2,10 @@ package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
@@ -14,6 +16,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
  * @version 5.2.5
  */
 @Entity
+@Table(name = "CS_ANAMNESE")
 @PrimaryKey(validation=IdValidation.NULL)
 public final class CsAnamnese implements Serializable {
 
@@ -21,6 +24,7 @@ public final class CsAnamnese implements Serializable {
    private static final long serialVersionUID = 1L;
 
    @Id
+   @Column(name="CIDADAO_RA")
    private Long cidadaoRa;
 
    private String Q1;
