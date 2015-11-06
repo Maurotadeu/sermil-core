@@ -177,8 +177,9 @@ public class CsServico {
       cs.addFuncionamento(funcionamento);
 
       // persistir
-     // if (isFuncionamentoDeCsCorreto(funcionamento) && isFeriadosDeFuncionamentoCorretos(feriados, funcionamento))
-         persistir(cs);
+      // if (isFuncionamentoDeCsCorreto(funcionamento) &&
+      // isFeriadosDeFuncionamentoCorretos(feriados, funcionamento))
+      persistir(cs);
       return cs;
    }
 
@@ -262,6 +263,15 @@ public class CsServico {
 
    public List<Pgc> getPgcList() {
       return pgcDao.findAll();
+   }
+
+   public int rodarDistribuicao() {
+      //TODO retornar de 0 a 100
+      return 0;
+   }
+
+   public boolean distribuicaoJaRodou() {
+      return false;
    }
 
 }
