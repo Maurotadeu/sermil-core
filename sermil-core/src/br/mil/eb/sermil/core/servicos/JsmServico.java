@@ -15,17 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.exceptions.CSException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
+import br.mil.eb.sermil.core.exceptions.JsmException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Jsm;
 import br.mil.eb.sermil.modelo.Municipio;
 
-/**
- * Serviços de Junta de Serviço Militar (JSM).
- * 
+/** Gerenciamento de Junta de Serviço Militar (JSM).
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: JsmServico.java 2537 2014-08-29 11:38:33Z wlopes $
+ * @version 5.2.5
  */
 @Named("jsmServico")
 @RemoteProxy(name = "jsmServico")
@@ -64,13 +63,11 @@ public class JsmServico {
       return this.jsmDao.findById(new Jsm.PK(csmCodigo, codigo));
    }
 
-   /**
-    * Realiza a conversão explícita dos códigos de CSM/JSM para uso no javascript (DWR).
-    * 
+   /** Realiza a conversão explícita dos códigos de CSM/JSM para uso no javascript (DWR).
     * @param csm código da CSM
     * @param jsm código da JSM
     * @return JSM
-    * @throws SermilException erro na aplicação
+    * @throws SermilException exceção da aplicação
     */
    @RemoteMethod
    public Jsm recuperarJsm(final String csm, final String jsm) throws SermilException {
@@ -105,23 +102,27 @@ public class JsmServico {
       return this.jsmDao.save(jsm);
    }
 
-   // Este metodoveio de AlistamentoServico em sermilweb
-   public Jsm validarJsm(Jsm jsm) {
+   /** Verifica se a JSM realiza Alistamento ONLINE (Internet = "S").
+    * @param jsm JSM a ser verificada
+    * @return JSM
+    * @throws JsmException
+    */
+   public Jsm verificarAOL(Jsm jsm) throws JsmException {
       final Jsm j = this.jsmDao.findById(jsm.getPk());
-      if ("S".equalsIgnoreCase(j.getJsmInfo().getInternet())) {
-         return j;
+      if ("N".equalsIgnoreCase(j.getJsmInfo().getInternet())) {
+         throw new JsmException("JSM não realiza alistamento ONLINE.");
       }
-      return null;
+      return j;
    }
 
    public boolean estaCSDefinidoCerto(Jsm jsm) throws CriterioException, CSException {
-      /**
-       * REGRAS DE NEGOCIO
-       */
-      if (jsm.getTributacao() == null)
+      /* REGRAS DE NEGOCIO */
+      if (jsm.getTributacao() == null) {
          throw new CriterioException();
-      if ((jsm.getTributacao() == Jsm.OM_Ativa_OFOR || jsm.getTributacao() == Jsm.OM_Ativa_TG || jsm.getTributacao() == Jsm.Tiro_de_Guerra || jsm.getTributacao() == Jsm.OM_Ativa) && (jsm.getCs() == null))
+      }
+      if ((jsm.getTributacao() == Jsm.OM_Ativa_OFOR || jsm.getTributacao() == Jsm.OM_Ativa_TG || jsm.getTributacao() == Jsm.Tiro_de_Guerra || jsm.getTributacao() == Jsm.OM_Ativa) && (jsm.getCs() == null)) {
          throw new CSException();
+      }
       return true;
    }
 
