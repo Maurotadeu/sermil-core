@@ -21,6 +21,7 @@ import br.mil.eb.sermil.core.dao.PgcDao;
 import br.mil.eb.sermil.core.dao.RmDao;
 import br.mil.eb.sermil.core.exceptions.AnoBaseNaoEhUnicoException;
 import br.mil.eb.sermil.core.exceptions.CsPersistErrorException;
+import br.mil.eb.sermil.core.exceptions.EntityPersistenceException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoAnoBaseException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoDataInicioErroException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoDataTerminoErroException;
@@ -272,6 +273,14 @@ public class CsServico {
 
    public boolean distribuicaoJaRodou() {
       return false;
+   }
+   
+   public Pgc salvarPgc(Pgc pgc) throws EntityPersistenceException{
+      try {
+         return this.pgcDao.save(pgc);
+      } catch (SermilException e) {
+         throw new EntityPersistenceException();
+      }
    }
 
 }
