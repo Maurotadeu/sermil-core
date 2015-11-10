@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -22,7 +23,9 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "PGC")
-@NamedQuery(name = "findByAnoBase", query = "select p from pgc p where p.anoBase = ?1 ")
+@NamedQueries({
+   @NamedQuery(name = "findByAnoBase", query = "select p from pgc p where p.anoBase = ?1 ")
+})
 public final class Pgc implements Serializable {
 
    /** serialVersionUID. */

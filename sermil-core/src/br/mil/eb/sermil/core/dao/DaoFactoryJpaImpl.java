@@ -54,18 +54,14 @@ import br.mil.eb.sermil.modelo.TaxaMulta;
 import br.mil.eb.sermil.modelo.Uf;
 import br.mil.eb.sermil.modelo.Usuario;
 
-/**
- * Implementação da fábrica abstrata de DAO para uso com o EclipseLink (JPA).
- * 
+/** Implementação da fábrica abstrata de DAO para uso com o EclipseLink (JPA).
  * @author Abreu Lopes
  * @since 4.0
  * @version 5.2.5
  */
 public class DaoFactoryJpaImpl extends DaoFactory {
 
-   /**
-    * Método auxiliar para instanciar os DAO.
-    * 
+   /** Método auxiliar para instanciar os DAO.
     * @param daoClass Classe do DAO a ser instanciado
     * @return DAO que manipula uma entidade do modelo
     */
@@ -198,7 +194,6 @@ public class DaoFactoryJpaImpl extends DaoFactory {
    public EstatAlistamentoEscDao getEstatAlistamentoEscDao() {
       return (EstatAlistamentoEscDao) instanciarDao(EstatAlistamentoEscDaoJpa.class);
    }
-
    @Override
    public EstatArrecadacaoDao getEstatArrecadacaoDao() {
       return (EstatArrecadacaoDao) instanciarDao(EstatArrecadacaoDaoJpa.class);
@@ -248,7 +243,6 @@ public class DaoFactoryJpaImpl extends DaoFactory {
    public OmBoletimDao getOmBoletimDao() {
       return (OmBoletimDao) instanciarDao(OmBoletimDaoJpa.class);
    }
-
    @Override
    public PadraoDao getPadraoDao() {
       return (PadraoDao) instanciarDao(PadraoDaoJpa.class);
@@ -262,6 +256,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
    @Override
    public PerfilDao getPerfilDao() {
       return (PerfilDao) instanciarDao(PerfilDaoJpa.class);
+   }
+
+   @Override
+   public PgcDao getPgcDao() {
+      return (PgcDao) instanciarDao(PgcDaoJpa.class);
    }
 
    @Override
@@ -290,6 +289,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
    }
 
    @Override
+   public RaItensDao getRaItensDao() {
+      return (RaItensDao) instanciarDao(RaItensDaoJpa.class);
+   }
+
+   @Override
    public RaMestreDao getRaMestreDao() {
       return (RaMestreDao) instanciarDao(RaMestreDaoJpa.class);
    }
@@ -297,6 +301,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
    @Override
    public RaPedidoDao getRaPedidoDao() {
       return (RaPedidoDao) instanciarDao(RaPedidoDaoJpa.class);
+   }
+
+   @Override
+   public RmDao getRmDao() {
+      return (RmDao) instanciarDao(RmDaoJpa.class);
    }
 
    @Override
@@ -329,21 +338,6 @@ public class DaoFactoryJpaImpl extends DaoFactory {
       return (UsuarioDao) instanciarDao(UsuarioDaoJpa.class);
    }
 
-   @Override
-   public PgcDao getPgcDao() {
-      return (PgcDao) instanciarDao(PgcDaoJpa.class);
-   }
-
-   @Override
-   public RaItensDao getRaItensDao() {
-      return (RaItensDao) instanciarDao(RaItensDaoJpa.class);
-   }
-
-   @Override
-   public RmDao getRmDao() {
-      return (RmDao) instanciarDao(RmDaoJpa.class);
-   }
-
    // Criar implementações concretas dos DAO a serem instanciados (usando classes internas para
    // evitar criar classes explícitas)
 
@@ -374,10 +368,10 @@ public class DaoFactoryJpaImpl extends DaoFactory {
    public static class CidFotoDaoJpa extends GenericDaoJpaImpl<CidFoto, Long> implements CidFotoDao {
    }
 
-   public static class CselDaoJpa extends GenericDaoJpaImpl<Csel, Integer> implements CselDao {
+   public static class CsAnamneseDaoJpa extends GenericDaoJpaImpl<CsAnamnese, Long> implements CsAnamneseDao {
    }
 
-   public static class CsAnamneseDaoJpa extends GenericDaoJpaImpl<CsAnamnese, Long> implements CsAnamneseDao {
+   public static class CselDaoJpa extends GenericDaoJpaImpl<Csel, Integer> implements CselDao {
    }
 
    public static class CselFeriadoJpa extends GenericDaoJpaImpl<CselFeriado, Integer> implements CselFeriadoDao {
