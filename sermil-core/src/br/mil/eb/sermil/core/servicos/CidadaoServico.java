@@ -32,7 +32,6 @@ import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
-import br.mil.eb.sermil.core.utils.EmailSender;
 import br.mil.eb.sermil.modelo.CidAuditoria;
 import br.mil.eb.sermil.modelo.CidDocApres;
 import br.mil.eb.sermil.modelo.CidDocumento;
@@ -68,7 +67,7 @@ public class CidadaoServico {
    private RaServico raServico;
 
    @Inject
-   private EmailSender emailSender;
+   private EmailServico emailServico;
 
    private static final int DOC_RG = 3;
 
@@ -267,8 +266,7 @@ public class CidadaoServico {
       cidadao.addCidEvento(ce);
 
       // Salvar cidadão
-      this.salvar(cidadao, usr, "ALISTAMENTO " + anotacoes);
-      return cidadao;
+      return this.salvar(cidadao, usr, "ALISTAMENTO " + anotacoes);
    }
 
    /**
@@ -276,7 +274,10 @@ public class CidadaoServico {
     */
    @Transactional
    public Cidadao alistar(final PreAlistamento alistamento, final String anotacoes) throws SermilException {
-
+      // Verifica se já foi cadastrado
+      if (isPreAlistamentoCadastrado(alistamento)) {
+         throw new CidadaoCadastradoException(alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
+      }
       // Configura PreAlistamento
       if (alistamento.getDocApresMunicipio().getCodigo() == -1) {
          alistamento.setDocApresMunicipio(null);
@@ -300,7 +301,7 @@ public class CidadaoServico {
       this.preAlistamentoDao.save(alistamento);
 
       // Enviar email de confirmacao de alistamento online
-      this.emailSender.enviarEmailConfirmacaoAlistamentoOnLine(cidadao);
+      this.emailServico.confirmarAlistamentoOnline(cidadao);
 
       return cidadao;
    }
