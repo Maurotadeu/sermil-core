@@ -11,14 +11,14 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** CEP.
  * @author Abreu Lopes
  * @since 5.1
- * @version $Id$
+ * @version 5.1.15
  */
 @Entity
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Cep implements Serializable {
 
   /** serialVersionUID. */
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = -3390686171102289283L;
 
   @Id
   private String codigo;

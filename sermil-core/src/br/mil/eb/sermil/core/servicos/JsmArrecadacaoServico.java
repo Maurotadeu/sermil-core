@@ -1,8 +1,7 @@
 package br.mil.eb.sermil.core.servicos;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -15,11 +14,12 @@ import br.mil.eb.sermil.core.dao.EstatArrecadacaoDao;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.EstatArrecadacao;
+import br.mil.eb.sermil.modelo.Jsm;
 
-/** Serviço de arrecadação de taxas e multas.
+/** Serviço de arrecadação de taxas e multas pela JSM.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: JsmArrecadacaoServico.java 2427 2014-05-15 13:23:38Z wlopes $
+ * @version 5.2.5
  */
 @Named("jsmArrecadacaoServico")
 public class JsmArrecadacaoServico {
@@ -33,38 +33,42 @@ public class JsmArrecadacaoServico {
     logger.debug("JsmArrecadacaoServico iniciado");
   }
 
-  public List<EstatArrecadacao> listar(final EstatArrecadacao arrecadacao) throws SermilException {
-    if (arrecadacao == null || arrecadacao.getJsm() == null ||
-        arrecadacao.getJsm().getCsmCodigo() == null ||
-        arrecadacao.getJsm().getCodigo() == null) {
-      throw new CriterioException();
-    }
-    final Map<String, Object> params = new HashMap<String, Object>();
-    String cmd = "EstatArrecadacao.listarPorJsm";
-    params.put("jsm", arrecadacao.getJsm());
-    if (arrecadacao.getAno() != null) {
-      cmd = "EstatArrecadacao.listarPorAno";
-      params.put("ano", arrecadacao.getAno());
-      if (arrecadacao.getMes() != null) {
-        cmd = "EstatArrecadacao.listarPorMes";
-        params.put("mes", arrecadacao.getMes());
-      }
-    }
-    return arrecadacaoDao.findByNamedQueryAndNamedParams(cmd, params);
-  }
-
   @Transactional
   public void excluir(final EstatArrecadacao arrecadacao) throws SermilException {
-    arrecadacaoDao.delete(arrecadacao);
+    this.arrecadacaoDao.delete(arrecadacao);
   }
 
+  public List<EstatArrecadacao> listar(final Jsm jsm, final Short ano) throws SermilException {
+     if (jsm == null || jsm.getCsmCodigo() == null || jsm.getCodigo() == null || ano == null) {
+       throw new CriterioException("Informe a JSM e o ANO da arrecadação.");
+     }
+     return this.arrecadacaoDao.findByNamedQuery("EstatArrecadacao.listarJsmAno", jsm, ano);
+   }
+
   public EstatArrecadacao recuperar(final Integer codigo) throws SermilException {
-    return arrecadacaoDao.findById(codigo);
+    return this.arrecadacaoDao.findById(codigo);
   }
 
   @Transactional
-  public void salvar(final EstatArrecadacao arrecadacao) throws SermilException {
-    arrecadacaoDao.save(arrecadacao);
+  public EstatArrecadacao salvar(final List<EstatArrecadacao> lista) throws SermilException {
+    if (lista == null || lista.isEmpty()) {
+       throw new SermilException("Lista de arrecadações está vazia.");
+    }
+    List<EstatArrecadacao> listaOld = this.listar(lista.get(0).getJsm(), lista.get(0).getAno());
+    if (listaOld == null) {
+       listaOld = new ArrayList<>();
+    }
+    for(EstatArrecadacao arr: lista) {
+      if (listaOld.contains(arr)) {
+         listaOld.add(listaOld.indexOf(arr), arr);
+      } else {
+         listaOld.add(arr);
+      }
+    }
+    for(EstatArrecadacao arr: listaOld) {
+      this.arrecadacaoDao.save(arr);
+    }
+    return lista.get(0);
   }
 
 }

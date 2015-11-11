@@ -54,7 +54,7 @@ public class MobilizacaoServico {
             cid.setRa(this.raServico.gerar(Byte.valueOf("99"), Short.valueOf("900")));
         }
         if(this.cidadaoServico.isCidadaoCadastrado(cid)) {
-            throw new CidadaoCadastradoException();
+            throw new CidadaoCadastradoException(cid.getNome(), cid.getMae(), cid.getNascimentoData());
         }
         if (cid.getNascimentoData() == null) {
             throw new SermilException("Data de nascimento é obrigatória.");

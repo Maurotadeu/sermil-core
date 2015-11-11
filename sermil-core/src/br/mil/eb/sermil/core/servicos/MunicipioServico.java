@@ -2,6 +2,8 @@ package br.mil.eb.sermil.core.servicos;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -20,10 +22,10 @@ import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Municipio;
 
-/** Serviço de informações de Município. (Tabela MUNICIPIO)
+/** Gerenciamento de informações de Municípios. (Tabela MUNICIPIO)
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: MunicipioServico.java 2428 2014-05-15 13:23:47Z wlopes $
+ * @version 5.2.5
  */
 @Named("municipioServico")
 @RemoteProxy(name="municipioServico")
@@ -63,6 +65,13 @@ public class MunicipioServico {
   @RemoteMethod
   public Object[] listarJsm(final Integer mun) throws SermilException {
     final List<Object[]> result = this.jsmDao.findBySQL("SELECT csm_codigo, codigo, descricao FROM jsm WHERE municipio_codigo = ?", mun);
+    // Ordena pela descrição da JSM
+    Collections.sort(result, new Comparator<Object[]>() {
+       @Override
+       public int compare(final Object[] obj1, final Object[] obj2) {
+           return ((String)obj1[2]).compareTo((String)obj2[2]);
+       }
+      } );
     return result.toArray(new Object[0]);
   }
   
