@@ -22,6 +22,14 @@ import br.mil.eb.sermil.core.exceptions.CPFSippesException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.tipos.CpfInfoSippes;
 
+/** Integração entre SERMIL e SIPPES, padrão Web Service (JAX-RS).
+ * Verifica a situação cadastral do CPF no InfoConv da Receita Federal.
+ * Utiliza o SIPPES como intermediário na transação.
+ * IMPORTANTE: Importar o certificado digital do SIPPES no cacerts da JVM do servidor SERMIL.
+ * @author Abreu Lopes
+ * @since 5.2.5
+ * @version 5.2.6
+ */
 public class CpfSippesServico {
 
    protected static final Logger log = LoggerFactory.getLogger(CpfSippesServico.class);
@@ -39,30 +47,36 @@ public class CpfSippesServico {
    }
 
    public CpfInfoSippes pesquisarCpf(final String cpf) throws CPFSippesException, SermilException {
-
+      // Usando a implementação default do Spring para REST-RS
       final RestTemplate restClient = new RestTemplate();
       restClient.setErrorHandler(new CustomResponseErrorHandler());
-
+      // Objeto JSON padrão de consulta no Web Service
       final JsonObject query = Json.createObjectBuilder()
             .add("cpf", cpf)
             .add("cpfUsuario", USR_CPF)
             .add("usuario", USR_ID)
             .build();
-
+      // Cabeçalhos necessários na requisição
       final HttpHeaders headers = new HttpHeaders();
       headers.setContentType(MediaType.APPLICATION_JSON);
       headers.add("service_key", KEY);
-
+      // Envio da Requisição, em caso de erro será emitida uma CPFSippesException
       final HttpEntity<String> request= new HttpEntity<String>(query.toString(), headers);
-
-      CpfInfoSippes info = restClient.postForObject(URL, request, CpfInfoSippes.class);
-
+      final CpfInfoSippes info = restClient.postForObject(URL, request, CpfInfoSippes.class);
+      // Tratamento da Resposta do servidor
       if (info != null && info.getErro() != null) {
          throw new SermilException(info.getErro());
+      } else {
+         log.info("Resposta: {}", info);
+         return info;
       }
-      return info;
    }
 
+   /** Manipulador de erro na resposta do servidor.
+    * @author Abreu Lopes
+    * @since 5.2.5
+    * @version 5.2.6
+    */
    public class CustomResponseErrorHandler implements ResponseErrorHandler {
       
       private ResponseErrorHandler errorHandler = new DefaultResponseErrorHandler();
