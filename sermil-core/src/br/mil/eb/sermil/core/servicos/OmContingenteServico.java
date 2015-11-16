@@ -30,7 +30,7 @@ import br.mil.eb.sermil.modelo.Usuario;
 /** Gerenciamento do contingente incorporado em uma OM.
  * @author Abreu Lopes, Gardino
  * @since 4.0
- * @version 5.2.1
+ * @version 5.2.6
  */
 @Named("omEfetivoServico")
 public class OmContingenteServico {
@@ -62,12 +62,12 @@ public class OmContingenteServico {
      * @return Lista de eventos (CID_EVENTO) para cada cidadão relacionado
      * @throws SermilException erro na consulta
      */
-    public List<CidEvento> listarEfetivo(final Integer codom, final Integer ano, final Short situacao, final Date data, final String biAbiNr, final boolean porNome) throws SermilException {
+    public List<CidEvento> listarEfetivo(final Integer codom, final Integer ano, final Integer situacao, final Date data, final String biAbiNr, final boolean porNome) throws SermilException {
         List<CidEvento> listaEvt = null;
         final List<Object[]> listaEfetivo = this.cidadaoDao.findBySQL("SELECT c.ra, c.nome, c.padrao_Codigo, c.gpt_Incorp FROM Cidadao c, Cid_evento e WHERE c.ra = e.cidadao_ra and c.om_codigo = ? AND c.situacao_Militar = ? AND e.codigo = 7 AND extract(year from e.data) = ?  order by c.gpt_Incorp", codom, situacao, ano);
         // final List<Object[]> listaCid = this.cidadaoDao.findByNamedQueryArray("Cidadao.listarPorOmSituacao", codom, ano.substring(2, 4), situacao);
         final Date dataEvt = (data != null ? data : new Date());
-        final Byte codigo = (situacao.equals(Short.valueOf("7")) ? Byte.valueOf("9") : Byte.valueOf("15"));
+        final int codigo = (situacao.equals(Short.valueOf("7")) ? Byte.valueOf("9") : Byte.valueOf("15"));
         if (listaEfetivo != null && !listaEfetivo.isEmpty()) {
             listaEvt = new ArrayList<CidEvento>(listaEfetivo.size());
             for (Object[] c : listaEfetivo) {

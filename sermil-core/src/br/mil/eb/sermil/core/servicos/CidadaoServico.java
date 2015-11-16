@@ -41,6 +41,8 @@ import br.mil.eb.sermil.modelo.PreAlistamento;
 import br.mil.eb.sermil.modelo.SituacaoMilitar;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.Ra;
+import br.mil.eb.sermil.tipos.TipoEvento;
+import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 
 /**
  * Gerenciamento de informações de Cidadão.
@@ -187,7 +189,7 @@ public class CidadaoServico {
       }
    }
 
-   public boolean cidadaoTemEvento(final Cidadao cidadao, final Byte eventoCodigo) {
+   public boolean cidadaoTemEvento(final Cidadao cidadao, final int eventoCodigo) {
       final List<CidEvento> eventos = cidadao.getCidEventoCollection();
       if (eventos != null && eventos.size() > 0) {
          for (CidEvento evento : eventos) {
@@ -261,7 +263,7 @@ public class CidadaoServico {
       cidadao.addCidDocumento(cd);
 
       // Evento de alistamento
-      final CidEvento ce = new CidEvento(cidadao.getRa(), CidEvento.ALISTAMENTO, dataAlist);
+      final CidEvento ce = new CidEvento(cidadao.getRa(), TipoEvento.ALISTAMENTO.ordinal(), dataAlist);
       ce.setAnotacao("Alistado pela Internet");
       cidadao.addCidEvento(ce);
 
@@ -341,10 +343,10 @@ public class CidadaoServico {
       return status;
    }
 
-   public boolean temEvento(Cidadao cidadao, Byte codigo) {
+   public boolean temEvento(Cidadao cidadao, int codigo) {
       List<CidEvento> eventos = cidadao.getCidEventoCollection();
       for (CidEvento ev : eventos) {
-         if (ev.getPk().getCodigo() == codigo) {
+         if (ev.getPk().getCodigo().intValue() == codigo) {
             return true;
          }
       }
@@ -361,11 +363,11 @@ public class CidadaoServico {
       }
       /* REGRAS DE NEGOCIO */
       // Situacao Militar = licenciado
-      if (cid.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_LICENCIADO) {
+      if (cid.getSituacaoMilitar() != TipoSituacaoMilitar.LICENCIADO.ordinal()) {
          throw new SermilException("Cidadão não está na situação LICENCIADO (15).");
       }
       // Tem que ter evento licenciamento
-      if (!temEvento(cid, CidEvento.LICENCIAMENTO)) {
+      if (!temEvento(cid, TipoEvento.LICENCIAMENTO.ordinal())) {
          throw new CidadaoNaoTemEventoException();
       }
       // Pelo menos um documento apresentado.

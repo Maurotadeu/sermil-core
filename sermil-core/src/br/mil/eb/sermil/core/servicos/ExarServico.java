@@ -18,6 +18,7 @@ import br.mil.eb.sermil.modelo.CidCertificado;
 import br.mil.eb.sermil.modelo.CidExar;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.Usuario;
+import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 
 /** Gerenciamento de Apresentação de Reservista (EXAR).
  * @author Abreu Lopes
@@ -110,9 +111,9 @@ public class ExarServico {
     */
    private boolean isExarLiberado(final Cidadao cid) {
       boolean status = false;
-      if(cid.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_LICENCIADO) {
+      if(cid.getSituacaoMilitar() == TipoSituacaoMilitar.LICENCIADO.ordinal()) {
          status = true;
-      } else if (cid.getSituacaoMilitar() == Cidadao.SITUACAO_MILITAR_EXCESSO) {
+      } else if (cid.getSituacaoMilitar() == TipoSituacaoMilitar.EXCESSO.ordinal()) {
          for (CidCertificado c: cid.getCidCertificadoCollection()) {
             if (!"S".equals(c.getAnulado())) {
                if (c.getPk().getTipo() == 3 || c.getPk().getTipo() == 4 || c.getPk().getTipo() == 6) {
