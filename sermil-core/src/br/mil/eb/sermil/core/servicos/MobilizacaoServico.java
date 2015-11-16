@@ -23,11 +23,12 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.Usuario;
+import br.mil.eb.sermil.tipos.TipoEvento;
 
 /** Serviço de Mobilização de Pessoal.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id$
+ * @version 5.2.6
  */
 @Named("mobilizacaoServico")
 public class MobilizacaoServico {
@@ -83,7 +84,7 @@ public class MobilizacaoServico {
             final Calendar cal = Calendar.getInstance();
             final CidEvento evento = new CidEvento();
             evento.getPk().setCidadaoRa(cid.getRa());
-            evento.getPk().setCodigo(Byte.parseByte("1"));
+            evento.getPk().setCodigo(TipoEvento.ALISTAMENTO.ordinal());
             evento.getPk().setData(cal.getTime());
             evento.setAnotacao("Cadastro de Mobilização");
             cid.addCidEvento(evento);

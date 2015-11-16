@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import br.mil.eb.sermil.core.exceptions.SermilException;
 
-/** Gerencia parâmetros do arquivo de configuração.
+/** Carrega arquivo de configuração.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id$
+ * @version 5.2.5
  */
 public class Configurador {
 

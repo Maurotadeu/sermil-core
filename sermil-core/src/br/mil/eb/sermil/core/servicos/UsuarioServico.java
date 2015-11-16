@@ -1,28 +1,16 @@
 package br.mil.eb.sermil.core.servicos;
 
-import static br.mil.eb.sermil.core.Constantes.SUPORTE_CONTA_EMAIL;
-
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.mail.internet.MimeMessage;
 
-import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.CidAuditoriaDao;
@@ -33,7 +21,6 @@ import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.exceptions.UserNotFoundException;
 import br.mil.eb.sermil.core.exceptions.UsuarioSalvarException;
-import br.mil.eb.sermil.core.utils.Configurador;
 import br.mil.eb.sermil.core.security.Randomize;
 import br.mil.eb.sermil.modelo.CidAuditoria;
 import br.mil.eb.sermil.modelo.Usuario;
@@ -44,52 +31,47 @@ import br.mil.eb.sermil.modelo.UsuarioPerfil;
  * 
  * @author Abreu Lopes, Anselmo Ribeiro <anselmo.sr@gmail.com>
  * @since 3.0
- * @version 5.2.3
+ * @version 5.2.5
  */
 @Named("usuarioServico")
 public class UsuarioServico {
 
    protected static final Logger logger = LoggerFactory.getLogger(UsuarioServico.class);
 
-   protected static final Configurador cfg = Configurador.getInstance();
-
    @Inject
-   private UsuarioDao dao;
-
-   @Inject
-   private JavaMailSender mailSender;
-
-   @Inject
-   private VelocityEngine velocityEngine;
+   private UsuarioDao usuarioDao;
 
    @Inject
    private CidAuditoriaDao cidAuditoriaDao;
 
+   @Inject
+   private EmailServico emailServico;
+   
    public UsuarioServico() {
       logger.debug("UsuarioServico iniciado");
    }
 
    @Transactional
    public void recadastrar(final Usuario usr) throws SermilException {
-      final Usuario u = (Usuario) this.dao.findById(usr.getCpf());
+      final Usuario u = (Usuario) this.usuarioDao.findById(usr.getCpf());
       if (usr.getEmail() == null || usr.getEmail().isEmpty() || !usr.getEmail().matches(Constantes.EMAIL_REGEXP)) {
          throw new SermilException("Informe um e-mail válido");
       }
       u.setEmail(usr.getEmail());
-      this.dao.save(u);
+      this.usuarioDao.save(u);
    }
 
    @Transactional
    public void alterarSenha(final Usuario usr) throws SermilException {
-      final Usuario u = (Usuario) this.dao.findById(usr.getCpf());
+      final Usuario u = (Usuario) this.usuarioDao.findById(usr.getCpf());
       u.setSenha(this.validarSenha(usr.getSenha(), usr.getConfirma()));
-      this.dao.save(u);
-      this.enviarEmail(u, "emailSenha.vm", "******");
+      this.usuarioDao.save(u);
+      this.emailServico.confirmarAlteracaoUsuario(u, "emailSenha.vm", "******", 2);
    }
 
    @Transactional
    public void recuperarSenha(final String cpf) throws SermilException {
-      final Usuario usr = (Usuario) dao.findById(cpf);
+      final Usuario usr = (Usuario) usuarioDao.findById(cpf);
       if (usr == null) {
          throw new SermilException("CPF INEXISTENTE, entre em contato com a Região Militar para ser cadastrado no sistema.");
       }
@@ -98,8 +80,8 @@ public class UsuarioServico {
       }
       final String senha = new Randomize().execute();
       usr.setSenha(new BCryptPasswordEncoder().encode(senha));
-      this.dao.save(usr);
-      this.enviarEmail(usr, "emailSenha.vm", senha);
+      this.usuarioDao.save(usr);
+      this.emailServico.confirmarAlteracaoUsuario(usr, "emailSenha.vm", senha, 2);
    }
 
    public List<Usuario> listar(final Usuario usr) throws SermilException {
@@ -109,16 +91,16 @@ public class UsuarioServico {
       List<Usuario> lista = null;
       if (usr.getCpf() != null || usr.getNome() != null) {
          if (usr.getCpf() != null) {
-            final Usuario u = this.dao.findById(usr.getCpf());
+            final Usuario u = this.usuarioDao.findById(usr.getCpf());
             if (u != null) {
                lista = new ArrayList<Usuario>(1);
                lista.add(u);
             }
          } else {
-            lista = this.dao.findByNamedQuery("Usuario.listarPorNome", usr.getNome().concat("%"));
+            lista = this.usuarioDao.findByNamedQuery("Usuario.listarPorNome", usr.getNome().concat("%"));
          }
       } else if (usr.getOm() != null && usr.getOm().getCodigo() != null) {
-         lista = this.dao.findByNamedQuery("Usuario.listarPorOm", usr.getOm().getCodigo());
+         lista = this.usuarioDao.findByNamedQuery("Usuario.listarPorOm", usr.getOm().getCodigo());
       }
       if (lista == null || lista.isEmpty()) {
          throw new NoDataFoundException();
@@ -136,7 +118,7 @@ public class UsuarioServico {
 
    @Transactional
    public Usuario salvar(final Usuario usr, final String[] perfis) throws SermilException {
-      final Usuario usuario = (Usuario) this.dao.findById(usr.getCpf());
+      final Usuario usuario = (Usuario) this.usuarioDao.findById(usr.getCpf());
       if (usr.getAtivo() != null && !usr.getAtivo().equals(usuario.getAtivo())) {
          usuario.setAtivo(usr.getAtivo());
       }
@@ -164,44 +146,24 @@ public class UsuarioServico {
       }
       usuario.setTentativaslogin(0);
       usuario.setAcessoData(new Date());
-      this.dao.save(usuario);
-      try {
-         final MimeMessagePreparator preparator = new MimeMessagePreparator() {
-            public void prepare(MimeMessage mimeMessage) throws Exception {
-               final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-               message.setTo(usuario.getEmail());
-               message.setFrom(cfg.getConfiguracao(SUPORTE_CONTA_EMAIL));
-               message.setSubject("SERMIL - Conta Alterada");
-               final Map<String, Object> model = new HashMap<String, Object>(4);
-               model.put("cpf", usuario.getCpf());
-               model.put("nome", usuario.getNome());
-               model.put("email", usuario.getEmail());
-               model.put("senha", usuario.getSenha());
-               model.put("data", DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date()));
-               final String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "emailAcesso.vm", "utf-8", model);
-               message.setText(text, true);
-            }
-         };
-         this.mailSender.send(preparator);
-      } catch (MailException e) {
-         logger.error("Erro ao tentar enviar e-mail {}", e.getMessage());
-      }
+      this.usuarioDao.save(usuario);
+      this.emailServico.confirmarAlteracaoUsuario(usuario, "emailCadastro.vm", null, 1);
       return usuario;
    }
 
    @Transactional
    public void solicitarCadastramento(final Usuario usr) throws SermilException {
-      if (this.dao.findById(usr.getCpf()) != null) {
+      if (this.usuarioDao.findById(usr.getCpf()) != null) {
          throw new SermilException(new StringBuilder("ERRO: CPF ").append(usr.getCpf()).append(" já se encontra cadastrado no sistema.").toString());
-      } else if (!this.dao.findByNamedQuery("Usuario.listarPorEmail", usr.getEmail()).isEmpty()) {
+      } else if (!this.usuarioDao.findByNamedQuery("Usuario.listarPorEmail", usr.getEmail()).isEmpty()) {
          throw new SermilException(new StringBuilder("ERRO: e-mail ").append(usr.getEmail()).append(" já se encontra cadastrado no sistema.").toString());
       } else {
          usr.setSenha(this.validarSenha(usr.getSenha(), usr.getConfirma()));
          usr.setAcessoData(new Date());
          usr.setAcessoQtd(0);
          usr.setAtivo("N");
-         final Usuario novo = this.dao.save(usr);
-         this.enviarEmail(novo, "emailCadastro.vm", null);
+         final Usuario novo = this.usuarioDao.save(usr);
+         this.emailServico.confirmarAlteracaoUsuario(novo, "emailCadastro.vm", null, 2);
       }
    }
 
@@ -234,42 +196,16 @@ public class UsuarioServico {
 
    @Transactional
    public void excluir(final Usuario usr) throws SermilException {
-      this.dao.delete(this.dao.findById(usr.getCpf()));
+      this.usuarioDao.delete(this.usuarioDao.findById(usr.getCpf()));
    }
 
    @Transactional
    public void removerPerfis(final String cpf) throws SermilException {
-      this.dao.execute("UsuarioPerfil.excluirPorCpf", cpf);
+      this.usuarioDao.execute("UsuarioPerfil.excluirPorCpf", cpf);
    }
 
    public Usuario recuperar(final String id) throws SermilException {
-      return this.dao.findById(id);
-   }
-
-   private void enviarEmail(final Usuario usr, final String template, final String senha) throws SermilException {
-      if (usr != null && usr.getEmail() != null) { 
-         try {
-            final MimeMessagePreparator preparator = new MimeMessagePreparator() {
-               public void prepare(MimeMessage mimeMessage) throws Exception {
-                  final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-                  message.setTo(usr.getEmail());
-                  message.setFrom(cfg.getConfiguracao(SUPORTE_CONTA_EMAIL));
-                  message.setSubject("SERMILWEB - Alteração de Usuário");
-                  final Map<String, Object> model = new HashMap<String, Object>(4);
-                  model.put("cpf", usr.getCpf());
-                  model.put("nome", usr.getNome());
-                  if (senha != null && !senha.isEmpty())
-                     model.put("senha", senha);
-                  model.put("data", DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date()));
-                  final String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, template, "utf-8", model);
-                  message.setText(text, true);
-               }
-            };
-            this.mailSender.send(preparator);
-         } catch (MailException e) {
-            logger.error("Erro ao tentar enviar e-mail {}", e);
-         }
-      }
+      return this.usuarioDao.findById(id);
    }
 
    private String validarSenha(final String senha1, final String senha2) throws SermilException {
@@ -302,7 +238,7 @@ public class UsuarioServico {
     * @author Anselmo Ribeiro
     */
    public Usuario findByCPF(String CPF) throws UserNotFoundException, CPFDuplicadoException {
-      Usuario usu = dao.findById(CPF);
+      Usuario usu = usuarioDao.findById(CPF);
       if (usu == null) {
          throw new UserNotFoundException("O usuario referente ao CPF " + CPF + " nao foi achado.");
       } else {
