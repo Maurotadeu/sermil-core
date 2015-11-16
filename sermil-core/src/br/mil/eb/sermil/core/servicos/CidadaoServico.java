@@ -38,7 +38,6 @@ import br.mil.eb.sermil.modelo.CidDocumento;
 import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.PreAlistamento;
-import br.mil.eb.sermil.modelo.SituacaoMilitar;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.Ra;
 import br.mil.eb.sermil.tipos.TipoEvento;
@@ -203,7 +202,7 @@ public class CidadaoServico {
 
    // TODO: melhorar o método para receber Cidadao ao invés de PreAlistamento
    @Transactional
-   public Cidadao alistar(final PreAlistamento alistamento, final Date dataAlist, final Long ra, final Byte situacaoMilitar, final Usuario usr, final String anotacoes) throws SermilException {
+   public Cidadao alistar(final PreAlistamento alistamento, final Date dataAlist, final Long ra, final Integer situacaoMilitar, final Usuario usr, final String anotacoes) throws SermilException {
       final Cidadao cidadao = new Cidadao();
       // Verifica se já foi alistado anteriormente
       cidadao.setNome(alistamento.getNome());
@@ -297,7 +296,7 @@ public class CidadaoServico {
       alistamento.setTipo(Byte.decode("0"));
 
       // Cidadao - alistamento real
-      final Cidadao cidadao = this.alistar(alistamento, new Date(), null, SituacaoMilitar.ALISTADO, new Usuario("99999999999"), anotacoes);
+      final Cidadao cidadao = this.alistar(alistamento, new Date(), null, TipoSituacaoMilitar.ALISTADO.ordinal(), new Usuario("99999999999"), anotacoes);
 
       // PreAlistamento - somente para controle
       this.preAlistamentoDao.save(alistamento);

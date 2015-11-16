@@ -17,20 +17,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/**
- * Eventos de cidadão.
- * 
+/** Entidade CidEvento. (Tabela CID_EVENTO)
  * @author Abreu Lopes
  * @since 2.0
- * @version $Id: CidEvento.java 2423 2014-05-13 17:00:54Z wlopes $
+ * @version 5.2.6
  */
 @Entity
 @Table(name = "CID_EVENTO")
 @NamedQueries({ @NamedQuery(name = "Evento.cidadaoPodeImprimirCdi", query = "SELECT e.cidadao.ra FROM CidEvento e WHERE e.cidadao.ra = ?1 and e.pk.codigo in (3,6,13,14,24)"),
                 @NamedQuery(name = "Evento.listarPorCodigo", query = "SELECT e FROM CidEvento e WHERE e.cidadao.ra = ?1 and e.pk.codigo = ?2") })
 public final class CidEvento implements Comparable<CidEvento>, Serializable {
-
-   private static final long serialVersionUID = -9003467429456295200L;
 
    /* Deprecated: usar Enum TipoEvento
    public final static Byte ALISTAMENTO = 1;
@@ -39,6 +35,8 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
    public final static Byte LICENCIAMENTO = 12; 
    */
    
+   private static final long serialVersionUID = 1473835585849221630L;
+
    @EmbeddedId
    private CidEvento.PK pk;
 
@@ -130,17 +128,15 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
       this.pk = pk;
    }
 
-   /**
-    * Chave primária (PK) de CidEvento.
-    * 
+   /** Chave primária (PK) de CidEvento.
     * @author Abreu Lopes
     * @since 3.0
-    * @version $Id: CidEvento.java 2423 2014-05-13 17:00:54Z wlopes $
+    * @version 5.2.6
     */
    @Embeddable
    public static class PK implements Comparable<CidEvento.PK>, Serializable {
 
-      private static final long serialVersionUID = 7201122436880705606L;
+      private static final long serialVersionUID = -2935874026418712323L;
 
       @Column(name = "CIDADAO_RA")
       private Long cidadaoRa;

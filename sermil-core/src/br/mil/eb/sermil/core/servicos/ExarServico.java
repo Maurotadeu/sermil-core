@@ -18,6 +18,7 @@ import br.mil.eb.sermil.modelo.CidCertificado;
 import br.mil.eb.sermil.modelo.CidExar;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.Usuario;
+import br.mil.eb.sermil.tipos.TipoCertificado;
 import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 
 /** Gerenciamento de Apresentação de Reservista (EXAR).
@@ -116,7 +117,7 @@ public class ExarServico {
       } else if (cid.getSituacaoMilitar() == TipoSituacaoMilitar.EXCESSO.ordinal()) {
          for (CidCertificado c: cid.getCidCertificadoCollection()) {
             if (!"S".equals(c.getAnulado())) {
-               if (c.getPk().getTipo() == 3 || c.getPk().getTipo() == 4 || c.getPk().getTipo() == 6) {
+               if (c.getPk().getTipo() == TipoCertificado.CDI.ordinal()) {
                   if ("S".equals(c.getSituacaoEspecial())) {
                      status = true;
                   }

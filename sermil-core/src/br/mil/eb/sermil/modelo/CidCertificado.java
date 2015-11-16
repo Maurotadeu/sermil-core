@@ -17,7 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/** Certificado Militar.
+/** Entidade CidCertificado. (TABELA CID_CERTIFICADO)
  * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
  * @version 5.2.6
@@ -30,7 +30,7 @@ import javax.persistence.TemporalType;
 public final class CidCertificado implements Comparable<CidCertificado>, Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = -6302205804261799450L;
+   private static final long serialVersionUID = 5949927084657236653L;
 
    /* Deprecated: USAR ENUM TipoCertificado, alguns tipos (4,6) foram abolidos
     public final static Byte RESERVISTA_1_CATEGORIA_TIPO = 1;
@@ -71,7 +71,7 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
       this.setPk(new CidCertificado.PK());
    }
 
-   public CidCertificado(final Long ra, final Byte tipo, final Date data) {
+   public CidCertificado(final Long ra, final Integer tipo, final Date data) {
       this.setPk(new CidCertificado.PK(ra, tipo, data));
    }
 
@@ -112,7 +112,7 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
 
    public void decode(String linha) throws Exception {
       this.getPk().setCidadaoRa(Long.valueOf(linha.substring(2, 14)));
-      this.getPk().setTipo(Byte.valueOf(linha.substring(14, 16)));
+      this.getPk().setTipo(Integer.valueOf(linha.substring(14, 16)));
       final Calendar data = Calendar.getInstance();
       data.set(Integer.parseInt(linha.substring(20, 24)), Integer.parseInt(linha.substring(18, 20)) - 1, Integer.parseInt(linha.substring(16, 18)));
       this.getPk().setData(data.getTime());
@@ -207,13 +207,13 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
    /** Chave primária (PK) de CidCertificado.
     * @author Abreu Lopes
     * @since 3.0
-    * @version 5.2.3
+    * @version 5.2.6
     */
    @Embeddable
    public static class PK implements Comparable<CidCertificado.PK>, Serializable {
 
       /** serialVersionUID. */
-      private static final long serialVersionUID = 3544350334696621626L;
+      private static final long serialVersionUID = 6039795906546448337L;
 
       @Column(name = "CIDADAO_RA")
       private Long cidadaoRa;
@@ -223,13 +223,13 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
       private Date data;
 
       @Column(name = "TIPO")
-      private Byte tipo;
+      private Integer tipo;
 
       public PK() {
          super();
       }
 
-      public PK(final Long cidadaoRa, final Byte tipo, final Date data) {
+      public PK(final Long cidadaoRa, final Integer tipo, final Date data) {
          super();
          this.setCidadaoRa(cidadaoRa);
          this.setTipo(tipo);
@@ -301,7 +301,7 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
          return this.data;
       }
 
-      public Byte getTipo() {
+      public Integer getTipo() {
          return this.tipo;
       }
 
@@ -322,7 +322,7 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
          this.data = data;
       }
 
-      public void setTipo(Byte tipo) {
+      public void setTipo(Integer tipo) {
          this.tipo = tipo;
       }
 

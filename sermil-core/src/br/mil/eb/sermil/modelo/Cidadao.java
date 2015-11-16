@@ -51,11 +51,11 @@ import br.mil.eb.sermil.tipos.Utils;
 public final class Cidadao implements Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 4392585870849582132L;
 
    private static final String EMAIL_REGEXP = "^([a-zA-Z0-9_\\.\\-\\+])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";
 
-   /*
+   /* Deprecated: usar Enum TipoSituacaoMilitar
    public static final Byte SITUACAO_MILITAR_EXCLUIDO = 0;
    public static final Byte SITUACAO_MILITAR_ALISTADO = 1;
    public static final Byte SITUACAO_MILITAR_EXCESSO = 8;
@@ -312,7 +312,7 @@ public final class Cidadao implements Serializable {
    private Byte sexo;
 
    @Column(name = "SITUACAO_MILITAR")
-   private Byte situacaoMilitar;
+   private Integer situacaoMilitar;
 
    private String telefone;
 
@@ -730,7 +730,7 @@ public final class Cidadao implements Serializable {
       return this.sexo;
    }
 
-   public Byte getSituacaoMilitar() {
+   public Integer getSituacaoMilitar() {
       return this.situacaoMilitar;
    }
 
@@ -1114,7 +1114,7 @@ public final class Cidadao implements Serializable {
       this.sexo = sexo;
    }
 
-   public void setSituacaoMilitar(Byte situacaoMilitar) {
+   public void setSituacaoMilitar(Integer situacaoMilitar) {
       this.situacaoMilitar = situacaoMilitar;
    }
 
