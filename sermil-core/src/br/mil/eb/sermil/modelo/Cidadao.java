@@ -119,13 +119,9 @@ public final class Cidadao implements Serializable {
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidEvento> cidEventoCollection;
 
-   // TODO: usando notação de relacionamento unidirecional, analisar também em CidExar
    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
    @JoinColumn(name = "CIDADAO_RA", referencedColumnName = "RA")
    private List<CidExar> cidExarCollection;
-
-   // @OneToMany(mappedBy="cidadao", fetch=FetchType.EAGER, orphanRemoval=true)
-   // private List<CidExar> cidExarCollection;
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidEmpresa> cidEmpresaCollection;
@@ -136,7 +132,6 @@ public final class Cidadao implements Serializable {
    @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
    private CidFoto cidFoto;
 
-   // TODO: usando notação de relacionamento unidirecional, analisar também em CidHabilitacao
    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
    @JoinColumn(name = "CIDADAO_RA", referencedColumnName = "RA")
    private List<CidHabilitacao> cidHabilitacaoCollection;

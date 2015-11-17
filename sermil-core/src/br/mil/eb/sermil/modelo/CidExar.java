@@ -15,16 +15,16 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/** Exercício de Apresentação da Reserva.
+/** Entidade CidExar. (TABELA CID_EXAR)
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id$
+ * @version 5.2.6
  */
 @Entity
 @Table(name = "CID_EXAR")
 public final class CidExar implements Comparable<CidExar>, Serializable {
 
-    /** serialVersionUID. */
+   /** serialVersionUID. */
     private static final long serialVersionUID = 4626180614113227696L;
 
     @EmbeddedId
@@ -41,10 +41,6 @@ public final class CidExar implements Comparable<CidExar>, Serializable {
     private Byte apresentacaoTipo;
 
     private String ip;
-
-    //  @ManyToOne, desativado para testar relacionamento unidirecional com a classe Cidadao
-    //  @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false)
-    //  private Cidadao cidadao;
 
     @ManyToOne
     @JoinColumn(name = "OM_CODIGO")
@@ -185,7 +181,7 @@ public final class CidExar implements Comparable<CidExar>, Serializable {
     /** Chave primária (PK) de CidExar.
      * @author Abreu Lopes
      * @since 3.0
-     * @version $Id$
+     * @version 5.2.6
      */
     @Embeddable
     public static class PK implements Comparable<CidExar.PK>, Serializable {

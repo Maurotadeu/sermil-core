@@ -1,13 +1,17 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;
 
 import org.apache.commons.io.IOUtils;
+import org.directwebremoting.annotations.RemoteMethod;
+import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -30,11 +34,13 @@ import br.mil.eb.sermil.tipos.CpfInfoSippes;
  * @since 5.2.5
  * @version 5.2.6
  */
+@Named("CpfSippesServico")
+@RemoteProxy(name = "cpfSippesServico")
 public class CpfSippesServico {
 
    protected static final Logger log = LoggerFactory.getLogger(CpfSippesServico.class);
 
-   private static final String URL = "https://www.sippes.eb.mil.br/consultacpf/rest/consultarcpf";
+   private static final String URL = "https://www.sippes.eb.mil.br/consultacpf/rest/consultarcpft";
 
    private static final String KEY = "4f8653a9-95be-476a-8b12-5c5a1904aaa3";
 
@@ -46,7 +52,8 @@ public class CpfSippesServico {
       log.info("CpfSippesServico iniciado");
    }
 
-   public CpfInfoSippes pesquisarCpf(final String cpf) throws CPFSippesException, SermilException {
+   @RemoteMethod
+   public CpfInfoSippes pesquisarCpf(final String cpf) throws CPFSippesException, SermilException, URISyntaxException {
       // Usando a implementação default do Spring para REST-RS
       final RestTemplate restClient = new RestTemplate();
       restClient.setErrorHandler(new CustomResponseErrorHandler());
@@ -67,7 +74,7 @@ public class CpfSippesServico {
       if (info != null && info.getErro() != null) {
          throw new SermilException(info.getErro());
       } else {
-         log.info("Resposta: {}", info);
+         log.debug("JAX-RS: {}", info);
          return info;
       }
    }
