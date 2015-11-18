@@ -50,10 +50,14 @@ public class CpfInfoSippes implements Serializable {
       if (this.getNome() != null && this.getNomeMae() != null && this.getDataNascimento() !=  null) {
          info = new StringBuilder("Nome: ").append(this.getNome())
                 .append(" - Mãe: ").append(this.getNomeMae())
-                .append(" - Data Nasc: ").append(new SimpleDateFormat("dd/MM/yyyy").format(this.getDataNascimento()))
+                .append(" - Data Nasc: ").append(this.getDtNascf())
                 .toString();
       }
       return info;
+   }
+
+   public String getDtNascf() {
+      return new SimpleDateFormat("dd/MM/yyyy").format(this.getDataNascimento());
    }
    
    public String getId() {

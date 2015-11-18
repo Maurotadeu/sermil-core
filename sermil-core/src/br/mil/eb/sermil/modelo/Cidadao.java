@@ -51,7 +51,7 @@ import br.mil.eb.sermil.tipos.Utils;
 public final class Cidadao implements Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = 4392585870849582132L;
+   private static final long serialVersionUID = 470074541922369630L;
 
    private static final String EMAIL_REGEXP = "^([a-zA-Z0-9_\\.\\-\\+])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";
 
@@ -119,13 +119,9 @@ public final class Cidadao implements Serializable {
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidEvento> cidEventoCollection;
 
-   // TODO: usando notação de relacionamento unidirecional, analisar também em CidExar
    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
    @JoinColumn(name = "CIDADAO_RA", referencedColumnName = "RA")
    private List<CidExar> cidExarCollection;
-
-   // @OneToMany(mappedBy="cidadao", fetch=FetchType.EAGER, orphanRemoval=true)
-   // private List<CidExar> cidExarCollection;
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidEmpresa> cidEmpresaCollection;
@@ -136,7 +132,6 @@ public final class Cidadao implements Serializable {
    @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
    private CidFoto cidFoto;
 
-   // TODO: usando notação de relacionamento unidirecional, analisar também em CidHabilitacao
    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
    @JoinColumn(name = "CIDADAO_RA", referencedColumnName = "RA")
    private List<CidHabilitacao> cidHabilitacaoCollection;
@@ -904,7 +899,7 @@ public final class Cidadao implements Serializable {
       } else if (Cpf.isCpf(cpf)) {
          this.cpf = cpf;
       } else {
-         throw new IllegalArgumentException("CPF invÃ¡lido.");
+         throw new IllegalArgumentException("CPF invalido.");
       }
    }
 
@@ -1389,6 +1384,30 @@ public final class Cidadao implements Serializable {
       if (cr.getCidadao() != this) {
          cr.setCidadao(this);
       }
+   }
+
+   public boolean hasCertificado(final int tipoCertificado) {
+      boolean status = false;
+      if (this.getCidCertificadoCollection() != null && !this.getCidCertificadoCollection().isEmpty()) {
+         for (final CidCertificado certificado : this.getCidCertificadoCollection()) {
+            if (certificado.getPk().getTipo() == tipoCertificado) {
+               status = true;
+            }
+         }
+      }
+      return status;
+   }
+   
+   public boolean hasEvento(final int eventoCodigo) {
+      boolean status = false;
+      if (this.getCidEventoCollection() != null && !this.getCidEventoCollection().isEmpty()) {
+         for (CidEvento evento : this.getCidEventoCollection()) {
+            if (evento.getPk().getCodigo() == eventoCodigo) {
+               status = true;
+            }
+         }
+      }
+      return status;
    }
 
 }

@@ -1,5 +1,10 @@
 package br.mil.eb.sermil.tipos;
 
+/** Tipo de Certificado Militar.
+ * @author Abreu Lopes
+ * @since 5.2.6
+ * @version 5.2.6
+ */
 public enum TipoCertificado {
 
    ND0("N/D","N/D"),

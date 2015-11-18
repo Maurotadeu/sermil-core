@@ -20,7 +20,7 @@ import br.mil.eb.sermil.modelo.Cidadao;
 /** Verificação de situação no serviço militar.
  * @author Abreu lopes
  * @since 5.1
- * @version $Id$
+ * @version 5.2.6
  */
 @Named("situacaoServico")
 public class SituacaoServico {
@@ -50,8 +50,6 @@ public class SituacaoServico {
             }
         }
         if (cid != null) {
-            //TODO: desativar após o período de validação do alistamento online na 19 CSM.
-            //if (cid.getJsm().getPk().getCsmCodigo() != 19) {
             if ("N".equalsIgnoreCase(cid.getJsm().getJsmInfo().getInternet())) {
                 throw new SermilException("Verifique no seu documento de alistamento (CAM) a data de comparecimento no Órgão de Serviço Militar.");
             }
@@ -100,11 +98,12 @@ public class SituacaoServico {
                 break;
             }
         } else {
-            throw new SermilException("Cidadão não foi encontrado.");
+            throw new CidadaoNotFoundException();
         }
         return cid;
     }
 
+    // TODO: substituir pela data definida na rotina de Agendamento
     private Date definirRetorno(final Long ra) throws SermilException {
         final List<CidEvento> e = this.eventoDao.findByNamedQuery("Evento.listarPorCodigo", ra, 1);
         if (e == null || e.isEmpty()) {
