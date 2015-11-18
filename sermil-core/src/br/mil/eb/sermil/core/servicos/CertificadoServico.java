@@ -1,7 +1,5 @@
 package br.mil.eb.sermil.core.servicos;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -110,10 +108,10 @@ public class CertificadoServico {
     * @throws CidadaoNaoTemEventoException
     */
    public boolean podeImprimirCDI(final Cidadao cidadao) throws EventNotFoundException, CertificateNotFoundException, OutOfSituationException {
-      if (!this.servico.cidadaoTemEvento(cidadao, TipoEvento.EXCESSO.ordinal()) && !this.servico.cidadaoTemEvento(cidadao, TipoEvento.DISPENSA.ordinal())) {
+      if (!cidadao.hasEvento(TipoEvento.EXCESSO.ordinal()) && !cidadao.hasEvento(TipoEvento.DISPENSA.ordinal())) {
          throw new EventNotFoundException();
       }
-      if (!temCertificado(cidadao, TipoCertificado.CDI.ordinal())) {
+      if (!cidadao.hasCertificado(TipoCertificado.CDI.ordinal())) {
          throw new CertificateNotFoundException();
       }
       if (!StringUtils.containsAny(cidadao.getSituacaoMilitar().toString(), "389")) {
@@ -131,6 +129,9 @@ public class CertificadoServico {
       return null;
    }
 
+  /* *****************************************************************
+   * DEPRECATED: usar Cidadao.hasCertificado(int tipo)
+   * *****************************************************************
    private boolean temCertificado(final Cidadao cidadao, final int tipo) {
       final List<CidCertificado> certificados = cidadao.getCidCertificadoCollection();
       if (certificados != null && certificados.size() > 0) {
@@ -143,7 +144,6 @@ public class CertificadoServico {
       return false;
    }
 
-   /*
     private boolean temPeloMenosUmCertificado(final Cidadao cidadao, final Byte[] tipos) {
         for (Byte tipo : tipos) {
            if (temCertificado(cidadao, tipo)) {
@@ -160,6 +160,6 @@ public class CertificadoServico {
          }
          return true;
       }
-    */
+    ************************************************************************************/
 
 }

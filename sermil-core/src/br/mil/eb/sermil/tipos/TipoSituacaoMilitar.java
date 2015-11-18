@@ -1,5 +1,10 @@
 package br.mil.eb.sermil.tipos;
 
+/** Tipo de Situação Militar.
+ * @author Abreu Lopes
+ * @since 5.2.6
+ * @version 5.2.6
+ */
 public enum TipoSituacaoMilitar {
 
    EXCLUIDO("Excluído do Sistema"),

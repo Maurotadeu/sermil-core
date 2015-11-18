@@ -1,5 +1,10 @@
 package br.mil.eb.sermil.tipos;
 
+/** Tipo de Evento no Serviço Militar.
+ * @author Abreu Lopes
+ * @since 5.2.6
+ * @version 5.2.6
+ */
 public enum TipoEvento {
 
    ND("N/D"),
