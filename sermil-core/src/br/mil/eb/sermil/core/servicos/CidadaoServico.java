@@ -32,23 +32,22 @@ import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
-import br.mil.eb.sermil.core.utils.EmailSender;
 import br.mil.eb.sermil.modelo.CidAuditoria;
 import br.mil.eb.sermil.modelo.CidDocApres;
 import br.mil.eb.sermil.modelo.CidDocumento;
 import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.PreAlistamento;
-import br.mil.eb.sermil.modelo.SituacaoMilitar;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.Ra;
+import br.mil.eb.sermil.tipos.TipoDocApres;
+import br.mil.eb.sermil.tipos.TipoEvento;
+import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 
-/**
- * Gerenciamento de informações de Cidadão.
- * 
+/** Gerenciamento de informações de Cidadão.
  * @author Abreu Lopes, Anselmo
  * @since 3.0
- * @version 5.2.5
+ * @version 5.2.6
  */
 @Named("cidadaoServico")
 public class CidadaoServico {
@@ -68,9 +67,7 @@ public class CidadaoServico {
    private RaServico raServico;
 
    @Inject
-   private EmailSender emailSender;
-
-   private static final int DOC_RG = 3;
+   private EmailServico emailServico;
 
    @Inject
    private MunicipioDao municipioDao;
@@ -188,21 +185,9 @@ public class CidadaoServico {
       }
    }
 
-   public boolean cidadaoTemEvento(final Cidadao cidadao, final Byte eventoCodigo) {
-      final List<CidEvento> eventos = cidadao.getCidEventoCollection();
-      if (eventos != null && eventos.size() > 0) {
-         for (CidEvento evento : eventos) {
-            if (evento.getPk().getCodigo() == eventoCodigo) {
-               return true;
-            }
-         }
-      }
-      return false;
-   }
-
    // TODO: melhorar o método para receber Cidadao ao invés de PreAlistamento
    @Transactional
-   public Cidadao alistar(final PreAlistamento alistamento, final Date dataAlist, final Long ra, final Byte situacaoMilitar, final Usuario usr, final String anotacoes) throws SermilException {
+   public Cidadao alistar(final PreAlistamento alistamento, final Date dataAlist, final Long ra, final Integer situacaoMilitar, final Usuario usr, final String anotacoes) throws SermilException {
       final Cidadao cidadao = new Cidadao();
       // Verifica se já foi alistado anteriormente
       cidadao.setNome(alistamento.getNome());
@@ -262,13 +247,12 @@ public class CidadaoServico {
       cidadao.addCidDocumento(cd);
 
       // Evento de alistamento
-      final CidEvento ce = new CidEvento(cidadao.getRa(), CidEvento.ALISTAMENTO, dataAlist);
+      final CidEvento ce = new CidEvento(cidadao.getRa(), TipoEvento.ALISTAMENTO.ordinal(), dataAlist);
       ce.setAnotacao("Alistado pela Internet");
       cidadao.addCidEvento(ce);
 
       // Salvar cidadão
-      this.salvar(cidadao, usr, "ALISTAMENTO " + anotacoes);
-      return cidadao;
+      return this.salvar(cidadao, usr, "ALISTAMENTO " + anotacoes);
    }
 
    /**
@@ -276,12 +260,15 @@ public class CidadaoServico {
     */
    @Transactional
    public Cidadao alistar(final PreAlistamento alistamento, final String anotacoes) throws SermilException {
-
+      // Verifica se já foi cadastrado
+      if (isPreAlistamentoCadastrado(alistamento)) {
+         throw new CidadaoCadastradoException(alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
+      }
       // Configura PreAlistamento
       if (alistamento.getDocApresMunicipio().getCodigo() == -1) {
          alistamento.setDocApresMunicipio(null);
       }
-      if (alistamento.getDocApresTipo() == DOC_RG) {
+      if (alistamento.getDocApresTipo() == TipoDocApres.RG.ordinal()) {
          if (StringUtils.isEmpty(alistamento.getRgNr())) {
             alistamento.setRgNr(alistamento.getDocApresNr());
             if (alistamento.getDocApresMunicipio() != null && alistamento.getDocApresMunicipio().getCodigo() != 99999) {
@@ -294,13 +281,13 @@ public class CidadaoServico {
       alistamento.setTipo(Byte.decode("0"));
 
       // Cidadao - alistamento real
-      final Cidadao cidadao = this.alistar(alistamento, new Date(), null, SituacaoMilitar.ALISTADO, new Usuario("99999999999"), anotacoes);
+      final Cidadao cidadao = this.alistar(alistamento, new Date(), null, TipoSituacaoMilitar.ALISTADO.ordinal(), new Usuario("99999999999"), anotacoes);
 
       // PreAlistamento - somente para controle
       this.preAlistamentoDao.save(alistamento);
 
       // Enviar email de confirmacao de alistamento online
-      this.emailSender.enviarEmailConfirmacaoAlistamentoOnLine(cidadao);
+      this.emailServico.confirmarAlistamentoOnline(cidadao);
 
       return cidadao;
    }
@@ -340,16 +327,6 @@ public class CidadaoServico {
       return status;
    }
 
-   public boolean temEvento(Cidadao cidadao, Byte codigo) {
-      List<CidEvento> eventos = cidadao.getCidEventoCollection();
-      for (CidEvento ev : eventos) {
-         if (ev.getPk().getCodigo() == codigo) {
-            return true;
-         }
-      }
-      return false;
-   }
-
    public boolean podeImprimirCertSitMilitar(final Long ra) throws SermilException {
       /* Recuperar cidadão */
       Cidadao cid = null;
@@ -360,11 +337,11 @@ public class CidadaoServico {
       }
       /* REGRAS DE NEGOCIO */
       // Situacao Militar = licenciado
-      if (cid.getSituacaoMilitar() != Cidadao.SITUACAO_MILITAR_LICENCIADO) {
+      if (cid.getSituacaoMilitar() != TipoSituacaoMilitar.LICENCIADO.ordinal()) {
          throw new SermilException("Cidadão não está na situação LICENCIADO (15).");
       }
       // Tem que ter evento licenciamento
-      if (!temEvento(cid, CidEvento.LICENCIAMENTO)) {
+      if (!cid.hasEvento(TipoEvento.LICENCIAMENTO.ordinal())) {
          throw new CidadaoNaoTemEventoException();
       }
       // Pelo menos um documento apresentado.
@@ -373,4 +350,32 @@ public class CidadaoServico {
       }
       return true;
    }
+
+   /* ******************************************************
+    * DEPRECATED: usar metodo Cidadao.hasEvento(int codigo) 
+    * <wagner.luis.alopes@gmail.com>
+    * ******************************************************
+   public boolean temEvento(Cidadao cidadao, int codigo) {
+      List<CidEvento> eventos = cidadao.getCidEventoCollection();
+      for (CidEvento ev : eventos) {
+         if (ev.getPk().getCodigo().intValue() == codigo) {
+            return true;
+         }
+      }
+      return false;
+   }
+
+   public boolean cidadaoTemEvento(final Cidadao cidadao, final int eventoCodigo) {
+      final List<CidEvento> eventos = cidadao.getCidEventoCollection();
+      if (eventos != null && eventos.size() > 0) {
+         for (CidEvento evento : eventos) {
+            if (evento.getPk().getCodigo() == eventoCodigo) {
+               return true;
+            }
+         }
+      }
+      return false;
+   }
+   */
+
 }

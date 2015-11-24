@@ -1,7 +1,12 @@
 package br.mil.eb.sermil.modelo;
 
+/** SituacaoMilitar.
+ * @author wagner
+ * @deprecated Usar Enum TipoSituacaoMilitar
+ */
+@Deprecated
 public class SituacaoMilitar {
-
+   
    public final static Byte EXCLUIDO_DO_SISTEMA = 0;
    public final static Byte ALISTADO = 1;
    public final static Byte SELECAO_GERAL = 2;
