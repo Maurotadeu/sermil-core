@@ -53,7 +53,7 @@ public class CpfSippesServico {
    private static final String USR_CPF = "98106546772";
 
    public CpfSippesServico() {
-      log.info("CpfSippesServico iniciado");
+      log.debug("CpfSippesServico iniciado");
    }
 
    @RemoteMethod
