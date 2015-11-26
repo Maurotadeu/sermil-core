@@ -40,7 +40,11 @@ public class CpfSippesServico {
 
    protected static final Logger log = LoggerFactory.getLogger(CpfSippesServico.class);
 
-   private static final String URL = "https://www.sippes.eb.mil.br/consultacpf/rest/consultarcpft";
+   /** URL de teste: não consome requisições no InfoConv. */
+   private static final String URL_TESTE = "https://www.sippes.eb.mil.br/consultacpf/rest/consultarcpft";
+
+   /** URL de produção: consome requisições reais no InfoConv. */
+   private static final String URL_PROD = "https://www.sippes.eb.mil.br/consultacpf/rest/consultarcpf";
 
    private static final String KEY = "4f8653a9-95be-476a-8b12-5c5a1904aaa3";
 
@@ -49,7 +53,7 @@ public class CpfSippesServico {
    private static final String USR_CPF = "98106546772";
 
    public CpfSippesServico() {
-      log.info("CpfSippesServico iniciado");
+      log.debug("CpfSippesServico iniciado");
    }
 
    @RemoteMethod
@@ -69,7 +73,7 @@ public class CpfSippesServico {
       headers.add("service_key", KEY);
       // Envio da Requisição, em caso de erro será emitida uma CPFSippesException
       final HttpEntity<String> request= new HttpEntity<String>(query.toString(), headers);
-      final CpfInfoSippes info = restClient.postForObject(URL, request, CpfInfoSippes.class);
+      final CpfInfoSippes info = restClient.postForObject(URL_PROD, request, CpfInfoSippes.class);
       // Tratamento da Resposta do servidor
       if (info != null && info.getErro() != null) {
          throw new SermilException(info.getErro());

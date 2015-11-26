@@ -28,7 +28,7 @@ import br.mil.eb.sermil.modelo.Usuario;
 /** Serviço de envio de e-mail.
  * @author Abreu Lopes
  * @since 5.2.5
- * @version 5.2.5
+ * @version 5.2.6
  */
 @Named("emailServico")
 public class EmailServico {
@@ -127,5 +127,32 @@ public class EmailServico {
       }
    }
 
+   public void suporteExarnet(final Cidadao cidadao, final String emailRm, final String msg) {
+      if (cidadao != null && !StringUtils.isEmpty(cidadao.getEmail())) {
+         try {
+            final MimeMessagePreparator preparator = new MimeMessagePreparator() {
+               public void prepare(MimeMessage mimeMessage) throws Exception {
+                 final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+                 message.setTo(emailRm);
+                 message.setReplyTo(cidadao.getEmail());
+                 message.setCc("sermilweb@dgp.eb.mil.br");
+                 message.setFrom(cidadao.getEmail());
+                 message.setSubject("EXARNET - Suporte");
+                 final Map<String, Object> model = new HashMap<String, Object>(5);
+                 model.put("nome", cidadao.getNome());
+                 model.put("mae", cidadao.getMae());
+                 model.put("dtNasc", DateFormat.getDateInstance(DateFormat.MEDIUM).format(cidadao.getNascimentoData()));
+                 model.put("municipio", cidadao.getMunicipioResidencia());
+                 model.put("mensagem", msg);
+                 final String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "suporteExarnet.vm","utf-8", model);
+                 message.setText(text, true);
+               }
+             };
+            this.mailSender.send(preparator);
+         } catch (Exception e) {
+            logger.warn("Falha no envio de e-mail: {}", e);
+         }
+      }
+   }
 
 }
