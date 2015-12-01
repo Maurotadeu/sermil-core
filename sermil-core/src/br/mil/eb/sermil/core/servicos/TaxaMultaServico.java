@@ -1,11 +1,9 @@
 package br.mil.eb.sermil.core.servicos;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.swing.event.ListSelectionEvent;
 
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
@@ -17,15 +15,12 @@ import br.mil.eb.sermil.core.dao.TaxaMultaDao;
 import br.mil.eb.sermil.core.exceptions.EntityPersistenceErrorException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
-import br.mil.eb.sermil.modelo.EstatArrecadacao;
 import br.mil.eb.sermil.modelo.TaxaMulta;
 
-/**
- * Serviços de Taxa/Multa.
- * 
- * @author Abreu Lopes
- * @since 5.0
- * @version $Id: OmServico.java 2427 2014-05-15 13:23:38Z wlopes $
+/** Serviços de Taxa/Multa.
+ * @author Abreu Lopes, Aryene
+ * @since 5.2.6
+ * @version 5.2.6
  */
 @Named("taxaMultaServico")
 @RemoteProxy(name = "taxaMultaServico")
@@ -63,15 +58,16 @@ public class TaxaMultaServico {
    }
 
    @Transactional
-   public List<TaxaMulta> salvar(final List<TaxaMulta> taxaMultas) throws EntityPersistenceErrorException  {
-      
-      for (TaxaMulta taxaMulta : taxaMultas) {
+   public List<TaxaMulta> salvar(final List<TaxaMulta> taxaMultas) throws SermilException  {
+      for (TaxaMulta tm : taxaMultas) {
          try {
-            tmDao.save(taxaMulta);
-         } catch (SermilException e) {
-            throw new EntityPersistenceErrorException();
+            this.tmDao.save(tm);
+            logger.debug("Entidade: TaxaMulta - Valores={}, {}, {}", tm.toString(), tm.getTipo(), tm.getValor());
+         } catch(Exception e) {
+            throw new EntityPersistenceErrorException(e);
          }
       }
       return taxaMultas;
    } 
+
 }
