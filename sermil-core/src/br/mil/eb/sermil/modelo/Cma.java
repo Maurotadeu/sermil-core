@@ -8,66 +8,91 @@ import javax.persistence.Id;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
-/** Comando Militar de Área.
+/** Entidade CMA (Comando Militar de Área).
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Cma.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.2.6
  */
 @Entity
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Cma implements Serializable {
 
-  /** serialVersionUID. */
-  private static final long serialVersionUID = -6654214842787703523L;
+   /** serialVersionUID. */
+   private static final long serialVersionUID = -6654214842787703523L;
 
-  @Id
-  private Integer codigo;
+   @Id
+   private Integer codigo;
 
-  private Byte cta;
+   private Byte cta;
 
-  private String descricao;
+   private String descricao;
 
-  private String sigla;
+   private String sigla;
 
-  public Cma() {
-    super();
-  }
+   public Cma() {
+      super();
+   }
 
-  @Override
-  public String toString() {
-    return this.getSigla() == null ? "NULO" : this.getSigla();
-  }
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+      return result;
+   }
 
-  public Integer getCodigo() {
-    return this.codigo;
-  }
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Cma other = (Cma) obj;
+      if (codigo == null) {
+         if (other.codigo != null)
+            return false;
+      } else if (!codigo.equals(other.codigo))
+         return false;
+      return true;
+   }
 
-  public Byte getCta() {
-    return this.cta;
-  }
+   @Override
+   public String toString() {
+      return this.getSigla() == null ? "CMA" : this.getSigla();
+   }
 
-  public String getDescricao() {
-    return this.descricao;
-  }
+   public Integer getCodigo() {
+      return this.codigo;
+   }
 
-  public String getSigla() {
-    return this.sigla;
-  }
+   public Byte getCta() {
+      return this.cta;
+   }
 
-  public void setCodigo(Integer codigo) {
-    this.codigo = codigo;
-  }
+   public String getDescricao() {
+      return this.descricao;
+   }
 
-  public void setCta(Byte cta) {
-    this.cta = cta;
-  }
+   public String getSigla() {
+      return this.sigla;
+   }
 
-  public void setDescricao(String descricao) {
-    this.descricao = descricao;
-  }
+   public void setCodigo(Integer codigo) {
+      this.codigo = codigo;
+   }
 
-  public void setSigla(String sigla) {
-    this.sigla = sigla;
-  }
+   public void setCta(Byte cta) {
+      this.cta = cta;
+   }
+
+   public void setDescricao(String descricao) {
+      this.descricao = descricao;
+   }
+
+   public void setSigla(String sigla) {
+      this.sigla = sigla;
+   }
 
 }
