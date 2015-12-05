@@ -18,14 +18,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
+
 import br.mil.eb.sermil.core.exceptions.FuncionamentoJaExisteException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
 
-/**
- * Comissao de Selecao
- * 
+/** Entidade CSEL (Comissao de Selecao).
  * @author Anselmo Ribeiro
  * @since 5.2.3
+ * @version 5.2.6
  */
 @Entity
 @Table(name = "CSEL")
@@ -33,11 +35,11 @@ import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
    @NamedQuery(name = "Csel.listarPorRM", query = "select c from Csel c where c.rm.codigo = ?1 "),
       @NamedQuery(name = "Csel.listarPorNome", query = "select c from Csel c where c.nome = ?1 ") 
       })
-
+@PrimaryKey(validation=IdValidation.NULL)
 public final class Csel implements Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = -6654214842787703523L;
+   private static final long serialVersionUID = -360070377498456916L;
 
    /** TRIBUTACAO */
    public static final String TRIBUTACAO_EB = "EB";
@@ -51,7 +53,7 @@ public final class Csel implements Serializable {
    private Integer codigo;
 
    @ManyToOne
-   @JoinColumn(name = "rm_codigo", referencedColumnName = "codigo", insertable = true, updatable = true, nullable = false)
+   @JoinColumn(name = "RM_CODIGO", referencedColumnName = "codigo", insertable = true, updatable = true, nullable = false)
    private Rm rm;
    
    @Column(nullable=false)
@@ -66,13 +68,42 @@ public final class Csel implements Serializable {
    @Column(nullable = false)
    private Integer atendimentos;
 
+   /** Funcionamentos. */
+   @OneToMany(mappedBy = "csel", fetch = FetchType.LAZY)
+   private List<CselFuncionamento> funcionamentos;
+
    public Csel() {
       super();
    }
-
+   
    @Override
    public String toString() {
       return new StringBuilder(nome).append(" (").append("CS").append(numero).append("/").append(rm.getCodigo()).append("RM)").toString();
+   }
+   
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Csel other = (Csel) obj;
+      if (codigo == null) {
+         if (other.codigo != null)
+            return false;
+      } else if (!codigo.equals(other.codigo))
+         return false;
+      return true;
    }
 
    public Integer getCodigo() {
@@ -123,12 +154,6 @@ public final class Csel implements Serializable {
       this.numero = numero;
    }
 
-   /*
-    * FUNCIONAMENTOS
-    */
-   @OneToMany(mappedBy = "csel", fetch = FetchType.LAZY)
-   private List<CselFuncionamento> funcionamentos;
-
    public List<CselFuncionamento> getFuncionamentos() {
       return funcionamentos;
    }
@@ -138,18 +163,22 @@ public final class Csel implements Serializable {
    }
 
    public void addFuncionamento(CselFuncionamento funcionamento) throws FuncionamentoJaExisteException {
-      if (this.funcionamentos.contains(funcionamento))
+      if (this.funcionamentos.contains(funcionamento)) {
          throw new FuncionamentoJaExisteException();
-      if (this.funcionamentos == null)
+      }
+      if (this.funcionamentos == null) {
          this.funcionamentos = new ArrayList<CselFuncionamento>();
+      }
       this.funcionamentos.add(funcionamento);
-      if (funcionamento.getCsel() == null || funcionamento.getCsel() != this)
+      if (funcionamento.getCsel() == null || funcionamento.getCsel() != this) {
          funcionamento.setCsel(this);
+      }
    }
 
    public void removeFuncionamento(CselFuncionamento funcionamento) throws FuncionamentoNaoExisteException {
-      if (!this.funcionamentos.contains(funcionamento))
+      if (!this.funcionamentos.contains(funcionamento)) {
          throw new FuncionamentoNaoExisteException();
+      }
       this.funcionamentos.remove(funcionamento);
       funcionamento.setCsel(null);
    }

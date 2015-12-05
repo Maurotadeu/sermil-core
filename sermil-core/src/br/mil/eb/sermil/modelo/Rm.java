@@ -17,12 +17,10 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 import br.mil.eb.sermil.core.exceptions.CselJaExisteException;
 import br.mil.eb.sermil.core.exceptions.CselNaoExisteException;
 
-/**
- * Região Militar.
- * 
+/** Entidade RM.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Rm.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.2.6
  */
 @Entity
 @NamedQuery(name = "Rm.listar", query = "SELECT r FROM Rm r")
@@ -30,7 +28,7 @@ import br.mil.eb.sermil.core.exceptions.CselNaoExisteException;
 public final class Rm implements Comparable<Rm>, Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = -8885833939779074521L;
+   private static final long serialVersionUID = 1013478439652344523L;
 
    @Id
    private Byte codigo;
@@ -42,8 +40,15 @@ public final class Rm implements Comparable<Rm>, Serializable {
    @ManyToOne
    private Cma cma;
 
+   @OneToMany(mappedBy = "rm", fetch = FetchType.LAZY)
+   private List<Csel> cselCollection;
+
    public Rm() {
       super();
+   }
+
+   public Rm(final Byte codigo) {
+      this.codigo = codigo;
    }
 
    @Override
@@ -53,7 +58,32 @@ public final class Rm implements Comparable<Rm>, Serializable {
 
    @Override
    public String toString() {
-      return this.getSigla() == null ? "NULO" : this.getSigla();
+      return this.getSigla() == null ? "RM" : this.getSigla();
+   }
+   
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Rm other = (Rm) obj;
+      if (codigo == null) {
+         if (other.codigo != null)
+            return false;
+      } else if (!codigo.equals(other.codigo))
+         return false;
+      return true;
    }
 
    public Cma getCma() {
@@ -88,28 +118,28 @@ public final class Rm implements Comparable<Rm>, Serializable {
       this.sigla = sigla;
    }
 
-   @OneToMany(mappedBy = "rm", fetch = FetchType.LAZY)
-   private List<Csel> cselCollection;
-
    public List<Csel> getCselCollection() {
       return cselCollection;
    }
 
-   public void setCselCollection(List<Csel> cselCollection) {
+   public void setCselCollection(final List<Csel> cselCollection) {
       this.cselCollection = cselCollection;
    }
 
-   public void addCsel(Csel csel) throws CselJaExisteException{
-      if(this.cselCollection.contains(csel))
+   public void addCsel(final Csel csel) throws CselJaExisteException{
+      if(this.cselCollection.contains(csel)) {
          throw new CselJaExisteException();
-      if(this.cselCollection==null)
+      }
+      if(this.cselCollection == null) {
          this.cselCollection = new ArrayList<Csel>();
+      }
       this.cselCollection.add(csel);
    }
    
-   public void removeCsel(Csel csel) throws CselNaoExisteException{
-      if(!this.cselCollection.contains(csel))
+   public void removeCsel(final Csel csel) throws CselNaoExisteException{
+      if(!this.cselCollection.contains(csel)) {
          throw new CselNaoExisteException();
+      }
       this.cselCollection.remove(csel);
       csel.setRm(null);
    }

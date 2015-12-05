@@ -60,6 +60,7 @@
       <groupId>org.directwebremoting</groupId>
       <artifactId>dwr</artifactId>
       <version>3.0.0-rc3-SNAPSHOT</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.persistence</groupId>
@@ -74,42 +75,33 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.12</version>
+      <version>1.7.13</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>
-      <version>4.1.7.RELEASE</version>
+      <version>4.2.3.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>4.1.7.RELEASE</version>
+      <version>4.2.3.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
-      <version>4.1.7.RELEASE</version>
+      <version>4.2.3.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>4.1.7.RELEASE</version>
+      <version>4.2.3.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
       <version>3.2.6.RELEASE</version>
-    </dependency>
-    <dependency>
-      <groupId>org.directwebremoting</groupId>
-      <artifactId>dwr</artifactId>
-      <version>3.0.0-rc3-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.velocity</groupId>
-      <artifactId>velocity</artifactId>
-      <version>1.7</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
   <repositories>
@@ -139,4 +131,26 @@
       </plugin>
     </plugins>
   </build>
+  <scm>
+    <connection>scm:git:https://github.com/SERMIL/sermil-core</connection>
+  </scm>
+  <organization>
+    <name>DSM</name>
+    <url>http://dsm.dgp.eb.mil.br</url>
+  </organization>
+  <developers>
+    <developer>
+      <id>wagnerlopes</id>
+      <name>Wagner Luis barbosa de Abreu Lopes</name>
+      <email>wagner.luis.alopes@gmail.com</email>
+      <organization>DSM</organization>
+      <organizationUrl>http://dsm.dgp.eb.mil.br</organizationUrl>
+      <roles>
+        <role>Manager</role>
+        <role>Developer</role>
+      </roles>
+      <url>https://github.com/wagnerlopes</url>
+      <timezone>-3</timezone>
+    </developer>
+  </developers>
 </project>

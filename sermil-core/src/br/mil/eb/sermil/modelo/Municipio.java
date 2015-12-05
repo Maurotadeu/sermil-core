@@ -20,26 +20,22 @@ import br.mil.eb.sermil.core.exceptions.EnderecoJaExisteException;
 import br.mil.eb.sermil.core.exceptions.EnderecoNaoExisteException;
 import br.mil.eb.sermil.tipos.Utils;
 
-/**
- * Município.
- * 
+/** Entidade Município.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Municipio.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.2.6
  */
 @Entity
-@NamedQueries({ @NamedQuery(name = "Municipio.listarPorUf", query = "SELECT m FROM Municipio m WHERE m.uf.sigla LIKE ?1 ORDER BY m.descricao"),
-      @NamedQuery(name = "Municipio.listarPorDescricao", query = "SELECT m FROM Municipio m WHERE m.descricao LIKE CONCAT(?1,'%') ORDER BY m.descricao"),
-      @NamedQuery(name = "Municipio.listarPorRmCsm", query = "SELECT DISTINCT m.codigo, m.descricao, m.uf.sigla, m.sigla, m.ddd, c.codigo, c.rm.codigo FROM Municipio m, Jsm j, Csm c WHERE m.codigo = j.municipio.codigo AND j.csm.codigo = c.codigo AND m.descricao LIKE CONCAT(?1,'%') ORDER BY m.descricao")
-      // @NamedQuery(name = "Municipio.gruparPorMesoregiao", query = "SELECT m.mesoregiao, COUNT(m)
-      // FROM Cidadao c JOIN Municipio m ON c.municipioResidencia.codigo = m.codigo WHERE
-      // c.vinculacaoAno = ?1 GROUP BY m.mesoregiao ORDER BY COUNT(m) DESC"),
+@NamedQueries({
+  @NamedQuery(name = "Municipio.listarPorUf", query = "SELECT m FROM Municipio m WHERE m.uf.sigla LIKE ?1 ORDER BY m.descricao"),
+  @NamedQuery(name = "Municipio.listarPorDescricao", query = "SELECT m FROM Municipio m WHERE m.descricao LIKE CONCAT(?1,'%') ORDER BY m.descricao"),
+  @NamedQuery(name = "Municipio.listarPorRmCsm", query = "SELECT DISTINCT m.codigo, m.descricao, m.uf.sigla, m.sigla, m.ddd, c.codigo, c.rm.codigo FROM Municipio m, Jsm j, Csm c WHERE m.codigo = j.municipio.codigo AND j.csm.codigo = c.codigo AND m.descricao LIKE CONCAT(?1,'%') ORDER BY m.descricao")
 })
 @PrimaryKey(validation = IdValidation.NULL)
 public final class Municipio implements Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = 5550910662728300648L;
+   private static final long serialVersionUID = -9051795322080254128L;
 
    @Id
    private Integer codigo;
@@ -54,6 +50,10 @@ public final class Municipio implements Serializable {
    @JoinColumn(name = "UF_SIGLA", nullable = false)
    private Uf uf;
 
+   /** Endereços de CS. */
+   @OneToMany(mappedBy = "municipio", fetch = FetchType.EAGER)
+   private List<CselEndereco> enderecosDeCsel;
+
    public Municipio() {
    }
 
@@ -61,6 +61,11 @@ public final class Municipio implements Serializable {
       this.setCodigo(codigo);
       this.setDescricao(descricao);
       this.setUf(uf);
+   }
+
+   @Override
+   public String toString() {
+      return new StringBuilder(this.getDescricao() == null ? "MUNICIPIO" : this.getDescricao()).append(" - ").append(this.getUf() == null ? "UF" : this.getUf()).toString();
    }
 
    public Integer getCodigo() {
@@ -103,18 +108,6 @@ public final class Municipio implements Serializable {
       this.uf = uf;
    }
 
-   @Override
-   public String toString() {
-      return new StringBuilder(this.getDescricao() == null ? "DESCRICAO" : this.getDescricao()).append(" - ").append(this.getUf() == null ? "UF" : this.getUf()).toString();
-   }
-
-   /*
-    * Enderecos de Csel collection
-    */
-
-   @OneToMany(mappedBy = "municipio", fetch = FetchType.EAGER)
-   private List<CselEndereco> enderecosDeCsel;
-
    public List<CselEndereco> getEnderecosDeCsel() {
       return enderecosDeCsel;
    }
@@ -133,7 +126,7 @@ public final class Municipio implements Serializable {
          endereco.setMunicipio(this);
    }
    
-   public void removeEnderecoDeCsel(CselEndereco endereco) throws EnderecoNaoExisteException{
+   public void removeEnderecoDeCsel(CselEndereco endereco) throws EnderecoNaoExisteException {
       if(!this.enderecosDeCsel.contains(endereco))
          throw new EnderecoNaoExisteException();
       this.enderecosDeCsel.remove(endereco);

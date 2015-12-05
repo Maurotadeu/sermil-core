@@ -17,7 +17,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Entidade Taxa/Multa.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id$
+ * @version 5.2.6
  */
 @Entity
 @Table(name = "TAXA_MULTA")
