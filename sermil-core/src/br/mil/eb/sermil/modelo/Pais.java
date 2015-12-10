@@ -7,13 +7,17 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
-/** País.
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
+
+/** Entidade País.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Pais.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.2.6
  */
 @Entity
 @NamedQuery(name = "Pais.listar", query = "SELECT p FROM Pais p ORDER BY p.descricao")
+@PrimaryKey(validation = IdValidation.NULL)
 public final class Pais implements Comparable<Pais>, Serializable {
 
   /** serialVersionUID.*/
@@ -47,9 +51,9 @@ public final class Pais implements Comparable<Pais>, Serializable {
   
   @Override
   public String toString() {
-    return new StringBuilder(this.getCodigo() == null ? "NULO" : this.getCodigo().toString())
+    return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo().toString())
       .append(" - ")
-      .append(this.getDescricao() == null ? "NULO" : this.getDescricao())
+      .append(this.getDescricao() == null ? "DESCRICAO" : this.getDescricao())
       .toString();
   }
 
