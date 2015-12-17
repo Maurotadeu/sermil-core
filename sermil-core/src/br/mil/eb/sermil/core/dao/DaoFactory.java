@@ -37,6 +37,8 @@ public abstract class DaoFactory {
 
    public abstract CidadaoDao getCidadaoDao();
 
+   public abstract CidAdiamentoDao getCidAdiamentoDao();
+
    public abstract CidArrecadacaoDao getCidArrecadacaoDao();
 
    public abstract CidAuditoriaDao getCidAuditoriaDao();
@@ -48,6 +50,8 @@ public abstract class DaoFactory {
    public abstract CidContatoDao getCidContatoDao();
 
    public abstract CidEventoDao getCidEventoDao();
+
+   public abstract CidExarDao getCidExarDao();
 
    public abstract CidFotoDao getCidFotoDao();
 

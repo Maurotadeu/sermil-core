@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -25,7 +26,8 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "CID_CERTIFICADO")
 @NamedQueries({
-   @NamedQuery(name = "Certificado.cidadaoTemCdi", query = " SELECT c.numero FROM CidCertificado c WHERE c.cidadao.ra = ?1 and c.pk.tipo = 3 ")
+   @NamedQuery(name = "Certificado.cidadaoTemCdi", query = " SELECT c.numero FROM CidCertificado c WHERE c.pk.cidadaoRa = ?1 and c.pk.tipo = 3 "),
+   @NamedQuery(name = "Certificado.listarPorRa", query = " SELECT c FROM CidCertificado c WHERE c.pk.cidadaoRa = ?1")
 })
 public final class CidCertificado implements Comparable<CidCertificado>, Serializable {
 
@@ -59,11 +61,11 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
 
    private String anulado;
 
-   @ManyToOne
-   @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
-   private Cidadao cidadao;
+//   @ManyToOne
+//   @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
+//   private Cidadao cidadao;
 
-   @ManyToOne
+   @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "OM_CODIGO", updatable = false, nullable = false)
    private Om om;
 
@@ -120,11 +122,18 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
       this.setSerie(linha.substring(24, 35).replaceAll("[^A-Z ]", ""));
       this.setResponsavel("Módulo JSM");
    }
-
+/*
    public Cidadao getCidadao() {
       return cidadao;
    }
 
+   public void setCidadao(Cidadao cid) {
+      this.cidadao = cid;
+      if (!cid.getCidCertificadoCollection().contains(this)) {
+         cid.getCidCertificadoCollection().add(this);
+      }
+   }
+*/
    public String getMotivo() {
       return motivo;
    }
@@ -151,13 +160,6 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
 
    public String getSituacaoEspecial() {
       return situacaoEspecial;
-   }
-
-   public void setCidadao(Cidadao cid) {
-      this.cidadao = cid;
-      if (!cid.getCidCertificadoCollection().contains(this)) {
-         cid.getCidCertificadoCollection().add(this);
-      }
    }
 
    public void setMotivo(String motivo) {

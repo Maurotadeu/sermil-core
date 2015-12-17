@@ -47,7 +47,10 @@ import br.mil.eb.sermil.tipos.Utils;
       @NamedQuery(name = "Cidadao.listarPorCsmJsm", query = "SELECT c FROM Cidadao c WHERE c.jsm.pk.csmCodigo = ?1 AND c.jsm.pk.codigo = ?2"),
       @NamedQuery(name = "Cidadao.listarPorFracao", query = "SELECT c FROM Cidadao c WHERE c.qcp.pk.omCodigo = ?1 AND c.qcp.pk.fracaoId = ?2 ORDER BY c.nome"),
       @NamedQuery(name = "Cidadao.limpaEmail", query = "UPDATE Cidadao c SET c.email = null WHERE c.ra = ?1"), @NamedQuery(name = "Cidadao.listarUnico", query = "SELECT c FROM Cidadao c WHERE c.nome = ?1 AND c.mae = ?2 AND c.nascimentoData = ?3"),
-      @NamedQuery(name = "Cidadao.listarPorCpf", query = "SELECT c FROM Cidadao c WHERE c.cpf = ?1") })
+      @NamedQuery(name = "Cidadao.listarPorCpf", query = "SELECT c FROM Cidadao c WHERE c.cpf = ?1"),
+      @NamedQuery(name = "Cidadao.SinpaWS1", query = "SELECT c.ra, c.nome, c.nascimentoData, c.mae, c.sexo, c.cpf, c.idtMilitar, c.situacaoMilitar FROM Cidadao c WHERE c.cpf = ?1"),
+      @NamedQuery(name = "Cidadao.SinpaWS2", query = "SELECT c.ra, c.nome, c.nascimentoData, c.mae, c.sexo, c.cpf, c.idtMilitar, c.situacaoMilitar FROM Cidadao c WHERE c.mae = ?1 AND c.nascimentoData = ?2 AND c.nome = ?3")
+})
 public final class Cidadao implements Serializable {
 
    /** serialVersionUID. */
@@ -92,7 +95,7 @@ public final class Cidadao implements Serializable {
 
    private String cid;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
    private List<CidAdiamento> cidAdiamentoCollection;
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
@@ -107,7 +110,7 @@ public final class Cidadao implements Serializable {
    @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
    private CidBcc cidBcc;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
+   @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidCertificado> cidCertificadoCollection;
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
@@ -116,7 +119,7 @@ public final class Cidadao implements Serializable {
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER)
    private List<CidDocumento> cidDocumentoCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
+   @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidEvento> cidEventoCollection;
 
    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
@@ -129,7 +132,7 @@ public final class Cidadao implements Serializable {
    @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
    private CidEximido cidEximido;
 
-   @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+   @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
    private CidFoto cidFoto;
 
    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
@@ -1173,9 +1176,9 @@ public final class Cidadao implements Serializable {
          throw new SermilException("Adiamente já existe");
       }
       this.getCidAdiamentoCollection().add(ca);
-      if (ca.getCidadao() != this) {
-         ca.setCidadao(this);
-      }
+//      if (ca.getCidadao() != this) {
+//         ca.setCidadao(this);
+//      }
    }
 
    public void addCidArrecadacao(final CidArrecadacao ca) throws SermilException {
@@ -1225,9 +1228,9 @@ public final class Cidadao implements Serializable {
          throw new SermilException("Certificado já existe");
       }
       this.getCidCertificadoCollection().add(cc);
-      if (cc.getCidadao() != this) {
-         cc.setCidadao(this);
-      }
+//      if (cc.getCidadao() != this) {
+//         cc.setCidadao(this);
+//      }
    }
 
    public void addCidContato(final CidContato cc) throws SermilException {
@@ -1290,9 +1293,9 @@ public final class Cidadao implements Serializable {
          throw new SermilException("Evento já existe");
       }
       this.getCidEventoCollection().add(ce);
-      if (ce.getCidadao() != this) {
-         ce.setCidadao(this);
-      }
+//      if (ce.getCidadao() != this) {
+//         ce.setCidadao(this);
+//      }
    }
 
    public void addCidExar(final CidExar cx) throws SermilException {

@@ -9,8 +9,10 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -22,6 +24,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "CID_EXAR")
+@NamedQuery(name = "CidExar.listarPorRa", query = "SELECT e FROM CidExar e WHERE e.pk.cidadaoRa = ?1")
 public final class CidExar implements Comparable<CidExar>, Serializable {
 
    /** serialVersionUID. */
@@ -42,15 +45,15 @@ public final class CidExar implements Comparable<CidExar>, Serializable {
 
     private String ip;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OM_CODIGO")
     private Om om;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PAIS_CODIGO")
     private Pais pais;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MUNICIPIO_CODIGO")
     private Municipio municipio;
 
