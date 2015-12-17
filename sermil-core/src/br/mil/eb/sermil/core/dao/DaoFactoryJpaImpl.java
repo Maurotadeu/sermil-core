@@ -1,12 +1,14 @@
 package br.mil.eb.sermil.core.dao;
 
 import br.mil.eb.sermil.modelo.Cep;
+import br.mil.eb.sermil.modelo.CidAdiamento;
 import br.mil.eb.sermil.modelo.CidArrecadacao;
 import br.mil.eb.sermil.modelo.CidAuditoria;
 import br.mil.eb.sermil.modelo.CidAverbacao;
 import br.mil.eb.sermil.modelo.CidCertificado;
 import br.mil.eb.sermil.modelo.CidContato;
 import br.mil.eb.sermil.modelo.CidEvento;
+import br.mil.eb.sermil.modelo.CidExar;
 import br.mil.eb.sermil.modelo.CidFoto;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.CsAnamnese;
@@ -56,7 +58,7 @@ import br.mil.eb.sermil.modelo.Usuario;
 /** Implementação da fábrica abstrata de DAO para uso com o EclipseLink (JPA).
  * @author Abreu Lopes
  * @since 4.0
- * @version 5.2.5
+ * @version 5.2.6
  */
 public class DaoFactoryJpaImpl extends DaoFactory {
 
@@ -82,6 +84,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   @Override
   public CidadaoDao getCidadaoDao() {
     return (CidadaoDao) instanciarDao(CidadaoDaoJpa.class);
+  }
+
+  @Override
+  public CidAdiamentoDao getCidAdiamentoDao() {
+    return (CidAdiamentoDao) instanciarDao(CidAdiamentoDaoJpa.class);
   }
 
   @Override
@@ -114,6 +121,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
     return (CidEventoDao) instanciarDao(CidEventoJpa.class);
   }
 
+  @Override
+  public CidExarDao getCidExarDao() {
+    return (CidExarDao) instanciarDao(CidExarJpa.class);
+  }
+  
   @Override
   public CidFotoDao getCidFotoDao() {
     return (CidFotoDao) instanciarDao(CidFotoDaoJpa.class);
@@ -338,6 +350,8 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   
   public static class CidadaoDaoJpa extends GenericDaoJpaImpl<Cidadao, Long> implements CidadaoDao {}
 
+  public static class CidAdiamentoDaoJpa extends GenericDaoJpaImpl<CidAdiamento, CidAdiamento.PK> implements CidAdiamentoDao {}
+
   public static class CidArrecadacaoDaoJpa extends GenericDaoJpaImpl<CidArrecadacao, CidArrecadacao.PK> implements CidArrecadacaoDao {}
 
   public static class CidAuditoriaDaoJpa extends GenericDaoJpaImpl<CidAuditoria, CidAuditoria.PK> implements CidAuditoriaDao {}
@@ -349,6 +363,8 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   public static class CidContatoDaoJpa extends GenericDaoJpaImpl<CidContato, CidContato.PK> implements CidContatoDao {}
 
   public static class CidEventoJpa extends GenericDaoJpaImpl<CidEvento,  CidEvento.PK> implements CidEventoDao{}
+
+  public static class CidExarJpa extends GenericDaoJpaImpl<CidExar,  CidExar.PK> implements CidExarDao{}
 
   public static class CidFotoDaoJpa extends GenericDaoJpaImpl<CidFoto, Long> implements CidFotoDao {}
 

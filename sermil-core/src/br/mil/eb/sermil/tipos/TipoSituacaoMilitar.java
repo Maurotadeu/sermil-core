@@ -24,7 +24,10 @@ public enum TipoSituacaoMilitar {
    EXIMIDO("Eximido"),
    LICENCIADO("Licenciado/Desligado"),
    DISP_SERV_ALT("Dispensado do Serviço Alternativo"),
-   PREST_SV_ALT("Prestou Serviço Alternativo");
+   PREST_SV_ALT("Prestou Serviço Alternativo"),
+   DESERTOR("Desertor"),
+   REFORMADO("Reformado")
+   ;
 
    private String descricao;
 
