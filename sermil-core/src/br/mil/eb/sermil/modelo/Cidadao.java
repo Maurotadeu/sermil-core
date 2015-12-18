@@ -19,6 +19,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -96,6 +97,7 @@ public final class Cidadao implements Serializable {
    private String cid;
 
    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+   @JoinColumn(name = "CIDADAO_RA", referencedColumnName = "RA")
    private List<CidAdiamento> cidAdiamentoCollection;
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
@@ -111,15 +113,20 @@ public final class Cidadao implements Serializable {
    private CidBcc cidBcc;
 
    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
+   @JoinColumn(name = "CIDADAO_RA", referencedColumnName = "RA")
    private List<CidCertificado> cidCertificadoCollection;
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidContato> cidContatoCollection;
 
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
+   private List<CidDocApres> cidDocApresColletion;
+
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER)
    private List<CidDocumento> cidDocumentoCollection;
 
    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
+   @JoinColumn(name = "CIDADAO_RA", referencedColumnName = "RA")
    private List<CidEvento> cidEventoCollection;
 
    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
@@ -133,6 +140,7 @@ public final class Cidadao implements Serializable {
    private CidEximido cidEximido;
 
    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+   @PrimaryKeyJoinColumn
    private CidFoto cidFoto;
 
    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
@@ -153,9 +161,6 @@ public final class Cidadao implements Serializable {
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidRequerimento> cidRequerimentoCollection;
-
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
-   private List<CidDocApres> cidDocApresColletion;
 
    private Short cintura;
 
@@ -1176,9 +1181,9 @@ public final class Cidadao implements Serializable {
          throw new SermilException("Adiamente já existe");
       }
       this.getCidAdiamentoCollection().add(ca);
-//      if (ca.getCidadao() != this) {
-//         ca.setCidadao(this);
-//      }
+      //if (ca.getCidadao() != this) {
+      //   ca.setCidadao(this);
+      //}
    }
 
    public void addCidArrecadacao(final CidArrecadacao ca) throws SermilException {
@@ -1228,9 +1233,9 @@ public final class Cidadao implements Serializable {
          throw new SermilException("Certificado já existe");
       }
       this.getCidCertificadoCollection().add(cc);
-//      if (cc.getCidadao() != this) {
-//         cc.setCidadao(this);
-//      }
+      //if (cc.getCidadao() != this) {
+      //   cc.setCidadao(this);
+      //}
    }
 
    public void addCidContato(final CidContato cc) throws SermilException {
@@ -1293,9 +1298,9 @@ public final class Cidadao implements Serializable {
          throw new SermilException("Evento já existe");
       }
       this.getCidEventoCollection().add(ce);
-//      if (ce.getCidadao() != this) {
-//         ce.setCidadao(this);
-//      }
+      //if (ce.getCidadao() != this) {
+      //  ce.setCidadao(this);
+      //}
    }
 
    public void addCidExar(final CidExar cx) throws SermilException {
