@@ -29,10 +29,10 @@ import br.mil.eb.sermil.core.utils.ZlibHelper;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.ArquivoCabecalho;
 
-/** Serviço de carga das averbações do Módulo JSM (SASM).
+/** Gerenciamento de carga das averbações do Módulo JSM (SASM).
  * @author Abreu Lopes, Gardino
  * @since 4.0
- * @version $Id: EntradaAverbacaoJsmServico.java 2486 2014-07-18 12:29:56Z wlopes $
+ * @version 5.2.6
  */
 @Named("entradaAverbacaoJsmServico")
 public class EntradaAverbacaoJsmServico {
@@ -82,7 +82,7 @@ public class EntradaAverbacaoJsmServico {
           try {
             stmt = con.prepareStatement("INSERT INTO CID_CERTIFICADO (CIDADAO_RA,TIPO,DATA,NUMERO,SERIE,RESPONSAVEL) VALUES(?, ?, ?, ?, ?, ?)");
             stmt.setLong(1, Long.valueOf(linha.substring(2, 14)));
-            stmt.setInt(2, Integer.parseInt(linha.substring(14, 16)));
+            stmt.setInt(2, this.converteTipoCertificado(Integer.parseInt(linha.substring(14, 16))));
             data.set(Integer.parseInt(linha.substring(20, 24)), Integer.parseInt(linha.substring(18, 20))-1, Integer.parseInt(linha.substring(16, 18)));
             stmt.setDate(3, new Date(data.getTimeInMillis()));
             stmt.setLong(4, Integer.valueOf(linha.substring(24, 35).replaceAll("[^0-9 ]", "").trim()));
@@ -153,4 +153,14 @@ public class EntradaAverbacaoJsmServico {
     }
     return cab;
   }
+  
+  private Integer converteTipoCertificado(final Integer tipo) {
+     switch(tipo) {
+     case 4: // CDI Computador => Novo Tipo 3 (CDI) 
+     case 6: // CDI JSM Infor  => VNovo Tipo 3 (CDI)
+        return 3;
+     default: return tipo;   
+     }
+  }
+  
 }

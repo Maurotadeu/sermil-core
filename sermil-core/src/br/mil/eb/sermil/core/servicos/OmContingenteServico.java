@@ -26,11 +26,12 @@ import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.OmBoletim;
 import br.mil.eb.sermil.modelo.OmBoletimCidadao;
 import br.mil.eb.sermil.modelo.Usuario;
+import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 
 /** Gerenciamento do contingente incorporado em uma OM.
  * @author Abreu Lopes, Gardino
  * @since 4.0
- * @version 5.2.1
+ * @version 5.2.6
  */
 @Named("omEfetivoServico")
 public class OmContingenteServico {
@@ -62,12 +63,12 @@ public class OmContingenteServico {
      * @return Lista de eventos (CID_EVENTO) para cada cidadão relacionado
      * @throws SermilException erro na consulta
      */
-    public List<CidEvento> listarEfetivo(final Integer codom, final Integer ano, final Short situacao, final Date data, final String biAbiNr, final boolean porNome) throws SermilException {
+    public List<CidEvento> listarEfetivo(final Integer codom, final Integer ano, final Integer situacao, final Date data, final String biAbiNr, final boolean porNome) throws SermilException {
         List<CidEvento> listaEvt = null;
         final List<Object[]> listaEfetivo = this.cidadaoDao.findBySQL("SELECT c.ra, c.nome, c.padrao_Codigo, c.gpt_Incorp FROM Cidadao c, Cid_evento e WHERE c.ra = e.cidadao_ra and c.om_codigo = ? AND c.situacao_Militar = ? AND e.codigo = 7 AND extract(year from e.data) = ?  order by c.gpt_Incorp", codom, situacao, ano);
         // final List<Object[]> listaCid = this.cidadaoDao.findByNamedQueryArray("Cidadao.listarPorOmSituacao", codom, ano.substring(2, 4), situacao);
         final Date dataEvt = (data != null ? data : new Date());
-        final Byte codigo = (situacao.equals(Short.valueOf("7")) ? Byte.valueOf("9") : Byte.valueOf("15"));
+        final int codigo = (situacao.equals(Short.valueOf("7")) ? Byte.valueOf("9") : Byte.valueOf("15"));
         if (listaEfetivo != null && !listaEfetivo.isEmpty()) {
             listaEvt = new ArrayList<CidEvento>(listaEfetivo.size());
             for (Object[] c : listaEfetivo) {
@@ -108,20 +109,20 @@ public class OmContingenteServico {
         for (int i = 0; i < lista.size(); i++) {
             final CidEvento e = lista.get(i);
             if (e != null && e.getPk() != null && e.getPk().getCodigo() != -1) {
-                byte sitMil = 7; // Distribuido
+                int sitMil = TipoSituacaoMilitar.DISTRIBUIDO.ordinal();
                 switch (e.getPk().getCodigo()) {
                 case 6:
-                    sitMil = 9;
-                    break; // Excesso
+                    sitMil = TipoSituacaoMilitar.EXCESSO_OM.ordinal();
+                    break;
                 case 8:
-                    sitMil = 10;
-                    break; // Insubmisso
+                    sitMil = TipoSituacaoMilitar.INSUBMISSO.ordinal();
+                    break;
                 case 9:
-                    sitMil = 12;
-                    break; // Incorporado
+                    sitMil = TipoSituacaoMilitar.INCORPORADO.ordinal();
+                    break;
                 case 23:
-                    sitMil = 11;
-                    break; // Refratário
+                    sitMil = TipoSituacaoMilitar.REFRATARIO.ordinal();
+                    break;
                 }
                 e.setAnotacao("USR: " + usr.getCpf());
                 final Cidadao c = this.cidadaoDao.findById(e.getPk().getCidadaoRa());
@@ -166,49 +167,49 @@ public class OmContingenteServico {
         for (int i = 0; i < lista.size(); i++) {
             final CidEvento e = lista.get(i);
             if (e != null && e.getPk() != null && e.getPk().getCodigo() != -1) {
-                byte sitMil = 12; // Incorporado
+                int sitMil = 12; // Incorporado
                 switch (e.getPk().getCodigo()) {
                 case 10:
-                    sitMil = 12;
+                    sitMil = TipoSituacaoMilitar.INCORPORADO.ordinal();
                     break; // Qualificação
                 case 11:
-                    sitMil = 12;
+                    sitMil = TipoSituacaoMilitar.INCORPORADO.ordinal();
                     break; // Engajamento
                 case 12:
-                    sitMil = 15;
+                    sitMil = TipoSituacaoMilitar.LICENCIADO.ordinal();
                     break; // Licenciamento
                 case 13:
-                    sitMil = 15;
+                    sitMil = TipoSituacaoMilitar.LICENCIADO.ordinal();
                     break; // Anulação de Incorporação/Matrícula
                 case 14:
-                    sitMil = 15;
+                    sitMil = TipoSituacaoMilitar.LICENCIADO.ordinal();
                     break; // Desincorporação
                 case 15:
-                    sitMil = 15;
+                    sitMil = TipoSituacaoMilitar.LICENCIADO.ordinal();
                     break; // Exclusão a bem da Disciplina
                 case 16:
-                    sitMil = 15;
+                    sitMil = TipoSituacaoMilitar.LICENCIADO.ordinal();
                     break; // Deserção
                 case 17:
-                    sitMil = 15;
+                    sitMil = TipoSituacaoMilitar.LICENCIADO.ordinal();
                     break; // Trancamento de Matrícula
                 case 18:
-                    sitMil = 15;
+                    sitMil = TipoSituacaoMilitar.LICENCIADO.ordinal();
                     break; // Reforma
                 case 19:
-                    sitMil = 15;
+                    sitMil = TipoSituacaoMilitar.LICENCIADO.ordinal();
                     break; // Desaparecimento
                 case 20:
-                    sitMil = 15;
+                    sitMil = TipoSituacaoMilitar.LICENCIADO.ordinal();
                     break; // Extravio
                 case 21:
-                    sitMil = 12;
+                    sitMil = TipoSituacaoMilitar.INCORPORADO.ordinal();
                     break; // Reinclusão
                 case 24:
-                    sitMil = 12;
+                    sitMil = TipoSituacaoMilitar.INCORPORADO.ordinal();
                     break; // Reabilitação
                 case 25:
-                    sitMil = 0;
+                    sitMil = TipoSituacaoMilitar.EXCLUIDO.ordinal();
                     break; // Falecido
                 }
                 e.setAnotacao("USR: " + usr.getCpf());
@@ -276,7 +277,9 @@ public class OmContingenteServico {
 
         @Override
         public int compare(CidEvento e1, CidEvento e2) {
-            int status = e1.getCidadao().getNome().compareTo(e2.getCidadao().getNome());
+           //TODO: Arrumar substituto pra este código
+           //int status = e1.getCidadao().getNome().compareTo(e2.getCidadao().getNome());
+           int status = e1.getPk().compareTo(e2.getPk());
             if (status == 0) { // mesmo nome
                 if (e1.getPk().getCodigo() < e2.getPk().getCodigo()) {
                     status = -1;

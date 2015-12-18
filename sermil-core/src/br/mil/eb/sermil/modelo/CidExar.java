@@ -9,22 +9,25 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/** Exercício de Apresentação da Reserva.
+/** Entidade CidExar. (TABELA CID_EXAR)
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id$
+ * @version 5.2.6
  */
 @Entity
 @Table(name = "CID_EXAR")
+@NamedQuery(name = "CidExar.listarPorRa", query = "SELECT e FROM CidExar e WHERE e.pk.cidadaoRa = ?1")
 public final class CidExar implements Comparable<CidExar>, Serializable {
 
-    /** serialVersionUID. */
+   /** serialVersionUID. */
     private static final long serialVersionUID = 4626180614113227696L;
 
     @EmbeddedId
@@ -42,19 +45,15 @@ public final class CidExar implements Comparable<CidExar>, Serializable {
 
     private String ip;
 
-    //  @ManyToOne, desativado para testar relacionamento unidirecional com a classe Cidadao
-    //  @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false)
-    //  private Cidadao cidadao;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OM_CODIGO")
     private Om om;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PAIS_CODIGO")
     private Pais pais;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MUNICIPIO_CODIGO")
     private Municipio municipio;
 
@@ -185,7 +184,7 @@ public final class CidExar implements Comparable<CidExar>, Serializable {
     /** Chave primária (PK) de CidExar.
      * @author Abreu Lopes
      * @since 3.0
-     * @version $Id$
+     * @version 5.2.6
      */
     @Embeddable
     public static class PK implements Comparable<CidExar.PK>, Serializable {

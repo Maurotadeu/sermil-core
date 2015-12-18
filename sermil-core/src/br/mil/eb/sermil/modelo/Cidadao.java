@@ -19,6 +19,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -27,12 +28,10 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.tipos.Cpf;
 import br.mil.eb.sermil.tipos.Utils;
 
-/**
- * Cidadao.
- * 
+/** Entidade Cidadao. (TABELA CIDADAO)
  * @author Abreu Lopes
  * @since 2.0
- * @version $Id$
+ * @version 5.2.6
  */
 @Entity
 @Table(name = "CIDADAO")
@@ -49,24 +48,26 @@ import br.mil.eb.sermil.tipos.Utils;
       @NamedQuery(name = "Cidadao.listarPorCsmJsm", query = "SELECT c FROM Cidadao c WHERE c.jsm.pk.csmCodigo = ?1 AND c.jsm.pk.codigo = ?2"),
       @NamedQuery(name = "Cidadao.listarPorFracao", query = "SELECT c FROM Cidadao c WHERE c.qcp.pk.omCodigo = ?1 AND c.qcp.pk.fracaoId = ?2 ORDER BY c.nome"),
       @NamedQuery(name = "Cidadao.limpaEmail", query = "UPDATE Cidadao c SET c.email = null WHERE c.ra = ?1"), @NamedQuery(name = "Cidadao.listarUnico", query = "SELECT c FROM Cidadao c WHERE c.nome = ?1 AND c.mae = ?2 AND c.nascimentoData = ?3"),
-      @NamedQuery(name = "Cidadao.listarPorCpf", query = "SELECT c FROM Cidadao c WHERE c.cpf = ?1") })
+      @NamedQuery(name = "Cidadao.listarPorCpf", query = "SELECT c FROM Cidadao c WHERE c.cpf = ?1"),
+      @NamedQuery(name = "Cidadao.SinpaWS1", query = "SELECT c.ra, c.nome, c.nascimentoData, c.mae, c.sexo, c.cpf, c.idtMilitar, c.situacaoMilitar FROM Cidadao c WHERE c.cpf = ?1"),
+      @NamedQuery(name = "Cidadao.SinpaWS2", query = "SELECT c.ra, c.nome, c.nascimentoData, c.mae, c.sexo, c.cpf, c.idtMilitar, c.situacaoMilitar FROM Cidadao c WHERE c.mae = ?1 AND c.nascimentoData = ?2 AND c.nome = ?3")
+})
 public final class Cidadao implements Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = -5980871656919801572L;
+   private static final long serialVersionUID = 470074541922369630L;
 
    private static final String EMAIL_REGEXP = "^([a-zA-Z0-9_\\.\\-\\+])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";
 
+   /* Deprecated: usar Enum TipoSituacaoMilitar
    public static final Byte SITUACAO_MILITAR_EXCLUIDO = 0;
-
    public static final Byte SITUACAO_MILITAR_ALISTADO = 1;
-
+   public static final Byte SITUACAO_MILITAR_EXCESSO = 8;
    public static final Byte SITUACAO_MILITAR_REFRATARIO = 11;
-
    public static final Byte SITUACAO_MILITAR_INCORPORADO = 12;
-   
    public static final Byte SITUACAO_MILITAR_LICENCIADO = 15;
-
+   */
+   
    @Column(name = "ACUIDADE_AUDITIVA")
    private Byte acuidadeAuditiva;
 
@@ -95,7 +96,8 @@ public final class Cidadao implements Serializable {
 
    private String cid;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+   @JoinColumn(name = "CIDADAO_RA", referencedColumnName = "RA")
    private List<CidAdiamento> cidAdiamentoCollection;
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
@@ -110,25 +112,26 @@ public final class Cidadao implements Serializable {
    @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
    private CidBcc cidBcc;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
+   @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
+   @JoinColumn(name = "CIDADAO_RA", referencedColumnName = "RA")
    private List<CidCertificado> cidCertificadoCollection;
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidContato> cidContatoCollection;
 
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
+   private List<CidDocApres> cidDocApresColletion;
+
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER)
    private List<CidDocumento> cidDocumentoCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
+   @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
+   @JoinColumn(name = "CIDADAO_RA", referencedColumnName = "RA")
    private List<CidEvento> cidEventoCollection;
 
-   // TODO: usando notação de relacionamento unidirecional, analisar também em CidExar
    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
    @JoinColumn(name = "CIDADAO_RA", referencedColumnName = "RA")
    private List<CidExar> cidExarCollection;
-
-   // @OneToMany(mappedBy="cidadao", fetch=FetchType.EAGER, orphanRemoval=true)
-   // private List<CidExar> cidExarCollection;
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidEmpresa> cidEmpresaCollection;
@@ -136,10 +139,10 @@ public final class Cidadao implements Serializable {
    @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
    private CidEximido cidEximido;
 
-   @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+   @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+   @PrimaryKeyJoinColumn
    private CidFoto cidFoto;
 
-   // TODO: usando notação de relacionamento unidirecional, analisar também em CidHabilitacao
    @OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
    @JoinColumn(name = "CIDADAO_RA", referencedColumnName = "RA")
    private List<CidHabilitacao> cidHabilitacaoCollection;
@@ -158,9 +161,6 @@ public final class Cidadao implements Serializable {
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidRequerimento> cidRequerimentoCollection;
-
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
-   private List<CidDocApres> cidDocApresColletion;
 
    private Short cintura;
 
@@ -315,7 +315,7 @@ public final class Cidadao implements Serializable {
    private Byte sexo;
 
    @Column(name = "SITUACAO_MILITAR")
-   private Byte situacaoMilitar;
+   private Integer situacaoMilitar;
 
    private String telefone;
 
@@ -733,7 +733,7 @@ public final class Cidadao implements Serializable {
       return this.sexo;
    }
 
-   public Byte getSituacaoMilitar() {
+   public Integer getSituacaoMilitar() {
       return this.situacaoMilitar;
    }
 
@@ -907,7 +907,7 @@ public final class Cidadao implements Serializable {
       } else if (Cpf.isCpf(cpf)) {
          this.cpf = cpf;
       } else {
-         throw new IllegalArgumentException("CPF invÃ¡lido.");
+         throw new IllegalArgumentException("CPF invalido.");
       }
    }
 
@@ -1117,7 +1117,7 @@ public final class Cidadao implements Serializable {
       this.sexo = sexo;
    }
 
-   public void setSituacaoMilitar(Byte situacaoMilitar) {
+   public void setSituacaoMilitar(Integer situacaoMilitar) {
       this.situacaoMilitar = situacaoMilitar;
    }
 
@@ -1181,9 +1181,9 @@ public final class Cidadao implements Serializable {
          throw new SermilException("Adiamente já existe");
       }
       this.getCidAdiamentoCollection().add(ca);
-      if (ca.getCidadao() != this) {
-         ca.setCidadao(this);
-      }
+      //if (ca.getCidadao() != this) {
+      //   ca.setCidadao(this);
+      //}
    }
 
    public void addCidArrecadacao(final CidArrecadacao ca) throws SermilException {
@@ -1233,9 +1233,9 @@ public final class Cidadao implements Serializable {
          throw new SermilException("Certificado já existe");
       }
       this.getCidCertificadoCollection().add(cc);
-      if (cc.getCidadao() != this) {
-         cc.setCidadao(this);
-      }
+      //if (cc.getCidadao() != this) {
+      //   cc.setCidadao(this);
+      //}
    }
 
    public void addCidContato(final CidContato cc) throws SermilException {
@@ -1298,9 +1298,9 @@ public final class Cidadao implements Serializable {
          throw new SermilException("Evento já existe");
       }
       this.getCidEventoCollection().add(ce);
-      if (ce.getCidadao() != this) {
-         ce.setCidadao(this);
-      }
+      //if (ce.getCidadao() != this) {
+      //  ce.setCidadao(this);
+      //}
    }
 
    public void addCidExar(final CidExar cx) throws SermilException {
@@ -1392,6 +1392,30 @@ public final class Cidadao implements Serializable {
       if (cr.getCidadao() != this) {
          cr.setCidadao(this);
       }
+   }
+
+   public boolean hasCertificado(final int tipoCertificado) {
+      boolean status = false;
+      if (this.getCidCertificadoCollection() != null && !this.getCidCertificadoCollection().isEmpty()) {
+         for (final CidCertificado certificado : this.getCidCertificadoCollection()) {
+            if (certificado.getPk().getTipo() == tipoCertificado) {
+               status = true;
+            }
+         }
+      }
+      return status;
+   }
+   
+   public boolean hasEvento(final int eventoCodigo) {
+      boolean status = false;
+      if (this.getCidEventoCollection() != null && !this.getCidEventoCollection().isEmpty()) {
+         for (CidEvento evento : this.getCidEventoCollection()) {
+            if (evento.getPk().getCodigo() == eventoCodigo) {
+               status = true;
+            }
+         }
+      }
+      return status;
    }
 
 }

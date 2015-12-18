@@ -9,33 +9,32 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/**
- * Eventos de cidadão.
- * 
+/** Entidade CidEvento. (Tabela CID_EVENTO)
  * @author Abreu Lopes
  * @since 2.0
- * @version $Id: CidEvento.java 2423 2014-05-13 17:00:54Z wlopes $
+ * @version 5.2.6
  */
 @Entity
 @Table(name = "CID_EVENTO")
-@NamedQueries({ @NamedQuery(name = "Evento.cidadaoPodeImprimirCdi", query = "SELECT e.cidadao.ra FROM CidEvento e WHERE e.cidadao.ra = ?1 and e.pk.codigo in (3,6,13,14,24)"),
-                @NamedQuery(name = "Evento.listarPorCodigo", query = "SELECT e FROM CidEvento e WHERE e.cidadao.ra = ?1 and e.pk.codigo = ?2") })
+@NamedQueries({@NamedQuery(name = "Evento.cidadaoPodeImprimirCdi", query = "SELECT e.pk.cidadaoRa FROM CidEvento e WHERE e.pk.cidadaoRa = ?1 and e.pk.codigo in (3,6,13,14,24)"),
+               @NamedQuery(name = "Evento.listarPorCodigo", query = "SELECT e FROM CidEvento e WHERE e.pk.cidadaoRa = ?1 and e.pk.codigo = ?2"),
+               @NamedQuery(name = "Evento.listarPorRa", query = "SELECT e FROM CidEvento e WHERE e.pk.cidadaoRa = ?1") })
 public final class CidEvento implements Comparable<CidEvento>, Serializable {
 
-   private static final long serialVersionUID = -9003467429456295200L;
-
+   /* Deprecated: usar Enum TipoEvento
    public final static Byte ALISTAMENTO = 1;
    public final static Byte DISPENSA_SELECAO = 3; 
    public final static Byte EXCESSO_CONTINGENTE = 6;
    public final static Byte LICENCIAMENTO = 12; 
+   */
+   
+   private static final long serialVersionUID = 1473835585849221630L;
 
    @EmbeddedId
    private CidEvento.PK pk;
@@ -45,15 +44,15 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
    @Column(name = "BI_ABI_NR")
    private String biAbiNr;
 
-   @ManyToOne
-   @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
-   private Cidadao cidadao;
+//   @ManyToOne
+//   @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
+//   private Cidadao cidadao;
 
    public CidEvento() {
       this.setPk(new CidEvento.PK());
    }
 
-   public CidEvento(final Long ra, final Byte codigo, final Date data) {
+   public CidEvento(final Long ra, final Integer codigo, final Date data) {
       this.setPk(new CidEvento.PK(ra, codigo, data));
    }
 
@@ -101,9 +100,9 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
       return this.biAbiNr;
    }
 
-   public Cidadao getCidadao() {
-      return this.cidadao;
-   }
+//   public Cidadao getCidadao() {
+//      return this.cidadao;
+//   }
 
    public CidEvento.PK getPk() {
       return this.pk;
@@ -116,35 +115,33 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
    public void setBiAbiNr(String biAbiNr) {
       this.biAbiNr = biAbiNr;
    }
-
+/*
    public void setCidadao(Cidadao cid) {
       this.cidadao = cid;
       if (!cid.getCidEventoCollection().contains(this)) {
          cid.getCidEventoCollection().add(this);
       }
    }
-
+*/
    public void setPk(CidEvento.PK pk) {
       this.pk = pk;
    }
 
-   /**
-    * Chave primária (PK) de CidEvento.
-    * 
+   /** Chave primária (PK) de CidEvento.
     * @author Abreu Lopes
     * @since 3.0
-    * @version $Id: CidEvento.java 2423 2014-05-13 17:00:54Z wlopes $
+    * @version 5.2.6
     */
    @Embeddable
    public static class PK implements Comparable<CidEvento.PK>, Serializable {
 
-      private static final long serialVersionUID = 7201122436880705606L;
+      private static final long serialVersionUID = -2935874026418712323L;
 
       @Column(name = "CIDADAO_RA")
       private Long cidadaoRa;
 
       @Column(name = "CODIGO")
-      private Byte codigo;
+      private Integer codigo;
 
       @Temporal(TemporalType.DATE)
       @Column(name = "DATA")
@@ -154,7 +151,7 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
          super();
       }
 
-      public PK(final Long cidadaoRa, final Byte codigo, final Date data) {
+      public PK(final Long cidadaoRa, final Integer codigo, final Date data) {
          super();
          this.setCidadaoRa(cidadaoRa);
          this.setCodigo(codigo);
@@ -214,7 +211,7 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
          return this.cidadaoRa;
       }
 
-      public Byte getCodigo() {
+      public Integer getCodigo() {
          return this.codigo;
       }
 
@@ -226,7 +223,7 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
          this.cidadaoRa = cidadaoRa;
       }
 
-      public void setCodigo(Byte codigo) {
+      public void setCodigo(Integer codigo) {
          this.codigo = codigo;
       }
 
