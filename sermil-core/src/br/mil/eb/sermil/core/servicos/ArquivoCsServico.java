@@ -25,7 +25,7 @@ import br.mil.eb.sermil.core.utils.ZlibHelper;
 /** Geração do arquivo de seleção para carregamento no Módulo Csel.
  * @author Abreu Lopes, Gardino
  * @since 4.0
- * @version 5.2.3
+ * @version 5.2.6
  */
 @Named("arquivoCsServico")
 public class ArquivoCsServico {
@@ -117,6 +117,7 @@ public class ArquivoCsServico {
         case 1:
           // Detalhes Seleção
           for(Object o: lista) {
+            logger.debug("Registro: {}", (String)o);
             bw.write(new StringBuilder((String)o).append(EOF).toString());
           }
           /*
@@ -141,9 +142,10 @@ public class ArquivoCsServico {
         case 2:
           // Detalhes Distribuição
           for(Object o: lista) {
+            logger.debug("Registro: {}", (String)o);
             bw.write(new StringBuilder((String)o).append(EOF).toString());
-            break;
           }
+          break;
         default:
           break;
         }
