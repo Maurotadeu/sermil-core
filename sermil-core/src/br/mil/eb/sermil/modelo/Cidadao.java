@@ -31,7 +31,7 @@ import br.mil.eb.sermil.tipos.Utils;
 /** Entidade Cidadao. (TABELA CIDADAO)
  * @author Abreu Lopes
  * @since 2.0
- * @version 5.2.6
+ * @version 5.2.7
  */
 @Entity
 @Table(name = "CIDADAO")
@@ -55,7 +55,7 @@ import br.mil.eb.sermil.tipos.Utils;
 public final class Cidadao implements Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = 470074541922369630L;
+   private static final long serialVersionUID = 8406550813811973209L;
 
    private static final String EMAIL_REGEXP = "^([a-zA-Z0-9_\\.\\-\\+])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";
 
@@ -346,6 +346,10 @@ public final class Cidadao implements Serializable {
 
    public Cidadao() {
       super();
+   }
+
+   public Cidadao(final Long ra) {
+      this.setRa(ra);
    }
 
    @Override
