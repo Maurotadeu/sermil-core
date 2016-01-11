@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -24,6 +25,8 @@ import org.springframework.web.client.RestTemplate;
 
 import br.mil.eb.sermil.core.exceptions.CPFSippesException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
+import br.mil.eb.sermil.modelo.Cidadao;
+import br.mil.eb.sermil.tipos.Cpf;
 import br.mil.eb.sermil.tipos.CpfInfoSippes;
 
 /** Integração entre SERMIL e SIPPES, padrão Web Service (JAX-RS).
@@ -32,7 +35,7 @@ import br.mil.eb.sermil.tipos.CpfInfoSippes;
  * IMPORTANTE: Importar o certificado digital do SIPPES no cacerts da JVM do servidor SERMIL.
  * @author Abreu Lopes
  * @since 5.2.5
- * @version 5.2.6
+ * @version 5.2.7
  */
 @Named("CpfSippesServico")
 @RemoteProxy(name = "cpfSippesServico")
@@ -41,6 +44,7 @@ public class CpfSippesServico {
    protected static final Logger log = LoggerFactory.getLogger(CpfSippesServico.class);
 
    /** URL de teste: não consome requisições no InfoConv. */
+   @SuppressWarnings("unused")
    private static final String URL_TESTE = "https://www.sippes.eb.mil.br/consultacpf/rest/consultarcpft";
 
    /** URL de produção: consome requisições reais no InfoConv. */
@@ -50,21 +54,32 @@ public class CpfSippesServico {
 
    private static final String USR_ID = "dsm";
 
-   private static final String USR_CPF = "98106546772";
-
+   @Inject
+   private CidadaoServico cidadaoServico;
+   
    public CpfSippesServico() {
       log.debug("CpfSippesServico iniciado");
    }
 
    @RemoteMethod
    public CpfInfoSippes pesquisarCpf(final String cpf) throws CPFSippesException, SermilException, URISyntaxException {
+      //  CPF é inválido
+      if (!Cpf.isCpf(cpf)) {
+         throw new CPFSippesException("CPF inválido, informe um número de CPF válido.");
+      };
+      // Verifica se o CPF já existe na base de dados
+      final Cidadao cidadao = new Cidadao();
+      cidadao.setCpf(cpf);
+      if (this.cidadaoServico.isCPFCadastrado(cidadao)) {
+         throw new CPFSippesException("CPF já foi cadastrado no sistema. Procure o órgão de Serviço Militar se necessário.");
+      }
       // Usando a implementação default do Spring para REST-RS
       final RestTemplate restClient = new RestTemplate();
       restClient.setErrorHandler(new CustomResponseErrorHandler());
       // Objeto JSON padrão de consulta no Web Service
       final JsonObject query = Json.createObjectBuilder()
             .add("cpf", cpf)
-            .add("cpfUsuario", USR_CPF)
+            .add("cpfUsuario", cpf)
             .add("usuario", USR_ID)
             .build();
       // Cabeçalhos necessários na requisição
@@ -86,7 +101,7 @@ public class CpfSippesServico {
    /** Manipulador de erro na resposta do servidor.
     * @author Abreu Lopes
     * @since 5.2.5
-    * @version 5.2.6
+    * @version 5.2.7
     */
    public class CustomResponseErrorHandler implements ResponseErrorHandler {
       
@@ -111,9 +126,10 @@ public class CpfSippesServico {
    
    }
 
+   /* SOMENTE PARA TESTES EM DESENVOLVIMENTO
    public static void main(String[] args) {
       try {
-         log.info(new CpfSippesServico().pesquisarCpf("98106546772").toString());
+         log.info(new CpfSippesServico().pesquisarCpf("99999999999").toString());
       } catch (Exception e) {
          if (e.getCause() instanceof CPFSippesException) {
             final Map<String,Object> prop = ((CPFSippesException)e.getCause()).getProperties();
@@ -125,5 +141,5 @@ public class CpfSippesServico {
          }
       }
    }
-   
+   */
 }
