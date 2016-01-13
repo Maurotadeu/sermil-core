@@ -9,8 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -18,10 +17,11 @@ import javax.persistence.TemporalType;
 /** Adiamento de incorporação.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CidAdiamento.java 2426 2014-05-14 15:01:41Z wlopes $
+ * @version 5.2.6
  */
 @Entity
 @Table(name = "CID_ADIAMENTO")
+@NamedQuery(name = "CidAdiamento.listarPorRa", query = "SELECT a FROM CidAdiamento a WHERE a.pk.cidadaoRa = ?1")
 public final class CidAdiamento implements Comparable<CidAdiamento>, Serializable {
 
   private static final long serialVersionUID = -6367822028531187502L;
@@ -32,9 +32,9 @@ public final class CidAdiamento implements Comparable<CidAdiamento>, Serializabl
   @Column(name = "ANOS_QTD")
   private Byte anosQtd;
 
-  @ManyToOne
-  @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
-  private Cidadao cidadao;
+//  @ManyToOne
+//  @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
+//  private Cidadao cidadao;
 
   @Column(name = "DOC_NR")
   private String docNr;
@@ -84,11 +84,18 @@ public final class CidAdiamento implements Comparable<CidAdiamento>, Serializabl
   public Byte getAnosQtd() {
     return this.anosQtd;
   }
-
+/*
   public Cidadao getCidadao() {
     return this.cidadao;
   }
 
+  public void setCidadao(Cidadao cid) {
+     this.cidadao = cid;
+     if (!cid.getCidAdiamentoCollection().contains(this)) {
+       cid.getCidAdiamentoCollection().add(this);
+     }
+   }
+*/
   public String getDocNr() {
     return this.docNr;
   }
@@ -99,13 +106,6 @@ public final class CidAdiamento implements Comparable<CidAdiamento>, Serializabl
 
   public void setAnosQtd(Byte anosQtd) {
     this.anosQtd = anosQtd;
-  }
-
-  public void setCidadao(Cidadao cid) {
-    this.cidadao = cid;
-    if (!cid.getCidAdiamentoCollection().contains(this)) {
-      cid.getCidAdiamentoCollection().add(this);
-    }
   }
 
   public void setDocNr(String docNr) {

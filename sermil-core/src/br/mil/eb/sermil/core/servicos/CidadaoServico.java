@@ -47,7 +47,7 @@ import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 /** Gerenciamento de informações de Cidadão.
  * @author Abreu Lopes, Anselmo
  * @since 3.0
- * @version 5.2.6
+ * @version 5.2.7
  */
 @Named("cidadaoServico")
 public class CidadaoServico {
@@ -185,7 +185,6 @@ public class CidadaoServico {
       }
    }
 
-   // TODO: melhorar o método para receber Cidadao ao invés de PreAlistamento
    @Transactional
    public Cidadao alistar(final PreAlistamento alistamento, final Date dataAlist, final Long ra, final Integer situacaoMilitar, final Usuario usr, final String anotacoes) throws SermilException {
       final Cidadao cidadao = new Cidadao();
@@ -255,15 +254,18 @@ public class CidadaoServico {
       return this.salvar(cidadao, usr, "ALISTAMENTO " + anotacoes);
    }
 
-   /**
-    * ALISTAMENTO SERVICO (SERMILWEB).
-    */
+   /** ALISTAMENTO ONLINE (SERMILWEB). */
    @Transactional
    public Cidadao alistar(final PreAlistamento alistamento, final String anotacoes) throws SermilException {
       // Verifica se já foi cadastrado
       if (isPreAlistamentoCadastrado(alistamento)) {
          throw new CidadaoCadastradoException(alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
       }
+      // Verifica os limites de idade
+      if (this.foraLimiteIdade(alistamento.getNascimentoData())) {
+         throw new SermilException("Alistamento permitido somente dos 17 aos 45 anos. Procure a JSM se for o caso.");
+      }
+      
       // Configura PreAlistamento
       if (alistamento.getDocApresMunicipio().getCodigo() == -1) {
          alistamento.setDocApresMunicipio(null);
@@ -304,6 +306,19 @@ public class CidadaoServico {
       }
       lista = null;
       return status;
+   }
+
+   public boolean foraLimiteIdade(final Date data) {
+      final Calendar ano17 = Calendar.getInstance();
+      ano17.add(Calendar.YEAR, -17);
+      final Calendar ano45 = Calendar.getInstance();
+      ano45.add(Calendar.YEAR, -45);
+      final Calendar dtNasc = Calendar.getInstance();
+      dtNasc.setTime(data);
+      if (dtNasc.get(Calendar.YEAR) > ano17.get(Calendar.YEAR) || dtNasc.get(Calendar.YEAR) < ano45.get(Calendar.YEAR)) {
+         return true;
+      }
+      return false;
    }
 
    public boolean isForaPrazo(final Date data) {

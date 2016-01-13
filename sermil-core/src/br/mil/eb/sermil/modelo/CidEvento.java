@@ -9,8 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -24,8 +22,9 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "CID_EVENTO")
-@NamedQueries({ @NamedQuery(name = "Evento.cidadaoPodeImprimirCdi", query = "SELECT e.cidadao.ra FROM CidEvento e WHERE e.cidadao.ra = ?1 and e.pk.codigo in (3,6,13,14,24)"),
-                @NamedQuery(name = "Evento.listarPorCodigo", query = "SELECT e FROM CidEvento e WHERE e.cidadao.ra = ?1 and e.pk.codigo = ?2") })
+@NamedQueries({@NamedQuery(name = "Evento.cidadaoPodeImprimirCdi", query = "SELECT e.pk.cidadaoRa FROM CidEvento e WHERE e.pk.cidadaoRa = ?1 and e.pk.codigo in (3,6,13,14,24)"),
+               @NamedQuery(name = "Evento.listarPorCodigo", query = "SELECT e FROM CidEvento e WHERE e.pk.cidadaoRa = ?1 and e.pk.codigo = ?2"),
+               @NamedQuery(name = "Evento.listarPorRa", query = "SELECT e FROM CidEvento e WHERE e.pk.cidadaoRa = ?1") })
 public final class CidEvento implements Comparable<CidEvento>, Serializable {
 
    /* Deprecated: usar Enum TipoEvento
@@ -45,9 +44,9 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
    @Column(name = "BI_ABI_NR")
    private String biAbiNr;
 
-   @ManyToOne
-   @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
-   private Cidadao cidadao;
+//   @ManyToOne
+//   @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
+//   private Cidadao cidadao;
 
    public CidEvento() {
       this.setPk(new CidEvento.PK());
@@ -101,9 +100,9 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
       return this.biAbiNr;
    }
 
-   public Cidadao getCidadao() {
-      return this.cidadao;
-   }
+//   public Cidadao getCidadao() {
+//      return this.cidadao;
+//   }
 
    public CidEvento.PK getPk() {
       return this.pk;
@@ -116,14 +115,14 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
    public void setBiAbiNr(String biAbiNr) {
       this.biAbiNr = biAbiNr;
    }
-
+/*
    public void setCidadao(Cidadao cid) {
       this.cidadao = cid;
       if (!cid.getCidEventoCollection().contains(this)) {
          cid.getCidEventoCollection().add(this);
       }
    }
-
+*/
    public void setPk(CidEvento.PK pk) {
       this.pk = pk;
    }

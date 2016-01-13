@@ -277,7 +277,9 @@ public class OmContingenteServico {
 
         @Override
         public int compare(CidEvento e1, CidEvento e2) {
-            int status = e1.getCidadao().getNome().compareTo(e2.getCidadao().getNome());
+           //TODO: Arrumar substituto pra este código
+           //int status = e1.getCidadao().getNome().compareTo(e2.getCidadao().getNome());
+           int status = e1.getPk().compareTo(e2.getPk());
             if (status == 0) { // mesmo nome
                 if (e1.getPk().getCodigo() < e2.getPk().getCodigo()) {
                     status = -1;
