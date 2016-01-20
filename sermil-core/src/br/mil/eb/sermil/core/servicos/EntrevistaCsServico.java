@@ -72,7 +72,14 @@ public class EntrevistaCsServico {
          throw new CidadaoNotFoundException();
       }
       return (ent != null);
-
+   }
+   
+   public void checaCidadao(Long ra) throws CidadaoNotFoundException{
+      try {
+         dao.findById(ra);
+      } catch (Exception e) {
+         throw new CidadaoNotFoundException();
+      }
    }
 
    public EntrevistaCs recuperarEntrevistaNaoArrimo(Long ra, EntrevistaCs ent) {
