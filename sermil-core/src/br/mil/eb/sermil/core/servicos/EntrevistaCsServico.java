@@ -94,6 +94,7 @@ public class EntrevistaCsServico {
       entrevista.setG15(ent.getG15());
       entrevista.setG15A(ent.getG15A());
       entrevista.setH1(ent.getH1());
+      entrevista.setPendencia(ent.getPendencia());
       return entrevista;
    }
 
