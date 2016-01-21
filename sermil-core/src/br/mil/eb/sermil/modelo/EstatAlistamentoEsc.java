@@ -10,15 +10,15 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
-/** Seleção de JSM (TABELA ESTAT_ALISTAMENTO_ESC).
- * @author Abreu Lopes, gardino
+/** Estatística de Alistamento (TABELA ESTAT_ALISTAMENTO_ESC).
+ * @author Abreu Lopes, Gardino
  * @since 4.5
- * @version $Id: EstatAlistamentoEsc.java 2459 2014-06-06 11:41:50Z wlopes $
+ * @version 5.2.7
  */
 @Entity
 @Table(name="ESTAT_ALISTAMENTO_ESC")
 @NamedQueries({
-  @NamedQuery(name = "EstatAlistamentoEsc.listarEscJsm", query = "SELECT e FROM EstatAlistamentoEsc e where e.pk.csmCodigo = ?1 and e.pk.jsmCodigo = ?2")
+   @NamedQuery(name = "EstatAlistamentoEsc.listarEscJsm", query = "SELECT e FROM EstatAlistamentoEsc e where e.pk.csmCodigo = ?1 and e.pk.jsmCodigo = ?2")
 })
 public class EstatAlistamentoEsc implements Serializable {
 
