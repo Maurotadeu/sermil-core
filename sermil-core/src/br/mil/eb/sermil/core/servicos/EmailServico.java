@@ -64,8 +64,8 @@ public class EmailServico {
                   model.put("mae", cadastro.getMae());
                   model.put("dtnasc", DateFormat.getDateInstance(DateFormat.MEDIUM).format(cadastro.getNascimentoData()));
                   model.put("jsm", cadastro.getJsm());
-                  model.put("endereco", cadastro.getJsm().getEndereco());
-                  model.put("telefone", cadastro.getJsm().getTelefone());
+                  model.put("endereco", cadastro.getJsm().getEndereco() == null ? "N/D" : cadastro.getJsm().getEndereco());
+                  model.put("telefone", cadastro.getJsm().getTelefone() == null ? "N/D" : cadastro.getJsm().getTelefone());
                   model.put("municipio", cadastro.getJsm().getMunicipio());
                   model.put("data", DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date()));
                   final String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "emailCadastro.vm", "utf-8", model);
