@@ -1,7 +1,5 @@
 package br.mil.eb.sermil.core.servicos;
 
-import java.text.DecimalFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.CidAuditoriaDao;
 import br.mil.eb.sermil.core.dao.CidadaoDao;
-import br.mil.eb.sermil.core.dao.MunicipioDao;
-import br.mil.eb.sermil.core.dao.PreAlistamentoDao;
-import br.mil.eb.sermil.core.exceptions.CPFDuplicadoException;
-import br.mil.eb.sermil.core.exceptions.CidadaoCadastradoException;
 import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemDocApresException;
 import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemEventoException;
 import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
@@ -33,21 +27,15 @@ import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.CidAuditoria;
-import br.mil.eb.sermil.modelo.CidDocApres;
-import br.mil.eb.sermil.modelo.CidDocumento;
-import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.Cidadao;
-import br.mil.eb.sermil.modelo.PreAlistamento;
 import br.mil.eb.sermil.modelo.Usuario;
-import br.mil.eb.sermil.tipos.Ra;
-import br.mil.eb.sermil.tipos.TipoDocApres;
 import br.mil.eb.sermil.tipos.TipoEvento;
 import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 
 /** Gerenciamento de informações de Cidadão.
  * @author Abreu Lopes, Anselmo
  * @since 3.0
- * @version 5.2.6
+ * @version 5.2.7
  */
 @Named("cidadaoServico")
 public class CidadaoServico {
@@ -60,23 +48,11 @@ public class CidadaoServico {
    @Inject
    private CidAuditoriaDao cidAuditoriaDao;
 
-   @Inject
-   private PreAlistamentoDao preAlistamentoDao;
-
-   @Inject
-   private RaServico raServico;
-
-   @Inject
-   private EmailServico emailServico;
-
-   @Inject
-   private MunicipioDao municipioDao;
-
    public CidadaoServico() {
       logger.debug("CidadaoServico iniciado");
    }
 
-   public boolean isCidadaoCadastrado(final Cidadao cidadao) {
+   public boolean isCadastrado(final Cidadao cidadao) {
       boolean status = false;
       if (!this.cidadaoDao.findByNamedQuery("Cidadao.listarUnico", cidadao.getNome(), cidadao.getMae(), cidadao.getNascimentoData()).isEmpty()) {
          status = true;
@@ -185,7 +161,37 @@ public class CidadaoServico {
       }
    }
 
-   // TODO: melhorar o método para receber Cidadao ao invés de PreAlistamento
+   public boolean podeImprimirCertSitMilitar(final Long ra) throws SermilException {
+      /* Recuperar cidadão */
+      Cidadao cid = null;
+      try {
+         cid = this.recuperar(ra);
+      } catch (SermilException e) {
+         throw new CidadaoNotFoundException();
+      }
+      /* REGRAS DE NEGOCIO */
+      // Situacao Militar = licenciado
+      if (cid.getSituacaoMilitar() != TipoSituacaoMilitar.LICENCIADO.ordinal()) {
+         throw new SermilException("Cidadão não está na situação LICENCIADO (15).");
+      }
+      // Tem que ter evento licenciamento
+      if (!cid.hasEvento(TipoEvento.LICENCIAMENTO.ordinal())) {
+         throw new CidadaoNaoTemEventoException();
+      }
+      // Pelo menos um documento apresentado.
+      if (cid.getCidDocApresColletion().size() <= 0) {
+         throw new CidadaoNaoTemDocApresException();
+      }
+      return true;
+   }
+
+}
+
+/* ------------------------------------------------------------------------------------------------------ */
+/* ---------------- LIXO RECICLAVEL !!!!!  -------------------------------------------------------------- */
+/* ------------------------------------------------------------------------------------------------------ */
+
+   /*
    @Transactional
    public Cidadao alistar(final PreAlistamento alistamento, final Date dataAlist, final Long ra, final Integer situacaoMilitar, final Usuario usr, final String anotacoes) throws SermilException {
       final Cidadao cidadao = new Cidadao();
@@ -255,15 +261,18 @@ public class CidadaoServico {
       return this.salvar(cidadao, usr, "ALISTAMENTO " + anotacoes);
    }
 
-   /**
-    * ALISTAMENTO SERVICO (SERMILWEB).
-    */
+    ALISTAMENTO ONLINE (SERMILWEB).
    @Transactional
    public Cidadao alistar(final PreAlistamento alistamento, final String anotacoes) throws SermilException {
       // Verifica se já foi cadastrado
       if (isPreAlistamentoCadastrado(alistamento)) {
          throw new CidadaoCadastradoException(alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
       }
+      // Verifica os limites de idade
+      if (this.foraLimiteIdade(alistamento.getNascimentoData())) {
+         throw new SermilException("Alistamento permitido somente dos 17 aos 45 anos. Procure a JSM se for o caso.");
+      }
+      
       // Configura PreAlistamento
       if (alistamento.getDocApresMunicipio().getCodigo() == -1) {
          alistamento.setDocApresMunicipio(null);
@@ -291,66 +300,8 @@ public class CidadaoServico {
 
       return cidadao;
    }
-
-   public boolean isPreAlistamentoCadastrado(final PreAlistamento alistamento) {
-      boolean status = false;
-      List<PreAlistamento> lista = this.preAlistamentoDao.findByNamedQuery("PreAlistamento.listarUnico", alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
-      if (lista != null && lista.size() > 0 && lista.get(0) != null) {
-         status = true;
-      }
-      lista = this.preAlistamentoDao.findByNamedQuery("PreAlistamento.listarPorCpf", alistamento.getCpf());
-      if (lista != null && lista.size() > 0 && lista.get(0) != null) {
-         status = true;
-      }
-      lista = null;
-      return status;
-   }
-
-   public boolean isForaPrazo(final Date data) {
-      boolean status = false;
-      final Calendar dtNasc = Calendar.getInstance();
-      dtNasc.setTime(data);
-      final Calendar hoje = Calendar.getInstance();
-      final Calendar jul = Calendar.getInstance();
-      final Calendar dez = Calendar.getInstance();
-      int anoAtual = hoje.get(Calendar.YEAR);
-      jul.set(anoAtual, 6, 1); // 1 jul
-      dez.set(anoAtual, 11, 31); // 31 dez
-      if (dtNasc.get(Calendar.YEAR) < anoAtual - 18) {
-         status = true;
-      } else if (dtNasc.get(Calendar.YEAR) < anoAtual - 17) {
-         if (hoje.getTimeInMillis() >= jul.getTimeInMillis() && hoje.getTimeInMillis() <= dez.getTimeInMillis()) {
-            status = true;
-         }
-      }
-      logger.debug("Classe={}, Ano={}, Inicio={}, Fim={}", dtNasc.get(Calendar.YEAR), anoAtual, jul, dez);
-      return status;
-   }
-
-   public boolean podeImprimirCertSitMilitar(final Long ra) throws SermilException {
-      /* Recuperar cidadão */
-      Cidadao cid = null;
-      try {
-         cid = this.recuperar(ra);
-      } catch (SermilException e) {
-         throw new CidadaoNotFoundException();
-      }
-      /* REGRAS DE NEGOCIO */
-      // Situacao Militar = licenciado
-      if (cid.getSituacaoMilitar() != TipoSituacaoMilitar.LICENCIADO.ordinal()) {
-         throw new SermilException("Cidadão não está na situação LICENCIADO (15).");
-      }
-      // Tem que ter evento licenciamento
-      if (!cid.hasEvento(TipoEvento.LICENCIAMENTO.ordinal())) {
-         throw new CidadaoNaoTemEventoException();
-      }
-      // Pelo menos um documento apresentado.
-      if (cid.getCidDocApresColletion().size() <= 0) {
-         throw new CidadaoNaoTemDocApresException();
-      }
-      return true;
-   }
-
+   */
+   
    /* ******************************************************
     * DEPRECATED: usar metodo Cidadao.hasEvento(int codigo) 
     * <wagner.luis.alopes@gmail.com>
@@ -377,5 +328,3 @@ public class CidadaoServico {
       return false;
    }
    */
-
-}
