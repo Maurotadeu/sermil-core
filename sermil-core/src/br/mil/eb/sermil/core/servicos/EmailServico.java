@@ -3,6 +3,7 @@ package br.mil.eb.sermil.core.servicos;
 import static br.mil.eb.sermil.core.Constantes.SUPORTE_CONTA_EMAIL;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,21 +21,26 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.utils.Configurador;
 import br.mil.eb.sermil.modelo.Cidadao;
+import br.mil.eb.sermil.modelo.Jsm;
 import br.mil.eb.sermil.modelo.Usuario;
 
 /** Serviço de envio de e-mail.
  * @author Abreu Lopes
  * @since 5.2.5
- * @version 5.2.6
+ * @version 5.2.7
  */
 @Named("emailServico")
 public class EmailServico {
 
    protected static final Logger logger = LoggerFactory.getLogger(EmailServico.class);
 
+   @Inject
+   private JsmDao jsmDao;
+   
    @Inject
    private JavaMailSender mailSender;
 
@@ -50,6 +56,7 @@ public class EmailServico {
 
    public void confirmarAlistamentoOnline(final Cidadao cadastro) {
       if (cadastro != null && !StringUtils.isEmpty(cadastro.getEmail())) {
+         final Jsm jsm = this.jsmDao.findById(cadastro.getJsm().getPk());
          try {
             final MimeMessagePreparator preparator = new MimeMessagePreparator() {
                public void prepare(MimeMessage mimeMessage) throws Exception {
@@ -57,17 +64,17 @@ public class EmailServico {
                   message.setTo(cadastro.getEmail());
                   message.setFrom(config.getConfiguracao(SUPORTE_CONTA_EMAIL));
                   message.setSubject("Alistamento ONLINE do Serviço Militar");
-                  final Map<String, Object> model = new HashMap<String, Object>(5);
+                  final Map<String, Object> model = new HashMap<String, Object>(10);
                   model.put("ra", cadastro.getRa());
                   model.put("nome", cadastro.getNome());
                   model.put("pai", cadastro.getPai());
                   model.put("mae", cadastro.getMae());
                   model.put("dtnasc", DateFormat.getDateInstance(DateFormat.MEDIUM).format(cadastro.getNascimentoData()));
-                  model.put("jsm", cadastro.getJsm());
-                  model.put("endereco", cadastro.getJsm().getEndereco() == null ? "N/D" : cadastro.getJsm().getEndereco());
-                  model.put("telefone", cadastro.getJsm().getTelefone() == null ? "N/D" : cadastro.getJsm().getTelefone());
-                  model.put("municipio", cadastro.getJsm().getMunicipio());
-                  model.put("data", DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date()));
+                  model.put("jsm", jsm);
+                  model.put("endereco", jsm.getEndereco() == null ? "N/D" : jsm.getEndereco());
+                  model.put("telefone", jsm.getTelefone() == null ? "N/D" : jsm.getTelefone());
+                  model.put("municipio", jsm.getMunicipio());
+                  model.put("data", new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(cadastro.getAtualizacaoData())); //DateFormat.getDateInstance(DateFormat.MEDIUM).format(new Date()));
                   final String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, "emailCadastro.vm", "utf-8", model);
                   message.setText(text, true);
                }

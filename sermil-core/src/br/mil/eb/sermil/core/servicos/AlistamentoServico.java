@@ -138,15 +138,17 @@ public class AlistamentoServico {
       cidadao.setAtualizacaoData(dataAtual);
       cidadao.setSituacaoMilitar(TipoSituacaoMilitar.ALISTADO.ordinal());
 
-      // Gerar novo RA
+      // Gerando novo RA
       final RaMestre raMestre = this.raMestreDao.findById(new RaMestre.PK(cidadao.getJsm().getPk().getCsmCodigo(), cidadao.getJsm().getPk().getCodigo()));
       if (raMestre == null) {
+         logger.error("JSM não existe na tabela RA_MESTRE ({})", cidadao.getJsm());
          throw new RaMestreException("CSM/JSM não existe na tabela de controle de RA (RA_MESTRE)");
       }
       this.preAlistamentoDao.getEntityManager().lock(raMestre, LockModeType.PESSIMISTIC_WRITE);
-      raMestre.setSequencial(raMestre.getSequencial() + 1);
-      cidadao.setRa(new Ra.Builder().csm(raMestre.getPk().getCsmCodigo()).jsm(raMestre.getPk().getJsmCodigo()).sequencial(raMestre.getSequencial()).build().getValor());
-      logger.debug("RA gerado: {} (JSM={})", cidadao.getRa(), cidadao.getJsm());
+      final Integer nrSequencial = raMestre.getSequencial() + 1;
+      cidadao.setRa(new Ra.Builder().csm(raMestre.getPk().getCsmCodigo()).jsm(raMestre.getPk().getJsmCodigo()).sequencial(nrSequencial).build().getValor());
+      raMestre.setSequencial(nrSequencial);
+      logger.debug("RA gerado: {} (JSM={} - MESTRE SEQUENCIAL: {})", cidadao.getRa(), cidadao.getJsm(), raMestre.getSequencial());
 
       // Documento apresentado
       final CidDocApres cda = new CidDocApres(cidadao.getRa(), alistamento.getDocApresNr());
@@ -174,6 +176,7 @@ public class AlistamentoServico {
       this.cidadaoDao.save(cidadao);
       this.preAlistamentoDao.save(alistamento);
       this.raMestreDao.save(raMestre);
+      this.preAlistamentoDao.getEntityManager().flush();
       return cidadao;
    }
 
