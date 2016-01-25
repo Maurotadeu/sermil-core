@@ -13,6 +13,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.LockModeType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.RaItensDao;
+import br.mil.eb.sermil.core.dao.RaMestreDao;
 import br.mil.eb.sermil.core.dao.RaPedidoDao;
 import br.mil.eb.sermil.core.exceptions.RaMestreException;
 import br.mil.eb.sermil.core.exceptions.RaPedidoJaProcessadoException;
@@ -32,9 +34,9 @@ import br.mil.eb.sermil.modelo.RaPedido;
 import br.mil.eb.sermil.tipos.Ra;
 
 /** Serviços do processo de Pedido de RA.
- * @author Anselmo
+ * @author Anselmo, Abreu Lopes
  * @since 5.0
- * @version $Id$
+ * @version 5.2.7
  */
 @Named("jsmRaPedidoProcessamentoServico")
 public class JsmRaPedidoProcessamentoServico {
@@ -42,10 +44,10 @@ public class JsmRaPedidoProcessamentoServico {
     protected static final Logger logger = LoggerFactory.getLogger(JsmRaPedidoProcessamentoServico.class);
 
     @Inject
-    private RaServico raServico;
+    private RaMestreDao raMestreDao;
 
     @Inject
-    private RaPedidoDao pedidoDao;
+    private RaPedidoDao raPedidoDao;
 
     @Inject
     private RaItensDao itemDao;
@@ -59,26 +61,35 @@ public class JsmRaPedidoProcessamentoServico {
     @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm')")
     @Transactional
     public void processarRaPedido(final Integer raPedidoNumero) throws SermilException  {
-
-        final RaPedido raPedido = this.pedidoDao.findById(raPedidoNumero);
-
+        if (raPedidoNumero == null) {
+          throw new SermilException("Nr do Pedido de RA deve ser informado");
+        }
+       
+        // Verificar Pedido de RA
+        final RaPedido raPedido = this.raPedidoDao.findById(raPedidoNumero);
         if ("S".equals(raPedido.getProcessado())) {
             throw new RaPedidoJaProcessadoException();
         }
-        // Alterar e salvar Pedido
+        this.raPedidoDao.getEntityManager().lock(raPedido, LockModeType.PESSIMISTIC_WRITE);
+        
+        // Alterar e salvar Pedido de RA
         raPedido.setProcessado("S");
-        this.pedidoDao.save(raPedido);
+        this.raPedidoDao.save(raPedido);
         for (RaItens raItem : raPedido.getRaItensCollection()) {
             // Incrementar Sequencial (RaMestre)
-            final RaMestre raMestre = this.raServico.recuperar(new RaMestre.PK(raItem.getPk().getCsmCodigo(), raItem.getPk().getJsmCodigo()));
-            int sequencial = raMestre.getSequencial() + raItem.getQuantidade();
+            final RaMestre raMestre = this.raMestreDao.findById(new RaMestre.PK(raItem.getPk().getCsmCodigo(), raItem.getPk().getJsmCodigo()));
+            this.raMestreDao.getEntityManager().lock(raMestre, LockModeType.PESSIMISTIC_WRITE);
+            this.raMestreDao.getEntityManager().lock(raItem, LockModeType.PESSIMISTIC_WRITE);
+            final Integer sequencial = raMestre.getSequencial() + raItem.getQuantidade();
             raMestre.setSequencial(sequencial);
-            this.raServico.salvar(raMestre);
+            this.raMestreDao.save(raMestre);
             // Definir RA inicial e final do RaItem
             raItem.setRaInicial(sequencial - raItem.getQuantidade() + 1);
             raItem.setRaFinal(sequencial);
             this.itemDao.save(raItem);
+            logger.debug("Faixa gerada: {} - {} (JSM = {})", raItem.getRaInicial(), raItem.getRaFinal(), raMestre.getPk());
         }
+        this.raMestreDao.getEntityManager().flush();
     }
 
     @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm')")
@@ -87,7 +98,7 @@ public class JsmRaPedidoProcessamentoServico {
         String caminho = Configurador.getInstance().getConfiguracao("temp.dir").toString();
         final Path file = Paths.get(caminho, title);
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(file.toString()), Charset.forName("UTF-8"))) {
-            String title2 = new StringBuilder("Pedido Nr ").append(this.pedidoDao.findById(item.getPk().getRaPedidoNumero()).toString()).toString();
+            String title2 = new StringBuilder("Pedido Nr ").append(this.raPedidoDao.findById(item.getPk().getRaPedidoNumero()).toString()).toString();
             bw.write(title.replace(".txt", "") + "\r\n\r\n");
             bw.write(title2 + "\r\n\r\n");
             Integer raIinicial = item.getRaInicial();
