@@ -25,6 +25,7 @@ import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.RaMestreException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.CidAuditoria;
+import br.mil.eb.sermil.modelo.CidDocApres;
 import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.RaMestre;
@@ -54,7 +55,7 @@ public class MobilizacaoServico {
    }
 
    @Transactional
-   public Cidadao cadastrar(final Cidadao cid, final Usuario usr, final String msg) throws SermilException {
+   public Cidadao cadastrar(final Cidadao cid, final Date dtAlist, final CidDocApres cda, final Usuario usr, final String msg) throws SermilException {
       // Verificar se já está cadastrado
       if (!this.cidadaoDao.findByNamedQuery("Cidadao.listarUnico", cid.getNome(), cid.getMae(), cid.getNascimentoData()).isEmpty()) {
          throw new CidadaoCadastradoException(cid.getNome(), cid.getMae(), cid.getNascimentoData());
@@ -84,21 +85,6 @@ public class MobilizacaoServico {
          cid.setOm(null);
       }
       
-      // Gerar Evento
-      if (cid.getSituacaoMilitar() == TipoSituacaoMilitar.ALISTADO.ordinal()) {
-         final Calendar dataEvento = Calendar.getInstance();
-         final CidEvento evento = new CidEvento();
-         evento.getPk().setCidadaoRa(cid.getRa());
-         evento.getPk().setCodigo(TipoEvento.ALISTAMENTO.ordinal());
-         evento.getPk().setData(dataEvento.getTime());
-         evento.setAnotacao("Cadastro de Mobilização");
-         cid.addCidEvento(evento);
-      }
-      
-      // Gerar Auditoria
-      final CidAuditoria aud = new CidAuditoria(cid.getRa(), new Date(), msg.substring(0, msg.length() > 500 ? 500 : msg.length()), usr.getAcessoIp(), usr.getCpf());
-      cid.addCidAuditoria(aud);
-      
       // Gerar RA se for nulo
       if (cid.getRa() == null) {
          final RaMestre raMestre = this.raMestreDao.findById(new RaMestre.PK(cid.getJsm().getPk().getCsmCodigo(), cid.getJsm().getPk().getCodigo()));
@@ -109,7 +95,34 @@ public class MobilizacaoServico {
          raMestre.setSequencial(raMestre.getSequencial() + 1);
          cid.setRa(new Ra.Builder().csm(raMestre.getPk().getCsmCodigo()).jsm(raMestre.getPk().getJsmCodigo()).sequencial(raMestre.getSequencial()).build().getValor());
          this.raMestreDao.save(raMestre);
+         logger.debug("RA gerado: {} (JSM={} - MESTRE SEQUENCIAL: {})", cid.getRa(), cid.getJsm(), raMestre.getSequencial());
       }
+      
+      // Gerar Evento
+      if (cid.getSituacaoMilitar() == TipoSituacaoMilitar.ALISTADO.ordinal()) {
+         final Calendar dataEvento = Calendar.getInstance();
+         if (dtAlist != null) {
+            dataEvento.setTime(dtAlist);
+         }
+         final CidEvento evento = new CidEvento();
+         evento.getPk().setCidadaoRa(cid.getRa());
+         evento.getPk().setCodigo(TipoEvento.ALISTAMENTO.ordinal());
+         evento.getPk().setData(dataEvento.getTime());
+         evento.setAnotacao(msg);
+         cid.addCidEvento(evento);
+      }
+
+      // Documento apresentado
+      if (cda != null) {
+        cda.getPk().setCidadaoRa(cid.getRa()); 
+        cid.addCidDocApres(cda);
+      }
+   
+      // Gerar Auditoria
+      final CidAuditoria aud = new CidAuditoria(cid.getRa(), new Date(), msg.substring(0, msg.length() > 500 ? 500 : msg.length()), usr.getAcessoIp(), usr.getCpf());
+      cid.addCidAuditoria(aud);
+
+      //Finaliza
       this.cidadaoDao.save(cid);
       return cid;
    }
