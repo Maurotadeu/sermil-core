@@ -125,6 +125,8 @@ public final class EntrevistaCs implements Serializable {
    private String Ind7;
    private String Ind8;
    private String Ind9;
+   
+   private String pendencia;
 
    public EntrevistaCs() {
    }
@@ -773,6 +775,14 @@ public final class EntrevistaCs implements Serializable {
 
    public void setJ231B(String j231b) {
       J231B = j231b;
+   }
+
+   public String getPendencia() {
+      return pendencia;
+   }
+
+   public void setPendencia(String pendencia) {
+      this.pendencia = pendencia;
    }
 
 }
