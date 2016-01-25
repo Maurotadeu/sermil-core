@@ -213,7 +213,7 @@ public final class Pgc implements Serializable {
 
    @Column(name = "DISTRIBUICAO_CONHECIMENTO_TG_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhemcimentoTgInicio;
+   private Date distribuicaoConhecimentoTgInicio;
 
    @Column(name = "DISTRIBUICAO_CONHECIMENTO_TG_TERMINO", nullable = false)
    @Temporal(TemporalType.DATE)
@@ -272,7 +272,7 @@ public final class Pgc implements Serializable {
 
    @Column(name = "INCORPORACAO_MFDV", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date incorporacaoMdfv;
+   private Date incorporacaoMfdv;
 
    @Column(name = "INCORPORACAO_GPTB", nullable = false)
    @Temporal(TemporalType.DATE)
@@ -674,12 +674,12 @@ public final class Pgc implements Serializable {
       this.distribuicaoConhecimentoCporNporTermino = distribuicaoConhecimentoCporNporTermino;
    }
 
-   public Date getDistribuicaoConhemcimentoTgInicio() {
-      return distribuicaoConhemcimentoTgInicio;
+   public Date getDistribuicaoConhecimentoTgInicio() {
+      return distribuicaoConhecimentoTgInicio;
    }
 
-   public void setDistribuicaoConhemcimentoTgInicio(Date distribuicaoConhemcimentoTgInicio) {
-      this.distribuicaoConhemcimentoTgInicio = distribuicaoConhemcimentoTgInicio;
+   public void setDistribuicaoConhecimentoTgInicio(Date distribuicaoConhecimentoTgInicio) {
+      this.distribuicaoConhecimentoTgInicio = distribuicaoConhecimentoTgInicio;
    }
 
    public Date getDistribuicaoConhecimentoTgTermino() {
@@ -802,12 +802,12 @@ public final class Pgc implements Serializable {
       this.incorporacaoTg = incorporacaoTg;
    }
 
-   public Date getIncorporacaoMdfv() {
-      return incorporacaoMdfv;
+   public Date getIncorporacaoMfdv() {
+      return incorporacaoMfdv;
    }
 
-   public void setIncorporacaoMdfv(Date incorporacaoMdfv) {
-      this.incorporacaoMdfv = incorporacaoMdfv;
+   public void setIncorporacaoMfdv(Date incorporacaoMfdv) {
+      this.incorporacaoMfdv = incorporacaoMfdv;
    }
 
    public Date getIncorporacaoGptb() {
@@ -865,7 +865,7 @@ public final class Pgc implements Serializable {
    public void setSelecaoGeralTermino(Date selecaoGeralTermino) {
       this.selecaoGeralTermino = selecaoGeralTermino;
    }
-
+   
    public Date getAlistamentoDentroPrazoInicio() {
       return alistamentoDentroPrazoInicio;
    }
