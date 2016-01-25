@@ -22,10 +22,10 @@ import javax.persistence.Transient;
 
 import br.mil.eb.sermil.tipos.Utils;
 
-/** Pré-alistamento.
+/** Alistamento Online.
  * @author Abreu Lopes
  * @since 3.4
- * @version $Id: PreAlistamento.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.2.7
  */
 @Entity
 @Table(name="PRE_ALISTAMENTO")
@@ -107,7 +107,7 @@ public final class PreAlistamento implements Comparable<PreAlistamento>, Seriali
   private Byte desejaServir;
 
   @Column(name="PROTOCOLO_DATA")
-  @Temporal(TemporalType.DATE)
+  @Temporal(TemporalType.TIMESTAMP)
   private Date protocoloData;
 
   @Column(name="NASCIMENTO_DATA")
