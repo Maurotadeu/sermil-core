@@ -11,6 +11,7 @@ import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.CidExar;
 import br.mil.eb.sermil.modelo.CidFoto;
 import br.mil.eb.sermil.modelo.Cidadao;
+import br.mil.eb.sermil.modelo.CsAgendamento;
 import br.mil.eb.sermil.modelo.CsAnamnese;
 import br.mil.eb.sermil.modelo.Csel;
 import br.mil.eb.sermil.modelo.CselEndereco;
@@ -58,7 +59,7 @@ import br.mil.eb.sermil.modelo.Usuario;
 /** Implementação da fábrica abstrata de DAO para uso com o EclipseLink (JPA).
  * @author Abreu Lopes
  * @since 4.0
- * @version 5.2.6
+ * @version 5.2.8
  */
 public class DaoFactoryJpaImpl extends DaoFactory {
 
@@ -132,9 +133,15 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   }
 
   @Override
+  public CsAgendamentoDao getCsAgendamentoDao() {
+    return (CsAgendamentoDao) instanciarDao(CsAgendamentoDaoJpa.class);
+  }
+  
+  @Override
   public CsAnamneseDao getCsAnamneseDao() {
     return (CsAnamneseDao) instanciarDao(CsAnamneseDaoJpa.class);
   }
+
 
   @Override
   public CselDao getCselDao() {
@@ -367,6 +374,8 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   public static class CidExarJpa extends GenericDaoJpaImpl<CidExar,  CidExar.PK> implements CidExarDao{}
 
   public static class CidFotoDaoJpa extends GenericDaoJpaImpl<CidFoto, Long> implements CidFotoDao {}
+
+  public static class CsAgendamentoDaoJpa extends GenericDaoJpaImpl<CsAgendamento, Integer> implements CsAgendamentoDao {}
 
   public static class CsAnamneseDaoJpa extends GenericDaoJpaImpl<CsAnamnese, Long> implements CsAnamneseDao {}
   
