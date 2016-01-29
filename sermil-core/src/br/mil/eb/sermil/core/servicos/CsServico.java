@@ -207,7 +207,7 @@ public class CsServico {
          logger.error("Exite um PGC com dois lancamento de ano base. Ano base: " + func.getAnoBase());
          throw new AnoBaseNaoEhUnicoException();
       }
-      List<Pgc> pgcs = pgcDao.findByNamedQuery("pgc.findByAnoBase", func.getAnoBase());
+      List<Pgc> pgcs = pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, func.getAnoBase());
       if (pgcs.size() < 1 )
          throw new PgcNaoExisteException();
 
@@ -230,7 +230,7 @@ public class CsServico {
       }
 
       // A CS so pode cadastrar funcionamento com ano base ja cadastrado no PGC
-      List<Pgc> ps = pgcDao.findByNamedQuery("pgc.findByAnoBase", func.getAnoBase());
+      List<Pgc> ps = pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, func.getAnoBase());
       if (ps.size() == 0)
          throw new FuncionamentoAnoBaseException();
 
@@ -252,7 +252,7 @@ public class CsServico {
    }
 
    public boolean isAnoBaseDePgcEhUnico(String anoBase) {
-      List<Pgc> pgcs = pgcDao.findByNamedQuery("pgc.findByAnoBase", anoBase);
+      List<Pgc> pgcs = pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, anoBase);
       int size = pgcs.size();
       return size > 1 ? false : true;
    }
@@ -440,7 +440,7 @@ public class CsServico {
 
    public boolean isPgcLancadoParaProximoAno() {
       int year = Calendar.getInstance().get(Calendar.YEAR);
-      List<Pgc> pgcs = this.pgcDao.findByNamedQuery("pgc.findByAnoBase", String.valueOf(year + 1));
+      List<Pgc> pgcs = this.pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, String.valueOf(year + 1));
       if (pgcs.size() > 0)
          return true;
       return false;
