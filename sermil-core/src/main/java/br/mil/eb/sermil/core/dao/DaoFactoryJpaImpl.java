@@ -297,11 +297,6 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   }
 
   @Override
-  public PgcDao getPgcDao() {
-    return (PgcDao) instanciarDao(PgcDaoJpa.class);
-  }
-
-  @Override
   public QcpDao getQcpDao() {
     return (QcpDao) instanciarDao(QcpDaoJpa.class);
   }

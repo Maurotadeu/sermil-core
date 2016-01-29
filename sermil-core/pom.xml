@@ -2,9 +2,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.mil.eb.sermil</groupId>
   <artifactId>sermil-core</artifactId>
-  <version>5.2.7</version>
+  <version>5.2.8</version>
   <name>SERMIL CORE</name>
-  <description>SERMIL CORE SERVICES</description>
+  <description>SERMIL LIBRARY CORE SERVICES</description>
   <dependencies>
     <dependency>
       <groupId>ch.qos.logback</groupId>
@@ -108,6 +108,12 @@
     	<artifactId>struts2-junit-plugin</artifactId>
     	<version>2.3.24.1</version>
     </dependency>
+    <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>2.50.0</version>
+        <scope>test</scope>
+    </dependency>  
   </dependencies>
   <repositories>
     <repository>
@@ -124,7 +130,14 @@
     </repository>
   </repositories>
   <build>
-    <sourceDirectory>src</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -132,6 +145,15 @@
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.19</version>
+        <configuration>
+          <argLine>-javaagent:${user.home}/.m2/repository/org/springframework/spring-instrument/4.2.3.RELEASE/spring-instrument-4.2.3.RELEASE.jar</argLine>
+          <skipTests>true</skipTests>
         </configuration>
       </plugin>
     </plugins>

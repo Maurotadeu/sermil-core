@@ -23,6 +23,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
  * 
  * @author dsmanselmo
  */
+@SuppressWarnings("unused")
 public class SelTestCase {
    private WebDriver driver;
    private String baseUrl;
