@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
@@ -21,6 +23,9 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "PGC")
+@NamedQueries({
+   @NamedQuery(name = "findByAnoBase", query = "select p from pgc p where p.anoBase = ?1 ")
+})
 public final class Pgc implements Serializable {
 
    /** serialVersionUID. */
@@ -34,24 +39,48 @@ public final class Pgc implements Serializable {
    @Column(name = "classe", nullable = false, length = 4)
    private String classe;
 
+   @Column(name = "ANO_BASE", unique = true)
+   private String anoBase;
+
    /**
     * ALISTAMENTO
     */
-   @Column(name = "ALISTAMENTO_INICIO", nullable = false)
+   @Column(name = "ALISTAMENTO_DENTRO_PRAZO_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date alistamentoInicio;
+   private Date alistamentoDentroPrazoInicio;
 
-   @Column(name = "ALISTAMENTO_TERMINO", nullable = false)
+   @Column(name = "ALISTAMENTO_DENTRO_PRAZO_TERMINO", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date alistamentoTermino;
+   private Date alistamentoDentroPrazoTermino;
 
+   @Column(name = "ALISTAMENTO_FORA_PRAZO_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date alistamentoForaPrazoInicio;
+
+   @Column(name = "ALISTAMENTO_FORA_PRAZO_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date alistamentoForaPrazoTermino;
+
+   /* CA = CLASSES ANTERIORES */
+   // Alistados de janeiro a junho
    @Column(name = "ALISTAMENTO_CA_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date alistamentoCaInicio;
 
+   // Alistados de janeiro a junho
    @Column(name = "ALISTAMENTO_CA_TERMINO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date alistamentoCaTermino;
+
+   // Alistados de julho a dezembro
+   @Column(name = "ALISTAMENTO_CA_2PERIODO_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date alistamentoCa2PeriodoInicio;
+
+   // Alistados de julho a dezembro
+   @Column(name = "ALISTAMENTO_CA_2PERIODO_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date alistamentoCa2PeriodoTermino;
 
    /**
     * PRE DISPENSA
@@ -91,6 +120,14 @@ public final class Pgc implements Serializable {
    /**
     * SELECAO
     */
+   @Column(name = "SELECAO_GERAL_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralInicio;
+
+   @Column(name = "SELECAO_GERAL_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralTermino;
+
    @Column(name = "SELECAO_GERAL_OMA_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date selecaoGeralOmaInicio;
@@ -130,6 +167,128 @@ public final class Pgc implements Serializable {
    @Column(name = "SELECAO_GERAL_MFDV_TERMINO", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date selecaoGeralMfdvTermino;
+
+   /**
+    * DISTRIBUICAO
+    */
+   @Column(name = "DISTRIBUICAO_PROCESSAMENTO_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoProcessamentoInicio;
+
+   @Column(name = "DISTRIBUICAO_PROCESSAMENTO_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoProcessamentoTermino;
+
+   @Column(name = "DISTRIBUICAO_CONHECIMENTO_GPTA_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoGptaInicio;
+
+   @Column(name = "DISTRIBUICAO_CONHECIMENTO_GPTA_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoGptaTermino;
+
+   @Column(name = "DISTRIBUICAO_CONHECIMENTO_GPTB_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoGptbInicio;
+
+   @Column(name = "DISTRIBUICAO_CONHECIMENTO_GPTB_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoGptbTermino;
+
+   @Column(name = "DISTRIBUICAO_CONHECIMENTO_MFDV_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoMfdvInicio;
+
+   @Column(name = "DISTRIBUICAO_CONHECIMENTO_MFDV_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoMfdvTermino;
+
+   @Column(name = "DISTRIBUICAO_CONHECIMENTO_CPOR_NPOR_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoCporNporInicio;
+
+   @Column(name = "DISTRIBUICAO_CONHECIMENTO_CPOR_NPOR_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoCporNporTermino;
+
+   @Column(name = "DISTRIBUICAO_CONHECIMENTO_TG_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoTgInicio;
+
+   @Column(name = "DISTRIBUICAO_CONHECIMENTO_TG_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoTgTermino;
+
+   @Column(name = "DISTRIBUICAO_CONHECIMENTO_ESIM_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoEsimInicio;
+
+   @Column(name = "DISTRIBUICAO_CONHECIMENTO_ESIM_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoEsimTermino;
+
+   @Column(name = "DISTRIBUICAO_BOLNEC_LANCAMENTO_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoBolnecLancamentoInicio;
+
+   @Column(name = "DISTRIBUICAO_BOLNEC_LANCAMENTO_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoBolnecLancamentoTermino;
+
+   @Column(name = "DISTRIBUICAO_PARAMETRO_LANCAMENTO_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoParametroLancamentoInicio;
+
+   @Column(name = "DISTRIBUICAO_PARAMETRO_LANCAMENTO_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoParametroLancamentoTermino;
+
+   @Column(name = "DISTRIBUICAO_GD_LANCAMENTO_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoGdLancamentoInicio;
+
+   @Column(name = "DISTRIBUICAO_GD_LANCAMENTO_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoGdLancamentoTermino;
+
+   @Column(name = "DISTRIBUICAO_BOLNEC_CONSOLIDACAO_INICIO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoBolnecConsolidacaoInicio;
+
+   @Column(name = "DISTRIBUICAO_BOLNEC_CONSOLIDACAO_TERMINO", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoBolnecConsolidacaoTermino;
+
+   /**
+    * SELECAO COMPLEMENTAR
+    */
+   @Column(name = "INCORPORACAO_GPTA", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date incorporacaoGpta;
+
+   @Column(name = "INCORPORACAO_TG", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date incorporacaoTg;
+
+   @Column(name = "INCORPORACAO_MFDV", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date incorporacaoMfdv;
+
+   @Column(name = "INCORPORACAO_GPTB", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date incorporacaoGptb;
+
+   @Column(name = "INCORPORACAO_SVTT", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date incorporacaoSvtt;
+
+   @Column(name = "INCORPORACAO_EIPOT", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date incorporacaoEipot;
+
+   @Column(name = "INCORPORACAO_EIC", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date incorporacaoEic;
 
    @Column(name = "SELECAO_COMPLEMENTAR_GPTA_INICIO", nullable = false)
    @Temporal(TemporalType.DATE)
@@ -179,128 +338,6 @@ public final class Pgc implements Serializable {
    @Temporal(TemporalType.DATE)
    private Date selecaoComplementarMfdvTermino;
 
-   /**
-    * DISTRIBUICAO
-    */
-   @Column(name = "DISTRIBUICAO_CONHECIMENTO_GPTA_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoGptaInicio;
-
-   @Column(name = "DISTRIBUICAO_CONHECIMENTO_GPTA_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoGptaTermino;
-
-   @Column(name = "DISTRIBUICAO_CONHECIMENTO_GPTB_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoGptbInicio;
-
-   @Column(name = "DISTRIBUICAO_CONHECIMENTO_GPTB_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoGptbTermino;
-
-   @Column(name = "DISTRIBUICAO_CONHECIMENTO_MFDV_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoMfdvInicio;
-
-   @Column(name = "DISTRIBUICAO_CONHECIMENTO_MFDV_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoMfdvTermino;
-
-   @Column(name = "DISTRIBUICAO_CONHECIMENTO_CPOR_NPOR_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoCporNporInicio;
-
-   @Column(name = "DISTRIBUICAO_CONHECIMENTO_CPOR_NPOR_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoCporNporTermino;
-
-   @Column(name = "DISTRIBUICAO_CONHECIMENTO_TG_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhemcimentoTgInicio;
-
-   @Column(name = "DISTRIBUICAO_CONHECIMENTO_TG_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoTgTermino;
-
-   @Column(name = "DISTRIBUICAO_CONHECIMENTO_ESIM_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoEsimInicio;
-
-   @Column(name = "DISTRIBUICAO_CONHECIMENTO_ESIM_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoEsimTermino;
-
-   @Column(name = "DISTRIBUICAO_BOLNEC_LANCAMENTO_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoBolnedLancamentoInicio;
-
-   @Column(name = "DISTRIBUICAO_BOLNEC_LANCAMENTO_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoBolnecLancamentoTermino;
-
-   @Column(name = "DISTRIBUICAO_PARAMETRO_LANCAMENTO_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoParametroLancamentoInicio;
-
-   @Column(name = "DISTRIBUICAO_PARAMETRO_LANCAMENTO_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoParametroLancamentoTermino;
-
-   @Column(name = "DISTRIBUICAO_GD_LANCAMENTO_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoGdLancamentoInicio;
-
-   @Column(name = "DISTRIBUICAO_GD_LANCAMENTO_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoGdLancamentoTermino;
-
-   @Column(name = "DISTRIBUICAO_BOLNEC_CONSOLIDACAO_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoBolnecConsolidacaoInicio;
-
-   @Column(name = "DISTRIBUICAO_BOLNEC_CONSOLIDACAO_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoBolnecConsolidacaoTermino;
-
-   @Column(name = "DISTRIBUICAO_PROCESSAMENTO_INICIO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoProcessamentoInicio;
-
-   @Column(name = "DISTRIBUICAO_PROCESSAMENTO_TERMINO", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoProcessamentoTermino;
-
-   /**
-    * SELECAO COMPLEMENTAR
-    */
-   @Column(name = "INCORPORACAO_GPTA", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date incorporacaoGpta;
-
-   @Column(name = "INCORPORACAO_TG", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date incorporacaoTg;
-
-   @Column(name = "INCORPORACAO_MFDV", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date incorporacaoMdfv;
-
-   @Column(name = "INCORPORACAO_GPTB", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date incorporacaoGptb;
-
-   @Column(name = "INCORPORACAO_SVTT", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date incorporacaoSvtt;
-
-   @Column(name = "INCORPORACAO_EIPOT", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date incorporacaoEipot;
-
-   @Column(name = "INCORPORACAO_EIC", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date incorporacaoEic;
-
    public Integer getCodigo() {
       return codigo;
    }
@@ -315,22 +352,6 @@ public final class Pgc implements Serializable {
 
    public void setClasse(String classe) {
       this.classe = classe;
-   }
-
-   public Date getAlistamentoInicio() {
-      return alistamentoInicio;
-   }
-
-   public void setAlistamentoInicio(Date alistamentoInicio) {
-      this.alistamentoInicio = alistamentoInicio;
-   }
-
-   public Date getAlistamentoTermino() {
-      return alistamentoTermino;
-   }
-
-   public void setAlistamentoTermino(Date alistamentoTermino) {
-      this.alistamentoTermino = alistamentoTermino;
    }
 
    public Date getAlistamentoCaInicio() {
@@ -653,12 +674,12 @@ public final class Pgc implements Serializable {
       this.distribuicaoConhecimentoCporNporTermino = distribuicaoConhecimentoCporNporTermino;
    }
 
-   public Date getDistribuicaoConhemcimentoTgInicio() {
-      return distribuicaoConhemcimentoTgInicio;
+   public Date getDistribuicaoConhecimentoTgInicio() {
+      return distribuicaoConhecimentoTgInicio;
    }
 
-   public void setDistribuicaoConhemcimentoTgInicio(Date distribuicaoConhemcimentoTgInicio) {
-      this.distribuicaoConhemcimentoTgInicio = distribuicaoConhemcimentoTgInicio;
+   public void setDistribuicaoConhecimentoTgInicio(Date distribuicaoConhecimentoTgInicio) {
+      this.distribuicaoConhecimentoTgInicio = distribuicaoConhecimentoTgInicio;
    }
 
    public Date getDistribuicaoConhecimentoTgTermino() {
@@ -685,12 +706,12 @@ public final class Pgc implements Serializable {
       this.distribuicaoConhecimentoEsimTermino = distribuicaoConhecimentoEsimTermino;
    }
 
-   public Date getDistribuicaoBolnedLancamentoInicio() {
-      return distribuicaoBolnedLancamentoInicio;
+   public Date getDistribuicaoBolnecLancamentoInicio() {
+      return distribuicaoBolnecLancamentoInicio;
    }
 
-   public void setDistribuicaoBolnedLancamentoInicio(Date distribuicaoBolnedLancamentoInicio) {
-      this.distribuicaoBolnedLancamentoInicio = distribuicaoBolnedLancamentoInicio;
+   public void setDistribuicaoBolnecLancamentoInicio(Date distribuicaoBolnecLancamentoInicio) {
+      this.distribuicaoBolnecLancamentoInicio = distribuicaoBolnecLancamentoInicio;
    }
 
    public Date getDistribuicaoBolnecLancamentoTermino() {
@@ -781,12 +802,12 @@ public final class Pgc implements Serializable {
       this.incorporacaoTg = incorporacaoTg;
    }
 
-   public Date getIncorporacaoMdfv() {
-      return incorporacaoMdfv;
+   public Date getIncorporacaoMfdv() {
+      return incorporacaoMfdv;
    }
 
-   public void setIncorporacaoMdfv(Date incorporacaoMdfv) {
-      this.incorporacaoMdfv = incorporacaoMdfv;
+   public void setIncorporacaoMfdv(Date incorporacaoMfdv) {
+      this.incorporacaoMfdv = incorporacaoMfdv;
    }
 
    public Date getIncorporacaoGptb() {
@@ -819,6 +840,78 @@ public final class Pgc implements Serializable {
 
    public void setIncorporacaoEic(Date incorporacaoEic) {
       this.incorporacaoEic = incorporacaoEic;
+   }
+
+   public String getAnoBase() {
+      return anoBase;
+   }
+
+   public void setAnoBase(String anoBase) {
+      this.anoBase = anoBase;
+   }
+
+   public Date getSelecaoGeralInicio() {
+      return selecaoGeralInicio;
+   }
+
+   public void setSelecaoGeralInicio(Date selecaoGeralInicio) {
+      this.selecaoGeralInicio = selecaoGeralInicio;
+   }
+
+   public Date getSelecaoGeralTermino() {
+      return selecaoGeralTermino;
+   }
+
+   public void setSelecaoGeralTermino(Date selecaoGeralTermino) {
+      this.selecaoGeralTermino = selecaoGeralTermino;
+   }
+   
+   public Date getAlistamentoDentroPrazoInicio() {
+      return alistamentoDentroPrazoInicio;
+   }
+
+   public void setAlistamentoDentroPrazoInicio(Date alistamentoDentroPrazoInicio) {
+      this.alistamentoDentroPrazoInicio = alistamentoDentroPrazoInicio;
+   }
+
+   public Date getAlistamentoDentroPrazoTermino() {
+      return alistamentoDentroPrazoTermino;
+   }
+
+   public void setAlistamentoDentroPrazoTermino(Date alistamentoDentroPrazoTermino) {
+      this.alistamentoDentroPrazoTermino = alistamentoDentroPrazoTermino;
+   }
+
+   public Date getAlistamentoForaPrazoInicio() {
+      return alistamentoForaPrazoInicio;
+   }
+
+   public void setAlistamentoForaPrazoInicio(Date alistamentoForaPrazoInicio) {
+      this.alistamentoForaPrazoInicio = alistamentoForaPrazoInicio;
+   }
+
+   public Date getAlistamentoForaPrazoTermino() {
+      return alistamentoForaPrazoTermino;
+   }
+
+   public void setAlistamentoForaPrazoTermino(Date alistamentoForaPrazoTermino) {
+      this.alistamentoForaPrazoTermino = alistamentoForaPrazoTermino;
+   }
+
+   public Date getAlistamentoCa2PeriodoInicio() {
+      return alistamentoCa2PeriodoInicio;
+   }
+
+   public void setAlistamentoCa2PeriodoInicio(Date alistamentoCa2PeriodoInicio) {
+      this.alistamentoCa2PeriodoInicio = alistamentoCa2PeriodoInicio;
+   }
+
+   public Date getAlistamentoCa2PeriodoTermino() {
+      return alistamentoCa2PeriodoTermino;
+   }
+
+   public void setAlistamentoCa2PeriodoTermino(Date alistamentoCa2PeriodoTermino) {
+      this.alistamentoCa2PeriodoTermino = alistamentoCa2PeriodoTermino;
    }
 
 }

@@ -40,6 +40,7 @@ import br.mil.eb.sermil.modelo.OmBoletim;
 import br.mil.eb.sermil.modelo.Padrao;
 import br.mil.eb.sermil.modelo.Pais;
 import br.mil.eb.sermil.modelo.Perfil;
+import br.mil.eb.sermil.modelo.Pgc;
 import br.mil.eb.sermil.modelo.PortalMensagem;
 import br.mil.eb.sermil.modelo.PostoGraduacao;
 import br.mil.eb.sermil.modelo.PreAlistamento;
@@ -56,7 +57,7 @@ import br.mil.eb.sermil.modelo.TaxaMulta;
 import br.mil.eb.sermil.modelo.Uf;
 import br.mil.eb.sermil.modelo.Usuario;
 
-/** Implementação da fábrica abstrata de DAO para uso com o EclipseLink (JPA).
+/** Implementação de fábrica abstrata de DAO para uso com o EclipseLink (JPA).
  * @author Abreu Lopes
  * @since 4.0
  * @version 5.2.8
@@ -142,10 +143,14 @@ public class DaoFactoryJpaImpl extends DaoFactory {
     return (CsAnamneseDao) instanciarDao(CsAnamneseDaoJpa.class);
   }
 
-
   @Override
   public CselDao getCselDao() {
     return (CselDao) instanciarDao(CselDaoJpa.class);
+  }
+
+  @Override
+  public CselEnderecoDao getCselEnderecoDao() {
+    return (CselEnderecoDao) instanciarDao(CselEnderecoDaoJpa.class);
   }
 
   @Override
@@ -156,11 +161,6 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   @Override
   public CselFuncionamentoDao getCselFuncionamentoDao() {
     return (CselFuncionamentoDao) instanciarDao(CselFuncionamentoDaoJpa.class);
-  }
-
-  @Override
-  public CselEnderecoDao getCselEnderecoDao() {
-    return (CselEnderecoDao) instanciarDao(CselEnderecoDaoJpa.class);
   }
 
   @Override
@@ -276,6 +276,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
     return (PerfilDao) instanciarDao(PerfilDaoJpa.class);
   }
 
+   @Override
+   public PgcDao getPgcDao() {
+      return (PgcDao) instanciarDao(PgcDaoJpa.class);
+   }
+
   @Override
   public PortalMensagemDao getPortalMensagemDao() {
     return (PortalMensagemDao) instanciarDao(PortalMensagemDaoJpa.class);
@@ -301,166 +306,225 @@ public class DaoFactoryJpaImpl extends DaoFactory {
     return (QmDao) instanciarDao(QmDaoJpa.class);
   }
 
-  @Override
-  public RaMestreDao getRaMestreDao() {
+   @Override
+   public RaItensDao getRaItensDao() {
+      return (RaItensDao) instanciarDao(RaItensDaoJpa.class);
+   }
+
+   @Override
+   public RaMestreDao getRaMestreDao() {
     return (RaMestreDao) instanciarDao(RaMestreDaoJpa.class);
-  }
+   }
 
-  @Override
-  public RaPedidoDao getRaPedidoDao() {
+   @Override
+   public RaPedidoDao getRaPedidoDao() {
     return (RaPedidoDao) instanciarDao(RaPedidoDaoJpa.class);
-  }
+   }
 
-  @Override
-  public RaItensDao getRaItensDao() {
-    return (RaItensDao) instanciarDao(RaItensDaoJpa.class);
-  }
+   @Override
+   public RmDao getRmDao() {
+      return (RmDao) instanciarDao(RmDaoJpa.class);
+   }
 
-  @Override
-  public RmDao getRmDao() {
-    return (RmDao) instanciarDao(RmDaoJpa.class);
-  }
+   @Override
+   public SelBccDao getSelBccDao() {
+      return (SelBccDao) instanciarDao(SelBccDaoJpa.class);
+   }
 
-  @Override
-  public SelBccDao getSelBccDao() {
-    return (SelBccDao) instanciarDao(SelBccDaoJpa.class);
-  }
+   @Override
+   public SelJsmDao getSelJsmDao() {
+      return (SelJsmDao) instanciarDao(SelJsmDaoJpa.class);
+   }
 
-  @Override
-  public SelJsmDao getSelJsmDao() {
-    return (SelJsmDao) instanciarDao(SelJsmDaoJpa.class);
-  }
+   @Override
+   public SelTributacaoDao getSelTributacaoDao() {
+      return (SelTributacaoDao) instanciarDao(SelTributacaoDaoJpa.class);
+   }
 
-  @Override
-  public SelTributacaoDao getSelTributacaoDao() {
-    return (SelTributacaoDao) instanciarDao(SelTributacaoDaoJpa.class);
-  }
+   @Override
+   public TaxaMultaDao getTaxaMultaDao() {
+      return (TaxaMultaDao) instanciarDao(TaxaMultaDaoJpa.class);
+   }
 
-  @Override
-  public TaxaMultaDao getTaxaMultaDao() {
-    return (TaxaMultaDao) instanciarDao(TaxaMultaDaoJpa.class);
-  }
+   @Override
+   public UfDao getUfDao() {
+      return (UfDao) instanciarDao(UfDaoJpa.class);
+   }
 
-  @Override
-  public UfDao getUfDao() {
-    return (UfDao) instanciarDao(UfDaoJpa.class);
-  }
+   @Override
+   public UsuarioDao getUsuarioDao() {
+      return (UsuarioDao) instanciarDao(UsuarioDaoJpa.class);
+   }
 
-  @Override
-  public UsuarioDao getUsuarioDao() {
-    return (UsuarioDao) instanciarDao(UsuarioDaoJpa.class);
-  }
+   // Criar implementações concretas dos DAO a serem instanciados
+   // (usando classes internas para evitar criaação de classes explícitas)
 
-  // Criar implementações concretas dos DAO a serem instanciados (usando classes internas para evitar criar classes explícitas)
+   public static class CepDaoJpa extends GenericDaoJpaImpl<Cep, String>implements CepDao {
+   }
 
-  public static class CepDaoJpa extends GenericDaoJpaImpl<Cep, String> implements CepDao {}
-  
-  public static class CidadaoDaoJpa extends GenericDaoJpaImpl<Cidadao, Long> implements CidadaoDao {}
+   public static class CidadaoDaoJpa extends GenericDaoJpaImpl<Cidadao, Long>implements CidadaoDao {
+   }
 
-  public static class CidAdiamentoDaoJpa extends GenericDaoJpaImpl<CidAdiamento, CidAdiamento.PK> implements CidAdiamentoDao {}
+   public static class CidAdiamentoDaoJpa extends GenericDaoJpaImpl<CidAdiamento, CidAdiamento.PK> implements CidAdiamentoDao {
+   }
 
-  public static class CidArrecadacaoDaoJpa extends GenericDaoJpaImpl<CidArrecadacao, CidArrecadacao.PK> implements CidArrecadacaoDao {}
+   public static class CidArrecadacaoDaoJpa extends GenericDaoJpaImpl<CidArrecadacao, CidArrecadacao.PK> implements CidArrecadacaoDao {
+   }
 
-  public static class CidAuditoriaDaoJpa extends GenericDaoJpaImpl<CidAuditoria, CidAuditoria.PK> implements CidAuditoriaDao {}
+   public static class CidAuditoriaDaoJpa extends GenericDaoJpaImpl<CidAuditoria, CidAuditoria.PK> implements CidAuditoriaDao {
+   }
 
-  public static class CidAverbacaoDaoJpa extends GenericDaoJpaImpl<CidAverbacao, CidAverbacao.PK> implements CidAverbacaoDao {}
+   public static class CidAverbacaoDaoJpa extends GenericDaoJpaImpl<CidAverbacao, CidAverbacao.PK> implements CidAverbacaoDao {
+   }
 
-  public static class CidCertificadoDaoJpa extends GenericDaoJpaImpl<CidCertificado, CidCertificado.PK> implements CidCertificadoDao {}
+   public static class CidCertificadoDaoJpa extends GenericDaoJpaImpl<CidCertificado, CidCertificado.PK> implements CidCertificadoDao {
+   }
 
-  public static class CidContatoDaoJpa extends GenericDaoJpaImpl<CidContato, CidContato.PK> implements CidContatoDao {}
+   public static class CidContatoDaoJpa extends GenericDaoJpaImpl<CidContato, CidContato.PK>implements CidContatoDao {
+   }
 
-  public static class CidEventoJpa extends GenericDaoJpaImpl<CidEvento,  CidEvento.PK> implements CidEventoDao{}
+   public static class CidEventoJpa extends GenericDaoJpaImpl<CidEvento, CidEvento.PK>implements CidEventoDao {
+   }
 
-  public static class CidExarJpa extends GenericDaoJpaImpl<CidExar,  CidExar.PK> implements CidExarDao{}
+   public static class CidExarJpa extends GenericDaoJpaImpl<CidExar, CidExar.PK>implements CidExarDao {
+   }
 
-  public static class CidFotoDaoJpa extends GenericDaoJpaImpl<CidFoto, Long> implements CidFotoDao {}
+   public static class CidFotoDaoJpa extends GenericDaoJpaImpl<CidFoto, Long>implements CidFotoDao {
+   }
 
-  public static class CsAgendamentoDaoJpa extends GenericDaoJpaImpl<CsAgendamento, Integer> implements CsAgendamentoDao {}
+   public static class CsAgendamentoDaoJpa extends GenericDaoJpaImpl<CsAgendamento, Integer> implements CsAgendamentoDao {
+   }
 
-  public static class CsAnamneseDaoJpa extends GenericDaoJpaImpl<CsAnamnese, Long> implements CsAnamneseDao {}
-  
-  public static class CselDaoJpa extends GenericDaoJpaImpl<Csel, Integer> implements CselDao {}
-  
-  public static class CselFeriadoJpa extends GenericDaoJpaImpl<CselFeriado, Integer> implements CselFeriadoDao {}
-  
-  public static class CselFuncionamentoDaoJpa extends GenericDaoJpaImpl<CselFuncionamento, Integer> implements CselFuncionamentoDao {}
-  
-  public static class CselEnderecoDaoJpa extends GenericDaoJpaImpl<CselEndereco, Integer> implements CselEnderecoDao {}
-  
-  public static class CsmDaoJpa extends GenericDaoJpaImpl<Csm, Byte> implements CsmDao {}
+   public static class CsAnamneseDaoJpa extends GenericDaoJpaImpl<CsAnamnese, Long>implements CsAnamneseDao {
+   }
 
-  public static class DelegaciaDaoJpa extends GenericDaoJpaImpl<Delegacia, Delegacia.PK> implements DelegaciaDao {}
+   public static class CselDaoJpa extends GenericDaoJpaImpl<Csel, Integer>implements CselDao {
+   }
 
-  public static class DominiosDaoJpa extends GenericDaoJpaImpl<Dominios, Dominios.PK> implements DominiosDao {}
+   public static class CselEnderecoDaoJpa extends GenericDaoJpaImpl<CselEndereco, Integer>implements CselEnderecoDao {
+   }
 
-  public static class DstbBolNecDaoJpa extends GenericDaoJpaImpl<DstbBolNec, DstbBolNec.PK> implements DstbBolNecDao {}
+   public static class CselFeriadoJpa extends GenericDaoJpaImpl<CselFeriado, Integer>implements CselFeriadoDao {
+   }
 
-  public static class DstbExclusaoDaoJpa extends GenericDaoJpaImpl<DstbExclusao, Long> implements DstbExclusaoDao {}
+   public static class CselFuncionamentoDaoJpa extends GenericDaoJpaImpl<CselFuncionamento, Integer> implements CselFuncionamentoDao {
+   }
 
-  public static class DstbGdDaoJpa extends GenericDaoJpaImpl<DstbGd, DstbGd.PK> implements DstbGdDao {}
+   public static class CsmDaoJpa extends GenericDaoJpaImpl<Csm, Byte>implements CsmDao {
+   }
 
-  public static class DstbParametroDaoJpa extends GenericDaoJpaImpl<DstbParametro, DstbParametro.PK> implements DstbParametroDao {}
+   public static class DelegaciaDaoJpa extends GenericDaoJpaImpl<Delegacia, Delegacia.PK>implements DelegaciaDao {
+   }
 
-  public static class EmpresaDaoJpa extends GenericDaoJpaImpl<Empresa, String> implements EmpresaDao {}
+   public static class DominiosDaoJpa extends GenericDaoJpaImpl<Dominios, Dominios.PK>implements DominiosDao {
+   }
 
-  public static class EntrevistaCsDaoJpa extends GenericDaoJpaImpl<EntrevistaCs, Long> implements EntrevistaCsDao {}
-  
-  public static class EstatAlistamentoEscDaoJpa extends GenericDaoJpaImpl<EstatAlistamentoEsc,Integer> implements EstatAlistamentoEscDao {}
+   public static class DstbBolNecDaoJpa extends GenericDaoJpaImpl<DstbBolNec, DstbBolNec.PK>implements DstbBolNecDao {
+   }
 
-  public static class EstatArrecadacaoDaoJpa extends GenericDaoJpaImpl<EstatArrecadacao, Integer> implements EstatArrecadacaoDao {}
+   public static class DstbExclusaoDaoJpa extends GenericDaoJpaImpl<DstbExclusao, Long>implements DstbExclusaoDao {
+   }
 
-  public static class EstatExarDaoJpa extends GenericDaoJpaImpl<EstatExar, EstatExar.PK> implements EstatExarDao {}
+   public static class DstbGdDaoJpa extends GenericDaoJpaImpl<DstbGd, DstbGd.PK>implements DstbGdDao {
+   }
 
-  public static class HabilitacaoDaoJpa extends GenericDaoJpaImpl<Habilitacao, String> implements HabilitacaoDao {}
+   public static class DstbParametroDaoJpa extends GenericDaoJpaImpl<DstbParametro, DstbParametro.PK> implements DstbParametroDao {
+   }
 
-  public static class ImpServicoDaoJpa extends GenericDaoJpaImpl<ImpServico, ImpServico.PK> implements ImpServicoDao {}
+   public static class EmpresaDaoJpa extends GenericDaoJpaImpl<Empresa, String>implements EmpresaDao {
+   }
 
-  public static class InfoLocalDaoJpa extends GenericDaoJpaImpl<InfoLocal, Byte> implements InfoLocalDao {}
+   public static class EntrevistaCsDaoJpa extends GenericDaoJpaImpl<EntrevistaCs, Long>implements EntrevistaCsDao {
+   }
 
-  public static class JsmDaoJpa extends GenericDaoJpaImpl<Jsm, Jsm.PK> implements JsmDao {}
+   public static class EstatAlistamentoEscDaoJpa extends GenericDaoJpaImpl<EstatAlistamentoEsc, Integer> implements EstatAlistamentoEscDao {
+   }
 
-  public static class MunicipioDaoJpa extends GenericDaoJpaImpl<Municipio, Integer> implements MunicipioDao {}
+   public static class EstatArrecadacaoDaoJpa extends GenericDaoJpaImpl<EstatArrecadacao, Integer> implements EstatArrecadacaoDao {
+   }
 
-  public static class OcupacaoDaoJpa extends GenericDaoJpaImpl<Ocupacao, String> implements OcupacaoDao {}
+   public static class EstatExarDaoJpa extends GenericDaoJpaImpl<EstatExar, EstatExar.PK>implements EstatExarDao {
+   }
 
-  public static class OmDaoJpa extends GenericDaoJpaImpl<Om, Integer> implements OmDao {}
+   public static class HabilitacaoDaoJpa extends GenericDaoJpaImpl<Habilitacao, String>implements HabilitacaoDao {
+   }
 
-  public static class OmBoletimDaoJpa extends GenericDaoJpaImpl<OmBoletim, OmBoletim.PK> implements OmBoletimDao {}
+   public static class ImpServicoDaoJpa extends GenericDaoJpaImpl<ImpServico, ImpServico.PK>implements ImpServicoDao {
+   }
 
-  public static class PadraoDaoJpa extends GenericDaoJpaImpl<Padrao, String> implements PadraoDao {}
+   public static class InfoLocalDaoJpa extends GenericDaoJpaImpl<InfoLocal, Byte>implements InfoLocalDao {
+   }
 
-  public static class PaisDaoJpa extends GenericDaoJpaImpl<Pais, Short> implements PaisDao {}
+   public static class JsmDaoJpa extends GenericDaoJpaImpl<Jsm, Jsm.PK>implements JsmDao {
+   }
 
-  public static class PerfilDaoJpa extends GenericDaoJpaImpl<Perfil, String> implements PerfilDao {}
+   public static class MunicipioDaoJpa extends GenericDaoJpaImpl<Municipio, Integer>implements MunicipioDao {
+   }
 
-  public static class PortalMensagemDaoJpa extends GenericDaoJpaImpl<PortalMensagem, Integer> implements PortalMensagemDao {}
+   public static class OcupacaoDaoJpa extends GenericDaoJpaImpl<Ocupacao, String>implements OcupacaoDao {
+   }
 
-  public static class PostoGraduacaoDaoJpa extends GenericDaoJpaImpl<PostoGraduacao, String> implements PostoGraduacaoDao {}
+   public static class OmDaoJpa extends GenericDaoJpaImpl<Om, Integer>implements OmDao {
+   }
 
-  public static class PreAlistamentoDaoJpa extends GenericDaoJpaImpl<PreAlistamento, Long> implements PreAlistamentoDao {}
+   public static class OmBoletimDaoJpa extends GenericDaoJpaImpl<OmBoletim, OmBoletim.PK>implements OmBoletimDao {
+   }
 
-  public static class QcpDaoJpa extends GenericDaoJpaImpl<Qcp, Qcp.PK> implements QcpDao {}
+   public static class PadraoDaoJpa extends GenericDaoJpaImpl<Padrao, String>implements PadraoDao {
+   }
 
-  public static class QmDaoJpa extends GenericDaoJpaImpl<Qm, String> implements QmDao {}
+   public static class PaisDaoJpa extends GenericDaoJpaImpl<Pais, Short>implements PaisDao {
+   }
 
-  public static class RaMestreDaoJpa extends GenericDaoJpaImpl<RaMestre, RaMestre.PK> implements RaMestreDao {}
+   public static class PerfilDaoJpa extends GenericDaoJpaImpl<Perfil, String>implements PerfilDao {
+   }
 
-  public static class RaPedidoDaoJpa extends GenericDaoJpaImpl<RaPedido, Integer> implements RaPedidoDao {}
+   public static class PgcDaoJpa extends GenericDaoJpaImpl<Pgc, Integer>implements PgcDao {
+   }
 
-  public static class RaItensDaoJpa extends GenericDaoJpaImpl<RaItens, RaItens.PK> implements RaItensDao {}
+   public static class PortalMensagemDaoJpa extends GenericDaoJpaImpl<PortalMensagem, Integer> implements PortalMensagemDao {
+   }
 
-  public static class RmDaoJpa extends GenericDaoJpaImpl<Rm, Byte> implements RmDao {}
+   public static class PostoGraduacaoDaoJpa extends GenericDaoJpaImpl<PostoGraduacao, String> implements PostoGraduacaoDao {
+   }
 
-  public static class SelBccDaoJpa extends GenericDaoJpaImpl<SelBcc,Long> implements SelBccDao {}
+   public static class PreAlistamentoDaoJpa extends GenericDaoJpaImpl<PreAlistamento, Long> implements PreAlistamentoDao {
+   }
 
-  public static class SelJsmDaoJpa extends GenericDaoJpaImpl<SelJsm, SelJsm.PK> implements SelJsmDao {}
+   public static class QcpDaoJpa extends GenericDaoJpaImpl<Qcp, Qcp.PK>implements QcpDao {
+   }
 
-  public static class SelTributacaoDaoJpa extends GenericDaoJpaImpl<SelTributacao, SelTributacao.PK> implements SelTributacaoDao {}
+   public static class QmDaoJpa extends GenericDaoJpaImpl<Qm, String>implements QmDao {
+   }
 
-  public static class TaxaMultaDaoJpa extends GenericDaoJpaImpl<TaxaMulta, TaxaMulta.PK> implements TaxaMultaDao {}
+   public static class RaItensDaoJpa extends GenericDaoJpaImpl<RaItens, RaItens.PK>implements RaItensDao {
+   }
 
-  public static class UfDaoJpa extends GenericDaoJpaImpl<Uf, String> implements UfDao {}
-  
-  public static class UsuarioDaoJpa extends GenericDaoJpaImpl<Usuario, String> implements UsuarioDao {}
+   public static class RaMestreDaoJpa extends GenericDaoJpaImpl<RaMestre, RaMestre.PK>implements RaMestreDao {
+   }
+
+   public static class RaPedidoDaoJpa extends GenericDaoJpaImpl<RaPedido, Integer>implements RaPedidoDao {
+   }
+
+   public static class RmDaoJpa extends GenericDaoJpaImpl<Rm, Byte>implements RmDao {
+   }
+
+   public static class SelBccDaoJpa extends GenericDaoJpaImpl<SelBcc, Long>implements SelBccDao {
+   }
+
+   public static class SelJsmDaoJpa extends GenericDaoJpaImpl<SelJsm, SelJsm.PK>implements SelJsmDao {
+   }
+
+   public static class SelTributacaoDaoJpa extends GenericDaoJpaImpl<SelTributacao, SelTributacao.PK> implements SelTributacaoDao {
+   }
+
+   public static class TaxaMultaDaoJpa extends GenericDaoJpaImpl<TaxaMulta, TaxaMulta.PK>implements TaxaMultaDao {
+   }
+
+   public static class UfDaoJpa extends GenericDaoJpaImpl<Uf, String>implements UfDao {
+   }
+
+   public static class UsuarioDaoJpa extends GenericDaoJpaImpl<Usuario, String>implements UsuarioDao {
+   }
 
 }
