@@ -22,11 +22,13 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "PGC")
-@NamedQuery(name = "pgc.findByAnoBase", query = "select p from Pgc p where p.anoBase = ?1 ")
+@NamedQuery(name = "pgcFindByAnoBase", query = "select p from Pgc p where p.anoBase = ?1 ")
 public final class Pgc implements Serializable {
 
    /** serialVersionUID. */
    private static final long serialVersionUID = 6479557479756080684L;
+   
+   public static final String NQ_FINDBY_ANO_BASE = "pgcFindByAnoBase" ; 
 
    @Id
    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PGC")

@@ -432,7 +432,7 @@ public class CsServico {
 
    public boolean isPgcLancadoParaAnoAtual() {
       int year = Calendar.getInstance().get(Calendar.YEAR);
-      List<Pgc> pgcs = this.pgcDao.findByNamedQuery("pgc.findByAnoBase", String.valueOf(year));
+      List<Pgc> pgcs = this.pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, String.valueOf(year));
       if (pgcs.size() > 0)
          return true;
       return false;
