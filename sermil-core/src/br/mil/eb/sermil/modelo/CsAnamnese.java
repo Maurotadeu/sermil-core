@@ -10,10 +10,10 @@ import javax.persistence.Table;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
-/** CS - Anamnese.
+/** CS - Anamnese (Ficha Médica da CS).
  * @author Abreu Lopes
  * @since 5.2.5
- * @version 5.2.5
+ * @version 5.2.8
  */
 @Entity
 @Table(name = "CS_ANAMNESE")
@@ -21,7 +21,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 public final class CsAnamnese implements Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 8828155626716701431L;
 
    @Id
    @Column(name="CIDADAO_RA")

@@ -1,6 +1,7 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -12,15 +13,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.mil.eb.sermil.core.dao.CidEventoDao;
+import br.mil.eb.sermil.core.dao.CsAgendamentoDao;
 import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.Cidadao;
+import br.mil.eb.sermil.modelo.CsAgendamento;
 
 /** Verificação de situação no serviço militar.
  * @author Abreu lopes
  * @since 5.1
- * @version 5.2.6
+ * @version 5.2.8
  */
 @Named("situacaoServico")
 public class SituacaoServico {
@@ -33,6 +36,9 @@ public class SituacaoServico {
     @Inject
     private CidEventoDao eventoDao;
 
+    @Inject
+    private CsAgendamentoDao csAgendamentoDao;
+    
     public SituacaoServico() {
         logger.debug("SituacaoServico iniciado.");
     }
@@ -53,13 +59,23 @@ public class SituacaoServico {
             if ("N".equalsIgnoreCase(cid.getJsm().getJsmInfo().getInternet())) {
                 throw new SermilException("Verifique no seu documento de alistamento (CAM) a data de comparecimento no Órgão de Serviço Militar.");
             }
+            // Verficar se há agendamento de CS
+            CsAgendamento csAgendamento = null;
+            final List<CsAgendamento> lista = this.csAgendamentoDao.findByNamedQuery("CsAgendamento.listarPorRa", cid.getRa());
+            if (lista != null && lista.size() > 0) {
+               csAgendamento = lista.get(0);
+            }
             switch (cid.getSituacaoMilitar()) {
             case 1:
-                if (Calendar.getInstance().get(Calendar.MONTH) > 5) {
-                    cid.setAnotacoes("Verifique a partir do próximo ANO a data de comparecimento no Órgão de Serviço Militar.");
-                } else {
-                    cid.setAnotacoes("Verifique a partir de 10 de julho a sua situação no Serviço Militar no sistema.");
-                }
+               if (csAgendamento != null) {
+                  cid.setAnotacoes("* Comparecer na Comissão de Seleção na data: " + new SimpleDateFormat("dd/MM/yyyy HH:mm").format(csAgendamento.getDataSelecao()));
+               } else {
+                  if (Calendar.getInstance().get(Calendar.MONTH) > 5) {
+                     cid.setAnotacoes("Verifique a partir do próximo ANO a data de comparecimento no Órgão de Serviço Militar.");
+                  } else {
+                     cid.setAnotacoes("Verifique a partir de 10 de julho a sua situação no Serviço Militar no sistema.");
+                  }
+               }
                 break;
             case 2:
                 //cid.setAnotacoes("Comparecer na Comissão de Seleção " + (cid.getCs() == null ? "" : cid.getCs()) + ", na data agendada, para realizar a Seleção Geral. <br>Em caso de falta será considerado REFRATÁRIO e ficará sujeito as penas previstas na Lei de Serviço Militar.");
