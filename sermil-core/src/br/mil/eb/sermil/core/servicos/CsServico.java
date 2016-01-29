@@ -1,6 +1,7 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import br.mil.eb.sermil.core.dao.CselDao;
 import br.mil.eb.sermil.core.dao.CselEnderecoDao;
 import br.mil.eb.sermil.core.dao.CselFuncionamentoDao;
+import br.mil.eb.sermil.core.dao.JsmDao;
+
 import br.mil.eb.sermil.core.dao.PgcDao;
 import br.mil.eb.sermil.core.dao.RmDao;
 import br.mil.eb.sermil.core.exceptions.AnoBaseNaoEhUnicoException;
@@ -30,21 +33,30 @@ import br.mil.eb.sermil.core.exceptions.FuncionamentoFeriadoErroException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoJaExisteException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentosSobrepostosException;
+
 import br.mil.eb.sermil.core.exceptions.SermilException;
+
+import br.mil.eb.sermil.core.exceptions.PgcNaoExisteException;
+import br.mil.eb.sermil.core.exceptions.SermilException;
+import br.mil.eb.sermil.core.utils.Configurador;
+
 import br.mil.eb.sermil.modelo.Csel;
 import br.mil.eb.sermil.modelo.CselEndereco;
 import br.mil.eb.sermil.modelo.CselFeriado;
 import br.mil.eb.sermil.modelo.CselFuncionamento;
+
+import br.mil.eb.sermil.modelo.Jsm;
+
 import br.mil.eb.sermil.modelo.Pgc;
 import br.mil.eb.sermil.modelo.Rm;
 import br.mil.eb.sermil.modelo.Usuario;
+import br.mil.eb.sermil.tipos.Alerta;
 
-/**
- * Gerenciamento de CS.
+/** Serviço de CS.
  * 
  * @author Anselmo Ribeiro
  * @version 5.2.4
- * @since 5.2.4
+ * @since 5.2.8
  */
 @Named("csServico")
 @RemoteProxy(name = "csServico")
@@ -67,6 +79,13 @@ public class CsServico {
    @Inject
    PgcDao pgcDao;
 
+   @Inject
+   JsmDao jsmDao;
+
+   public CsServico() {
+      logger.debug("CsServico iniciado");
+   }
+
    public Map<Integer, String> getCselEnderecos(Integer cselCodigo) {
       Map<Integer, String> ret = new HashMap<Integer, String>();
       List<CselEndereco> enderecos = enderecoDao.findByNamedQuery("listarEnderecosDeCselNative", cselCodigo);
@@ -76,10 +95,6 @@ public class CsServico {
 
    public List<CselFuncionamento> listarFuncionamentosDeCsel(Integer cselCodigo) {
       return funcionamentoDao.findByNamedQuery("Funcionamento.listarFuncionamentosDeCsel", cselCodigo);
-   }
-
-   public CsServico() {
-      logger.debug("CsServico iniciado");
    }
 
    public List<Csel> listarPorRM(Byte rm_codigo) {
@@ -95,7 +110,7 @@ public class CsServico {
       return ret;
    }
 
-   public List<Csel> ListarPorNome(String nome) {
+   public List<Csel> listarPorNome(String nome) {
       return (List<Csel>) cselDao.findByNamedQuery("Csel.listarPorNome", nome);
    }
 
@@ -124,7 +139,7 @@ public class CsServico {
       return tributacoes;
    }
 
-   /**
+   /** Obter RM.
     * 
     * @param usuRm Rm a rm do usuario. Tente: Rm rm = ((Usuario) ((SecurityContext)
     *           this.session.get("SPRING_SECURITY_CONTEXT")).getAuthentication().getPrincipal()).
@@ -188,16 +203,20 @@ public class CsServico {
     * Regras de Negocio para Funcionamento de CS
     * 
     * @return boolean
+    * @throws PgcNaoExisteException 
     */
    public boolean isFuncionamentoDeCsCorreto(CselFuncionamento func)
-         throws AnoBaseNaoEhUnicoException, FuncionamentoDataInicioErroException, FuncionamentoDataTerminoErroException, FuncionamentoFeriadoErroException, FuncionamentosSobrepostosException, FuncionamentoAnoBaseException {
+         throws AnoBaseNaoEhUnicoException, FuncionamentoDataInicioErroException, FuncionamentoDataTerminoErroException, FuncionamentoFeriadoErroException, FuncionamentosSobrepostosException, FuncionamentoAnoBaseException, PgcNaoExisteException {
 
       // ano base de PGC tem que ser unico
-      if (!this.anoBaseDePgcEhUnico(func.getAnoBase())) {
+      if (!this.isAnoBaseDePgcEhUnico(func.getAnoBase())) {
          logger.error("Exite um PGC com dois lancamento de ano base. Ano base: " + func.getAnoBase());
          throw new AnoBaseNaoEhUnicoException();
       }
-      List<Pgc> pgcs = pgcDao.findByNamedQuery("pgc.findByAnoBase", func.getAnoBase());
+      List<Pgc> pgcs = pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, func.getAnoBase());
+      if (pgcs.size() < 1 )
+         throw new PgcNaoExisteException();
+
       Pgc p = pgcs.get(0);
 
       // O inicio da CS nao pode ser antes do inicio no PGC
@@ -217,18 +236,16 @@ public class CsServico {
       }
 
       // A CS so pode cadastrar funcionamento com ano base ja cadastrado no PGC
-      List<Pgc> ps = pgcDao.findByNamedQuery("pgc.findByAnoBase", func.getAnoBase());
+      List<Pgc> ps = pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, func.getAnoBase());
       if (ps.size() == 0)
          throw new FuncionamentoAnoBaseException();
 
       return true;
    }
 
-   /**
-    * Regras de Negocio para Feriados de Funcionamento de CS
-    * 
-    * @return boolean
-    */
+  /** Regras de Negocio para Feriados de Funcionamento de CS.
+   * @return boolean
+   */
    public boolean isFeriadosDeFuncionamentoCorretos(List<CselFeriado> feriados, CselFuncionamento func) throws FuncionamentoFeriadoErroException {
       // Os feriados tem que estar dentro do periodo declarado
       for (CselFeriado fer : feriados) {
@@ -238,9 +255,10 @@ public class CsServico {
       return true;
    }
 
-   public boolean anoBaseDePgcEhUnico(String anoBase) {
-      List<Pgc> pgcs = pgcDao.findByNamedQuery("findByAnoBase", anoBase);
-      return pgcs.size() == 1 ? true : false;
+   public boolean isAnoBaseDePgcEhUnico(String anoBase) {
+      List<Pgc> pgcs = pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, anoBase);
+      int size = pgcs.size();
+      return size > 1 ? false : true;
    }
 
    public List<CselFuncionamento> getFuncionamentosDeCsel(Integer cselCodigo) {
@@ -267,20 +285,183 @@ public class CsServico {
    }
 
    public int rodarDistribuicao() {
-      //TODO retornar de 0 a 100
-      return 0;
+     // TODO retornar de 0 a 100
+     return 0;
    }
 
    public boolean distribuicaoJaRodou() {
       return false;
    }
-   
-   public Pgc salvarPgc(Pgc pgc) throws EntityPersistenceException{
+
+   public Pgc salvarPgc(Pgc pgc) throws EntityPersistenceException {
       try {
          return this.pgcDao.save(pgc);
       } catch (SermilException e) {
          throw new EntityPersistenceException();
       }
+   }
+
+   public Map<String, List<Alerta>> getPgcAlertas() {
+      Map<String, List<Alerta>> alertas = new HashMap<String, List<Alerta>>();
+      alertas.put(Configurador.getText("alistamento"), getAlistamentoAlerta());
+      alertas.put(Configurador.getText("predispensa"), getPreDispensaAlerta());
+      alertas.put(Configurador.getText("selecao"), getSelecaoAlerta());
+      alertas.put(Configurador.getText("distribuicao"), getDistribuicaoAlerta());
+      alertas.put(Configurador.getText("selecao.complementar"), getSelecaoComplementarAlerta());
+      return alertas;
+   }
+
+   public List<Alerta> getAlistamentoAlerta() {
+      Alerta alerta = new Alerta();
+      alerta.setTitulo(Configurador.getText("alistamento.lancamento.dados.ano.atual"));
+      alerta.setTipo(Alerta.TIPO_OK);
+
+      if (!isPgcLancadoParaAnoAtual()) {
+         alerta.addMessage(Configurador.getText("alistamento.lancamento.dados.ano.atual.motivo"));
+         alerta.setTipo(Alerta.TIPO_ERROR);
+      }
+
+      Alerta alerta2 = new Alerta();
+      alerta2.setTitulo(Configurador.getText("alistamento.lancamento.dados.proximo.ano"));
+      alerta2.setTipo(Alerta.TIPO_OK);
+
+      if (!isPgcLancadoParaProximoAno()) {
+         alerta2.addMessage(Configurador.getText("alistamento.lancamento.dados.proximo.ano.motivo"));
+         alerta2.setTipo(Alerta.TIPO_ERROR);
+      }
+
+      List<Alerta> alertas = new ArrayList<Alerta>();
+      alertas.add(alerta);
+      alertas.add(alerta2);
+      return alertas;
+   }
+
+   public List<Alerta> getPreDispensaAlerta() {
+
+      Alerta alerta = new Alerta();
+      alerta.setTitulo(Configurador.getText("predispensa.lancamento.parametros.distribuicao"));
+      alerta.setTipo(Alerta.TIPO_OK);
+      byte[] rmCodigo = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+      for (byte i = 0; i < rmCodigo.length; i++) {
+         if (!rmLancouParametrosDistribuicao(i)) {
+            alerta.addMessage(String.valueOf(i + 1) + " " + Configurador.getText("predispensa.rm.nao.lancou.parametros.distribuicao"));
+            alerta.setTipo(Alerta.TIPO_ERROR);
+         }
+      }
+
+      Alerta alerta2 = new Alerta();
+      alerta2.setTitulo(Configurador.getText("predispensa.alteracao.dados.cs"));
+      alerta2.setTipo(Alerta.TIPO_OK);
+      for (Csel cs : cselDao.findAll()) {
+         if (isDadosDeCsAlteradosForaDoPrazo(cs.getCodigo())) {
+            alerta2.addMessage(cs.getCodigo() + " " + Configurador.getText("predispensa.alteracao.dados.cs.msg"));
+            alerta2.setTipo(Alerta.TIPO_ERROR);
+         }
+      }
+
+      Alerta alerta3 = new Alerta();
+      alerta3.setTitulo(Configurador.getText("predispensa.alteracao.tributacao"));
+      alerta3.setTipo(Alerta.TIPO_OK);
+      //TODO achar jsm que mudaram tributacao
+      List<Jsm> jsms = new ArrayList<Jsm>();
+      jsms.add(new Jsm());
+      for (Jsm jsm : jsms) {
+         if (isTributacaoDeJsmAlteradaForaDoPrazo(jsm.getCsmCodigo(), jsm.getCodigo())) {
+            alerta3.setTipo(Alerta.TIPO_ERROR);
+            alerta3.addMessage(new StringBuilder().append(jsm.getCodigo()).append("/").append(jsm.getCsmCodigo()).append(" ").append(Configurador.getText("predispensa.alteracao.tributacao.msg")).toString());
+         }
+      }
+
+      List<Alerta> alertas = new ArrayList<Alerta>();
+      alertas.add(alerta);
+      alertas.add(alerta2);
+      alertas.add(alerta3);
+      return alertas;
+
+   }
+
+   public List<Alerta> getSelecaoAlerta() {
+
+      Alerta alerta = new Alerta();
+      alerta.setTitulo(Configurador.getText("selecao.periodo.funcionamento.ano.atual"));
+      alerta.setTipo(Alerta.TIPO_OK);
+
+      Alerta alerta2 = new Alerta();
+      alerta2.setTitulo(Configurador.getText("selecao.periodo.funcionamento.proxomo.ano"));
+      alerta2.setTipo(Alerta.TIPO_OK);
+
+      List<Alerta> alertas = new ArrayList<Alerta>();
+      alertas.add(alerta);
+      alertas.add(alerta2);
+      return alertas;
+
+   }
+
+   public List<Alerta> getDistribuicaoAlerta() {
+      Alerta alerta = new Alerta();
+      alerta.setTitulo(Configurador.getText("distribuicao.preenchimento.bolnec"));
+      alerta.setTipo(Alerta.TIPO_OK);
+      //TODO  alerta.addMessage("Erro tal e tal"); alerta.setTipo(Alerta.TIPO_ERROR); 
+      // toda vez que encontrar um erro mudar tipo de alerta para erro ou warning.
+
+      Alerta alerta2 = new Alerta();
+      alerta2.setTitulo(Configurador.getText("distribuicao.lancamento.parametros"));
+      alerta2.setTipo(Alerta.TIPO_OK);
+
+      Alerta alerta3 = new Alerta();
+      alerta3.setTitulo(Configurador.getText("distribuicao.alteracao.grupos.distribuicao"));
+      alerta3.setTipo(Alerta.TIPO_OK);
+
+      Alerta alerta4 = new Alerta();
+      alerta4.setTitulo(Configurador.getText("distribuicao.consolidacao.bolnec"));  
+      alerta4.setTipo(Alerta.TIPO_OK);
+
+      Alerta alerta5 = new Alerta();
+      alerta5.setTitulo(Configurador.getText("distribuicao.bcciap.carregamento"));
+      alerta5.setTipo(Alerta.TIPO_OK);
+
+      List<Alerta> alertas = new ArrayList<Alerta>();
+      alertas.add(alerta);
+      alertas.add(alerta2);
+      alertas.add(alerta3);
+      alertas.add(alerta4);
+      alertas.add(alerta5);
+      return alertas;
+   }
+
+   public List<Alerta> getSelecaoComplementarAlerta() {
+      List<Alerta> alertas = new ArrayList<Alerta>();
+      return alertas;
+   }
+
+   public boolean isPgcLancadoParaAnoAtual() {
+      int year = Calendar.getInstance().get(Calendar.YEAR);
+      List<Pgc> pgcs = this.pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, String.valueOf(year));
+      if (pgcs.size() > 0)
+         return true;
+      return false;
+   }
+
+   public boolean isPgcLancadoParaProximoAno() {
+      int year = Calendar.getInstance().get(Calendar.YEAR);
+      List<Pgc> pgcs = this.pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, String.valueOf(year + 1));
+      if (pgcs.size() > 0)
+         return true;
+      return false;
+   }
+
+   public boolean rmLancouParametrosDistribuicao(Byte rmCodigo) {
+      // TODO implementar
+      return false;
+   }
+
+   public boolean isDadosDeCsAlteradosForaDoPrazo(Integer csCodigo) {
+      // TODO implementar idDadosAlteradosDeCs
+      return true;
+   }
+
+   public boolean isTributacaoDeJsmAlteradaForaDoPrazo(Byte csmCodigo, Short jsmCodigo) {
+      return true;
    }
 
 }

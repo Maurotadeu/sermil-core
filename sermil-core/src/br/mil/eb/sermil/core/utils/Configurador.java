@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory;
 
 import br.mil.eb.sermil.core.exceptions.SermilException;
 
-/** Carrega arquivo de configuração.
+/** Gerencia parâmetros do arquivo de configuração.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.2.5
+ * @version $Id$
  */
 public class Configurador {
 
@@ -51,8 +51,30 @@ public class Configurador {
      * @throws SermilException erro no processaamento
      */
     public FileConfiguration getFile() throws SermilException {
+       try {
+           final FileConfiguration config = new PropertiesConfiguration(ADMIN);
+           config.setReloadingStrategy(new FileChangedReloadingStrategy());
+           return config;
+       } catch (ConfigurationException e) {
+           logger.error("Erro lendo arquivo de configurações do sistema.", e);
+           throw new SermilException(e);
+       }
+   }
+    
+    
+
+    /**
+     * Sobrecarregando este metodo para poder trabalhar com outros Bundles
+     * alem do sermil-admin.properties
+     * 
+     * @author Anselmo S Ribeiro
+     * @param fileName
+     * @return
+     * @throws SermilException
+     */
+    public FileConfiguration getFile(String fileName) throws SermilException {
         try {
-            final FileConfiguration config = new PropertiesConfiguration(ADMIN);
+            final FileConfiguration config = new PropertiesConfiguration(fileName);
             config.setReloadingStrategy(new FileChangedReloadingStrategy());
             return config;
         } catch (ConfigurationException e) {
@@ -60,6 +82,8 @@ public class Configurador {
             throw new SermilException(e);
         }
     }
+    
+    
 
     /** Obtém o valor da propriedade de configuração.
      * @param cfg propriedade de configuração
@@ -67,8 +91,42 @@ public class Configurador {
      * @throws SermilException erro no processamento
      */
     public String getConfiguracao(final String cfg) throws SermilException {
-        return this.getFile().getString(cfg);
+       return this.getFile().getString(cfg);
+   }
+    
+    
+    
+
+    /**
+     * Sobrecarregando este metodo para poder escolher outros
+     * bundles alem do sermil-admin.properties
+     * 
+     * @author Anselmo S Ribeiro
+     * @param bundleName
+     * @param cfg
+     * @return
+     * @throws SermilException
+     */
+    public String getConfiguracao(final String bundleName, final String key)  {
+        try {
+         return this.getFile(bundleName).getString(key);
+      } catch (SermilException e) {
+         logger.error("Nao foi possivel achar o arquivo "+ bundleName + " com a key: " + key );
+         return key;
+      }
     }
+    
+
+    /**
+     * Metodo para trazer os valores especificos de sermil.properties
+     * @author Anselmo S Ribeiro
+     * @param key
+     * @return
+     */
+    public static String getText(String key){
+       return getInstance().getConfiguracao("sermil.properties", key);
+    }
+    
 
     /** Lista de propriedades de configuração armazenada em arquivo.
      * @return Lista de propriedades
