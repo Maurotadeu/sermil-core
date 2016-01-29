@@ -4,5 +4,5 @@ import br.mil.eb.sermil.modelo.Pgc;
 
 public interface PgcDao extends GenericDao<Pgc, Integer> {
   
-}
 
+}
