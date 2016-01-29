@@ -19,7 +19,6 @@ import br.mil.eb.sermil.core.dao.CselDao;
 import br.mil.eb.sermil.core.dao.CselEnderecoDao;
 import br.mil.eb.sermil.core.dao.CselFuncionamentoDao;
 import br.mil.eb.sermil.core.dao.JsmDao;
-
 import br.mil.eb.sermil.core.dao.PgcDao;
 import br.mil.eb.sermil.core.dao.RmDao;
 import br.mil.eb.sermil.core.exceptions.AnoBaseNaoEhUnicoException;
@@ -33,27 +32,20 @@ import br.mil.eb.sermil.core.exceptions.FuncionamentoFeriadoErroException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoJaExisteException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentosSobrepostosException;
-
-import br.mil.eb.sermil.core.exceptions.SermilException;
-
 import br.mil.eb.sermil.core.exceptions.PgcNaoExisteException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.utils.Configurador;
-
 import br.mil.eb.sermil.modelo.Csel;
 import br.mil.eb.sermil.modelo.CselEndereco;
 import br.mil.eb.sermil.modelo.CselFeriado;
 import br.mil.eb.sermil.modelo.CselFuncionamento;
-
 import br.mil.eb.sermil.modelo.Jsm;
-
 import br.mil.eb.sermil.modelo.Pgc;
 import br.mil.eb.sermil.modelo.Rm;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.Alerta;
 
 /** Serviço de CS.
- * 
  * @author Anselmo Ribeiro
  * @version 5.2.4
  * @since 5.2.8
