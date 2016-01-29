@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
@@ -167,7 +166,6 @@ public class EmailServico {
    }
 
    @Transactional
-   @Scheduled(cron="* 0/2 0-8 * * ?")
    public void agendamentoCs() throws Exception {
       int status[] = {0,0,0};
       final List<Object[]> lista = this.jsmDao.findBySQL("SELECT c.ra, c.email, c.nome, to_char(a.data_selecao,'dd/mm/yyyy hh24:mi') FROM cidadao c JOIN cs_agendamento a ON c.ra = a.cidadao_ra WHERE a.email = 'N' AND rownum < 11");
@@ -226,7 +224,7 @@ public class EmailServico {
                .append("\n").toString();
          logger.info("{}", resumo);
       } else {
-         logger.info("Lista de Agendamento da CS está vazia, não há e-mails a enviar.");
+         logger.warn("Lista de Agendamento da CS está vazia, não há e-mails a enviar.");
       }
    }
 
