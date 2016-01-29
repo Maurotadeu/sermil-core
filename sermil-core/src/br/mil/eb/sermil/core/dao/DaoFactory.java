@@ -117,6 +117,8 @@ public abstract class DaoFactory {
 
    public abstract PreAlistamentoDao getPreAlistamentoDao();
 
+   public abstract PgcDao getPgcDao();
+
    public abstract QcpDao getQcpDao();
 
    public abstract QmDao getQmDao();

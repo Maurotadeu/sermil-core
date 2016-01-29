@@ -39,6 +39,7 @@ import br.mil.eb.sermil.modelo.OmBoletim;
 import br.mil.eb.sermil.modelo.Padrao;
 import br.mil.eb.sermil.modelo.Pais;
 import br.mil.eb.sermil.modelo.Perfil;
+import br.mil.eb.sermil.modelo.Pgc;
 import br.mil.eb.sermil.modelo.PortalMensagem;
 import br.mil.eb.sermil.modelo.PostoGraduacao;
 import br.mil.eb.sermil.modelo.PreAlistamento;
@@ -285,6 +286,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   }
 
   @Override
+  public PgcDao getPgcDao() {
+    return (PgcDao) instanciarDao(PgcDaoJpa.class);
+  }
+
+  @Override
   public QcpDao getQcpDao() {
     return (QcpDao) instanciarDao(QcpDaoJpa.class);
   }
@@ -429,6 +435,8 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   public static class PostoGraduacaoDaoJpa extends GenericDaoJpaImpl<PostoGraduacao, String> implements PostoGraduacaoDao {}
 
   public static class PreAlistamentoDaoJpa extends GenericDaoJpaImpl<PreAlistamento, Long> implements PreAlistamentoDao {}
+
+  public static class PgcDaoJpa extends GenericDaoJpaImpl<Pgc, Integer> implements PgcDao {}
 
   public static class QcpDaoJpa extends GenericDaoJpaImpl<Qcp, Qcp.PK> implements QcpDao {}
 
