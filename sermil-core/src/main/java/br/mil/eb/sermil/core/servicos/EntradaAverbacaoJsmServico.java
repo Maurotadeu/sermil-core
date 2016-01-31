@@ -18,26 +18,29 @@ import javax.inject.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.CidCertificadoDao;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.CriptoSermil;
-import br.mil.eb.sermil.core.utils.Configurador;
 import br.mil.eb.sermil.core.utils.ZlibHelper;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.ArquivoCabecalho;
 
-/** Gerenciamento de carga das averbações do Módulo JSM (SASM).
+/** Processamento de carga do arquivo de averbações do Módulo JSM (SASM).
  * @author Abreu Lopes, Gardino
  * @since 4.0
- * @version 5.2.6
+ * @version 5.2.8
  */
 @Named("entradaAverbacaoJsmServico")
 public class EntradaAverbacaoJsmServico {
 
   protected static final Logger logger = LoggerFactory.getLogger(EntradaAverbacaoJsmServico.class);
+
+  @Inject
+  private Environment env;
 
   @Inject
   private CidCertificadoDao crtDao;
@@ -51,7 +54,7 @@ public class EntradaAverbacaoJsmServico {
     if (arquivo == null || arquivo.getName().isEmpty()) {
       throw new SermilException("ERRO: informe o nome do arquivo a ser carregado.");
     }
-    final Path tempDir = Paths.get(Configurador.getInstance().getConfiguracao(Constantes.TEMP_DIR));
+    final Path tempDir = Paths.get(this.env.getRequiredProperty(Constantes.TEMP_DIR));
     final Path txt = Paths.get(tempDir.toString(), arquivo.getName().concat(".txt"));
     Connection con = null;
     ArquivoCabecalho cab = null;
@@ -90,7 +93,7 @@ public class EntradaAverbacaoJsmServico {
             stmt.setString(6, "Módulo JSM");
             stmt.execute();
           } catch (Exception e) {
-            logger.warn("CRT Linha:{} ERRO: {}", doc, e.getMessage());
+            logger.debug("CRT Linha:{} ERRO: {}", doc, e.getMessage());
             continue;
           } finally {
             if (stmt != null) {
@@ -109,7 +112,7 @@ public class EntradaAverbacaoJsmServico {
             stmt.setDouble(5, Double.parseDouble(linha.substring(28, 32).replaceAll(",", ".")));
             stmt.execute();
           } catch (Exception e) {
-            logger.warn("ARR Linha:{} ERRO: {}", doc, e.getMessage());
+            logger.debug("ARR Linha:{} ERRO: {}", doc, e.getMessage());
             continue;
           } finally {
             if (stmt != null) {
@@ -127,7 +130,7 @@ public class EntradaAverbacaoJsmServico {
             stmt.setString(4, "Módulo JSM");
             stmt.execute();
           } catch (Exception e) {
-            logger.warn("AVB Linha:{} ERRO: {}", doc, e.getMessage());
+            logger.debug("AVB Linha:{} ERRO: {}", doc, e.getMessage());
             continue;
           } finally {
             if (stmt != null) {

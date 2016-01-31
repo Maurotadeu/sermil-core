@@ -15,18 +15,19 @@ import javax.inject.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
+import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.CriptoSermil;
-import br.mil.eb.sermil.core.utils.Configurador;
 import br.mil.eb.sermil.modelo.Jsm;
 
 /** Geração do arquivo de carga de alistados para entrada no SASM.
  * @author Abreu Lopes, Gardino
  * @since 3.4
- * @version 5.2.3
+ * @version 5.2.8
  */
 @Named("arquivoAlistadosServico")
 public class ArquivoAlistadosServico {
@@ -47,12 +48,15 @@ public class ArquivoAlistadosServico {
    @Inject
    private JsmDao jsmDao;
 
+   @Inject
+   private Environment env;
+
    public ArquivoAlistadosServico() {
       logger.debug("ArquivoAlistadosServico iniciado.");
    }
 
    public Path gerarArquivo(final Jsm jsm, final Date dataInicial, final Date dataFinal) throws SermilException {
-      final Path tempDir = Paths.get(Configurador.getInstance().getConfiguracao("temp.dir"));
+      final Path tempDir = Paths.get(this.env.getRequiredProperty(Constantes.TEMP_DIR));
       List<Object[]> lista = null;
       try {
          if (dataInicial == null && dataFinal == null) {

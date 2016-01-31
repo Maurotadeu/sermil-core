@@ -12,6 +12,7 @@ import javax.inject.Named;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +35,6 @@ import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentosSobrepostosException;
 import br.mil.eb.sermil.core.exceptions.PgcNaoExisteException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
-import br.mil.eb.sermil.core.utils.Configurador;
 import br.mil.eb.sermil.modelo.Csel;
 import br.mil.eb.sermil.modelo.CselEndereco;
 import br.mil.eb.sermil.modelo.CselFeriado;
@@ -46,7 +46,7 @@ import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.Alerta;
 
 /** Serviço de CS.
- * @author Anselmo Ribeiro
+ * @author Anselmo Ribeiro, Abreu Lopes
  * @version 5.2.4
  * @since 5.2.8
  */
@@ -55,6 +55,9 @@ import br.mil.eb.sermil.tipos.Alerta;
 public class CsServico {
 
    protected static final Logger logger = LoggerFactory.getLogger(CsServico.class);
+
+   @Inject
+   private Environment env;
 
    @Inject
    CselDao cselDao;
@@ -295,30 +298,30 @@ public class CsServico {
 
    public Map<String, List<Alerta>> getPgcAlertas() {
       Map<String, List<Alerta>> alertas = new HashMap<String, List<Alerta>>();
-      alertas.put(Configurador.getText("alistamento"), getAlistamentoAlerta());
-      alertas.put(Configurador.getText("predispensa"), getPreDispensaAlerta());
-      alertas.put(Configurador.getText("selecao"), getSelecaoAlerta());
-      alertas.put(Configurador.getText("distribuicao"), getDistribuicaoAlerta());
-      alertas.put(Configurador.getText("selecao.complementar"), getSelecaoComplementarAlerta());
+      alertas.put(this.env.getProperty("alistamento"), getAlistamentoAlerta());
+      alertas.put(this.env.getProperty("predispensa"), getPreDispensaAlerta());
+      alertas.put(this.env.getProperty("selecao"), getSelecaoAlerta());
+      alertas.put(this.env.getProperty("distribuicao"), getDistribuicaoAlerta());
+      alertas.put(this.env.getProperty("selecao.complementar"), getSelecaoComplementarAlerta());
       return alertas;
    }
 
    public List<Alerta> getAlistamentoAlerta() {
       Alerta alerta = new Alerta();
-      alerta.setTitulo(Configurador.getText("alistamento.lancamento.dados.ano.atual"));
+      alerta.setTitulo(this.env.getProperty("alistamento.lancamento.dados.ano.atual"));
       alerta.setTipo(Alerta.TIPO_OK);
 
       if (!isPgcLancadoParaAnoAtual()) {
-         alerta.addMessage(Configurador.getText("alistamento.lancamento.dados.ano.atual.motivo"));
+         alerta.addMessage(this.env.getProperty("alistamento.lancamento.dados.ano.atual.motivo"));
          alerta.setTipo(Alerta.TIPO_ERROR);
       }
 
       Alerta alerta2 = new Alerta();
-      alerta2.setTitulo(Configurador.getText("alistamento.lancamento.dados.proximo.ano"));
+      alerta2.setTitulo(this.env.getProperty("alistamento.lancamento.dados.proximo.ano"));
       alerta2.setTipo(Alerta.TIPO_OK);
 
       if (!isPgcLancadoParaProximoAno()) {
-         alerta2.addMessage(Configurador.getText("alistamento.lancamento.dados.proximo.ano.motivo"));
+         alerta2.addMessage(this.env.getProperty("alistamento.lancamento.dados.proximo.ano.motivo"));
          alerta2.setTipo(Alerta.TIPO_ERROR);
       }
 
@@ -331,28 +334,28 @@ public class CsServico {
    public List<Alerta> getPreDispensaAlerta() {
 
       Alerta alerta = new Alerta();
-      alerta.setTitulo(Configurador.getText("predispensa.lancamento.parametros.distribuicao"));
+      alerta.setTitulo(this.env.getProperty("predispensa.lancamento.parametros.distribuicao"));
       alerta.setTipo(Alerta.TIPO_OK);
       byte[] rmCodigo = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
       for (byte i = 0; i < rmCodigo.length; i++) {
          if (!rmLancouParametrosDistribuicao(i)) {
-            alerta.addMessage(String.valueOf(i + 1) + " " + Configurador.getText("predispensa.rm.nao.lancou.parametros.distribuicao"));
+            alerta.addMessage(String.valueOf(i + 1) + " " + this.env.getProperty("predispensa.rm.nao.lancou.parametros.distribuicao"));
             alerta.setTipo(Alerta.TIPO_ERROR);
          }
       }
 
       Alerta alerta2 = new Alerta();
-      alerta2.setTitulo(Configurador.getText("predispensa.alteracao.dados.cs"));
+      alerta2.setTitulo(this.env.getProperty("predispensa.alteracao.dados.cs"));
       alerta2.setTipo(Alerta.TIPO_OK);
       for (Csel cs : cselDao.findAll()) {
          if (isDadosDeCsAlteradosForaDoPrazo(cs.getCodigo())) {
-            alerta2.addMessage(cs.getCodigo() + " " + Configurador.getText("predispensa.alteracao.dados.cs.msg"));
+            alerta2.addMessage(cs.getCodigo() + " " + this.env.getProperty("predispensa.alteracao.dados.cs.msg"));
             alerta2.setTipo(Alerta.TIPO_ERROR);
          }
       }
 
       Alerta alerta3 = new Alerta();
-      alerta3.setTitulo(Configurador.getText("predispensa.alteracao.tributacao"));
+      alerta3.setTitulo(this.env.getProperty("predispensa.alteracao.tributacao"));
       alerta3.setTipo(Alerta.TIPO_OK);
       //TODO achar jsm que mudaram tributacao
       List<Jsm> jsms = new ArrayList<Jsm>();
@@ -360,7 +363,7 @@ public class CsServico {
       for (Jsm jsm : jsms) {
          if (isTributacaoDeJsmAlteradaForaDoPrazo(jsm.getCsmCodigo(), jsm.getCodigo())) {
             alerta3.setTipo(Alerta.TIPO_ERROR);
-            alerta3.addMessage(new StringBuilder().append(jsm.getCodigo()).append("/").append(jsm.getCsmCodigo()).append(" ").append(Configurador.getText("predispensa.alteracao.tributacao.msg")).toString());
+            alerta3.addMessage(new StringBuilder().append(jsm.getCodigo()).append("/").append(jsm.getCsmCodigo()).append(" ").append(this.env.getProperty("predispensa.alteracao.tributacao.msg")).toString());
          }
       }
 
@@ -375,11 +378,11 @@ public class CsServico {
    public List<Alerta> getSelecaoAlerta() {
 
       Alerta alerta = new Alerta();
-      alerta.setTitulo(Configurador.getText("selecao.periodo.funcionamento.ano.atual"));
+      alerta.setTitulo(this.env.getProperty("selecao.periodo.funcionamento.ano.atual"));
       alerta.setTipo(Alerta.TIPO_OK);
 
       Alerta alerta2 = new Alerta();
-      alerta2.setTitulo(Configurador.getText("selecao.periodo.funcionamento.proxomo.ano"));
+      alerta2.setTitulo(this.env.getProperty("selecao.periodo.funcionamento.proxomo.ano"));
       alerta2.setTipo(Alerta.TIPO_OK);
 
       List<Alerta> alertas = new ArrayList<Alerta>();
@@ -391,25 +394,25 @@ public class CsServico {
 
    public List<Alerta> getDistribuicaoAlerta() {
       Alerta alerta = new Alerta();
-      alerta.setTitulo(Configurador.getText("distribuicao.preenchimento.bolnec"));
+      alerta.setTitulo(this.env.getProperty("distribuicao.preenchimento.bolnec"));
       alerta.setTipo(Alerta.TIPO_OK);
       //TODO  alerta.addMessage("Erro tal e tal"); alerta.setTipo(Alerta.TIPO_ERROR); 
       // toda vez que encontrar um erro mudar tipo de alerta para erro ou warning.
 
       Alerta alerta2 = new Alerta();
-      alerta2.setTitulo(Configurador.getText("distribuicao.lancamento.parametros"));
+      alerta2.setTitulo(this.env.getProperty("distribuicao.lancamento.parametros"));
       alerta2.setTipo(Alerta.TIPO_OK);
 
       Alerta alerta3 = new Alerta();
-      alerta3.setTitulo(Configurador.getText("distribuicao.alteracao.grupos.distribuicao"));
+      alerta3.setTitulo(this.env.getProperty("distribuicao.alteracao.grupos.distribuicao"));
       alerta3.setTipo(Alerta.TIPO_OK);
 
       Alerta alerta4 = new Alerta();
-      alerta4.setTitulo(Configurador.getText("distribuicao.consolidacao.bolnec"));  
+      alerta4.setTitulo(this.env.getProperty("distribuicao.consolidacao.bolnec"));  
       alerta4.setTipo(Alerta.TIPO_OK);
 
       Alerta alerta5 = new Alerta();
-      alerta5.setTitulo(Configurador.getText("distribuicao.bcciap.carregamento"));
+      alerta5.setTitulo(this.env.getProperty("distribuicao.bcciap.carregamento"));
       alerta5.setTipo(Alerta.TIPO_OK);
 
       List<Alerta> alertas = new ArrayList<Alerta>();
