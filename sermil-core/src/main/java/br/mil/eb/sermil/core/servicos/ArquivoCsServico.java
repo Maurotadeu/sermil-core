@@ -15,17 +15,18 @@ import javax.inject.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
+import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.CriptoSermil;
-import br.mil.eb.sermil.core.utils.Configurador;
 import br.mil.eb.sermil.core.utils.ZlibHelper;
 
 /** Geração do arquivo de seleção para carregamento no Módulo Csel.
  * @author Abreu Lopes, Gardino
  * @since 4.0
- * @version 5.2.6
+ * @version 5.2.8
  */
 @Named("arquivoCsServico")
 public class ArquivoCsServico {
@@ -75,12 +76,15 @@ public class ArquivoCsServico {
   @Inject
   private JsmDao jsmDao;
 
+  @Inject
+  private Environment env;
+  
   public ArquivoCsServico() {
     logger.debug("ArquivoCsServico iniciado");
   }
 
   public Path gerarArquivo(final Byte rm, final Short cs, final Integer ano, final Short tipo) throws SermilException {
-    final Path tempDir = Paths.get(Configurador.getInstance().getConfiguracao("temp.dir"));
+    final Path tempDir = Paths.get(this.env.getRequiredProperty(Constantes.TEMP_DIR));
     try {
       List<Object[]> lista = null;
       //List<Object[]> listaRefratarios = null;

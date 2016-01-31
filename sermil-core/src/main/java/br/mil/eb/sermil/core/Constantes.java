@@ -27,9 +27,15 @@ public final class Constantes {
     /** Expressão regular para validar e-mail. */
     public static final String JPG_REGEXP = "([^\\s]+(\\.(?i)(jpg))$)";
 
+    /** Arquivo de Log. */
+    public static final String LOG_FILE = "logFile";
+
     /** Expressão regular para validar senha: mínimo 6 e máximo 30 caracteres, ao menos um dígito, ao menos um caracter minúsculo, ao menos um maiúsculo e um caracter especial. */
     public static final String SENHA_REGEXP = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%!&*]).{6,30})";
 
+    /** RA Emergencial Máximo. */
+    public static final String RA_EMERGENCIAL_MAXIMO = "ra.emergencial.maximo";
+    
     /** Construtor protegido. */
     private Constantes() {
         // Classe utilitária

@@ -17,9 +17,11 @@ import javax.persistence.LockModeType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.RaItensDao;
 import br.mil.eb.sermil.core.dao.RaMestreDao;
 import br.mil.eb.sermil.core.dao.RaPedidoDao;
@@ -27,7 +29,6 @@ import br.mil.eb.sermil.core.exceptions.RaMestreException;
 import br.mil.eb.sermil.core.exceptions.RaPedidoJaProcessadoException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.CriptoSermil;
-import br.mil.eb.sermil.core.utils.Configurador;
 import br.mil.eb.sermil.modelo.RaItens;
 import br.mil.eb.sermil.modelo.RaMestre;
 import br.mil.eb.sermil.modelo.RaPedido;
@@ -36,12 +37,15 @@ import br.mil.eb.sermil.tipos.Ra;
 /** Serviços do processo de Pedido de RA.
  * @author Anselmo, Abreu Lopes
  * @since 5.0
- * @version 5.2.7
+ * @version 5.2.8
  */
 @Named("jsmRaPedidoProcessamentoServico")
 public class JsmRaPedidoProcessamentoServico {
 
     protected static final Logger logger = LoggerFactory.getLogger(JsmRaPedidoProcessamentoServico.class);
+
+    @Inject
+    private Environment env;
 
     @Inject
     private RaMestreDao raMestreDao;
@@ -95,7 +99,7 @@ public class JsmRaPedidoProcessamentoServico {
     @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm')")
     public Path createTxtFile(final RaItens item) throws SermilException {
         String title = new StringBuilder("Faixa de RA Emergencial - ").append(item.getPk().getJsmCodigo()).append("ª JSM.txt").toString();
-        String caminho = Configurador.getInstance().getConfiguracao("temp.dir").toString();
+        String caminho = this.env.getRequiredProperty(Constantes.TEMP_DIR).toString();
         final Path file = Paths.get(caminho, title);
         try (BufferedWriter bw = Files.newBufferedWriter(Paths.get(file.toString()), Charset.forName("UTF-8"))) {
             String title2 = new StringBuilder("Pedido Nr ").append(this.raPedidoDao.findById(item.getPk().getRaPedidoNumero()).toString()).toString();
@@ -127,7 +131,7 @@ public class JsmRaPedidoProcessamentoServico {
         final String faixaTipo = Byte.toString(item.getPk().getTipo()).equals("3") ? "E" : "A";
         final String csm = String.format("%02d", item.getPk().getCsmCodigo());
         final String jsm = String.format("%03d", item.getPk().getJsmCodigo());
-        String caminho = Configurador.getInstance().getConfiguracao("temp.dir").toString();
+        String caminho = this.env.getRequiredProperty(Constantes.TEMP_DIR).toString();
         String title = "FAIXARA" + faixaTipo + csm + jsm + ".txt";
         final Path file = Paths.get(caminho, title);
 

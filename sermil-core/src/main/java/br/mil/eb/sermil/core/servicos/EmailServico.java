@@ -1,7 +1,5 @@
 package br.mil.eb.sermil.core.servicos;
 
-import static br.mil.eb.sermil.core.Constantes.SUPORTE_CONTA_EMAIL;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,15 +16,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
+import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.exceptions.SermilException;
-import br.mil.eb.sermil.core.utils.Configurador;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.Jsm;
 import br.mil.eb.sermil.modelo.Usuario;
@@ -42,6 +41,9 @@ public class EmailServico {
    protected static final Logger logger = LoggerFactory.getLogger(EmailServico.class);
 
    @Inject
+   private Environment env;
+
+   @Inject
    private JsmDao jsmDao;
 
    @Inject
@@ -50,10 +52,7 @@ public class EmailServico {
    @Inject
    private VelocityEngine velocityEngine;
 
-   private Configurador config;
-
    public EmailServico() {
-      this.config = Configurador.getInstance();
       logger.debug("EmailServico iniciado");
    }   
 
@@ -65,7 +64,7 @@ public class EmailServico {
                public void prepare(MimeMessage mimeMessage) throws Exception {
                   final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
                   message.setTo(cadastro.getEmail());
-                  message.setFrom(config.getConfiguracao(SUPORTE_CONTA_EMAIL));
+                  message.setFrom(env.getProperty(Constantes.SUPORTE_CONTA_EMAIL));
                   message.setSubject("Alistamento ONLINE do Serviço Militar");
                   final Map<String, Object> model = new HashMap<String, Object>(10);
                   model.put("ra", cadastro.getRa());
@@ -99,7 +98,7 @@ public class EmailServico {
                   public void prepare(MimeMessage mimeMessage) throws Exception {
                      final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
                      message.setTo(usr.getEmail());
-                     message.setFrom(config.getConfiguracao(SUPORTE_CONTA_EMAIL));
+                     message.setFrom(env.getProperty(Constantes.SUPORTE_CONTA_EMAIL));
                      message.setSubject("SERMILWEB - Conta Alterada");
                      final Map<String, Object> model = new HashMap<String, Object>(4);
                      model.put("cpf", usr.getCpf());
@@ -117,7 +116,7 @@ public class EmailServico {
                   public void prepare(MimeMessage mimeMessage) throws Exception {
                      final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
                      message.setTo(usr.getEmail());
-                     message.setFrom(config.getConfiguracao(SUPORTE_CONTA_EMAIL));
+                     message.setFrom(env.getProperty(Constantes.SUPORTE_CONTA_EMAIL));
                      message.setSubject("SERMILWEB - Alteração de Usuário");
                      final Map<String, Object> model = new HashMap<String, Object>(4);
                      model.put("cpf", usr.getCpf());
@@ -145,7 +144,7 @@ public class EmailServico {
                   final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
                   message.setTo(emailRm);
                   message.setReplyTo(cidadao.getEmail());
-                  message.setCc("sermilweb@dgp.eb.mil.br");
+                  message.setCc(env.getProperty(Constantes.SUPORTE_CONTA_EMAIL));
                   message.setFrom(cidadao.getEmail());
                   message.setSubject("EXARNET - Suporte");
                   final Map<String, Object> model = new HashMap<String, Object>(5);
@@ -181,8 +180,8 @@ public class EmailServico {
                   public void prepare(MimeMessage mimeMessage) throws Exception {
                      final MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
                      message.setTo(email);
-                     message.setFrom("sermilweb@dgp.eb.mil.br");
-                     message.setReplyTo("sermilweb@dgp.eb.mil.br");
+                     message.setFrom(env.getProperty(Constantes.SUPORTE_CONTA_EMAIL));
+                     message.setReplyTo(env.getProperty(Constantes.SUPORTE_CONTA_EMAIL));
                      message.setSubject("Alistamento Online - Convocação para a Seleção Geral");
                      final Map<String, Object> model = new HashMap<String, Object>(1);
                      model.put("ra", o[0]);

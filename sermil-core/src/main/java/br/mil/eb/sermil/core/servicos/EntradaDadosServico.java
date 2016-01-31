@@ -15,6 +15,7 @@ import javax.inject.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.Constantes;
@@ -24,7 +25,6 @@ import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.CriptoSermil;
-import br.mil.eb.sermil.core.utils.Configurador;
 import br.mil.eb.sermil.core.utils.ZlibHelper;
 import br.mil.eb.sermil.modelo.ImpDocumento;
 import br.mil.eb.sermil.modelo.ImpServico;
@@ -37,7 +37,7 @@ import br.mil.eb.sermil.modelo.Usuario;
  * O layout dos arquivos está descrito na documentação do sistema.
  * @author Abreu Lopes, Gardino
  * @since 3.4
- * @version $Id: EntradaDadosServico.java 2509 2014-08-19 18:36:30Z wlopes $
+ * @version 5.2.8
  */
 @Named("entradaDadosServico")
 public class EntradaDadosServico {
@@ -47,6 +47,9 @@ public class EntradaDadosServico {
   private static final String SELECT_2 = "SELECT s.codigo, s.ano, s.gravacao_data, s.gr_nr, s.gr_emissao_data, s.gr_entrada_data, s.nome_arquivo, s.registros_qtd, u.cpf||' - '||u.nome, s.usuario_data FROM imp_servico s, cs c, usuario u WHERE u.cpf = s.usuario AND SUBSTR(s.CODIGO,2,2) = c.rm and SUBSTR(s.codigo,6,3) = c.cs AND SUBSTR(s.CODIGO,1,1) in (2,6) AND c.csm = ? AND ano = ?";
 
   protected static final Logger logger = LoggerFactory.getLogger(EntradaDadosServico.class);
+
+  @Inject
+  private Environment env;
 
   @Inject
   private ImpServicoDao dao;
@@ -80,7 +83,7 @@ public class EntradaDadosServico {
     if (arquivo == null || arquivo.getName().isEmpty()) {
       throw new SermilException("ERRO: informe o nome do arquivo a ser carregado.");
     }
-    final Path tempDir = Paths.get(Configurador.getInstance().getConfiguracao(Constantes.TEMP_DIR));
+    final Path tempDir = Paths.get(this.env.getRequiredProperty(Constantes.TEMP_DIR));
     final Path txt = Paths.get(tempDir.toString(), arquivo.getName().concat(".txt"));
     try {
       CriptoSermil.executar(ZlibHelper.descompactar(arquivo.toPath()).toFile(), txt.toFile(), 2007);

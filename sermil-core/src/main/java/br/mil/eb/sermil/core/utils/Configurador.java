@@ -15,9 +15,11 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 
 /** Gerencia parâmetros do arquivo de configuração.
  * @author Abreu Lopes
+ * @deprecated A partir da versão 5.2.8, substituir pela chamada de Environment injetado pelo Spring. 
  * @since 3.0
- * @version $Id$
+ * @version 5.2.8
  */
+@Deprecated
 public class Configurador {
 
     protected static final Logger logger = LoggerFactory.getLogger(Configurador.class);

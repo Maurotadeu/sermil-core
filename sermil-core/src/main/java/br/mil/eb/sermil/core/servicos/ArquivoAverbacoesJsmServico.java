@@ -15,18 +15,19 @@ import javax.inject.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.env.Environment;
 
+import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.CriptoSermil;
-import br.mil.eb.sermil.core.utils.Configurador;
 import br.mil.eb.sermil.core.utils.ZlibHelper;
 import br.mil.eb.sermil.modelo.Jsm;
 
 /** Serviço de Averbações de JSM.
  * @author Abreu Lopes
  * @since 4.0
- * @version $Id: ArquivoAverbacoesJsmServico.java 2495 2014-07-31 18:29:36Z wlopes $
+ * @version 5.2.8
  */
 @Named("arquivoAverbacoesJsmServico")
 public class ArquivoAverbacoesJsmServico {
@@ -50,12 +51,15 @@ public class ArquivoAverbacoesJsmServico {
   @Inject
   private JsmDao jsmDao;
 
+  @Inject
+  private Environment env;
+  
   public ArquivoAverbacoesJsmServico() {
     logger.debug("ArquivoAverbacoesJsmServico iniciado");
   }
 
   public Path gerarArquivo(final Jsm jsm, final Integer ano, final Integer tipo) throws SermilException {
-    final Path tempDir = Paths.get(Configurador.getInstance().getConfiguracao("temp.dir"));
+    final Path tempDir = Paths.get(this.env.getRequiredProperty(Constantes.TEMP_DIR));
     String CAB = null;
     String CMD = null;
     try {
