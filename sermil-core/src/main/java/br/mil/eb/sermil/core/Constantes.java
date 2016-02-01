@@ -5,7 +5,7 @@ import java.util.Locale;
 /** Constantes simbólicas do sistema.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id$
+ * @version 5.2.8
  */
 public final class Constantes {
 
@@ -24,7 +24,7 @@ public final class Constantes {
     /** Expressão regular para validar e-mail. */
     public static final String EMAIL_REGEXP = "^([a-zA-Z0-9_\\.\\-\\+])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";
 
-    /** Expressão regular para validar e-mail. */
+    /** Expressão regular para validar JPEG. */
     public static final String JPG_REGEXP = "([^\\s]+(\\.(?i)(jpg))$)";
 
     /** Arquivo de Log. */
