@@ -73,6 +73,7 @@ public class CsServico {
    @Inject
    PgcDao pgcDao;
 
+
    @Inject
    JsmDao jsmDao;
 
@@ -199,6 +200,7 @@ public class CsServico {
     * @return boolean
     * @throws PgcNaoExisteException 
     */
+
    public boolean isFuncionamentoDeCsCorreto(CselFuncionamento func)
          throws AnoBaseNaoEhUnicoException, FuncionamentoDataInicioErroException, FuncionamentoDataTerminoErroException, FuncionamentoFeriadoErroException, FuncionamentosSobrepostosException, FuncionamentoAnoBaseException, PgcNaoExisteException {
 
@@ -207,10 +209,9 @@ public class CsServico {
          logger.error("Exite um PGC com dois lancamento de ano base. Ano base: " + func.getAnoBase());
          throw new AnoBaseNaoEhUnicoException();
       }
-      List<Pgc> pgcs = pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, func.getAnoBase());
+      List<Pgc> pgcs = pgcDao.findByNamedQuery("pgc.findByAnoBase", func.getAnoBase());
       if (pgcs.size() < 1 )
          throw new PgcNaoExisteException();
-
       Pgc p = pgcs.get(0);
 
       // O inicio da CS nao pode ser antes do inicio no PGC
@@ -288,7 +289,6 @@ public class CsServico {
    public boolean distribuicaoJaRodou() {
       return false;
    }
-
    public Pgc salvarPgc(Pgc pgc) throws EntityPersistenceException {
       try {
          return this.pgcDao.save(pgc);

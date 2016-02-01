@@ -57,7 +57,7 @@ public final class CselFeriado implements Serializable {
 
    @Override
    public String toString() {
-      return new StringBuilder(new SimpleDateFormat("dd/mm/yyyy").format(feriadoData)).toString();
+      return new StringBuilder(new SimpleDateFormat("dd/MM/yyyy").format(feriadoData)).toString();
    }
 
    public CselFuncionamento getFuncionamento() {
