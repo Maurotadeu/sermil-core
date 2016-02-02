@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 /** Guia de Recolhimento para CEF ou EBCT.
  * @author Abreu Lopes
  * @since 5.1
- * @version 5.2.3
+ * @version 5.2.8
  */
 @SuppressWarnings("unused")
 public class Boleto implements Serializable {
@@ -53,9 +53,14 @@ public class Boleto implements Serializable {
 
   private Banco banco;
   
+ /** Tipo de arrecadação: 1 - Taxa Militar  e 2 - Multa RLSM
+  * @author Abreu Lopes
+  * @since 5.2.3
+  * @version 5.2.8
+  */
   public enum Tipo {
       
-      MULTA("1"), TAXA("2");
+      MULTA("2"), TAXA("1");
       
       private final String codigo;
 
@@ -69,6 +74,11 @@ public class Boleto implements Serializable {
       
   }  
 
+  /** Banco da arrecadação: 1 -  e 2 -
+   * @author Abreu Lopes
+   * @since 5.2.3
+   * @version 5.2.8
+   */
   public enum Banco {
       
       CEF("1"), ECT("2");
