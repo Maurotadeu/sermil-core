@@ -28,7 +28,7 @@ import br.mil.eb.sermil.modelo.Padrao;
  * Serviços de Organização Militar (OM).
  * 
  * @author Abreu Lopes
- * @since 3.0
+ * @since 3.0 
  * @version $Id$
  */
 @Named("omServico")

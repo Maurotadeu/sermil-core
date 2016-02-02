@@ -31,7 +31,7 @@ public final class Padrao implements Comparable<Padrao>, Serializable {
   private Byte nvAptB;
 
   @Column(name = "NV_APT_E")
-  private Byte nvAptE;
+  private Byte nvAptE;  
 
   @Column(name = "NV_APT_M")
   private Byte nvAptM;
