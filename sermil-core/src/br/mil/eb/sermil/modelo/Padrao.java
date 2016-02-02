@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 /** Padrão Funcional.
@@ -13,7 +14,11 @@ import javax.persistence.NamedQuery;
  * @version $Id: Padrao.java 1637 2011-11-25 13:52:11Z wlopes $
  */
 @Entity
-@NamedQuery(name = "Padrao.listar", query = "SELECT p.codigo FROM Padrao p WHERE SUBSTRING(p.codigo,2,2) != '99' AND p.codigo NOT IN ('F01','F02')")
+@NamedQueries({
+   @NamedQuery(name = "Padrao.listar", query = "SELECT p.codigo FROM Padrao p WHERE SUBSTRING(p.codigo,2,2) != '99' AND p.codigo NOT IN ('F01','F02')"),
+   @NamedQuery(name = "Padrao.padroesOrdenados", query = "SELECT p FROM Padrao p order by p.codigo ")   
+})
+
 public final class Padrao implements Comparable<Padrao>, Serializable {
 
   /** serialVersionUID. */
