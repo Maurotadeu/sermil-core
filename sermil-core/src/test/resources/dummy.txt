@@ -1,0 +1,4 @@
+# dummy
+
+- Por favor, ative os testes no plugin do Surefire no POM.XML!
+- Está desativo... nenhum teste será executado ao gerar o jar (true)
