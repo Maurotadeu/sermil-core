@@ -59,40 +59,40 @@ public class Boleto implements Serializable {
   * @version 5.2.8
   */
   public enum Tipo {
-      
-      MULTA("2"), TAXA("1");
-      
-      private final String codigo;
 
-      Tipo(String cod) {
-          codigo = cod;
-      };
+     TAXA("1"), MULTA("2");
 
-      public String getCodigo() {
-          return codigo;
-      }
-      
+     private final String codigo;
+
+     Tipo(String cod) {
+        codigo = cod;
+     };
+
+     public String getCodigo() {
+        return codigo;
+     }
+
   }  
 
-  /** Banco da arrecadação: 1 -  e 2 -
+  /** Banco da arrecadação: 1 - CEF  e 0 - Correio (EBCT)
    * @author Abreu Lopes
    * @since 5.2.3
    * @version 5.2.8
    */
   public enum Banco {
-      
-      CEF("1"), ECT("2");
-      
-      private final String codigo;
 
-      Banco(String cod) {
-          codigo = cod;
-      };
+     CEF("1"), ECT("0");
 
-      public String getCodigo() {
-          return codigo;
-      }
-      
+     private final String codigo;
+
+     Banco(String cod) {
+        codigo = cod;
+     };
+
+     public String getCodigo() {
+        return codigo;
+     }
+
   };
   
   public Boleto() {
