@@ -39,6 +39,12 @@ public final class RaPedido implements Serializable {
 
   private static final long serialVersionUID = -3430080544016118416L;
 
+  public static final String APROVADO_NAO  = "N";
+  public static final String APROVADO_SIM  = "S";
+  
+  public static final String PROCESSADO_NAO  = "N";
+  public static final String PROCESSADO_SIM  = "S";
+
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="RA_PEDIDO")
   @TableGenerator(name="RA_PEDIDO", allocationSize=1)
