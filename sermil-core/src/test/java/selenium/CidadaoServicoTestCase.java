@@ -1,4 +1,4 @@
-package sel;
+package selenium;
 
 import static org.junit.Assert.*;
 
