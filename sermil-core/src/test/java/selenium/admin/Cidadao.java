@@ -1,22 +1,12 @@
 package selenium.admin;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class Cidadao {
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@Before
-	public void setUp() throws Exception {
-	}
+public class Cidadao extends AdminAbstractTest {
 
 	@Test
-	public final void testRecuperarLong() {
-		// TODO
+	public final void alistamentoNoSermil() {
+
 	}
 
 }
