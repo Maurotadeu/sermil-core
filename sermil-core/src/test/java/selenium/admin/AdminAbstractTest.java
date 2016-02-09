@@ -1,29 +1,17 @@
-package selenium;
+package selenium.admin;
 
 import static org.junit.Assert.fail;
-
-import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
-public class SermilTest {
+import selenium.AbstractTest;
 
-	protected WebDriver driver;
-	protected String baseUrl;
-
-	protected StringBuffer verificationErrors = new StringBuffer();
-
-	public static final Integer TEMPO_ESPERA_PAGINA_RESPONDER = 30;
+public class AdminAbstractTest extends AbstractTest {
 
 	@Before
 	public void setUp() throws Exception {
-		driver = new FirefoxDriver();
-		baseUrl = "https://www.sermilweb.eb.mil.br";
-		driver.manage().timeouts().implicitlyWait(SermilTest.TEMPO_ESPERA_PAGINA_RESPONDER, TimeUnit.SECONDS);
 		this.login();
 	}
 
@@ -35,7 +23,6 @@ public class SermilTest {
 		driver.findElement(By.id("j_username")).sendKeys("99999999999");
 		driver.findElement(By.xpath("//button[@type='submit']")).click();
 	}
-	
 
 	public void logout() throws Exception {
 		driver.get(baseUrl + "/portal/inicio.action#");
