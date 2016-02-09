@@ -6,7 +6,7 @@ import org.junit.runners.Suite;
 import selenium.admin.Entrevista;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ Entrevista.class })
+@Suite.SuiteClasses({ Entrevista.class, Cidadao.class })
 public class AdminTestSuite {
 
 }
