@@ -1,21 +1,13 @@
-package selenium;
+package selenium.admin;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.NoSuchElementException;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoAlertPresentException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
+
+import selenium.SermilTest;
 
 /**
  * SelTestCase. Usuario Teste Admin CPF 66666666666 Senha !@#$1234QWERqwer email
@@ -23,8 +15,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
  * 
  * @author dsmanselmo
  */
-@SuppressWarnings("unused")
-public class SelTestCase extends SermilTest{
+public class Entrevista extends SermilTest{
 
    private void vaiParaInicio() {
       driver.get(baseUrl + "/portal/inicio.action");
