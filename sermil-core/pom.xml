@@ -153,7 +153,7 @@
         <version>2.19</version>
         <configuration>
           <argLine>-javaagent:${user.home}/.m2/repository/org/springframework/spring-instrument/4.2.3.RELEASE/spring-instrument-4.2.3.RELEASE.jar</argLine>
-          <skipTests>true</skipTests>
+          <skipTests>false</skipTests>
         </configuration>
       </plugin>
     </plugins>
@@ -181,3 +181,5 @@
     </developer>
   </developers>
 </project>
+
+

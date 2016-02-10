@@ -7,9 +7,25 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 
 public class Cidadao extends AdminAbstractTest {
-
+   
    @Test
-   public void pesquisarCidadao() throws Exception {
+   public void testar() throws Exception{
+      this.login();
+      this.pesquisarCidadao();
+      this.pesquisarCidaddaoPorCpf();
+      this.logout();
+   }
+
+   private void login() throws Exception {
+      driver.get(baseUrl + "/portal/login.jsp");
+      driver.findElement(By.name("j_password")).clear();
+      driver.findElement(By.name("j_password")).sendKeys("AR$7wQ$W");
+      driver.findElement(By.id("j_username")).clear();
+      driver.findElement(By.id("j_username")).sendKeys("99999999999");
+      driver.findElement(By.xpath("//button[@type='submit']")).click();
+   }
+
+   private void pesquisarCidadao() throws Exception {
       driver.get(baseUrl + "/portal/jsp/index.jsp");
       driver.findElement(By.linkText("Cidadão")).click();
       driver.findElement(By.cssSelector("li.dropdown.open > ul.dropdown-menu > li > a")).click();
@@ -23,14 +39,17 @@ public class Cidadao extends AdminAbstractTest {
       assertTrue(isElementPresent(By.id("cidadao.nascimentoData")));
    }
 
-   @Test
-   public void pesquisarCidaddaoPorCpf() throws Exception {
+   private void pesquisarCidaddaoPorCpf() throws Exception {
       driver.get(baseUrl + "/portal/cidadao/pesquisar.action");
       driver.findElement(By.id("cpf")).clear();
       driver.findElement(By.id("cpf")).sendKeys("03354498161");
       driver.findElement(By.id("btPesquisar")).click();
       assertEquals("Pesquisa de Cidadão", driver.findElement(By.cssSelector("div.panel-heading > b")).getText());
       assertTrue(isElementPresent(By.cssSelector("div.panel-heading")));
+   }
+
+   private void logout() throws Exception {
+      driver.get(baseUrl + "/portal/j_spring_security_logout");
    }
 
 }
