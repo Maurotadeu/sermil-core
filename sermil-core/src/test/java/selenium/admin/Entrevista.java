@@ -13,14 +13,15 @@ import org.openqa.selenium.By;
  */
 public class Entrevista extends AdminAbstractTest {
 
-	@Test
-	public void entrevistaJaRealizadaTest() throws Exception {
-		driver.get(baseUrl + "/portal/entrevista!inicio.action");
-		driver.findElement(By.id("entrevista!entrada_ra")).clear();
-		driver.findElement(By.id("entrevista!entrada_ra")).sendKeys("040582159345");
-		driver.findElement(By.cssSelector("button.btn.btn-success")).click();
-		assertEquals("Entrevista realizada com sucesso.", driver.findElement(By.cssSelector("h4")).getText());
-		assertTrue(isElementPresent(By.linkText("Alterar Entrevista")));
-	}
+   @Test
+   public void entrevistaJaRealizadaTest() throws Exception {
+      driver.get(baseUrl + "/portal/entrevista!inicio.action");
+      driver.findElement(By.id("entrevista!entrada_ra")).clear();
+      driver.findElement(By.id("entrevista!entrada_ra")).sendKeys("040582159345");
+      driver.findElement(By.cssSelector("button.btn.btn-success")).click();
+      assertEquals("Entrevista realizada com sucesso.", driver.findElement(By.cssSelector("h4")).getText());
+      assertTrue(isElementPresent(By.linkText("Alterar Entrevista")));
+      Thread.sleep(5000);
+   }
 
 }
