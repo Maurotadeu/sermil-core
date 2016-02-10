@@ -25,14 +25,12 @@ public class AdminAbstractTest extends AbstractTest {
 	}
 
 	public void logout() throws Exception {
-		driver.get(baseUrl + "/portal/inicio.action#");
-		driver.findElement(By.linkText("Sair")).click();
-		driver.findElement(By.cssSelector("button.btn.btn-primary")).click();
+		driver.get(baseUrl + "/portal/j_spring_security_logout");
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		this.login();
+		this.logout();
 		driver.quit();
 		String verificationErrorString = verificationErrors.toString();
 		if (!"".equals(verificationErrorString)) {
