@@ -21,7 +21,6 @@ public class Entrevista extends AdminAbstractTest {
       driver.findElement(By.cssSelector("button.btn.btn-success")).click();
       assertEquals("Entrevista realizada com sucesso.", driver.findElement(By.cssSelector("h4")).getText());
       assertTrue(isElementPresent(By.linkText("Alterar Entrevista")));
-      Thread.sleep(5000);
    }
 
 }
