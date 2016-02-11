@@ -392,7 +392,7 @@ public class DaoFactoryJpaImpl extends DaoFactory {
    public static class CidFotoDaoJpa extends GenericDaoJpaImpl<CidFoto, Long>implements CidFotoDao {
    }
 
-   public static class CsAgendamentoDaoJpa extends GenericDaoJpaImpl<CsAgendamento, Integer> implements CsAgendamentoDao {
+   public static class CsAgendamentoDaoJpa extends GenericDaoJpaImpl<CsAgendamento, CsAgendamento.PK> implements CsAgendamentoDao {
    }
 
    public static class CsAnamneseDaoJpa extends GenericDaoJpaImpl<CsAnamnese, Long>implements CsAnamneseDao {
