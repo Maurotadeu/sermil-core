@@ -25,6 +25,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @Table(name = "CS_AGENDAMENTO")
 @PrimaryKey(validation=IdValidation.NULL)
 @NamedQueries({
+   @NamedQuery(name = "CsAgendamento.listarPorCsData", query = "SELECT c FROM CsAgendamento c where c.pk.csCodigo = ?1 and c.dataSelecao BETWEEN ?2 and ?3 "),
    @NamedQuery(name = "CsAgendamento.listarPorCs", query = "SELECT c FROM CsAgendamento c WHERE c.pk.csCodigo = ?1"),
    @NamedQuery(name = "CsAgendamento.listarPorRa", query = "SELECT c FROM CsAgendamento c WHERE c.pk.cidadaoRa = ?1"),
    @NamedQuery(name = "CsAgendamento.gruparPorEmail", query = "SELECT c.email, COUNT(c) FROM CsAgendamento c GROUP BY c.email") 
