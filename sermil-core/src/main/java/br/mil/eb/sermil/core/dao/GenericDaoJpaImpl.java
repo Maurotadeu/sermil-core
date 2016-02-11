@@ -15,6 +15,9 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.mil.eb.sermil.core.exceptions.SermilException;
 
 /** Implementação JPA (EclipseLink) de GenericDao.
@@ -22,10 +25,14 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
  * @param <ID> Tipo da chave primária
  * @author Abreu Lopes
  * @since 4.0
- * @version 5.2.5
+ * @version 5.2.8
  */
 public class GenericDaoJpaImpl<T, ID extends Serializable> implements GenericDao<T, ID> {
 
+  protected static final Logger logger = LoggerFactory.getLogger(GenericDaoJpaImpl.class);
+
+  public List<T> lista;
+  
   /** Classe da entidade manipulada pelo DAO. */
   private final Class<T> classe;
 

@@ -105,6 +105,7 @@ public class OmServico {
    }
 
    public Map<String, String> getListaDePadroes() {
+      @SuppressWarnings("unchecked")
       Map<String, String> mapPadroes = new ListOrderedMap();
       List<Padrao> padroes = padraoDao.findByNamedQuery("Padrao.padroesOrdenados");
       List<String> filtro = new ArrayList<String>();
