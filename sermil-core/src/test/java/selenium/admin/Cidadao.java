@@ -12,7 +12,10 @@ public class Cidadao extends AdminAbstractTest {
    public void testar() throws Exception{
       this.login();
       this.pesquisarCidadao();
-      this.pesquisarCidaddaoPorCpf();
+      this.pesquisarCidadaoPorCpf();
+      this.pesquisarCidadaoPorRa();
+      this.alistamentoCidadao();
+      this.editarAlistamentoCidadao();
       this.logout();
    }
 
@@ -39,7 +42,7 @@ public class Cidadao extends AdminAbstractTest {
       assertTrue(isElementPresent(By.id("cidadao.nascimentoData")));
    }
 
-   private void pesquisarCidaddaoPorCpf() throws Exception {
+   private void pesquisarCidadaoPorCpf() throws Exception {
       driver.get(baseUrl + "/portal/cidadao/pesquisar.action");
       driver.findElement(By.id("cpf")).clear();
       driver.findElement(By.id("cpf")).sendKeys("03354498161");
@@ -47,7 +50,32 @@ public class Cidadao extends AdminAbstractTest {
       assertEquals("Pesquisa de Cidadão", driver.findElement(By.cssSelector("div.panel-heading > b")).getText());
       assertTrue(isElementPresent(By.cssSelector("div.panel-heading")));
    }
-
+   
+   public void pesquisarCidadaoPorRa() throws Exception {
+      driver.get(baseUrl + "/portal/cidadao/pesquisar.action");
+      driver.findElement(By.id("ra")).clear();
+      driver.findElement(By.id("ra")).sendKeys("040582159345");
+      driver.findElement(By.id("ra")).clear();
+      driver.findElement(By.id("ra")).sendKeys("040582159345");
+      driver.findElement(By.id("btPesquisar")).click();
+      assertTrue(isElementPresent(By.cssSelector("div.panel-heading > b")));
+    }
+ 
+   public void alistamentoCidadao() throws Exception {
+      driver.get(baseUrl + "/portal/cidadao/recuperar.action?cidadao.ra=040582159345");
+      assertEquals("Pesquisar", driver.findElement(By.xpath("//div[3]/ul/li[3]")).getText());
+      assertEquals("Editar", driver.findElement(By.xpath("(//a[contains(text(),'Editar')])[2]")).getText());
+      assertEquals("Ano de Vinculação", driver.findElement(By.cssSelector("th.col-sm-2.text-right")).getText());
+    }
+   
+   public void editarAlistamentoCidadao() throws Exception {
+      driver.get(baseUrl + "/portal/cidadao/recuperar.action?cidadao.ra=040582159345");
+      driver.findElement(By.xpath("(//a[contains(text(),'Editar')])[2]")).click();
+      assertTrue(isElementPresent(By.cssSelector("label.col-sm-2.control-label")));
+      assertTrue(isElementPresent(By.cssSelector("button.btn.btn-success")));
+      assertEquals("Cancelar", driver.findElement(By.cssSelector("button.btn.btn-danger")).getText());
+    }
+   
    private void logout() throws Exception {
       driver.get(baseUrl + "/portal/j_spring_security_logout");
    }
