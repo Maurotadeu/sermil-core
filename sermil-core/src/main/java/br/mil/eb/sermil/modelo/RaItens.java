@@ -25,6 +25,10 @@ public final class RaItens implements Serializable {
 
    private static final long serialVersionUID = -2094341422409056895L;
 
+   public static final Byte TIPO_EMERGENCIAL = new Byte("3");
+   public static final Byte TIPO_NORMAL = new Byte("2");
+   public static final Byte TIPO_1 = new Byte("1");
+
    @EmbeddedId
    private RaItens.PK pk;
 
@@ -37,7 +41,8 @@ public final class RaItens implements Serializable {
    private Integer raFinal;
 
    @ManyToOne
-   @JoinColumns({ @JoinColumn(name = "CSM_CODIGO", referencedColumnName = "CSM_CODIGO", insertable = false, updatable = false, nullable = false),
+   @JoinColumns({
+         @JoinColumn(name = "CSM_CODIGO", referencedColumnName = "CSM_CODIGO", insertable = false, updatable = false, nullable = false),
          @JoinColumn(name = "JSM_CODIGO", referencedColumnName = "CODIGO", insertable = false, updatable = false, nullable = false) })
    private Jsm jsm;
 
@@ -76,7 +81,8 @@ public final class RaItens implements Serializable {
 
    @Override
    public String toString() {
-      return new StringBuilder(this.getPk() == null ? "ITEM" : this.getPk().toString()).append(" - ").append(this.getQuantidade() == null ? "QTD" : this.getQuantidade()).toString();
+      return new StringBuilder(this.getPk() == null ? "ITEM" : this.getPk().toString()).append(" - ")
+            .append(this.getQuantidade() == null ? "QTD" : this.getQuantidade()).toString();
    }
 
    public RaItens.PK getPk() {
@@ -158,18 +164,24 @@ public final class RaItens implements Serializable {
             return false;
          }
          PK other = (PK) o;
-         return this.raPedidoNumero.equals(other.raPedidoNumero) && this.csmCodigo.equals(other.csmCodigo) && this.jsmCodigo.equals(other.jsmCodigo) && this.tipo.equals(other.tipo);
+         return this.raPedidoNumero.equals(other.raPedidoNumero) && this.csmCodigo.equals(other.csmCodigo)
+               && this.jsmCodigo.equals(other.jsmCodigo) && this.tipo.equals(other.tipo);
       }
 
       @Override
       public int hashCode() {
-         return this.raPedidoNumero.hashCode() ^ this.csmCodigo.hashCode() ^ this.jsmCodigo.hashCode() ^ this.tipo.hashCode();
+         return this.raPedidoNumero.hashCode() ^ this.csmCodigo.hashCode() ^ this.jsmCodigo.hashCode()
+               ^ this.tipo.hashCode();
       }
 
       @Override
       public String toString() {
-         return new StringBuilder().append(this.getRaPedidoNumero() == null ? "NR" : this.getRaPedidoNumero().toString()).append(" - ").append(this.getCsmCodigo() == null ? "00" : new DecimalFormat("00").format(this.getCsmCodigo())).append("/")
-               .append(this.getJsmCodigo() == null ? "000" : new DecimalFormat("000").format(this.getJsmCodigo())).append(" - ").append(this.getTipo() == null ? "TIPO" : this.getTipo()).toString();
+         return new StringBuilder()
+               .append(this.getRaPedidoNumero() == null ? "NR" : this.getRaPedidoNumero().toString()).append(" - ")
+               .append(this.getCsmCodigo() == null ? "00" : new DecimalFormat("00").format(this.getCsmCodigo()))
+               .append("/")
+               .append(this.getJsmCodigo() == null ? "000" : new DecimalFormat("000").format(this.getJsmCodigo()))
+               .append(" - ").append(this.getTipo() == null ? "TIPO" : this.getTipo()).toString();
       }
 
       public Integer getRaPedidoNumero() {
