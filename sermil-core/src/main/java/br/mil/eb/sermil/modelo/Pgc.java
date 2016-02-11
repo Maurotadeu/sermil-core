@@ -8,16 +8,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
 import javax.persistence.NamedQueries;
-
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/** Plano Geral de Convocacao (PGC).
+/**
+ * Plano Geral de Convocacao (PGC).
+ * 
  * @author Anselmo Ribeiro
  * @since 5.2.3
  * @version 5.2.8
@@ -25,16 +25,15 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "PGC")
 
-@NamedQueries({
-   @NamedQuery(name = "pgcFindByAnoBase", query = "select p from Pgc p where p.anoBase = ?1 ")
+@NamedQueries({ @NamedQuery(name = Pgc.NQ_FINDBY_ANO_BASE, query = "select p from Pgc p where p.anoBase = ?1 ")
 
 })
 public final class Pgc implements Serializable {
 
    /** serialVersionUID. */
    private static final long serialVersionUID = 6479557479756080684L;
-   
-   public static final String NQ_FINDBY_ANO_BASE = "pgcFindByAnoBase" ; 
+
+   public static final String NQ_FINDBY_ANO_BASE = "pgcFindByAnoBase";
 
    @Id
    @GeneratedValue(strategy = GenerationType.TABLE, generator = "PGC")
@@ -172,94 +171,184 @@ public final class Pgc implements Serializable {
    @Temporal(TemporalType.DATE)
    private Date selecaoGeralMfdvTermino;
 
-   /**
-    * DISTRIBUICAO
+   /*
+    * @Column(name = "SG_PROCESS_I", nullable = false)
+    * 
+    * @Temporal(TemporalType.DATE) private Date selecaoGeralProcessamentoInicio;
+    * 
+    * @Column(name = "SG_PROCESS_T", nullable = false)
+    * 
+    * @Temporal(TemporalType.DATE) private Date
+    * selecaoGeralProcessamentoTermino;
     */
-   @Column(name = "SG_PROCESS_I", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoProcessamentoInicio;
-
-   @Column(name = "SG_PROCESS_T", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoProcessamentoTermino;
-
-   @Column(name = "SG_CONH_GPTA_I", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoGptaInicio;
-
-   @Column(name = "SG_CONH_GPTA_T", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoGptaTermino;
-
-   @Column(name = "SG_CONH_GPTB_I", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoGptbInicio;
-
-   @Column(name = "SG_CONH_GPTB_T", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoGptbTermino;
-
-   @Column(name = "SG_CONH_MFDV_I", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoMfdvInicio;
-
-   @Column(name = "SG_CONH_MFDV_T", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoMfdvTermino;
-
-   @Column(name = "SG_CONH_NPOR_I", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoCporNporInicio;
-
-   @Column(name = "SG_CONH_NPOR_T", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoCporNporTermino;
-
-   @Column(name = "SG_CONH_TG_I", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoTgInicio;
-
-   @Column(name = "SG_CONH_TG_T", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoTgTermino;
-
-   @Column(name = "SG_CONH_ESIM_I", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoEsimInicio;
-
-   @Column(name = "SG_CONH_ESIM_T", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoConhecimentoEsimTermino;
-
-   @Column(name = "SG_BN_LANC_I", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoBolnecLancamentoInicio;
-
-   @Column(name = "SG_BN_LANC_T", nullable = false)
-   @Temporal(TemporalType.DATE)
-   private Date distribuicaoBolnecLancamentoTermino;
-
    @Column(name = "SG_PAR_LANC_I", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date distribuicaoParametroLancamentoInicio;
+   private Date selecaoGeralParamentrosLancamentoInicio;
 
    @Column(name = "SG_PAR_LANC_T", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date distribuicaoParametroLancamentoTermino;
+   private Date selecaoGeralParametrosLancamentoTermino;
 
    @Column(name = "SG_GD_LANC_I", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date distribuicaoGdLancamentoInicio;
+   private Date selecaoGeralGdLancamentoInicio;
 
    @Column(name = "SG_GD_LANC_T", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date distribuicaoGdLancamentoTermino;
+   private Date selecaoGeralGdLancamentoTermino;
 
    @Column(name = "SG_BN_CONS_I", nullable = false)
    @Temporal(TemporalType.DATE)
-   private Date distribuicaoBolnecConsolidacaoInicio;
+   private Date selecaoGeralBolNecConsolidacaoInicio;
 
    @Column(name = "SG_BN_CONS_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralBolNecConsolidacaoTermino;
+
+   @Column(name = "SG_CONH_TG_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralConhecimentoTgInicio;
+
+   @Column(name = "SG_CONH_TG_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralConhecimentoTgTermino;
+
+   @Column(name = "SG_CONH_ESIM_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralConhecimentoEsimInicio;
+
+   @Column(name = "SG_CONH_ESIM_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralConhecimentoEsimTermino;
+
+   @Column(name = "SG_BN_LANC_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralBolNecLancamentoInicio;
+
+   @Column(name = "SG_BN_LANC_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralBolNecLancamentoTermino;
+
+   @Column(name = "SG_CONH_MFDV_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralConhecimentoMfdvInicio;
+
+   @Column(name = "SG_CONH_MFDV_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralConhecimentoMfdvTermino;
+
+   @Column(name = "SG_CONH_NPOR_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralConhecimentoNporInicio;
+
+   @Column(name = "SG_CONH_NPOR_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralConhecimentoNporTermino;
+
+   @Column(name = "SG_CONH_GPTB_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralConhecimentoGptbInicio;
+
+   @Column(name = "SG_CONH_GPTB_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralConhecimentoGptbTermino;
+
+   @Column(name = "SG_CONH_GPTA_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralConhecimentoGptaInicio;
+
+   @Column(name = "SG_CONH_GPTA_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date selecaoGeralConhecimentoGptaTermino;
+
+   /**
+    * DISTRIBUICAO
+    */
+   @Column(name = "DIST_PROCESS_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoProcessamentoInicio;
+
+   @Column(name = "DIST_PROCESS_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoProcessamentoTermino;
+
+   @Column(name = "DIST_CONH_GPTA_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoGptaInicio;
+
+   @Column(name = "DIST_CONH_GPTA_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoGptaTermino;
+
+   @Column(name = "DIST_CONH_GPTB_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoGptbInicio;
+
+   @Column(name = "DIST_CONH_GPTB_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoGptbTermino;
+
+   @Column(name = "DIST_CONH_MFDV_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoMfdvInicio;
+
+   @Column(name = "DIST_CONH_MFDV_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoMfdvTermino;
+
+   @Column(name = "DIST_CONH_NPOR_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoCporNporInicio;
+
+   @Column(name = "DIST_CONH_NPOR_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoCporNporTermino;
+
+   @Column(name = "DIST_CONH_TG_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoTgInicio;
+
+   @Column(name = "DIST_CONH_TG_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoTgTermino;
+
+   @Column(name = "DIST_CONH_ESIM_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoEsimInicio;
+
+   @Column(name = "DIST_CONH_ESIM_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoConhecimentoEsimTermino;
+
+   @Column(name = "DIST_BN_LANC_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoBolnecLancamentoInicio;
+
+   @Column(name = "DIST_BN_LANC_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoBolnecLancamentoTermino;
+
+   @Column(name = "DIST_PAR_LANC_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoParametroLancamentoInicio;
+
+   @Column(name = "DIST_PAR_LANC_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoParametroLancamentoTermino;
+
+   @Column(name = "DIST_GD_LANC_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoGdLancamentoInicio;
+
+   @Column(name = "DIST_GD_LANC_T", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoGdLancamentoTermino;
+
+   @Column(name = "DIST_BN_CONS_I", nullable = false)
+   @Temporal(TemporalType.DATE)
+   private Date distribuicaoBolnecConsolidacaoInicio;
+
+   @Column(name = "DIST_BN_CONS_T", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date distribuicaoBolnecConsolidacaoTermino;
 
@@ -293,7 +382,6 @@ public final class Pgc implements Serializable {
    @Column(name = "INCORPORACAO_EIC", nullable = false)
    @Temporal(TemporalType.DATE)
    private Date incorporacaoEic;
-
 
    @Column(name = "SELCOMP_GPTA_I", nullable = false)
    @Temporal(TemporalType.DATE)
@@ -340,7 +428,6 @@ public final class Pgc implements Serializable {
    private Date selecaoComplementarMfdvInicio;
 
    @Column(name = "SELCOMP_MFDV_T", nullable = false)
-
    @Temporal(TemporalType.DATE)
    private Date selecaoComplementarMfdvTermino;
 
@@ -360,6 +447,46 @@ public final class Pgc implements Serializable {
       this.classe = classe;
    }
 
+   public String getAnoBase() {
+      return anoBase;
+   }
+
+   public void setAnoBase(String anoBase) {
+      this.anoBase = anoBase;
+   }
+
+   public Date getAlistamentoDentroPrazoInicio() {
+      return alistamentoDentroPrazoInicio;
+   }
+
+   public void setAlistamentoDentroPrazoInicio(Date alistamentoDentroPrazoInicio) {
+      this.alistamentoDentroPrazoInicio = alistamentoDentroPrazoInicio;
+   }
+
+   public Date getAlistamentoDentroPrazoTermino() {
+      return alistamentoDentroPrazoTermino;
+   }
+
+   public void setAlistamentoDentroPrazoTermino(Date alistamentoDentroPrazoTermino) {
+      this.alistamentoDentroPrazoTermino = alistamentoDentroPrazoTermino;
+   }
+
+   public Date getAlistamentoForaPrazoInicio() {
+      return alistamentoForaPrazoInicio;
+   }
+
+   public void setAlistamentoForaPrazoInicio(Date alistamentoForaPrazoInicio) {
+      this.alistamentoForaPrazoInicio = alistamentoForaPrazoInicio;
+   }
+
+   public Date getAlistamentoForaPrazoTermino() {
+      return alistamentoForaPrazoTermino;
+   }
+
+   public void setAlistamentoForaPrazoTermino(Date alistamentoForaPrazoTermino) {
+      this.alistamentoForaPrazoTermino = alistamentoForaPrazoTermino;
+   }
+
    public Date getAlistamentoCaInicio() {
       return alistamentoCaInicio;
    }
@@ -374,6 +501,22 @@ public final class Pgc implements Serializable {
 
    public void setAlistamentoCaTermino(Date alistamentoCaTermino) {
       this.alistamentoCaTermino = alistamentoCaTermino;
+   }
+
+   public Date getAlistamentoCa2PeriodoInicio() {
+      return alistamentoCa2PeriodoInicio;
+   }
+
+   public void setAlistamentoCa2PeriodoInicio(Date alistamentoCa2PeriodoInicio) {
+      this.alistamentoCa2PeriodoInicio = alistamentoCa2PeriodoInicio;
+   }
+
+   public Date getAlistamentoCa2PeriodoTermino() {
+      return alistamentoCa2PeriodoTermino;
+   }
+
+   public void setAlistamentoCa2PeriodoTermino(Date alistamentoCa2PeriodoTermino) {
+      this.alistamentoCa2PeriodoTermino = alistamentoCa2PeriodoTermino;
    }
 
    public Date getPredispensaCsAlteracaoInicio() {
@@ -438,6 +581,22 @@ public final class Pgc implements Serializable {
 
    public void setPredispensaProcessamentoTermino(Date predispensaProcessamentoTermino) {
       this.predispensaProcessamentoTermino = predispensaProcessamentoTermino;
+   }
+
+   public Date getSelecaoGeralInicio() {
+      return selecaoGeralInicio;
+   }
+
+   public void setSelecaoGeralInicio(Date selecaoGeralInicio) {
+      this.selecaoGeralInicio = selecaoGeralInicio;
+   }
+
+   public Date getSelecaoGeralTermino() {
+      return selecaoGeralTermino;
+   }
+
+   public void setSelecaoGeralTermino(Date selecaoGeralTermino) {
+      this.selecaoGeralTermino = selecaoGeralTermino;
    }
 
    public Date getSelecaoGeralOmaInicio() {
@@ -520,100 +679,180 @@ public final class Pgc implements Serializable {
       this.selecaoGeralMfdvTermino = selecaoGeralMfdvTermino;
    }
 
-   public Date getSelecaoComplementarGptaInicio() {
-      return selecaoComplementarGptaInicio;
+   public Date getSelecaoGeralParamentrosLancamentoInicio() {
+      return selecaoGeralParamentrosLancamentoInicio;
    }
 
-   public void setSelecaoComplementarGptaInicio(Date selecaoComplementarGptaInicio) {
-      this.selecaoComplementarGptaInicio = selecaoComplementarGptaInicio;
+   public void setSelecaoGeralParamentrosLancamentoInicio(Date selecaoGeralParamentrosLancamentoInicio) {
+      this.selecaoGeralParamentrosLancamentoInicio = selecaoGeralParamentrosLancamentoInicio;
    }
 
-   public Date getSelecaoComplementarGptaTermino() {
-      return selecaoComplementarGptaTermino;
+   public Date getSelecaoGeralParametrosLancamentoTermino() {
+      return selecaoGeralParametrosLancamentoTermino;
    }
 
-   public void setSelecaoComplementarGptaTermino(Date selecaoComplementarGptaTermino) {
-      this.selecaoComplementarGptaTermino = selecaoComplementarGptaTermino;
+   public void setSelecaoGeralParametrosLancamentoTermino(Date selecaoGeralParametrosLancamentoTermino) {
+      this.selecaoGeralParametrosLancamentoTermino = selecaoGeralParametrosLancamentoTermino;
    }
 
-   public Date getSelecaoComplementarGptbInicio() {
-      return selecaoComplementarGptbInicio;
+   public Date getSelecaoGeralGdLancamentoInicio() {
+      return selecaoGeralGdLancamentoInicio;
    }
 
-   public void setSelecaoComplementarGptbInicio(Date selecaoComplementarGptbInicio) {
-      this.selecaoComplementarGptbInicio = selecaoComplementarGptbInicio;
+   public void setSelecaoGeralGdLancamentoInicio(Date selecaoGeralGdLancamentoInicio) {
+      this.selecaoGeralGdLancamentoInicio = selecaoGeralGdLancamentoInicio;
    }
 
-   public Date getSelecaoComplementarGptbTermino() {
-      return selecaoComplementarGptbTermino;
+   public Date getSelecaoGeralGdLancamentoTermino() {
+      return selecaoGeralGdLancamentoTermino;
    }
 
-   public void setSelecaoComplementarGptbTermino(Date selecaoComplementarGptbTermino) {
-      this.selecaoComplementarGptbTermino = selecaoComplementarGptbTermino;
+   public void setSelecaoGeralGdLancamentoTermino(Date selecaoGeralGdLancamentoTermino) {
+      this.selecaoGeralGdLancamentoTermino = selecaoGeralGdLancamentoTermino;
    }
 
-   public Date getSelecaoComplementarNporInicio() {
-      return selecaoComplementarNporInicio;
+   public Date getSelecaoGeralBolNecConsolidacaoInicio() {
+      return selecaoGeralBolNecConsolidacaoInicio;
    }
 
-   public void setSelecaoComplementarNporInicio(Date selecaoComplementarNporInicio) {
-      this.selecaoComplementarNporInicio = selecaoComplementarNporInicio;
+   public void setSelecaoGeralBolNecConsolidacaoInicio(Date selecaoGeralBolNecConsolidacaoInicio) {
+      this.selecaoGeralBolNecConsolidacaoInicio = selecaoGeralBolNecConsolidacaoInicio;
    }
 
-   public Date getSelecaoComplementarNporTermino() {
-      return selecaoComplementarNporTermino;
+   public Date getSelecaoGeralBolNecConsolidacaoTermino() {
+      return selecaoGeralBolNecConsolidacaoTermino;
    }
 
-   public void setSelecaoComplementarNporTermino(Date selecaoComplementarNporTermino) {
-      this.selecaoComplementarNporTermino = selecaoComplementarNporTermino;
+   public void setSelecaoGeralBolNecConsolidacaoTermino(Date selecaoGeralBolNecConsolidacaoTermino) {
+      this.selecaoGeralBolNecConsolidacaoTermino = selecaoGeralBolNecConsolidacaoTermino;
    }
 
-   public Date getSelecaoComplementarTgInicio() {
-      return selecaoComplementarTgInicio;
+   public Date getSelecaoGeralConhecimentoTgInicio() {
+      return selecaoGeralConhecimentoTgInicio;
    }
 
-   public void setSelecaoComplementarTgInicio(Date selecaoComplementarTgInicio) {
-      this.selecaoComplementarTgInicio = selecaoComplementarTgInicio;
+   public void setSelecaoGeralConhecimentoTgInicio(Date selecaoGeralConhecimentoTgInicio) {
+      this.selecaoGeralConhecimentoTgInicio = selecaoGeralConhecimentoTgInicio;
    }
 
-   public Date getSelecaoComplementarTgTermino() {
-      return selecaoComplementarTgTermino;
+   public Date getSelecaoGeralConhecimentoTgTermino() {
+      return selecaoGeralConhecimentoTgTermino;
    }
 
-   public void setSelecaoComplementarTgTermino(Date selecaoComplementarTgTermino) {
-      this.selecaoComplementarTgTermino = selecaoComplementarTgTermino;
+   public void setSelecaoGeralConhecimentoTgTermino(Date selecaoGeralConhecimentoTgTermino) {
+      this.selecaoGeralConhecimentoTgTermino = selecaoGeralConhecimentoTgTermino;
    }
 
-   public Date getSelecaoComplementarEsimInicio() {
-      return selecaoComplementarEsimInicio;
+   public Date getSelecaoGeralConhecimentoEsimInicio() {
+      return selecaoGeralConhecimentoEsimInicio;
    }
 
-   public void setSelecaoComplementarEsimInicio(Date selecaoComplementarEsimInicio) {
-      this.selecaoComplementarEsimInicio = selecaoComplementarEsimInicio;
+   public void setSelecaoGeralConhecimentoEsimInicio(Date selecaoGeralConhecimentoEsimInicio) {
+      this.selecaoGeralConhecimentoEsimInicio = selecaoGeralConhecimentoEsimInicio;
    }
 
-   public Date getSelecaoComplementarEsimTermino() {
-      return selecaoComplementarEsimTermino;
+   public Date getSelecaoGeralConhecimentoEsimTermino() {
+      return selecaoGeralConhecimentoEsimTermino;
    }
 
-   public void setSelecaoComplementarEsimTermino(Date selecaoComplementarEsimTermino) {
-      this.selecaoComplementarEsimTermino = selecaoComplementarEsimTermino;
+   public void setSelecaoGeralConhecimentoEsimTermino(Date selecaoGeralConhecimentoEsimTermino) {
+      this.selecaoGeralConhecimentoEsimTermino = selecaoGeralConhecimentoEsimTermino;
    }
 
-   public Date getSelecaoComplementarMfdvInicio() {
-      return selecaoComplementarMfdvInicio;
+   public Date getSelecaoGeralBolNecLancamentoInicio() {
+      return selecaoGeralBolNecLancamentoInicio;
    }
 
-   public void setSelecaoComplementarMfdvInicio(Date selecaoComplementarMfdvInicio) {
-      this.selecaoComplementarMfdvInicio = selecaoComplementarMfdvInicio;
+   public void setSelecaoGeralBolNecLancamentoInicio(Date selecaoGeralBolNecLancamentoInicio) {
+      this.selecaoGeralBolNecLancamentoInicio = selecaoGeralBolNecLancamentoInicio;
    }
 
-   public Date getSelecaoComplementarMfdvTermino() {
-      return selecaoComplementarMfdvTermino;
+   public Date getSelecaoGeralBolNecLancamentoTermino() {
+      return selecaoGeralBolNecLancamentoTermino;
    }
 
-   public void setSelecaoComplementarMfdvTermino(Date selecaoComplementarMfdvTermino) {
-      this.selecaoComplementarMfdvTermino = selecaoComplementarMfdvTermino;
+   public void setSelecaoGeralBolNecLancamentoTermino(Date selecaoGeralBolNecLancamentoTermino) {
+      this.selecaoGeralBolNecLancamentoTermino = selecaoGeralBolNecLancamentoTermino;
+   }
+
+   public Date getSelecaoGeralConhecimentoMfdvInicio() {
+      return selecaoGeralConhecimentoMfdvInicio;
+   }
+
+   public void setSelecaoGeralConhecimentoMfdvInicio(Date selecaoGeralConhecimentoMfdvInicio) {
+      this.selecaoGeralConhecimentoMfdvInicio = selecaoGeralConhecimentoMfdvInicio;
+   }
+
+   public Date getSelecaoGeralConhecimentoMfdvTermino() {
+      return selecaoGeralConhecimentoMfdvTermino;
+   }
+
+   public void setSelecaoGeralConhecimentoMfdvTermino(Date selecaoGeralConhecimentoMfdvTermino) {
+      this.selecaoGeralConhecimentoMfdvTermino = selecaoGeralConhecimentoMfdvTermino;
+   }
+
+   public Date getSelecaoGeralConhecimentoNporInicio() {
+      return selecaoGeralConhecimentoNporInicio;
+   }
+
+   public void setSelecaoGeralConhecimentoNporInicio(Date selecaoGeralConhecimentoNporInicio) {
+      this.selecaoGeralConhecimentoNporInicio = selecaoGeralConhecimentoNporInicio;
+   }
+
+   public Date getSelecaoGeralConhecimentoNporTermino() {
+      return selecaoGeralConhecimentoNporTermino;
+   }
+
+   public void setSelecaoGeralConhecimentoNporTermino(Date selecaoGeralConhecimentoNporTermino) {
+      this.selecaoGeralConhecimentoNporTermino = selecaoGeralConhecimentoNporTermino;
+   }
+
+   public Date getSelecaoGeralConhecimentoGptbInicio() {
+      return selecaoGeralConhecimentoGptbInicio;
+   }
+
+   public void setSelecaoGeralConhecimentoGptbInicio(Date selecaoGeralConhecimentoGptbInicio) {
+      this.selecaoGeralConhecimentoGptbInicio = selecaoGeralConhecimentoGptbInicio;
+   }
+
+   public Date getSelecaoGeralConhecimentoGptbTermino() {
+      return selecaoGeralConhecimentoGptbTermino;
+   }
+
+   public void setSelecaoGeralConhecimentoGptbTermino(Date selecaoGeralConhecimentoGptbTermino) {
+      this.selecaoGeralConhecimentoGptbTermino = selecaoGeralConhecimentoGptbTermino;
+   }
+
+   public Date getSelecaoGeralConhecimentoGptaInicio() {
+      return selecaoGeralConhecimentoGptaInicio;
+   }
+
+   public void setSelecaoGeralConhecimentoGptaInicio(Date selecaoGeralConhecimentoGptaInicio) {
+      this.selecaoGeralConhecimentoGptaInicio = selecaoGeralConhecimentoGptaInicio;
+   }
+
+   public Date getSelecaoGeralConhecimentoGptaTermino() {
+      return selecaoGeralConhecimentoGptaTermino;
+   }
+
+   public void setSelecaoGeralConhecimentoGptaTermino(Date selecaoGeralConhecimentoGptaTermino) {
+      this.selecaoGeralConhecimentoGptaTermino = selecaoGeralConhecimentoGptaTermino;
+   }
+
+   public Date getDistribuicaoProcessamentoInicio() {
+      return distribuicaoProcessamentoInicio;
+   }
+
+   public void setDistribuicaoProcessamentoInicio(Date distribuicaoProcessamentoInicio) {
+      this.distribuicaoProcessamentoInicio = distribuicaoProcessamentoInicio;
+   }
+
+   public Date getDistribuicaoProcessamentoTermino() {
+      return distribuicaoProcessamentoTermino;
+   }
+
+   public void setDistribuicaoProcessamentoTermino(Date distribuicaoProcessamentoTermino) {
+      this.distribuicaoProcessamentoTermino = distribuicaoProcessamentoTermino;
    }
 
    public Date getDistribuicaoConhecimentoGptaInicio() {
@@ -776,22 +1015,6 @@ public final class Pgc implements Serializable {
       this.distribuicaoBolnecConsolidacaoTermino = distribuicaoBolnecConsolidacaoTermino;
    }
 
-   public Date getDistribuicaoProcessamentoInicio() {
-      return distribuicaoProcessamentoInicio;
-   }
-
-   public void setDistribuicaoProcessamentoInicio(Date distribuicaoProcessamentoInicio) {
-      this.distribuicaoProcessamentoInicio = distribuicaoProcessamentoInicio;
-   }
-
-   public Date getDistribuicaoProcessamentoTermino() {
-      return distribuicaoProcessamentoTermino;
-   }
-
-   public void setDistribuicaoProcessamentoTermino(Date distribuicaoProcessamentoTermino) {
-      this.distribuicaoProcessamentoTermino = distribuicaoProcessamentoTermino;
-   }
-
    public Date getIncorporacaoGpta() {
       return incorporacaoGpta;
    }
@@ -848,76 +1071,100 @@ public final class Pgc implements Serializable {
       this.incorporacaoEic = incorporacaoEic;
    }
 
-   public String getAnoBase() {
-      return anoBase;
+   public Date getSelecaoComplementarGptaInicio() {
+      return selecaoComplementarGptaInicio;
    }
 
-   public void setAnoBase(String anoBase) {
-      this.anoBase = anoBase;
+   public void setSelecaoComplementarGptaInicio(Date selecaoComplementarGptaInicio) {
+      this.selecaoComplementarGptaInicio = selecaoComplementarGptaInicio;
    }
 
-   public Date getSelecaoGeralInicio() {
-      return selecaoGeralInicio;
+   public Date getSelecaoComplementarGptaTermino() {
+      return selecaoComplementarGptaTermino;
    }
 
-   public void setSelecaoGeralInicio(Date selecaoGeralInicio) {
-      this.selecaoGeralInicio = selecaoGeralInicio;
+   public void setSelecaoComplementarGptaTermino(Date selecaoComplementarGptaTermino) {
+      this.selecaoComplementarGptaTermino = selecaoComplementarGptaTermino;
    }
 
-   public Date getSelecaoGeralTermino() {
-      return selecaoGeralTermino;
+   public Date getSelecaoComplementarGptbInicio() {
+      return selecaoComplementarGptbInicio;
    }
 
-   public void setSelecaoGeralTermino(Date selecaoGeralTermino) {
-      this.selecaoGeralTermino = selecaoGeralTermino;
+   public void setSelecaoComplementarGptbInicio(Date selecaoComplementarGptbInicio) {
+      this.selecaoComplementarGptbInicio = selecaoComplementarGptbInicio;
    }
 
-   public Date getAlistamentoDentroPrazoInicio() {
-      return alistamentoDentroPrazoInicio;
+   public Date getSelecaoComplementarGptbTermino() {
+      return selecaoComplementarGptbTermino;
    }
 
-   public void setAlistamentoDentroPrazoInicio(Date alistamentoDentroPrazoInicio) {
-      this.alistamentoDentroPrazoInicio = alistamentoDentroPrazoInicio;
+   public void setSelecaoComplementarGptbTermino(Date selecaoComplementarGptbTermino) {
+      this.selecaoComplementarGptbTermino = selecaoComplementarGptbTermino;
    }
 
-   public Date getAlistamentoDentroPrazoTermino() {
-      return alistamentoDentroPrazoTermino;
+   public Date getSelecaoComplementarNporInicio() {
+      return selecaoComplementarNporInicio;
    }
 
-   public void setAlistamentoDentroPrazoTermino(Date alistamentoDentroPrazoTermino) {
-      this.alistamentoDentroPrazoTermino = alistamentoDentroPrazoTermino;
+   public void setSelecaoComplementarNporInicio(Date selecaoComplementarNporInicio) {
+      this.selecaoComplementarNporInicio = selecaoComplementarNporInicio;
    }
 
-   public Date getAlistamentoForaPrazoInicio() {
-      return alistamentoForaPrazoInicio;
+   public Date getSelecaoComplementarNporTermino() {
+      return selecaoComplementarNporTermino;
    }
 
-   public void setAlistamentoForaPrazoInicio(Date alistamentoForaPrazoInicio) {
-      this.alistamentoForaPrazoInicio = alistamentoForaPrazoInicio;
+   public void setSelecaoComplementarNporTermino(Date selecaoComplementarNporTermino) {
+      this.selecaoComplementarNporTermino = selecaoComplementarNporTermino;
    }
 
-   public Date getAlistamentoForaPrazoTermino() {
-      return alistamentoForaPrazoTermino;
+   public Date getSelecaoComplementarTgInicio() {
+      return selecaoComplementarTgInicio;
    }
 
-   public void setAlistamentoForaPrazoTermino(Date alistamentoForaPrazoTermino) {
-      this.alistamentoForaPrazoTermino = alistamentoForaPrazoTermino;
+   public void setSelecaoComplementarTgInicio(Date selecaoComplementarTgInicio) {
+      this.selecaoComplementarTgInicio = selecaoComplementarTgInicio;
    }
 
-   public Date getAlistamentoCa2PeriodoInicio() {
-      return alistamentoCa2PeriodoInicio;
+   public Date getSelecaoComplementarTgTermino() {
+      return selecaoComplementarTgTermino;
    }
 
-   public void setAlistamentoCa2PeriodoInicio(Date alistamentoCa2PeriodoInicio) {
-      this.alistamentoCa2PeriodoInicio = alistamentoCa2PeriodoInicio;
+   public void setSelecaoComplementarTgTermino(Date selecaoComplementarTgTermino) {
+      this.selecaoComplementarTgTermino = selecaoComplementarTgTermino;
    }
 
-   public Date getAlistamentoCa2PeriodoTermino() {
-      return alistamentoCa2PeriodoTermino;
+   public Date getSelecaoComplementarEsimInicio() {
+      return selecaoComplementarEsimInicio;
    }
 
-   public void setAlistamentoCa2PeriodoTermino(Date alistamentoCa2PeriodoTermino) {
-      this.alistamentoCa2PeriodoTermino = alistamentoCa2PeriodoTermino;
+   public void setSelecaoComplementarEsimInicio(Date selecaoComplementarEsimInicio) {
+      this.selecaoComplementarEsimInicio = selecaoComplementarEsimInicio;
+   }
+
+   public Date getSelecaoComplementarEsimTermino() {
+      return selecaoComplementarEsimTermino;
+   }
+
+   public void setSelecaoComplementarEsimTermino(Date selecaoComplementarEsimTermino) {
+      this.selecaoComplementarEsimTermino = selecaoComplementarEsimTermino;
+   }
+
+   public Date getSelecaoComplementarMfdvInicio() {
+      return selecaoComplementarMfdvInicio;
+   }
+
+   public void setSelecaoComplementarMfdvInicio(Date selecaoComplementarMfdvInicio) {
+      this.selecaoComplementarMfdvInicio = selecaoComplementarMfdvInicio;
+   }
+
+   public Date getSelecaoComplementarMfdvTermino() {
+      return selecaoComplementarMfdvTermino;
+   }
+
+   public void setSelecaoComplementarMfdvTermino(Date selecaoComplementarMfdvTermino) {
+      this.selecaoComplementarMfdvTermino = selecaoComplementarMfdvTermino;
    }
 
 }

@@ -288,10 +288,12 @@ public class CsServico {
       return false;
    }
 
+   @Transactional
    public Pgc salvarPgc(Pgc pgc) throws EntityPersistenceException {
       try {
          return this.pgcDao.save(pgc);
-      } catch (SermilException e) {
+      } catch (Exception e) {
+         logger.error(e.getMessage());
          throw new EntityPersistenceException();
       }
    }
