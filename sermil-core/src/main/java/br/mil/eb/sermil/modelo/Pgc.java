@@ -24,7 +24,9 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "PGC")
-@NamedQueries({ @NamedQuery(name = Pgc.NQ_FINDBY_ANO_BASE, query = "select p from Pgc p where p.anoBase = ?1 ") })
+@NamedQueries({ 
+   @NamedQuery(name = Pgc.NQ_FINDBY_ANO_BASE, query = "select p from Pgc p where p.anoBase = ?1 ") 
+   })
 public final class Pgc implements Serializable {
 
    /** serialVersionUID. */
