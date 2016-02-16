@@ -20,7 +20,7 @@ abstract public class AbstractTest {
 	public AbstractTest() {
 		driver = new FirefoxDriver();
       //baseUrl = "https://www.sermilweb.eb.mil.br";
-      baseUrl = "http://localhost";
+      baseUrl = "http://www.sermilweb.eb.mil.br";
 		driver.manage().timeouts().implicitlyWait(AbstractTest.TEMPO_ESPERA_PAGINA_RESPONDER, TimeUnit.SECONDS);
 	}
 
