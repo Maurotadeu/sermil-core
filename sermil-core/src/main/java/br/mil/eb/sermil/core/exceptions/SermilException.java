@@ -7,7 +7,7 @@ import javax.servlet.ServletException;
  * Todas as demais exceções descendem desta exceção.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: SermilException.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.3.0
  */
 public class SermilException extends ServletException {
 
