@@ -19,7 +19,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** CS - Agendamento.
  * @author Abreu Lopes
  * @since 5.2.8
- * @version 5.2.8
+ * @version 5.3.0
  */
 @Entity
 @Table(name = "CS_AGENDAMENTO")
@@ -32,8 +32,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 })
 public final class CsAgendamento implements Serializable {
 
-   /** serialVersionUID. */
-   private static final long serialVersionUID = -4660098478693871696L;
+   private static final long serialVersionUID = 4296531679466838124L;
 
    @EmbeddedId
    private PK pk;
@@ -46,6 +45,10 @@ public final class CsAgendamento implements Serializable {
 
    public CsAgendamento() {
       super();
+   }
+
+   public CsAgendamento(Short cs, Long ra) {
+      this.pk = new CsAgendamento.PK(cs, ra);
    }
 
    @Override
@@ -82,15 +85,15 @@ public final class CsAgendamento implements Serializable {
    /** Chave primária (PK) de CsAgendamento.
     * @author Abreu Lopes
     * @since 5.2.8
-    * @version 5.2.8
+    * @version 5.3.0
     */
    @Embeddable
    public static class PK implements Comparable<CsAgendamento.PK>, Serializable {
 
-      private static final long serialVersionUID = -1983860765661998247L;
+      private static final long serialVersionUID = 885577210501039392L;
 
       @Column(name="CS_CODIGO")
-      private Integer csCodigo;
+      private Short csCodigo;
       
       @Column(name="CIDADAO_RA")
       private Long cidadaoRa;
@@ -99,7 +102,7 @@ public final class CsAgendamento implements Serializable {
          super();
       }
 
-      public PK(final Integer csCodigo, final Long cidadaoRa) {
+      public PK(final Short csCodigo, final Long cidadaoRa) {
          this.setCsCodigo(csCodigo);
          this.setCidadaoRa(cidadaoRa);
       }
@@ -149,11 +152,11 @@ public final class CsAgendamento implements Serializable {
          return this.getCsCodigo().compareTo(o.getCsCodigo()) == 0 ? this.getCidadaoRa().compareTo(o.getCidadaoRa()) : this.getCsCodigo().compareTo(o.getCsCodigo());
       }
 
-      public Integer getCsCodigo() {
+      public Short getCsCodigo() {
          return csCodigo;
       }
 
-      public void setCsCodigo(Integer csCodigo) {
+      public void setCsCodigo(Short csCodigo) {
          this.csCodigo = csCodigo;
       }
 

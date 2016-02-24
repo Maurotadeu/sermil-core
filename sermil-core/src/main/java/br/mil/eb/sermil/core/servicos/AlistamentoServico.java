@@ -46,6 +46,9 @@ public class AlistamentoServico {
    @Inject
    private CidadaoDao cidadaoDao;
 
+   //@Inject
+   //private CsAgendamentoDao csAgendaDao;
+
    @Inject
    private PreAlistamentoDao preAlistamentoDao;
 
@@ -102,9 +105,11 @@ public class AlistamentoServico {
       cidadao.setEmail(alistamento.getEmail());
       cidadao.setTelefone(alistamento.getTelefone());
       cidadao.setDesejaServir(alistamento.getDesejaServir());
+      cidadao.setCs(alistamento.getJsm().getCs());
       cidadao.setAtualizacaoData(dataAtual);
       cidadao.setSituacaoMilitar(TipoSituacaoMilitar.ALISTADO.ordinal());
-
+      cidadao.setMobDestino(Byte.decode("1")); // Flag indicando Alistamento Internet
+      
       // Verificar se CPF está disponível
       if (!StringUtils.isEmpty(alistamento.getCpf()) && !this.cidadaoDao.findByNamedQuery("Cidadao.listarPorCpf", alistamento.getCpf()).isEmpty()) {
          logger.debug("CPF ja cadastrado: CPF={}", alistamento.getCpf());
@@ -172,6 +177,12 @@ public class AlistamentoServico {
       ce.setAnotacao("Alistado pela Internet");
       cidadao.addCidEvento(ce);
 
+      // CS Agendamento
+      //if (cidadao.getCs() != null) {
+      //  final CsAgendamento csa = new CsAgendamento(cidadao.getCs(), cidadao.getRa());
+      //  this.csAgendaDao.save(csa);
+      //}
+      
       // Salvar cidadão
       this.cidadaoDao.save(cidadao);
       this.preAlistamentoDao.save(alistamento);
