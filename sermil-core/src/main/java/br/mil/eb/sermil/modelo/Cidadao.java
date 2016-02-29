@@ -24,6 +24,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.tipos.Cpf;
 import br.mil.eb.sermil.tipos.Utils;
@@ -31,7 +32,7 @@ import br.mil.eb.sermil.tipos.Utils;
 /** Entidade Cidadao. (TABELA CIDADAO)
  * @author Abreu Lopes
  * @since 2.0
- * @version 5.2.7
+ * @version 5.3.0
  */
 @Entity
 @Table(name = "CIDADAO")
@@ -1422,4 +1423,51 @@ public final class Cidadao implements Serializable {
       return status;
    }
 
+   public boolean isForaPrazo() throws CriterioException {
+      if (this.getNascimentoData() == null) {
+         throw new CriterioException("Cidadão sem data de nascimento");
+      }
+      boolean status = false;
+      final Calendar dtNasc = Calendar.getInstance();
+      dtNasc.setTime(this.getNascimentoData());
+      final Calendar hoje = Calendar.getInstance();
+      final Calendar jul = Calendar.getInstance();
+      final Calendar dez = Calendar.getInstance();
+      int anoAtual = hoje.get(Calendar.YEAR);
+      jul.set(anoAtual, 6, 1);   // 1 jul
+      dez.set(anoAtual, 11, 31); // 31 dez
+      if (dtNasc.get(Calendar.YEAR) < anoAtual - 18) {
+         status = true;
+      } else if (dtNasc.get(Calendar.YEAR) < anoAtual - 17) {
+         if (hoje.getTimeInMillis() >= jul.getTimeInMillis() && hoje.getTimeInMillis() <= dez.getTimeInMillis()) {
+            status = true;
+         }
+      }
+      return status;
+   }
+
+   public boolean isForaLimiteIdade() throws CriterioException {
+      if (this.getNascimentoData() == null) {
+         throw new CriterioException("Cidadão sem data de nascimento");
+      }
+      final Calendar limInf = Calendar.getInstance();
+      limInf.add(Calendar.YEAR, -17);
+      final Calendar limSup = Calendar.getInstance();
+      limSup.add(Calendar.YEAR, -45);
+      final Calendar dtNasc = Calendar.getInstance();
+      dtNasc.setTime(this.getNascimentoData());
+      if (dtNasc.get(Calendar.YEAR) > limInf.get(Calendar.YEAR) || dtNasc.get(Calendar.YEAR) < limSup.get(Calendar.YEAR)) {
+         return true;
+      }
+      return false;
+   }
+
+   public boolean isAlistadoInternet() {
+      // Usando atributo mobSetor como flag de alistamento internet
+      if (this.getMobSetor() == 1) {
+         return true;
+      }
+      return false;
+   }
+   
 }

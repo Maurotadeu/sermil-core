@@ -46,6 +46,9 @@ public class AlistamentoServico {
    @Inject
    private CidadaoDao cidadaoDao;
 
+   //@Inject
+   //private CsAgendamentoDao csAgendaDao;
+
    @Inject
    private PreAlistamentoDao preAlistamentoDao;
 
@@ -76,39 +79,6 @@ public class AlistamentoServico {
 
       final Date dataAtual = new Date();
 
-      // Verificar se CPF está disponível
-      if (!StringUtils.isEmpty(alistamento.getCpf()) && !this.cidadaoDao.findByNamedQuery("Cidadao.listarPorCpf", alistamento.getCpf()).isEmpty()) {
-         logger.debug("CPF ja cadastrado: CPF={}", alistamento.getCpf());
-         throw new CPFDuplicadoException(alistamento.getCpf());
-      }
-
-      // Verifica se já foi alistado anteriormente
-      if (this.isCadastrado(alistamento)) {
-         logger.debug("Cidadao ja Alistado: nome={}, mae={}, dt nasc={}", alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
-         throw new CidadaoCadastradoException(alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
-      }
-      
-      // Verifica os limites de idade
-      if (this.isForaLimiteIdade(alistamento.getNascimentoData())) {
-         throw new SermilException("Alistamento permitido somente dos 17 aos 45 anos. Procure a JSM se for o caso.");
-      }
-
-      // Configura PreAlistamento
-      if (alistamento.getDocApresMunicipio().getCodigo() == -1) {
-         alistamento.setDocApresMunicipio(null);
-      }
-      if (alistamento.getDocApresTipo() == TipoDocApres.RG.ordinal()) {
-         if (StringUtils.isEmpty(alistamento.getRgNr())) {
-            alistamento.setRgNr(alistamento.getDocApresNr());
-            if (alistamento.getDocApresMunicipio() != null && alistamento.getDocApresMunicipio().getCodigo() != 99999) {
-               alistamento.setDocApresMunicipio(this.municipioDao.findById(alistamento.getDocApresMunicipio().getCodigo()));
-               alistamento.setRgUf(alistamento.getDocApresMunicipio().getUf().getSigla());
-            }
-         }
-      }
-      alistamento.setProtocoloData(dataAtual);
-      alistamento.setTipo(Byte.decode("0"));
-
       // Informações do Alistamento
       final Cidadao cidadao = new Cidadao();
       cidadao.setJsm(alistamento.getJsm());
@@ -135,8 +105,43 @@ public class AlistamentoServico {
       cidadao.setEmail(alistamento.getEmail());
       cidadao.setTelefone(alistamento.getTelefone());
       cidadao.setDesejaServir(alistamento.getDesejaServir());
+      cidadao.setCs(alistamento.getJsm().getCs());
       cidadao.setAtualizacaoData(dataAtual);
       cidadao.setSituacaoMilitar(TipoSituacaoMilitar.ALISTADO.ordinal());
+      cidadao.setMobDestino(Byte.decode("1")); // Flag indicando Alistamento Internet
+      
+      // Verificar se CPF está disponível
+      if (!StringUtils.isEmpty(alistamento.getCpf()) && !this.cidadaoDao.findByNamedQuery("Cidadao.listarPorCpf", alistamento.getCpf()).isEmpty()) {
+         logger.debug("CPF ja cadastrado: CPF={}", alistamento.getCpf());
+         throw new CPFDuplicadoException(alistamento.getCpf());
+      }
+
+      // Verifica se já foi alistado anteriormente
+      if (this.isCadastrado(alistamento)) {
+         logger.debug("Cidadao ja Alistado: nome={}, mae={}, dt nasc={}", alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
+         throw new CidadaoCadastradoException(alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
+      }
+      
+      // Verifica os limites de idade
+      if (cidadao.isForaLimiteIdade()) {
+         throw new SermilException("Alistamento permitido somente dos 17 aos 45 anos. Procure a JSM se for o caso.");
+      }
+
+      // Configura PreAlistamento
+      if (alistamento.getDocApresMunicipio().getCodigo() == -1) {
+         alistamento.setDocApresMunicipio(null);
+      }
+      if (alistamento.getDocApresTipo() == TipoDocApres.RG.ordinal()) {
+         if (StringUtils.isEmpty(alistamento.getRgNr())) {
+            alistamento.setRgNr(alistamento.getDocApresNr());
+            if (alistamento.getDocApresMunicipio() != null && alistamento.getDocApresMunicipio().getCodigo() != 99999) {
+               alistamento.setDocApresMunicipio(this.municipioDao.findById(alistamento.getDocApresMunicipio().getCodigo()));
+               alistamento.setRgUf(alistamento.getDocApresMunicipio().getUf().getSigla());
+            }
+         }
+      }
+      alistamento.setProtocoloData(dataAtual);
+      alistamento.setTipo(Byte.decode("0"));
 
       // Gerando novo RA
       final RaMestre raMestre = this.raMestreDao.findById(new RaMestre.PK(cidadao.getJsm().getPk().getCsmCodigo(), cidadao.getJsm().getPk().getCodigo()));
@@ -172,6 +177,12 @@ public class AlistamentoServico {
       ce.setAnotacao("Alistado pela Internet");
       cidadao.addCidEvento(ce);
 
+      // CS Agendamento
+      //if (cidadao.getCs() != null) {
+      //  final CsAgendamento csa = new CsAgendamento(cidadao.getCs(), cidadao.getRa());
+      //  this.csAgendaDao.save(csa);
+      //}
+      
       // Salvar cidadão
       this.cidadaoDao.save(cidadao);
       this.preAlistamentoDao.save(alistamento);
@@ -197,10 +208,11 @@ public class AlistamentoServico {
       return status;
    }
 
-   public boolean isForaPrazo(final Date data) {
+/*   
+   public boolean isForaPrazo(final Date dataNasc) {
       boolean status = false;
       final Calendar dtNasc = Calendar.getInstance();
-      dtNasc.setTime(data);
+      dtNasc.setTime(dataNasc);
       final Calendar hoje = Calendar.getInstance();
       final Calendar jul = Calendar.getInstance();
       final Calendar dez = Calendar.getInstance();
@@ -218,17 +230,17 @@ public class AlistamentoServico {
       return status;
    }
 
-   public boolean isForaLimiteIdade(final Date data) {
+   public boolean isForaLimiteIdade(final Date dataNasc) {
       final Calendar limInf = Calendar.getInstance();
       limInf.add(Calendar.YEAR, -17);
       final Calendar limSup = Calendar.getInstance();
       limSup.add(Calendar.YEAR, -45);
       final Calendar dtNasc = Calendar.getInstance();
-      dtNasc.setTime(data);
+      dtNasc.setTime(dataNasc);
       if (dtNasc.get(Calendar.YEAR) > limInf.get(Calendar.YEAR) || dtNasc.get(Calendar.YEAR) < limSup.get(Calendar.YEAR)) {
          return true;
       }
       return false;
    }
-
+*/
 }
