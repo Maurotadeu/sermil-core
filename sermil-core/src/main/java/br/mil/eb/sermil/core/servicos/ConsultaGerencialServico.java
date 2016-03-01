@@ -15,7 +15,8 @@ import br.mil.eb.sermil.tipos.Pesquisa;
 
 /** Serviço de geração de SQL de consulta gerencial.
  * @author Abreu Lopes
- * @version $Id: ConsultaGerencialServico.java 2427 2014-05-15 13:23:38Z wlopes $
+ * @since 4.0
+ * @version 5.3.1
  */
 @Named("consultaGerencialServico")
 public class ConsultaGerencialServico {
@@ -90,6 +91,7 @@ public class ConsultaGerencialServico {
     }
     // Finaliza o comando
     sql += " GROUP BY " + vGrp + " ORDER BY " + vGrp;
+    logger.debug("SQL = {}", sql);
     // Consulta
     final List<Object[]> lista = this.dao.findBySQL(sql);
     // Monta resultado    
@@ -134,6 +136,7 @@ public class ConsultaGerencialServico {
      }
    }
    resultado.append("\n\nComando SQL:\n===========\n").append(sql);
+   logger.debug("RESULT = {}", resultado);
    return resultado.toString();
   }
   
