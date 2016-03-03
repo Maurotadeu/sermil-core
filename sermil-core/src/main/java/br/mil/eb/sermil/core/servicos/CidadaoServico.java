@@ -35,7 +35,7 @@ import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 /** Gerenciamento de informações de Cidadão.
  * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
- * @version 5.3.0
+ * @version 5.3.1
  */
 @Named("cidadaoServico")
 public class CidadaoServico {
@@ -110,7 +110,7 @@ public class CidadaoServico {
       return lista.get(0);
    }
 
-   @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm','mob','om','smr')")
+   @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm','mob','om','smr','cs')")
    @Transactional
    public Cidadao salvar(final Cidadao cid, final Usuario usr, final String msg) throws SermilException {
       final CidAuditoria aud = new CidAuditoria(cid.getRa(), new Date(), msg.substring(0, msg.length() > 500 ? 500 : msg.length()), usr.getAcessoIp(), usr.getCpf());
@@ -128,7 +128,7 @@ public class CidadaoServico {
       return res;
    }
 
-   @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','om','mob')")
+   @PreAuthorize("hasAnyRole('adm','dsm','smr','cs','csm','del','om','mob')")
    public List<CidAuditoria> listarAuditoria(final Long ra) throws SermilException {
       if (ra == null) {
          throw new CriterioException("Informe o RA do cidadão a ser pesquisado.");

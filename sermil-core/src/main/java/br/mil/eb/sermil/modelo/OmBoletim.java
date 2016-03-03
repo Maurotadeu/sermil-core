@@ -169,10 +169,10 @@ public final class OmBoletim implements Comparable<OmBoletim>, Serializable {
 
       @Override
       public String toString() {
-         return new StringBuilder("COD=").append(this.getCodigo())
-               .append(" - OM=").append(this.getOmCodigo())
-               .append(" - Gpt=").append(this.getGptIncorp())
-               .append(" - Ano=").append(this.getAno()).toString();
+         return new StringBuilder("COD = ").append(this.getCodigo())
+               .append(" - OM = ").append(this.getOmCodigo())
+               .append(" - Gpt = ").append(this.getGptIncorp())
+               .append(" - Ano = ").append(this.getAno()).toString();
       }
 
       @Override

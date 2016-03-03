@@ -36,7 +36,7 @@ import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 /** Alistamento de Cidadão.
  * @author Abreu Lopes
  * @since 5.2.7
- * @version 5.2.7
+ * @version 5.3.1
  */
 @Named("alistamentoServico")
 public class AlistamentoServico {
@@ -87,7 +87,7 @@ public class AlistamentoServico {
       cidadao.setNascimentoData(alistamento.getNascimentoData());
       cidadao.setCpf(alistamento.getCpf());
       cidadao.setPai(alistamento.getPai());
-      cidadao.setDispensa(alistamento.getTipo());
+      cidadao.setDispensa(alistamento.getTipo() == null ? Byte.decode("0") : alistamento.getTipo());
       cidadao.setMunicipioNascimento(alistamento.getMunicipioNascimento());
       cidadao.setPaisNascimento(alistamento.getPaisNascimento());
       cidadao.setEstadoCivil(alistamento.getEstadoCivil());

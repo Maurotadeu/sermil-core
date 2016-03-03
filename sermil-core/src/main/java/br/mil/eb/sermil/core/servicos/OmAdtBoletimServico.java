@@ -18,11 +18,11 @@ import br.mil.eb.sermil.modelo.OmBoletim;
 import br.mil.eb.sermil.modelo.OmBoletimCidadao;
 
 /** Serviço de Boletim de Incorporação.
- * @author Abreu Lopes, gardino
+ * @author Abreu Lopes, Daniel Gardino
  * @since 4.6
- * @version $Id: OmAdtBoletimServico.java 2435 2014-05-27 13:26:13Z wlopes $
+ * @version 5.3.1
  */
-@Named("omBoletimServico")
+@Named("omAdtBoletimServico")
 public class OmAdtBoletimServico {
 
   protected static final Logger logger = LoggerFactory.getLogger(OmAdtBoletimServico.class);
@@ -39,7 +39,11 @@ public class OmAdtBoletimServico {
 
   @Transactional
   public OmBoletim adicionarSU(final OmBoletim omBoletim) throws SermilException {
-    final List<?> lista = this.omBoletimDao.findBySQL("SELECT MAX(CODIGO) FROM OM_BOLETIM WHERE OM_CODIGO = ? AND ANO = ? ", omBoletim.getPk().getOmCodigo(),omBoletim.getPk().getAno());
+    if (omBoletim == null || omBoletim.getPk().getAno() == null || omBoletim.getPk().getOmCodigo() == null) {
+       throw new SermilException("Informe o ANO e o CODOM da OM.");
+    }
+    logger.debug("BOLETIM = {}", omBoletim);
+    final List<?> lista = this.omBoletimDao.findBySQL("SELECT MAX(CODIGO) FROM OM_BOLETIM WHERE OM_CODIGO = ? AND ANO = ? ", omBoletim.getPk().getOmCodigo(), omBoletim.getPk().getAno());
     if(lista.get(0) == null) {
       omBoletim.getPk().setCodigo(1);
     } else {
@@ -79,7 +83,7 @@ public class OmAdtBoletimServico {
 
   public List<Cidadao> listarEfetivo(final OmBoletim.PK pk) throws SermilException {
     if (pk == null) {
-      throw new SermilException("ERRO: Informe o ano, Código OM e Gpt de incorporação.");
+      throw new SermilException("Informe ANO, CODOM e GPT de incorporação.");
     }
     List<Cidadao> cidadaos = this.cidadaoDao.findByNamedQuery("OmBoletim.listarEfetivo", pk.getAno() - 1, pk.getOmCodigo(), pk.getGptIncorp(), pk.getAno());
     return cidadaos;
@@ -87,7 +91,7 @@ public class OmAdtBoletimServico {
 
   public List<OmBoletim> listarBoletim(final OmBoletim.PK pk) throws SermilException {
     if (pk == null) {
-      throw new SermilException("ERRO: Informe o ano, Código OM e Gpt de incorporação.");
+      throw new SermilException("Informe ANO, CODOM e GPT de incorporação.");
     }
     return this.omBoletimDao.findByNamedQuery("OmBoletim.listarBoletimGpt", pk.getAno(), pk.getOmCodigo(), pk.getGptIncorp());
   }

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.CidAuditoriaDao;
 import br.mil.eb.sermil.core.dao.UsuarioDao;
-import br.mil.eb.sermil.core.exceptions.CPFDuplicadoException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
@@ -26,12 +26,10 @@ import br.mil.eb.sermil.modelo.CidAuditoria;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.modelo.UsuarioPerfil;
 
-/**
- * Gerenciamento dos usuários do sistema.
- * 
+/** Gerenciamento de usuário da aplicação.
  * @author Abreu Lopes, Anselmo Ribeiro <anselmo.sr@gmail.com>
  * @since 3.0
- * @version 5.2.5
+ * @version 5.3.1
  */
 @Named("usuarioServico")
 public class UsuarioServico {
@@ -218,32 +216,20 @@ public class UsuarioServico {
       }
    }
 
-   public Boolean isAdmin(Usuario user) {
-      Boolean isAdmin = false;
-      List<UsuarioPerfil> usuPerfis = user.getUsuarioPerfilCollection();
-      for (UsuarioPerfil usuPerfil : usuPerfis) {
-         if (usuPerfil.getPerfil().getCodigo().equals("adm")) {
-            isAdmin = true;
-         }
-      }
-      return isAdmin;
-   }
-
-   /**
-    * 
-    * @param CPF
+   /** Busca usuário pelo CPF.
+    * @param cpf
     * @return Usuario
-    * @throws UserNotFoundException
-    * @throws CPFDuplicadoException
-    * @author Anselmo Ribeiro
+    * @throws SermilException
     */
-   public Usuario findByCPF(String CPF) throws UserNotFoundException, CPFDuplicadoException {
-      Usuario usu = usuarioDao.findById(CPF);
-      if (usu == null) {
-         throw new UserNotFoundException("O usuario referente ao CPF " + CPF + " nao foi achado.");
-      } else {
-         return usu;
+   public Usuario findByCPF(final String cpf) throws SermilException {
+      if (StringUtils.isBlank(cpf)) {
+         throw new SermilException("Informe um CPF válido.");
       }
+      final Usuario usr = this.usuarioDao.findById(cpf);
+      if (usr == null) {
+         throw new UserNotFoundException("O usuário referente ao CPF " + cpf + " não foi encontrado na base de dados.");
+      }
+      return usr;
    }
 
 }
