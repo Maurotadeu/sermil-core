@@ -45,7 +45,9 @@ import br.mil.eb.sermil.modelo.Rm;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.Alerta;
 
-/** Serviço de CS.
+/**
+ * Serviço de CS.
+ * 
  * @author Anselmo Ribeiro, Abreu Lopes
  * @version 5.2.4
  * @since 5.2.8
@@ -115,7 +117,8 @@ public class CsServico {
          cs = cselDao.save(cs);
       } catch (Exception e) {
          logger.error(e.getMessage());
-         e.printStackTrace(); // TODO: tirar stacktrace antes de entrar em producao
+         e.printStackTrace(); // TODO: tirar stacktrace antes de entrar em
+                              // producao
          throw new CsPersistErrorException();
       }
       return cs;
@@ -134,13 +137,16 @@ public class CsServico {
       return tributacoes;
    }
 
-   /** Obter RM.
+   /**
+    * Obter RM.
     * 
-    * @param usuRm Rm a rm do usuario. Tente: Rm rm = ((Usuario) ((SecurityContext)
-    *           this.session.get("SPRING_SECURITY_CONTEXT")).getAuthentication().getPrincipal()).
-    *           getOm().getRm();
+    * @param usuRm
+    *           Rm a rm do usuario. Tente: Rm rm = ((Usuario) ((SecurityContext)
+    *           this.session.get("SPRING_SECURITY_CONTEXT")).getAuthentication()
+    *           .getPrincipal()). getOm().getRm();
     * 
-    * @param isAdm se o usuario é ou nao administrador Tente: boolean isAdm =
+    * @param isAdm
+    *           se o usuario é ou nao administrador Tente: boolean isAdm =
     *           ServletActionContext.getRequest().isUserInRole("adm");
     * 
     * @return Map codigo -> sigla
@@ -168,8 +174,9 @@ public class CsServico {
    }
 
    @Transactional(propagation = Propagation.NESTED)
-   public Csel salvarCselEFuncionamento(Csel cs, CselFuncionamento funcionamento, List<CselFeriado> feriados, CselEndereco endereco) throws FuncionamentoJaExisteException, CsPersistErrorException, AnoBaseNaoEhUnicoException,
-         FuncionamentoDataInicioErroException, FuncionamentoDataTerminoErroException, FuncionamentoFeriadoErroException, FuncionamentosSobrepostosException, FuncionamentoAnoBaseException {
+   public Csel salvarCselEFuncionamento(Csel cs, CselFuncionamento funcionamento, List<CselFeriado> feriados, CselEndereco endereco)
+         throws FuncionamentoJaExisteException, CsPersistErrorException, AnoBaseNaoEhUnicoException, FuncionamentoDataInicioErroException, FuncionamentoDataTerminoErroException,
+         FuncionamentoFeriadoErroException, FuncionamentosSobrepostosException, FuncionamentoAnoBaseException {
 
       feriados.forEach(fer -> {
          if (fer == null)
@@ -198,10 +205,10 @@ public class CsServico {
     * Regras de Negocio para Funcionamento de CS
     * 
     * @return boolean
-    * @throws PgcNaoExisteException 
+    * @throws PgcNaoExisteException
     */
-   public boolean isFuncionamentoDeCsCorreto(CselFuncionamento func)
-         throws AnoBaseNaoEhUnicoException, FuncionamentoDataInicioErroException, FuncionamentoDataTerminoErroException, FuncionamentoFeriadoErroException, FuncionamentosSobrepostosException, FuncionamentoAnoBaseException, PgcNaoExisteException {
+   public boolean isFuncionamentoDeCsCorreto(CselFuncionamento func) throws AnoBaseNaoEhUnicoException, FuncionamentoDataInicioErroException, FuncionamentoDataTerminoErroException,
+         FuncionamentoFeriadoErroException, FuncionamentosSobrepostosException, FuncionamentoAnoBaseException, PgcNaoExisteException {
 
       // ano base de PGC tem que ser unico
       if (!this.isAnoBaseDePgcEhUnico(func.getAnoBase())) {
@@ -209,7 +216,7 @@ public class CsServico {
          throw new AnoBaseNaoEhUnicoException();
       }
       List<Pgc> pgcs = pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, func.getAnoBase());
-      if (pgcs.size() < 1 )
+      if (pgcs.size() < 1)
          throw new PgcNaoExisteException();
 
       Pgc p = pgcs.get(0);
@@ -222,7 +229,8 @@ public class CsServico {
       if (func.getTerminoData().after(p.getSelecaoGeralTermino()))
          throw new FuncionamentoDataTerminoErroException();
 
-      // Os blocos de cada inicio e termino de funcionamento para o mesmo ano base nao podem se
+      // Os blocos de cada inicio e termino de funcionamento para o mesmo ano
+      // base nao podem se
       // sobrepor
       List<CselFuncionamento> funcs = cselDao.findById(func.getCsel().getCodigo()).getFuncionamentos();
       for (CselFuncionamento f : funcs) {
@@ -238,9 +246,11 @@ public class CsServico {
       return true;
    }
 
-  /** Regras de Negocio para Feriados de Funcionamento de CS.
-   * @return boolean
-   */
+   /**
+    * Regras de Negocio para Feriados de Funcionamento de CS.
+    * 
+    * @return boolean
+    */
    public boolean isFeriadosDeFuncionamentoCorretos(List<CselFeriado> feriados, CselFuncionamento func) throws FuncionamentoFeriadoErroException {
       // Os feriados tem que estar dentro do periodo declarado
       for (CselFeriado fer : feriados) {
@@ -280,8 +290,8 @@ public class CsServico {
    }
 
    public int rodarDistribuicao() {
-     // TODO retornar de 0 a 100
-     return 0;
+      // TODO retornar de 0 a 100
+      return 0;
    }
 
    public boolean distribuicaoJaRodou() {
@@ -312,7 +322,6 @@ public class CsServico {
       Alerta alerta = new Alerta();
       alerta.setTitulo(this.env.getProperty("alistamento.lancamento.dados.ano.atual"));
       alerta.setTipo(Alerta.TIPO_OK);
-
       if (!isPgcLancadoParaAnoAtual()) {
          alerta.addMessage(this.env.getProperty("alistamento.lancamento.dados.ano.atual.motivo"));
          alerta.setTipo(Alerta.TIPO_ERROR);
@@ -321,7 +330,6 @@ public class CsServico {
       Alerta alerta2 = new Alerta();
       alerta2.setTitulo(this.env.getProperty("alistamento.lancamento.dados.proximo.ano"));
       alerta2.setTipo(Alerta.TIPO_OK);
-
       if (!isPgcLancadoParaProximoAno()) {
          alerta2.addMessage(this.env.getProperty("alistamento.lancamento.dados.proximo.ano.motivo"));
          alerta2.setTipo(Alerta.TIPO_ERROR);
@@ -359,13 +367,14 @@ public class CsServico {
       Alerta alerta3 = new Alerta();
       alerta3.setTitulo(this.env.getProperty("predispensa.alteracao.tributacao"));
       alerta3.setTipo(Alerta.TIPO_OK);
-      //TODO achar jsm que mudaram tributacao
+      // TODO achar jsm que mudaram tributacao
       List<Jsm> jsms = new ArrayList<Jsm>();
       jsms.add(new Jsm());
       for (Jsm jsm : jsms) {
          if (isTributacaoDeJsmAlteradaForaDoPrazo(jsm.getCsmCodigo(), jsm.getCodigo())) {
             alerta3.setTipo(Alerta.TIPO_ERROR);
-            alerta3.addMessage(new StringBuilder().append(jsm.getCodigo()).append("/").append(jsm.getCsmCodigo()).append(" ").append(this.env.getProperty("predispensa.alteracao.tributacao.msg")).toString());
+            alerta3.addMessage(
+                  new StringBuilder().append(jsm.getCodigo()).append("/").append(jsm.getCsmCodigo()).append(" ").append(this.env.getProperty("predispensa.alteracao.tributacao.msg")).toString());
          }
       }
 
@@ -398,8 +407,10 @@ public class CsServico {
       Alerta alerta = new Alerta();
       alerta.setTitulo(this.env.getProperty("distribuicao.preenchimento.bolnec"));
       alerta.setTipo(Alerta.TIPO_OK);
-      //TODO  alerta.addMessage("Erro tal e tal"); alerta.setTipo(Alerta.TIPO_ERROR); 
-      // toda vez que encontrar um erro mudar tipo de alerta para erro ou warning.
+      // TODO alerta.addMessage("Erro tal e tal");
+      // alerta.setTipo(Alerta.TIPO_ERROR);
+      // toda vez que encontrar um erro mudar tipo de alerta para erro ou
+      // warning.
 
       Alerta alerta2 = new Alerta();
       alerta2.setTitulo(this.env.getProperty("distribuicao.lancamento.parametros"));
@@ -410,7 +421,7 @@ public class CsServico {
       alerta3.setTipo(Alerta.TIPO_OK);
 
       Alerta alerta4 = new Alerta();
-      alerta4.setTitulo(this.env.getProperty("distribuicao.consolidacao.bolnec"));  
+      alerta4.setTitulo(this.env.getProperty("distribuicao.consolidacao.bolnec"));
       alerta4.setTipo(Alerta.TIPO_OK);
 
       Alerta alerta5 = new Alerta();

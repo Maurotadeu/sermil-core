@@ -29,9 +29,9 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.tipos.Cpf;
 
 /** Usuário.
- * @author Abreu Lopes, Gardino
+ * @author Abreu Lopes, Daniel Gardino
  * @since 3.0
- * @version 5.2.4
+ * @version 5.3.1
  */
 @Entity
 @Table(name = "USUARIO")
@@ -43,7 +43,7 @@ import br.mil.eb.sermil.tipos.Cpf;
 })
 public final class Usuario extends User implements Serializable {
 
-   private static final long serialVersionUID = -1814921412537895544L;
+   private static final long serialVersionUID = 4022352622571265315L;
 
    @Id
    private String cpf;
@@ -104,7 +104,7 @@ public final class Usuario extends User implements Serializable {
    public String toString() {
       return new StringBuilder(this.getCpf() == null ? "CPF" : this.getCpf()).append(" - ").append(this.getNome() == null ? "NOME" : this.getNome()).toString();
    }
-   
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -301,6 +301,18 @@ public final class Usuario extends User implements Serializable {
       if (p.getUsuario() != this) {
          p.setUsuario(this);
       }
+   }
+
+   public Boolean isAdmin() {
+      final List<UsuarioPerfil> perfis = this.getUsuarioPerfilCollection();
+      if (perfis != null && !perfis.isEmpty()) {
+         for (UsuarioPerfil p : perfis) {
+            if (p.getPerfil().getCodigo().equals("adm")) {
+               return true;
+            }
+         }
+      }
+      return false;
    }
 
 }

@@ -25,7 +25,6 @@ import org.springframework.web.client.RestTemplate;
 
 import br.mil.eb.sermil.core.exceptions.CPFSippesException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
-import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.tipos.Cpf;
 import br.mil.eb.sermil.tipos.CpfInfoSippes;
 
@@ -35,7 +34,7 @@ import br.mil.eb.sermil.tipos.CpfInfoSippes;
  * IMPORTANTE: Importar o certificado digital do SIPPES no cacerts da JVM do servidor SERMIL.
  * @author Abreu Lopes
  * @since 5.2.5
- * @version 5.2.7
+ * @version 5.3.0
  */
 @Named("CpfSippesServico")
 @RemoteProxy(name = "cpfSippesServico")
@@ -68,9 +67,7 @@ public class CpfSippesServico {
          throw new CPFSippesException("CPF inválido, informe um número de CPF válido.");
       };
       // Verifica se o CPF já existe na base de dados
-      final Cidadao cidadao = new Cidadao();
-      cidadao.setCpf(cpf);
-      if (this.cidadaoServico.isCPFCadastrado(cidadao)) {
+      if (this.cidadaoServico.isCPFCadastrado(cpf)) {
          throw new CPFSippesException("CPF já foi cadastrado no sistema. Procure o órgão de Serviço Militar se necessário.");
       }
       // Usando a implementação default do Spring para REST-RS

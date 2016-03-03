@@ -36,7 +36,7 @@ import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 /** Alistamento de Cidadão.
  * @author Abreu Lopes
  * @since 5.2.7
- * @version 5.2.7
+ * @version 5.3.1
  */
 @Named("alistamentoServico")
 public class AlistamentoServico {
@@ -45,6 +45,9 @@ public class AlistamentoServico {
 
    @Inject
    private CidadaoDao cidadaoDao;
+
+   //@Inject
+   //private CsAgendamentoDao csAgendaDao;
 
    @Inject
    private PreAlistamentoDao preAlistamentoDao;
@@ -76,6 +79,37 @@ public class AlistamentoServico {
 
       final Date dataAtual = new Date();
 
+      // Informações do Alistamento
+      final Cidadao cidadao = new Cidadao();
+      cidadao.setJsm(alistamento.getJsm());
+      cidadao.setNome(alistamento.getNome());
+      cidadao.setMae(alistamento.getMae());
+      cidadao.setNascimentoData(alistamento.getNascimentoData());
+      cidadao.setCpf(alistamento.getCpf());
+      cidadao.setPai(alistamento.getPai());
+      cidadao.setDispensa(alistamento.getTipo() == null ? Byte.decode("0") : alistamento.getTipo());
+      cidadao.setMunicipioNascimento(alistamento.getMunicipioNascimento());
+      cidadao.setPaisNascimento(alistamento.getPaisNascimento());
+      cidadao.setEstadoCivil(alistamento.getEstadoCivil());
+      cidadao.setSexo(alistamento.getSexo());
+      cidadao.setEscolaridade(alistamento.getEscolaridade());
+      cidadao.setOcupacao(alistamento.getOcupacao());
+      cidadao.setVinculacaoAno(Calendar.getInstance().get(Calendar.YEAR));
+      cidadao.setZonaResidencial(alistamento.getZonaResidencial());
+      cidadao.setMunicipioResidencia(alistamento.getMunicipioResidencia());
+      cidadao.setPaisResidencia(alistamento.getPaisResidencia());
+      cidadao.setEndereco(alistamento.getEndereco());
+      cidadao.setBairro(alistamento.getBairro());
+      cidadao.setCep(alistamento.getCep());
+      cidadao.setRg(alistamento.getRgNr() == null ? null : new StringBuilder(alistamento.getRgUf()).append(alistamento.getRgNr()).toString());
+      cidadao.setEmail(alistamento.getEmail());
+      cidadao.setTelefone(alistamento.getTelefone());
+      cidadao.setDesejaServir(alistamento.getDesejaServir());
+      cidadao.setCs(alistamento.getJsm().getCs());
+      cidadao.setAtualizacaoData(dataAtual);
+      cidadao.setSituacaoMilitar(TipoSituacaoMilitar.ALISTADO.ordinal());
+      cidadao.setMobDestino(Byte.decode("1")); // Flag indicando Alistamento Internet
+      
       // Verificar se CPF está disponível
       if (!StringUtils.isEmpty(alistamento.getCpf()) && !this.cidadaoDao.findByNamedQuery("Cidadao.listarPorCpf", alistamento.getCpf()).isEmpty()) {
          logger.debug("CPF ja cadastrado: CPF={}", alistamento.getCpf());
@@ -89,7 +123,7 @@ public class AlistamentoServico {
       }
       
       // Verifica os limites de idade
-      if (this.isForaLimiteIdade(alistamento.getNascimentoData())) {
+      if (cidadao.isForaLimiteIdade()) {
          throw new SermilException("Alistamento permitido somente dos 17 aos 45 anos. Procure a JSM se for o caso.");
       }
 
@@ -108,35 +142,6 @@ public class AlistamentoServico {
       }
       alistamento.setProtocoloData(dataAtual);
       alistamento.setTipo(Byte.decode("0"));
-
-      // Informações do Alistamento
-      final Cidadao cidadao = new Cidadao();
-      cidadao.setJsm(alistamento.getJsm());
-      cidadao.setNome(alistamento.getNome());
-      cidadao.setMae(alistamento.getMae());
-      cidadao.setNascimentoData(alistamento.getNascimentoData());
-      cidadao.setCpf(alistamento.getCpf());
-      cidadao.setPai(alistamento.getPai());
-      cidadao.setDispensa(alistamento.getTipo());
-      cidadao.setMunicipioNascimento(alistamento.getMunicipioNascimento());
-      cidadao.setPaisNascimento(alistamento.getPaisNascimento());
-      cidadao.setEstadoCivil(alistamento.getEstadoCivil());
-      cidadao.setSexo(alistamento.getSexo());
-      cidadao.setEscolaridade(alistamento.getEscolaridade());
-      cidadao.setOcupacao(alistamento.getOcupacao());
-      cidadao.setVinculacaoAno(Calendar.getInstance().get(Calendar.YEAR));
-      cidadao.setZonaResidencial(alistamento.getZonaResidencial());
-      cidadao.setMunicipioResidencia(alistamento.getMunicipioResidencia());
-      cidadao.setPaisResidencia(alistamento.getPaisResidencia());
-      cidadao.setEndereco(alistamento.getEndereco());
-      cidadao.setBairro(alistamento.getBairro());
-      cidadao.setCep(alistamento.getCep());
-      cidadao.setRg(alistamento.getRgNr() == null ? null : new StringBuilder(alistamento.getRgUf()).append(alistamento.getRgNr()).toString());
-      cidadao.setEmail(alistamento.getEmail());
-      cidadao.setTelefone(alistamento.getTelefone());
-      cidadao.setDesejaServir(alistamento.getDesejaServir());
-      cidadao.setAtualizacaoData(dataAtual);
-      cidadao.setSituacaoMilitar(TipoSituacaoMilitar.ALISTADO.ordinal());
 
       // Gerando novo RA
       final RaMestre raMestre = this.raMestreDao.findById(new RaMestre.PK(cidadao.getJsm().getPk().getCsmCodigo(), cidadao.getJsm().getPk().getCodigo()));
@@ -172,6 +177,12 @@ public class AlistamentoServico {
       ce.setAnotacao("Alistado pela Internet");
       cidadao.addCidEvento(ce);
 
+      // CS Agendamento
+      //if (cidadao.getCs() != null) {
+      //  final CsAgendamento csa = new CsAgendamento(cidadao.getCs(), cidadao.getRa());
+      //  this.csAgendaDao.save(csa);
+      //}
+      
       // Salvar cidadão
       this.cidadaoDao.save(cidadao);
       this.preAlistamentoDao.save(alistamento);
@@ -197,10 +208,11 @@ public class AlistamentoServico {
       return status;
    }
 
-   public boolean isForaPrazo(final Date data) {
+/*   
+   public boolean isForaPrazo(final Date dataNasc) {
       boolean status = false;
       final Calendar dtNasc = Calendar.getInstance();
-      dtNasc.setTime(data);
+      dtNasc.setTime(dataNasc);
       final Calendar hoje = Calendar.getInstance();
       final Calendar jul = Calendar.getInstance();
       final Calendar dez = Calendar.getInstance();
@@ -218,17 +230,17 @@ public class AlistamentoServico {
       return status;
    }
 
-   public boolean isForaLimiteIdade(final Date data) {
+   public boolean isForaLimiteIdade(final Date dataNasc) {
       final Calendar limInf = Calendar.getInstance();
       limInf.add(Calendar.YEAR, -17);
       final Calendar limSup = Calendar.getInstance();
       limSup.add(Calendar.YEAR, -45);
       final Calendar dtNasc = Calendar.getInstance();
-      dtNasc.setTime(data);
+      dtNasc.setTime(dataNasc);
       if (dtNasc.get(Calendar.YEAR) > limInf.get(Calendar.YEAR) || dtNasc.get(Calendar.YEAR) < limSup.get(Calendar.YEAR)) {
          return true;
       }
       return false;
    }
-
+*/
 }
