@@ -15,7 +15,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Entrevista de cidadao na Comissão de Seleção.
  * @author Anselmo S Ribeiro
- * @since 3.0
+ * @since 5.0
  * @version 5.3.2
  */
 @Entity
@@ -23,8 +23,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation = IdValidation.NULL)
 public final class EntrevistaCs implements Serializable {
 
-   /** serialVersionUID. */
-   private static final long serialVersionUID = 1408657925141269864L;
+   private static final long serialVersionUID = -9086252221623567436L;
 
    @Id
    @Column(name = "CIDADAO_RA") 
@@ -123,12 +122,12 @@ public final class EntrevistaCs implements Serializable {
    private String Ind7;  // INDICADOR: Declarou intenção de acabar com a própria vida?
    private String Ind8;  // INDICADOR: Mencionou problemas emocionais ou internação psiquiátrica?
    private String Ind9;  // INDICADOR: AVALIAÇÃO FINAL
-   
+
    private String pendencia;
 
    public EntrevistaCs() {
    }
-   
+
    @Override
    public int hashCode() {
       final int prime = 31;
