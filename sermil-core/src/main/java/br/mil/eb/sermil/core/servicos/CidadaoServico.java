@@ -20,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.CidAuditoriaDao;
 import br.mil.eb.sermil.core.dao.CidadaoDao;
-import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemDocApresException;
-import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemEventoException;
 import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
@@ -29,13 +27,11 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.CidAuditoria;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.Usuario;
-import br.mil.eb.sermil.tipos.TipoEvento;
-import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 
 /** Gerenciamento de informações de Cidadão.
  * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
- * @version 5.3.1
+ * @version 5.3.2
  */
 @Named("cidadaoServico")
 public class CidadaoServico {
@@ -189,27 +185,6 @@ public class CidadaoServico {
          throw new CidadaoNotFoundException();
       }
       return lista;
-   }
-
-   public boolean podeImprimirCertSitMilitar(final Long ra) throws SermilException {
-      /* Recuperar cidadão */
-      if (ra == null) {
-         throw new CriterioException("Informe o RA do cidadão a ser verificado.");
-      }
-      final Cidadao cid = this.recuperar(ra);
-      /* REGRAS DE NEGOCIO */
-      if (cid.getSituacaoMilitar() != TipoSituacaoMilitar.LICENCIADO.ordinal()) {
-         throw new SermilException("Cidadão não está na situação LICENCIADO (15).");
-      }
-      // Tem que ter evento licenciamento
-      if (!cid.hasEvento(TipoEvento.LICENCIAMENTO.ordinal())) {
-         throw new CidadaoNaoTemEventoException();
-      }
-      // Pelo menos um documento apresentado.
-      if (cid.getCidDocApresColletion().size() <= 0) {
-         throw new CidadaoNaoTemDocApresException();
-      }
-      return true;
    }
 
 }

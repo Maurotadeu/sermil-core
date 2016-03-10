@@ -12,181 +12,190 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-/** Cabeçalho de relatório de OM.
+import org.apache.commons.lang3.StringUtils;
+
+/** Informações de Organização Militar (OM).
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: OmCabecalho.java 2421 2014-05-12 16:12:00Z wlopes $
+ * @version 5.3.2
  */
 @Entity
 @Table(name="OM_CABECALHO")
 @NamedQueries({
-  @NamedQuery(name = "Cabecalho.listarPorOm", query = "SELECT c FROM OmCabecalho c where c.om.codigo= ?1 " ),
-  @NamedQuery(name = "Cabecalho.listar", query = "SELECT DISTINCT c.om FROM OmCabecalho c " )
+   @NamedQuery(name = "Cabecalho.listarPorOm", query = "SELECT c FROM OmCabecalho c where c.om.codigo = ?1"),
+   @NamedQuery(name = "Cabecalho.listar", query = "SELECT DISTINCT c.om FROM OmCabecalho c")
 })
 public final class OmCabecalho implements Serializable {
 
-  private static final long serialVersionUID = -455600186915817511L;
+   private static final long serialVersionUID = -9196978082126404086L;
 
-  @OneToOne
-  @Id
-  @JoinColumn(name="OM_CODIGO", referencedColumnName="CODIGO")  
-  private Om om;
+   @OneToOne
+   @Id
+   @JoinColumn(name="OM_CODIGO", referencedColumnName="CODIGO")  
+   private Om om;
 
-  private String csm;
+   private String csm;
 
-  private String email;
+   private String email;
 
-  private String telefone;
+   private String telefone;
 
-  private String ministerio;
+   private String ministerio;
 
-  @Column(name = "FORCA_ARMADA")
-  private String forcaArmada;
+   @Column(name = "FORCA_ARMADA")
+   private String forcaArmada;
 
-  @Column(name = "CMDO_MIL")
-  private String cmdoMil;
+   @Column(name = "CMDO_MIL")
+   private String cmdoMil;
 
-  private String rm;
+   private String rm;
 
-  @Column(name = "OM_DESCRICAO")
-  private String omDescricao;
+   @Column(name = "OM_DESCRICAO")
+   private String omDescricao;
 
-  @Column(name = "DESCRICAO_HISTORICA")
-  private String descricaoHistorica;
+   @Column(name = "DESCRICAO_HISTORICA")
+   private String descricaoHistorica;
 
-  @Column(name = "NOME_AUTORIDADE")
-  private String nomeAutoridade;
+   @Column(name = "NOME_AUTORIDADE")
+   private String nomeAutoridade;
 
-  private String funcao;
+   private String funcao;
 
-  private String sitio;
-  
-  @Lob
-  @Column(name="ASS_DIGITAL")
-  private byte[] assDigital;
+   private String sitio;
 
-  public OmCabecalho(){
-    super();
-  }
-  
-  @Override
-  public String toString() {
-    return new StringBuilder(this.getOm() == null ? "CODOM" : this.getOm().getCodigo().toString())
-      .append(" - ")
-      .append(this.getOmDescricao() == null ? "DESCRICAO" : this.getOmDescricao())
-      .toString();
-  }
+   @Lob
+   @Column(name="ASS_DIGITAL")
+   private byte[] assDigital;
 
-  public String getCsm() {
-    return csm;
-  }
+   public OmCabecalho(){
+      super();
+   }
 
-  public void setCsm(String csm) {
-    this.csm = csm;
-  }
+   public OmCabecalho(Om om){
+      this.om = om;
+      this.setOmDescricao(StringUtils.isBlank(om.getDescricao()) ? "NOME DA OM" : om.getDescricao());
+      this.setRm(StringUtils.isBlank(om.getRm().getDescricao()) ? "NOME DA RM" : om.getRm().getDescricao());
+     this.setCmdoMil(StringUtils.isBlank(om.getRm().getCma().getDescricao()) ? "CMDO MIL AREA" : om.getRm().getCma().getDescricao());
+   }
 
-  public String getEmail() {
-    return email;
-  }
+   @Override
+   public String toString() {
+      return new StringBuilder(this.getOm() == null ? "CODOM" : this.getOm().getCodigo().toString())
+            .append(" - ")
+            .append(this.getOmDescricao() == null ? "DESCRICAO" : this.getOmDescricao())
+            .toString();
+   }
 
-  public void setEmail(String email) {
-    this.email = email;
-  }
+   public String getCsm() {
+      return csm;
+   }
 
-  public String getTelefone() {
-    return telefone;
-  }
+   public void setCsm(String csm) {
+      this.csm = csm;
+   }
 
-  public void setTelefone(String telefone) {
-    this.telefone = telefone;
-  }
+   public String getEmail() {
+      return email;
+   }
 
-  public String getMinisterio() {
-    return ministerio;
-  }
+   public void setEmail(String email) {
+      this.email = email;
+   }
 
-  public void setMinisterio(String ministerio) {
-    this.ministerio = ministerio;
-  }
+   public String getTelefone() {
+      return telefone;
+   }
 
-  public String getForcaArmada() {
-    return forcaArmada;
-  }
+   public void setTelefone(String telefone) {
+      this.telefone = telefone;
+   }
 
-  public void setForcaArmada(String forcaArmada) {
-    this.forcaArmada = forcaArmada;
-  }
+   public String getMinisterio() {
+      return ministerio;
+   }
 
-  public String getCmdoMil() {
-    return cmdoMil;
-  }
+   public void setMinisterio(String ministerio) {
+      this.ministerio = ministerio;
+   }
 
-  public void setCmdoMil(String cmdoMil) {
-    this.cmdoMil = cmdoMil;
-  }
+   public String getForcaArmada() {
+      return forcaArmada;
+   }
 
-  public String getRm() {
-    return rm;
-  }
+   public void setForcaArmada(String forcaArmada) {
+      this.forcaArmada = forcaArmada;
+   }
 
-  public void setRm(String rm) {
-    this.rm = rm;
-  }
+   public String getCmdoMil() {
+      return cmdoMil;
+   }
 
-  public String getOmDescricao() {
-    return omDescricao;
-  }
+   public void setCmdoMil(String cmdoMil) {
+      this.cmdoMil = cmdoMil;
+   }
 
-  public void setOmDescricao(String omDescricao) {
-    this.omDescricao = omDescricao;
-  }
+   public String getRm() {
+      return rm;
+   }
 
-  public String getDescricaoHistorica() {
-    return descricaoHistorica;
-  }
+   public void setRm(String rm) {
+      this.rm = rm;
+   }
 
-  public void setDescricaoHistorica(String descricaoHistorica) {
-    this.descricaoHistorica = descricaoHistorica;
-  }
+   public String getOmDescricao() {
+      return omDescricao;
+   }
 
-  public String getNomeAutoridade() {
-    return nomeAutoridade;
-  }
+   public void setOmDescricao(String omDescricao) {
+      this.omDescricao = omDescricao;
+   }
 
-  public void setNomeAutoridade(String nomeAutoridade) {
-    this.nomeAutoridade = nomeAutoridade;
-  }
+   public String getDescricaoHistorica() {
+      return descricaoHistorica;
+   }
 
-  public String getFuncao() {
-    return funcao;
-  }
+   public void setDescricaoHistorica(String descricaoHistorica) {
+      this.descricaoHistorica = descricaoHistorica;
+   }
 
-  public void setFuncao(String funcao) {
-    this.funcao = funcao;
-  }
+   public String getNomeAutoridade() {
+      return nomeAutoridade;
+   }
 
-  public String getSitio() {
-    return sitio;
-  }
+   public void setNomeAutoridade(String nomeAutoridade) {
+      this.nomeAutoridade = nomeAutoridade;
+   }
 
-  public void setSitio(String sitio) {
-    this.sitio = sitio;
-  }
-  
-  public byte[] getAssDigital() {
-	  return assDigital;
-  }
+   public String getFuncao() {
+      return funcao;
+   }
 
-  public void setAssDigital(byte[] assDigital) {
-	  this.assDigital = assDigital;
-  }
+   public void setFuncao(String funcao) {
+      this.funcao = funcao;
+   }
 
-  public Om getOm() {
-	  return om;
-  }
+   public String getSitio() {
+      return sitio;
+   }
 
-  public void setOm(Om om) {
-    this.om = om;
-  }
+   public void setSitio(String sitio) {
+      this.sitio = sitio;
+   }
+
+   public byte[] getAssDigital() {
+      return assDigital;
+   }
+
+   public void setAssDigital(byte[] assDigital) {
+      this.assDigital = assDigital;
+   }
+
+   public Om getOm() {
+      return om;
+   }
+
+   public void setOm(Om om) {
+      this.om = om;
+   }
 
 }

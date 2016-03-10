@@ -19,7 +19,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Organização Militar (OM).
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Om.java 2481 2014-06-18 15:35:45Z wlopes $
+ * @version 5.3.2
  */
 @Entity
 @NamedQueries({
@@ -73,6 +73,11 @@ public final class Om implements Comparable<Om>, Serializable {
 
   public Om() {
   }
+
+  public Om(final Integer codigo) {
+     this();
+     this.setCodigo(codigo);
+   }
 
   @Override
   public int compareTo(Om o) {
@@ -162,10 +167,6 @@ public final class Om implements Comparable<Om>, Serializable {
 
   public String getSigla() {
     return this.sigla;
-  }
-
-  public Om(final Integer codigo) {
-    this.setCodigo(codigo);
   }
 
   public void setBairro(String bairro) {
