@@ -13,12 +13,10 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
-/**
- * Entrevista de cidadao na Comissao de Selecao.
- * 
+/** Entrevista de cidadao na Comissão de Seleção.
  * @author Anselmo S Ribeiro
  * @since 3.0
- * @version $Id: Csm.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.3.2
  */
 @Entity
 @Table(name = "ENTREVISTA_CS")
@@ -32,116 +30,133 @@ public final class EntrevistaCs implements Serializable {
    @Column(name = "CIDADAO_RA") 
    private Long ra;
 
-   private String A1;
-   private String A11;
+   private String A1;    // Você estuda atualmente?
+   private String A11;   // Já concluiu os estudos?
 
-   private String B3;
-   private String B4;
-   private String B5;
+   private String B3;    // Já fez algum curso profissionalizante?
+   private String B4;    // Quais?
+   private String B5;    // Tem comprovante?
 
-   private String C5;
-   private String C6;
-   private String C61;
+   private String C5;    // Possui alguma experiência profissional?
+   private String C6;    // Quais?
+   private String C61;   // Tem comprovante?
 
-   private String D7;
-   private String D71;
-   private String D72;
+   private String D7;    // Possui Carteira Nacional de Habilitação (CNH)?
+   private String D71;   // Está realizando curso para a habilitação?
+   private String D72;   // Qual a categoria?
 
-   private String EA;
-   private String EB;
+   private String EA;    // Padrão de Pré-qualificação 1
+   private String EB;    // Padrão de Pré-qualificação 2
 
-   private String F8;
-   private String F8A;
-   private String F81;
-   private String F9;
+   private String F8;    // Pratica esportes?
+   private String F8A;   // Qual(is)?
+   private String F81;   // É ou já foi federado?
+   private String F9;    // Sabe nadar?
 
-   private String G10;
-   private String G11;
-   private String G12;
-   private String G121;
-   private String G13;
-   private String G13A;
-   private String G14;
-   private String G14A;
-   private String G15;
-   private String G15A;
+   private String G10;   // Com quem mora?
+   private String G11;   // 
+   private String G12;   // Possui filhos?
+   private String G121;  // Quantos?
+   private String G13;   // Quem trabalha na familia?
+   private String G13A;  // Outros
+   private String G14;   // Quem sustenta a familia?
+   private String G14A;  // Outros
+   private String G15;   // Recebe auxílio do Governo?
+   private String G15A;  // Qual?
 
-   private String H1;
+   private String H1;    // Situação de Arrimo
 
-   private String I16;
+   private String I16;   // O que costuma fazer nas horas de lazer?
 
-   private String J17;
-   private String J171;
-   private String J18;
-   private String J181;
-   private String J182;
-   private String J183;
-   private String J184;
-   private String J19;
-   private String J191;
-   private String J192;
-   private String J20;
-   private String J20A;
-   private String J21;
-   private String J211;
-   private String J22;
-   private String J221;
-   private String J222;
-   private String J222A;
-   private String J223;
-   private String J23;
-   private String J231;
-   private String J231A;
-   private String J231B;
-   private String J232;
-   private String J232A;
-   private String J233;
-   private String J234;
-   private String J235;
+   private String J17;   // Já teve algum problema de saúde?
+   private String J171;  // Qual(is)?
+   private String J18;   // Usa algum remédio controlado?
+   private String J181;  // Qual(is)?
+   private String J182;  // Para que?
+   private String J183;  // Há quanto tempo?
+   private String J184;  // Por quanto tempo ainda usará?
+   private String J19;   // Já esteve internado em hospital ou clínica psiquiátrica?
+   private String J191;  // Qual foi o motivo?
+   private String J192;  // Por quanto tempo?
+   private String J20;   // Fuma?
+   private String J20A;  // Há quanto tempo?
+   private String J21;   // Faz uso de bebida alcoólica?
+   private String J211;  // Com que frequência?
+   private String J22;   // Já experimentou droga?
+   private String J221;  // Qual?
+   private String J222;  // Ainda faz uso?
+   private String J222A; // Com que frequência?
+   private String J223;  // Quando foi a última vez que usou?
+   private String J23;   // Possui algum parente usuário de drogas (álcool ou outros tipos de droga)?
+   private String J231;  // Quem?
+   private String J231A; // Isso afeta sua vida diretamente?
+   private String J231B; // Como?
+   private String J232;  // Isso afeta sua vida diretamente?
+   private String J232A; // Como?
+   private String J233;  // Possui algum parente com histórico de transtorno psiquiátrico?
+   private String J234;  // Quem?
+   private String J235;  // 
 
-   private String K24;
-   private String K241;
-   private String K241A;
+   private String K24;   // Já foi detido pela polícia?
+   private String K241;  // Qual a infração?
+   private String K241A; // Outros
 
-   private String L1;
+   private String L1;    // Problema Social?
 
-   private String M25;
-   private String M26;
-   private String M27;
+   private String M25;   // Deseja Servir?
+   private String M26;   // Qual Força?
+   private String M27;   // CS Especial?
 
-   private String N27;
-   private String N28;
+   private String N27;   // Tem alguma coisa que não foi perguntada e que gostaria de acrescentar?
+   private String N28;   // Observações Regionais
 
-   private String O29;
+   private String O29;   // Expressão Oral
 
-   private String Ind1;
-   private String Ind2;
-   private String Ind3;
-   private String Ind3A;
-   private String Ind4;
-   private String Ind5;
-   private String Ind5A;
-   private String Ind6;
-   private String Ind7;
-   private String Ind8;
-   private String Ind9;
+   private String Ind1;  // INDICADOR: Apresentou muita dificuldade para compreender as perguntas?
+   private String Ind2;  // INDICADOR: Apresentou muita dificuldade para responder as perguntas?
+   private String Ind3;  // INDICADOR: Apresentou comportamentos estranhos?
+   private String Ind3A; // Qual?
+   private String Ind4;  // INDICADOR: Apresentou agitação corporal excessiva?
+   private String Ind5;  // INDICADOR: Apresentou sinais de agressividade ou irritabilidade?
+   private String Ind5A; // Qual?
+   private String Ind6;  // INDICADOR: Demonstrou apatia, desânimo, choro, indiferença, medo ou fobias? 
+   private String Ind7;  // INDICADOR: Declarou intenção de acabar com a própria vida?
+   private String Ind8;  // INDICADOR: Mencionou problemas emocionais ou internação psiquiátrica?
+   private String Ind9;  // INDICADOR: AVALIAÇÃO FINAL
    
    private String pendencia;
 
    public EntrevistaCs() {
    }
-
+   
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((this.ra == null) ? 0 : this.ra.hashCode());
+      result = prime * result + ((ra == null) ? 0 : ra.hashCode());
       return result;
    }
 
    @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      EntrevistaCs other = (EntrevistaCs) obj;
+      if (ra == null) {
+         if (other.ra != null)
+            return false;
+      } else if (!ra.equals(other.ra))
+         return false;
+      return true;
+   }
+
+   @Override
    public String toString() {
-      return "Entrevista " + ra.toString();
+      return new StringBuilder("Entrevista ").append(ra.toString()).toString();
    }
 
    public Long getRa() {
