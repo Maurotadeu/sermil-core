@@ -7,24 +7,33 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /** Entidade controle de RA (RA_MESTRE).
  * @author Abreu Lopes
  * @since 3.3
- * @version $Id$
+ * @version 5.3.2
  */
 @Entity
 @Table(name="RA_MESTRE")
 public final class RaMestre implements Comparable<RaMestre>, Serializable {
 
-    /** serialVersionUID. */
-    private static final long serialVersionUID = 1016352332770793993L;
+   private static final long serialVersionUID = -7770810798516130512L;
 
     @EmbeddedId
     private PK pk;
 
     private Integer sequencial;
+
+    @OneToOne
+    @JoinColumns({
+      @JoinColumn(name="CSM_CODIGO", referencedColumnName="CSM_CODIGO", insertable=false, updatable=false),
+      @JoinColumn(name="JSM_CODIGO", referencedColumnName="CODIGO", insertable=false, updatable=false)
+    })
+    private Jsm jsm;
 
     public RaMestre() {
         this.setPk(new RaMestre.PK());
@@ -46,8 +55,16 @@ public final class RaMestre implements Comparable<RaMestre>, Serializable {
     public int compareTo(RaMestre o) {
         return this.getPk().compareTo(o.getPk());
     }
+    
+    public Jsm getJsm() {
+      return jsm;
+   }
 
-    public PK getPk() {
+   public void setJsm(Jsm jsm) {
+      this.jsm = jsm;
+   }
+
+   public PK getPk() {
         return this.pk;
     }
 
