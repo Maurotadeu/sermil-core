@@ -1,4 +1,4 @@
-package selenium.admin;
+package br.mil.eb.sermil.core.testes.selenium.admin;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
