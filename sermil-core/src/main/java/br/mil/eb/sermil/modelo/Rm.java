@@ -41,7 +41,7 @@ public final class Rm implements Comparable<Rm>, Serializable {
    private Cma cma;
 
    @OneToMany(mappedBy = "rm", fetch = FetchType.LAZY)
-   private List<Csel> cselCollection;
+   private List<Cs> cselCollection;
 
    public Rm() {
       super();
@@ -118,25 +118,25 @@ public final class Rm implements Comparable<Rm>, Serializable {
       this.sigla = sigla;
    }
 
-   public List<Csel> getCselCollection() {
+   public List<Cs> getCselCollection() {
       return cselCollection;
    }
 
-   public void setCselCollection(final List<Csel> cselCollection) {
+   public void setCselCollection(final List<Cs> cselCollection) {
       this.cselCollection = cselCollection;
    }
 
-   public void addCsel(final Csel csel) throws CselJaExisteException{
+   public void addCsel(final Cs csel) throws CselJaExisteException{
       if(this.cselCollection.contains(csel)) {
          throw new CselJaExisteException();
       }
       if(this.cselCollection == null) {
-         this.cselCollection = new ArrayList<Csel>();
+         this.cselCollection = new ArrayList<Cs>();
       }
       this.cselCollection.add(csel);
    }
    
-   public void removeCsel(final Csel csel) throws CselNaoExisteException{
+   public void removeCsel(final Cs csel) throws CselNaoExisteException{
       if(!this.cselCollection.contains(csel)) {
          throw new CselNaoExisteException();
       }
