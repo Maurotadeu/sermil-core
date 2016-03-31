@@ -27,7 +27,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
  * @version 5.3.2
  */
 @Entity
-@Table(name = "CS_EXLUSAO_DATA")
+@Table(name = "CS_EXCLUSAO_DATA")
 @NamedQueries({
    @NamedQuery(name = "CsExclusaoData.listarPorCs", query = "select f from CsExclusaoData f where f.cs.codigo = ?1 ")
 })

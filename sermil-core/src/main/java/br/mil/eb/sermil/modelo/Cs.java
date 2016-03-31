@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -45,24 +46,25 @@ public final class Cs implements Serializable {
    @TableGenerator(name="CS", allocationSize=1)
    private Integer codigo;
 
-   @ManyToOne
-   @JoinColumn(name = "RM_CODIGO", referencedColumnName = "CODIGO", insertable = true, updatable = true, nullable = false)
-   private Rm rm;
-
-   @Column(nullable=false)
-   private Integer numero;
-
-   @Column(length = 250, nullable = false)
-   private String nome;
-
-   @Column(nullable = false)
+   @Column
    private Integer atende;
 
-   @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, orphanRemoval=true)
-   private List<CsFuncionamento> csFuncionamentoCollection;
+   @Column
+   private String nome;
+
+   @Column
+   private Integer numero;
+
+   @ManyToOne
+   @JoinColumn(name = "RM_CODIGO", referencedColumnName = "CODIGO", nullable = false)
+   private Rm rm;
 
    @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, orphanRemoval=true)
    private List<CsExclusaoData> csExclusaoDataCollection;
+
+   @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, cascade=CascadeType.ALL , orphanRemoval=true)
+   @JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO")
+   private List<CsFuncionamento> csFuncionamentoCollection;
 
    public Cs() {
       super();
@@ -133,7 +135,7 @@ public final class Cs implements Serializable {
       return atende;
    }
 
-   public void setAtendimentos(Integer atende) {
+   public void setAtende(Integer atende) {
       this.atende = atende;
    }
 

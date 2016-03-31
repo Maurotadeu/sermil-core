@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,14 +48,14 @@ public final class CsFuncionamento implements Serializable {
    @TableGenerator(name = "CS_FUNCIONAMENTO", allocationSize = 1)
    private Integer codigo;
 
-   @Column(name = "ANO_BASE", nullable = false, length = 4)
+   @Column(name = "ANO_BASE")
    private String anoBase;
 
-   @Column(name = "INICIO_DATA", nullable = false)
+   @Column(name = "INICIO_DATA")
    @Temporal(TemporalType.DATE)
    private Date inicioData;
 
-   @Column(name = "TERMINO_DATA", nullable = false)
+   @Column(name = "TERMINO_DATA")
    @Temporal(TemporalType.DATE)
    private Date terminoData;
 
@@ -62,7 +63,7 @@ public final class CsFuncionamento implements Serializable {
    @JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO", nullable = false)
    private Cs cs;
 
-   @OneToOne
+   @OneToOne(fetch = FetchType.EAGER)
    @JoinColumn(name = "CS_ENDERECO_CODIGO", referencedColumnName = "CODIGO", nullable = false)
    private CsEndereco csEndereco;
 
@@ -72,10 +73,9 @@ public final class CsFuncionamento implements Serializable {
 
    @Override
    public String toString() {
-      return new StringBuilder("CS ").append(this.getCs())
-            .append("/").append(this.getAnoBase())
-            .append(" - ").append(new SimpleDateFormat("dd/mm/yyyy").format(getInicioData()))
-            .append(" a ").append(new SimpleDateFormat("dd/mm/yyyy").format(this.getTerminoData()))
+      return new StringBuilder(this.getAnoBase())
+            .append(": ").append(new SimpleDateFormat("dd/MM/yyyy").format(getInicioData()))
+            .append(" a ").append(new SimpleDateFormat("dd/MM/yyyy").format(this.getTerminoData()))
             .toString();
    }
    

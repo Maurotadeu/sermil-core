@@ -9,6 +9,7 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.CsDao;
@@ -95,18 +96,19 @@ public class CsServico {
       }
       final List<CsEndereco> lista = this.csEnderecoDao.findByNamedQuery("CsEndereco.listarPorRm", rmCodigo);
       if (lista == null || lista.isEmpty()) {
-         throw new ConsultaException("Não há endereços de CS cadastrados na Região Militar");
+         throw new ConsultaException("Não há endereços de CS cadastrados na " + rmCodigo + "ª Região Militar");
       }
       return lista;
    }
 
+   @RemoteMethod
    public List<CsFuncionamento> listarFuncionamentos(final Integer csCodigo) throws ConsultaException {
       if (csCodigo == null) {
          throw new ConsultaException("Informe o código da CS");
       }
       final List<CsFuncionamento> lista = this.csFuncionamentoDao.findByNamedQuery("CsFuncionamento.listarPorCs", csCodigo);
       if (lista == null || lista.isEmpty()) {
-         throw new ConsultaException("Não há funcionamentos cadastrados para esta CS");
+         throw new ConsultaException("Não há funcionamentos cadastrados para a CS " + csCodigo);
       }
       return lista;
    }
@@ -127,33 +129,31 @@ public class CsServico {
    }
 
    @Transactional
+   @PreAuthorize("hasAnyRole('adm','dsm','smr')")
    public String excluir(final Integer csCodigo) throws SermilException {
       this.csDao.delete(this.recuperar(csCodigo));
       return new StringBuilder("CS ").append(csCodigo).append(" excluída").toString();
    }
    
    @Transactional
+   @PreAuthorize("hasAnyRole('adm','dsm','smr')")
    public String excluirEndereco(final Integer codigo) throws SermilException {
       this.csEnderecoDao.delete(this.recuperarEndereco(codigo));
       return new StringBuilder("Endereço cod=").append(codigo).append(" excluído").toString();
    }
 
    @Transactional
-   public Cs salvar(final Cs cs) throws SermilException {
-      return this.csDao.save(cs);
+   @PreAuthorize("hasAnyRole('adm','dsm','smr')")
+   public String salvar(final Cs cs) throws SermilException {
+      final Cs csSalva = this.csDao.save(cs);
+      logger.info("Salvo: {}", csSalva);
+      return new StringBuilder(cs.toString()).append(" salva").toString();
    }
 
    @Transactional
+   @PreAuthorize("hasAnyRole('adm','dsm','smr')")
    public CsEndereco salvarEndereco(final CsEndereco csEndereco) throws SermilException {
       return this.csEnderecoDao.save(csEndereco);
-   }
-
-   public List<CsFuncionamento> getCsFuncionamentos(final Integer csCodigo) {
-      return this.csFuncionamentoDao.findByNamedQuery("CsFuncionamento.listarPorCs", csCodigo);
-   }
-   
-   public CsEndereco getEndereco(Integer enderecoCodigo) {
-      return this.csEnderecoDao.findById(enderecoCodigo);
    }
 
    /** Regras de Negocio para Funcionamento de CS.
