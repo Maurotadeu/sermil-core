@@ -13,7 +13,7 @@ public class Cidadao extends AdminAbstractTest {
       this.login();
       this.pesquisarCidadao();
       this.pesquisarCidadaoPorCpf();
-      this.pesquisarCidadaoPorRa();
+      //this.pesquisarCidadaoPorRa();
       this.alistamentoCidadao();
       this.editarAlistamentoCidadao();
       this.logout();
