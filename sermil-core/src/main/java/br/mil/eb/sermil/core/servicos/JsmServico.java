@@ -24,7 +24,7 @@ import br.mil.eb.sermil.modelo.Municipio;
 /** Gerenciamento de Junta de Serviço Militar (JSM).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.2.5
+ * @version 5.3.2
  */
 @Named("jsmServico")
 @RemoteProxy(name = "jsmServico")
@@ -115,12 +115,12 @@ public class JsmServico {
       return j;
    }
 
-   public boolean estaCSDefinidoCerto(Jsm jsm) throws CriterioException, CSException {
+   public boolean estaCSDefinidoCerto(Jsm jsm) throws CriterioException, JsmException, CSException {
       /* REGRAS DE NEGOCIO */
       if (jsm.getTributacao() == null) {
          throw new CriterioException();
       }
-      if ((jsm.getTributacao() == Jsm.OM_Ativa_OFOR || jsm.getTributacao() == Jsm.OM_Ativa_TG || jsm.getTributacao() == Jsm.Tiro_de_Guerra || jsm.getTributacao() == Jsm.OM_Ativa) && (jsm.getCs() == null)) {
+      if ((jsm.isTributaria()) && (jsm.getCs() == null)) {
          throw new CSException();
       }
       return true;

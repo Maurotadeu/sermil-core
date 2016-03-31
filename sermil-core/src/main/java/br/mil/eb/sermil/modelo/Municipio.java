@@ -52,7 +52,7 @@ public final class Municipio implements Serializable {
 
    /** Endereços de CS. */
    @OneToMany(mappedBy = "municipio", fetch = FetchType.EAGER)
-   private List<CselEndereco> enderecosDeCsel;
+   private List<CsEndereco> enderecosDeCsel;
 
    public Municipio() {
    }
@@ -108,25 +108,25 @@ public final class Municipio implements Serializable {
       this.uf = uf;
    }
 
-   public List<CselEndereco> getEnderecosDeCsel() {
+   public List<CsEndereco> getEnderecosDeCsel() {
       return enderecosDeCsel;
    }
 
-   public void setEnderecosDeCsel(List<CselEndereco> enderecosDeCsel) {
+   public void setEnderecosDeCsel(List<CsEndereco> enderecosDeCsel) {
       this.enderecosDeCsel = enderecosDeCsel;
    }
 
-   public void addEnderecoDeCsel(CselEndereco endereco) throws EnderecoJaExisteException {
+   public void addEnderecoDeCsel(CsEndereco endereco) throws EnderecoJaExisteException {
       if (this.enderecosDeCsel.contains(endereco))
          throw new EnderecoJaExisteException();
       if (this.enderecosDeCsel == null)
-         this.enderecosDeCsel = new ArrayList<CselEndereco>();
+         this.enderecosDeCsel = new ArrayList<CsEndereco>();
       this.enderecosDeCsel.add(endereco);
       if (endereco.getMunicipio() == null || endereco.getMunicipio() != this)
          endereco.setMunicipio(this);
    }
    
-   public void removeEnderecoDeCsel(CselEndereco endereco) throws EnderecoNaoExisteException {
+   public void removeEnderecoDeCsel(CsEndereco endereco) throws EnderecoNaoExisteException {
       if(!this.enderecosDeCsel.contains(endereco))
          throw new EnderecoNaoExisteException();
       this.enderecosDeCsel.remove(endereco);

@@ -19,12 +19,13 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
+import br.mil.eb.sermil.core.exceptions.JsmException;
 import br.mil.eb.sermil.tipos.Utils;
 
 /** Junta de Serviço Militar (JSM).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.2.5
+ * @version 5.3.2
  */
 @Entity
 @NamedQueries({
@@ -39,14 +40,15 @@ import br.mil.eb.sermil.tipos.Utils;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Jsm implements Comparable<Jsm>, Serializable {
 
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 2006620367074513909L;
 
+   /*DEPRECATED, use Enum TipoTributacao
    public static final byte OM_Ativa_OFOR = 1;
    public static final byte OM_Ativa_TG = 2;
    public static final byte Tiro_de_Guerra = 3;
    public static final byte OM_Ativa = 4;
    public static final byte JSM_Desativada = 5;        
-
+   */
 
    @EmbeddedId
    private PK pk;
@@ -64,8 +66,11 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
    @OneToOne(mappedBy="jsm", fetch=FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
    private JsmInfo jsmInfo;
 
+   @OneToOne(mappedBy="jsm", fetch=FetchType.EAGER, cascade={CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval=false)
+   private RaMestre raMestre;
+
    @ManyToOne(fetch=FetchType.EAGER)
-   @JoinColumn(name="MUNICIPIO_CODIGO", referencedColumnName="CODIGO")
+   @JoinColumn(name="MUNICIPIO_CODIGO", referencedColumnName="CODIGO", insertable=false, updatable=false, nullable=false)
    private Municipio municipio;
 
    @ManyToOne
@@ -118,22 +123,55 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
             .toString();
    }
 
+   public Short getCodigo() {
+      return this.pk.getCodigo();
+   }
+
+   public void setCodigo(Short codigo) {
+      this.pk.setCodigo(codigo);
+   }
+
+   public Byte getCsmCodigo() {
+      return this.pk.getCsmCodigo();
+   }
+
+   public void setCsmCodigo(Byte csmCodigo) {
+      this.pk.setCsmCodigo(csmCodigo);
+   }
+
    public Short getCs() {
       return this.cs;
+   }
+
+   public void setCs(Short cs) {
+      this.cs = cs;
    }
 
    public Csm getCsm() {
       return this.csm;
    }
 
+   public void setCsm(Csm csm) {
+      this.csm = csm;
+   }
+
    public Short getDelsm() {
       return this.delsm;
+   }
+
+   public void setDelsm(Short delsm) {
+      this.delsm = delsm;
    }
 
    public String getDescricao() {
       return this.descricao;
    }
 
+   public void setDescricao(String descricao) {
+      this.descricao = (descricao == null || descricao.trim().isEmpty() ? null : Utils.limpaAcento(descricao).toUpperCase());
+   }
+
+   /* Endereço obtido indiretamente de JsmInfo, não existe atributo endereco em Jsm. */
    public String getEndereco() {
       final StringBuilder sb = new StringBuilder("");
       if (this.getJsmInfo() != null && !StringUtils.isEmpty(this.getJsmInfo().getEndereco())) {
@@ -150,64 +188,24 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
       return this.infor;
    }
 
-   public Municipio getMunicipio() {
-      return this.municipio;
-   }
-
-   public Byte getTributacao() {
-      return this.tributacao;
-   }
-
-   public void setCs(Short cs) {
-      this.cs = cs;
-   }
-
-   public void setCsm(Csm csm) {
-      this.csm = csm;
-   }
-
-   public void setDelsm(Short delsm) {
-      this.delsm = delsm;
-   }
-
-   public void setDescricao(String descricao) {
-      this.descricao = (descricao == null || descricao.trim().isEmpty() ? null : Utils.limpaAcento(descricao).toUpperCase());
-   }
-
    public void setInfor(String infor) {
       this.infor = (infor != null && infor.equalsIgnoreCase("S") ? "S" : "N");
    }
 
+   public JsmInfo getJsmInfo() {
+      return this.jsmInfo;
+   }
+
+   public void setJsmInfo(JsmInfo jsmInfo) {
+      this.jsmInfo = jsmInfo;
+   }
+
+   public Municipio getMunicipio() {
+      return this.municipio;
+   }
+
    public void setMunicipio(Municipio municipio) {
       this.municipio = municipio;
-   }
-
-   public String getTelefone() {
-      final StringBuilder sb = new StringBuilder("");
-      if (this.getJsmInfo() != null && !StringUtils.isEmpty(this.getJsmInfo().getTelefone())) {
-         sb.append(this.getJsmInfo().getTelefone());
-      }
-      return sb.toString();
-   }
-   
-   public void setTributacao(Byte tributacao) {
-      this.tributacao = tributacao;
-   }
-
-   public void setCsmCodigo(Byte csmCodigo) {
-      this.pk.setCsmCodigo(csmCodigo);
-   }
-
-   public void setCodigo(Short codigo) {
-      this.pk.setCodigo(codigo);
-   }
-
-   public Byte getCsmCodigo() {
-      return this.pk.getCsmCodigo();
-   }
-
-   public Short getCodigo() {
-      return this.pk.getCodigo();
    }
 
    public PK getPk() {
@@ -218,18 +216,69 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
       this.pk = pk;
    }
 
-   public JsmInfo getJsmInfo() {
-      return jsmInfo;
+   public RaMestre getRaMestre() {
+      return this.raMestre;
    }
 
-   public void setJsmInfo(JsmInfo jsmInfo) {
-      this.jsmInfo = jsmInfo;
+   public void setRaMestre(RaMestre raMestre) {
+      this.raMestre = raMestre;
    }
 
+   /* Telefone obtido indiretamente de JsmInfo, não existe atributo telefone em Jsm. */
+   public String getTelefone() {
+      final StringBuilder sb = new StringBuilder("");
+      if (this.getJsmInfo() != null && !StringUtils.isEmpty(this.getJsmInfo().getTelefone())) {
+         sb.append(this.getJsmInfo().getTelefone());
+      }
+      return sb.toString();
+   }
+   
+   public Byte getTributacao() {
+      return this.tributacao;
+   }
+
+   public void setTributacao(Byte tributacao) {
+      this.tributacao = tributacao;
+   }
+
+   public boolean isTributaria() throws JsmException {
+      if (this.tributacao == null) {
+         throw new JsmException("Tributação não está definida.");
+      }
+      switch (this.tributacao) {
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+         return true;
+      case 0:
+      case 5:
+      default:
+         return false;
+      }
+   }
+
+   public boolean isAtiva() throws JsmException {
+      if (this.tributacao == null) {
+         throw new JsmException("Tributação não está definida.");
+      }
+      switch (this.tributacao) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+         return true;
+      case 5:
+      default:
+         return false;
+      }
+   }
+   
    /** Chave primária (PK) de Jsm.
     * @author Abreu Lopes
     * @since 3.0
-    * @version 5.2.5
+    * @version 5.3.2
     */
    @Embeddable
    public static class PK implements Comparable<Jsm.PK>, Serializable {

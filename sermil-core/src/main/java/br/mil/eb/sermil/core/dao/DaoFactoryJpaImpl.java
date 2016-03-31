@@ -13,10 +13,10 @@ import br.mil.eb.sermil.modelo.CidFoto;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.CsAgendamento;
 import br.mil.eb.sermil.modelo.CsAnamnese;
-import br.mil.eb.sermil.modelo.Csel;
-import br.mil.eb.sermil.modelo.CselEndereco;
-import br.mil.eb.sermil.modelo.CselFeriado;
-import br.mil.eb.sermil.modelo.CselFuncionamento;
+import br.mil.eb.sermil.modelo.Cs;
+import br.mil.eb.sermil.modelo.CsEndereco;
+import br.mil.eb.sermil.modelo.CsExclusaoData;
+import br.mil.eb.sermil.modelo.CsFuncionamento;
 import br.mil.eb.sermil.modelo.Csm;
 import br.mil.eb.sermil.modelo.Delegacia;
 import br.mil.eb.sermil.modelo.Dominios;
@@ -25,7 +25,7 @@ import br.mil.eb.sermil.modelo.DstbExclusao;
 import br.mil.eb.sermil.modelo.DstbGd;
 import br.mil.eb.sermil.modelo.DstbParametro;
 import br.mil.eb.sermil.modelo.Empresa;
-import br.mil.eb.sermil.modelo.EntrevistaCs;
+import br.mil.eb.sermil.modelo.CsEntrevista;
 import br.mil.eb.sermil.modelo.EstatAlistamentoEsc;
 import br.mil.eb.sermil.modelo.EstatArrecadacao;
 import br.mil.eb.sermil.modelo.EstatExar;
@@ -134,6 +134,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   }
 
   @Override
+  public CsDao getCsDao() {
+    return (CsDao) instanciarDao(CsDaoJpa.class);
+  }
+
+  @Override
   public CsAgendamentoDao getCsAgendamentoDao() {
     return (CsAgendamentoDao) instanciarDao(CsAgendamentoDaoJpa.class);
   }
@@ -144,23 +149,23 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   }
 
   @Override
-  public CselDao getCselDao() {
-    return (CselDao) instanciarDao(CselDaoJpa.class);
+  public CsEnderecoDao getCsEnderecoDao() {
+    return (CsEnderecoDao) instanciarDao(CsEnderecoDaoJpa.class);
   }
 
   @Override
-  public CselEnderecoDao getCselEnderecoDao() {
-    return (CselEnderecoDao) instanciarDao(CselEnderecoDaoJpa.class);
+  public CsEntrevistaDao getCsEntrevistaDao() {
+   return (CsEntrevistaDao) instanciarDao(CsEntrevistaDaoJpa.class);
   }
 
   @Override
-  public CselFeriadoDao getCselFeriadoDao() {
-    return (CselFeriadoDao) instanciarDao(CselFeriadoJpa.class);
+  public CsExclusaoDataDao getCsExclusaoDataDao() {
+    return (CsExclusaoDataDao) instanciarDao(CsExclusaoDataJpa.class);
   }
 
   @Override
-  public CselFuncionamentoDao getCselFuncionamentoDao() {
-    return (CselFuncionamentoDao) instanciarDao(CselFuncionamentoDaoJpa.class);
+  public CsFuncionamentoDao getCsFuncionamentoDao() {
+    return (CsFuncionamentoDao) instanciarDao(CsFuncionamentoDaoJpa.class);
   }
 
   @Override
@@ -201,11 +206,6 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   @Override
   public EmpresaDao getEmpresaDao() {
     return (EmpresaDao) instanciarDao(EmpresaDaoJpa.class);
-  }
-
-  @Override
-  public EntrevistaCsDao getEntrevistaCsDao() {
-   return (EntrevistaCsDao) instanciarDao(EntrevistaCsDaoJpa.class);
   }
 
   @Override
@@ -392,22 +392,25 @@ public class DaoFactoryJpaImpl extends DaoFactory {
    public static class CidFotoDaoJpa extends GenericDaoJpaImpl<CidFoto, Long>implements CidFotoDao {
    }
 
+   public static class CsDaoJpa extends GenericDaoJpaImpl<Cs, Integer>implements CsDao {
+   }
+
    public static class CsAgendamentoDaoJpa extends GenericDaoJpaImpl<CsAgendamento, CsAgendamento.PK> implements CsAgendamentoDao {
    }
 
    public static class CsAnamneseDaoJpa extends GenericDaoJpaImpl<CsAnamnese, Long>implements CsAnamneseDao {
    }
 
-   public static class CselDaoJpa extends GenericDaoJpaImpl<Csel, Integer>implements CselDao {
+   public static class CsEnderecoDaoJpa extends GenericDaoJpaImpl<CsEndereco, Integer>implements CsEnderecoDao {
    }
 
-   public static class CselEnderecoDaoJpa extends GenericDaoJpaImpl<CselEndereco, Integer>implements CselEnderecoDao {
+   public static class CsEntrevistaDaoJpa extends GenericDaoJpaImpl<CsEntrevista, Long>implements CsEntrevistaDao {
    }
 
-   public static class CselFeriadoJpa extends GenericDaoJpaImpl<CselFeriado, Integer>implements CselFeriadoDao {
+   public static class CsExclusaoDataJpa extends GenericDaoJpaImpl<CsExclusaoData, Integer>implements CsExclusaoDataDao {
    }
 
-   public static class CselFuncionamentoDaoJpa extends GenericDaoJpaImpl<CselFuncionamento, Integer> implements CselFuncionamentoDao {
+   public static class CsFuncionamentoDaoJpa extends GenericDaoJpaImpl<CsFuncionamento, Integer> implements CsFuncionamentoDao {
    }
 
    public static class CsmDaoJpa extends GenericDaoJpaImpl<Csm, Byte>implements CsmDao {
@@ -432,9 +435,6 @@ public class DaoFactoryJpaImpl extends DaoFactory {
    }
 
    public static class EmpresaDaoJpa extends GenericDaoJpaImpl<Empresa, String>implements EmpresaDao {
-   }
-
-   public static class EntrevistaCsDaoJpa extends GenericDaoJpaImpl<EntrevistaCs, Long>implements EntrevistaCsDao {
    }
 
    public static class EstatAlistamentoEscDaoJpa extends GenericDaoJpaImpl<EstatAlistamentoEsc, Integer> implements EstatAlistamentoEscDao {

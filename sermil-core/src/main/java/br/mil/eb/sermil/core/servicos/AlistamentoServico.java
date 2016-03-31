@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.CidadaoDao;
+import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.dao.MunicipioDao;
 import br.mil.eb.sermil.core.dao.PreAlistamentoDao;
 import br.mil.eb.sermil.core.dao.RaMestreDao;
@@ -26,9 +27,11 @@ import br.mil.eb.sermil.modelo.CidDocApres;
 import br.mil.eb.sermil.modelo.CidDocumento;
 import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.Cidadao;
+import br.mil.eb.sermil.modelo.Jsm;
 import br.mil.eb.sermil.modelo.PreAlistamento;
 import br.mil.eb.sermil.modelo.RaMestre;
 import br.mil.eb.sermil.tipos.Ra;
+import br.mil.eb.sermil.tipos.TipoDispensa;
 import br.mil.eb.sermil.tipos.TipoDocApres;
 import br.mil.eb.sermil.tipos.TipoEvento;
 import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
@@ -36,7 +39,7 @@ import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 /** Alistamento de Cidadão.
  * @author Abreu Lopes
  * @since 5.2.7
- * @version 5.3.1
+ * @version 5.3.2
  */
 @Named("alistamentoServico")
 public class AlistamentoServico {
@@ -49,6 +52,9 @@ public class AlistamentoServico {
    //@Inject
    //private CsAgendamentoDao csAgendaDao;
 
+   @Inject
+   private JsmDao jsmDao;
+   
    @Inject
    private PreAlistamentoDao preAlistamentoDao;
 
@@ -77,17 +83,30 @@ public class AlistamentoServico {
    @Transactional
    public Cidadao alistar(final PreAlistamento alistamento) throws SermilException {
 
+      // Verificar se CPF está disponível
+      if (!StringUtils.isEmpty(alistamento.getCpf()) && !this.cidadaoDao.findByNamedQuery("Cidadao.listarPorCpf", alistamento.getCpf()).isEmpty()) {
+         logger.debug("CPF já cadastrado: CPF={}", alistamento.getCpf());
+         throw new CPFDuplicadoException(alistamento.getCpf());
+      }
+
+      // Verifica se já foi alistado anteriormente
+      if (this.isCadastrado(alistamento)) {
+         logger.debug("Cidadao já Alistado: {}", alistamento);
+         throw new CidadaoCadastradoException(alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
+      }
+      
       final Date dataAtual = new Date();
+
+      final Jsm jsm = this.jsmDao.findById(new Jsm.PK(alistamento.getJsm().getPk().getCsmCodigo(), alistamento.getJsm().getPk().getCodigo()));
 
       // Informações do Alistamento
       final Cidadao cidadao = new Cidadao();
-      cidadao.setJsm(alistamento.getJsm());
+      cidadao.setJsm(jsm);
       cidadao.setNome(alistamento.getNome());
       cidadao.setMae(alistamento.getMae());
       cidadao.setNascimentoData(alistamento.getNascimentoData());
       cidadao.setCpf(alistamento.getCpf());
       cidadao.setPai(alistamento.getPai());
-      cidadao.setDispensa(alistamento.getTipo() == null ? Byte.decode("0") : alistamento.getTipo());
       cidadao.setMunicipioNascimento(alistamento.getMunicipioNascimento());
       cidadao.setPaisNascimento(alistamento.getPaisNascimento());
       cidadao.setEstadoCivil(alistamento.getEstadoCivil());
@@ -107,25 +126,24 @@ public class AlistamentoServico {
       cidadao.setDesejaServir(alistamento.getDesejaServir());
       cidadao.setCs(alistamento.getJsm().getCs());
       cidadao.setAtualizacaoData(dataAtual);
-      cidadao.setSituacaoMilitar(TipoSituacaoMilitar.ALISTADO.ordinal());
       cidadao.setMobDestino(Byte.decode("1")); // Flag indicando Alistamento Internet
-      
-      // Verificar se CPF está disponível
-      if (!StringUtils.isEmpty(alistamento.getCpf()) && !this.cidadaoDao.findByNamedQuery("Cidadao.listarPorCpf", alistamento.getCpf()).isEmpty()) {
-         logger.debug("CPF ja cadastrado: CPF={}", alistamento.getCpf());
-         throw new CPFDuplicadoException(alistamento.getCpf());
-      }
-
-      // Verifica se já foi alistado anteriormente
-      if (this.isCadastrado(alistamento)) {
-         logger.debug("Cidadao ja Alistado: nome={}, mae={}, dt nasc={}", alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
-         throw new CidadaoCadastradoException(alistamento.getNome(), alistamento.getMae(), alistamento.getNascimentoData());
-      }
       
       // Verifica os limites de idade
       if (cidadao.isForaLimiteIdade()) {
          throw new SermilException("Alistamento permitido somente dos 17 aos 45 anos. Procure a JSM se for o caso.");
       }
+      
+      // Gerando novo RA
+      final RaMestre raMestre = this.raMestreDao.findById(new RaMestre.PK(cidadao.getJsm().getPk().getCsmCodigo(), cidadao.getJsm().getPk().getCodigo()));
+      if (raMestre == null) {
+         logger.error("JSM não existe na tabela RA_MESTRE ({})", cidadao.getJsm());
+         throw new RaMestreException("CSM/JSM não existe na tabela de controle de RA (RA_MESTRE)");
+      }
+      this.preAlistamentoDao.getEntityManager().lock(raMestre, LockModeType.PESSIMISTIC_WRITE);
+      final Integer nrSequencial = raMestre.getSequencial() + 1;
+      cidadao.setRa(new Ra.Builder().csm(raMestre.getPk().getCsmCodigo()).jsm(raMestre.getPk().getJsmCodigo()).sequencial(nrSequencial).build().getValor());
+      raMestre.setSequencial(nrSequencial);
+      logger.debug("RA gerado: {} (JSM={} - MESTRE SEQUENCIAL: {})", cidadao.getRa(), cidadao.getJsm(), raMestre.getSequencial());
 
       // Configura PreAlistamento
       if (alistamento.getDocApresMunicipio().getCodigo() == -1) {
@@ -142,19 +160,7 @@ public class AlistamentoServico {
       }
       alistamento.setProtocoloData(dataAtual);
       alistamento.setTipo(Byte.decode("0"));
-
-      // Gerando novo RA
-      final RaMestre raMestre = this.raMestreDao.findById(new RaMestre.PK(cidadao.getJsm().getPk().getCsmCodigo(), cidadao.getJsm().getPk().getCodigo()));
-      if (raMestre == null) {
-         logger.error("JSM não existe na tabela RA_MESTRE ({})", cidadao.getJsm());
-         throw new RaMestreException("CSM/JSM não existe na tabela de controle de RA (RA_MESTRE)");
-      }
-      this.preAlistamentoDao.getEntityManager().lock(raMestre, LockModeType.PESSIMISTIC_WRITE);
-      final Integer nrSequencial = raMestre.getSequencial() + 1;
-      cidadao.setRa(new Ra.Builder().csm(raMestre.getPk().getCsmCodigo()).jsm(raMestre.getPk().getJsmCodigo()).sequencial(nrSequencial).build().getValor());
-      raMestre.setSequencial(nrSequencial);
-      logger.debug("RA gerado: {} (JSM={} - MESTRE SEQUENCIAL: {})", cidadao.getRa(), cidadao.getJsm(), raMestre.getSequencial());
-
+      
       // Documento apresentado
       final CidDocApres cda = new CidDocApres(cidadao.getRa(), alistamento.getDocApresNr());
       cda.setTipo(alistamento.getDocApresTipo());
@@ -182,6 +188,15 @@ public class AlistamentoServico {
       //  final CsAgendamento csa = new CsAgendamento(cidadao.getCs(), cidadao.getRa());
       //  this.csAgendaDao.save(csa);
       //}
+
+      // Define Situação e Dispensa
+      if (!jsm.isTributaria() && jsm.getCsm().getCodigo() != 99) {
+         cidadao.setSituacaoMilitar(TipoSituacaoMilitar.DISPENSADO.ordinal());
+         cidadao.setDispensa(TipoDispensa.JSM_NT.getCodigo());
+      } else {
+         cidadao.setSituacaoMilitar(TipoSituacaoMilitar.ALISTADO.ordinal());
+         cidadao.setDispensa(alistamento.getTipo() == null ? TipoDispensa.SEM_DISPENSA.getCodigo() : alistamento.getTipo());
+      }
       
       // Salvar cidadão
       this.cidadaoDao.save(cidadao);
@@ -208,39 +223,4 @@ public class AlistamentoServico {
       return status;
    }
 
-/*   
-   public boolean isForaPrazo(final Date dataNasc) {
-      boolean status = false;
-      final Calendar dtNasc = Calendar.getInstance();
-      dtNasc.setTime(dataNasc);
-      final Calendar hoje = Calendar.getInstance();
-      final Calendar jul = Calendar.getInstance();
-      final Calendar dez = Calendar.getInstance();
-      int anoAtual = hoje.get(Calendar.YEAR);
-      jul.set(anoAtual, 6, 1); // 1 jul
-      dez.set(anoAtual, 11, 31); // 31 dez
-      if (dtNasc.get(Calendar.YEAR) < anoAtual - 18) {
-         status = true;
-      } else if (dtNasc.get(Calendar.YEAR) < anoAtual - 17) {
-         if (hoje.getTimeInMillis() >= jul.getTimeInMillis() && hoje.getTimeInMillis() <= dez.getTimeInMillis()) {
-            status = true;
-         }
-      }
-      logger.debug("Classe={}, Ano={}, Inicio={}, Fim={}", dtNasc.get(Calendar.YEAR), anoAtual, jul, dez);
-      return status;
-   }
-
-   public boolean isForaLimiteIdade(final Date dataNasc) {
-      final Calendar limInf = Calendar.getInstance();
-      limInf.add(Calendar.YEAR, -17);
-      final Calendar limSup = Calendar.getInstance();
-      limSup.add(Calendar.YEAR, -45);
-      final Calendar dtNasc = Calendar.getInstance();
-      dtNasc.setTime(dataNasc);
-      if (dtNasc.get(Calendar.YEAR) > limInf.get(Calendar.YEAR) || dtNasc.get(Calendar.YEAR) < limSup.get(Calendar.YEAR)) {
-         return true;
-      }
-      return false;
-   }
-*/
 }
