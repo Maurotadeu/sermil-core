@@ -78,17 +78,12 @@ public final class CsFuncionamento implements Serializable {
             .append(" a ").append(new SimpleDateFormat("dd/MM/yyyy").format(this.getTerminoData()))
             .toString();
    }
-   
+
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((anoBase == null) ? 0 : anoBase.hashCode());
-      result = prime * result + ((cs == null) ? 0 : cs.hashCode());
-      result = prime * result
-            + ((inicioData == null) ? 0 : inicioData.hashCode());
-      result = prime * result
-            + ((terminoData == null) ? 0 : terminoData.hashCode());
+      result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
       return result;
    }
 
@@ -101,25 +96,10 @@ public final class CsFuncionamento implements Serializable {
       if (getClass() != obj.getClass())
          return false;
       CsFuncionamento other = (CsFuncionamento) obj;
-      if (anoBase == null) {
-         if (other.anoBase != null)
+      if (codigo == null) {
+         if (other.codigo != null)
             return false;
-      } else if (!anoBase.equals(other.anoBase))
-         return false;
-      if (cs == null) {
-         if (other.cs != null)
-            return false;
-      } else if (!cs.equals(other.cs))
-         return false;
-      if (inicioData == null) {
-         if (other.inicioData != null)
-            return false;
-      } else if (!inicioData.equals(other.inicioData))
-         return false;
-      if (terminoData == null) {
-         if (other.terminoData != null)
-            return false;
-      } else if (!terminoData.equals(other.terminoData))
+      } else if (!codigo.equals(other.codigo))
          return false;
       return true;
    }

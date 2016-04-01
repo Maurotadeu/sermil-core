@@ -60,6 +60,7 @@ public final class Cs implements Serializable {
    private Rm rm;
 
    @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, orphanRemoval=true)
+   @JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO")
    private List<CsExclusaoData> csExclusaoDataCollection;
 
    @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, cascade=CascadeType.ALL , orphanRemoval=true)

@@ -113,6 +113,18 @@ public class CsServico {
       return lista;
    }
 
+   @RemoteMethod
+   public List<CsExclusaoData> listarExclusaoData(final Integer csCodigo) throws ConsultaException {
+      if (csCodigo == null) {
+         throw new ConsultaException("Informe o código da CS");
+      }
+      final List<CsExclusaoData> lista = this.recuperar(csCodigo).getCsExclusaoDataCollection();
+      if (lista == null || lista.isEmpty()) {
+         throw new ConsultaException("Não há exclusões de data cadastradas para a CS " + csCodigo);
+      }
+      return lista;
+   }
+   
    public Cs recuperar(final Integer csCodigo) {
       return this.csDao.findById(csCodigo);
    }
