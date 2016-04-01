@@ -62,8 +62,7 @@ public final class CsExclusaoData implements Serializable {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((ExclusaoData == null) ? 0 : ExclusaoData.hashCode());
-      result = prime * result + ((cs == null) ? 0 : cs.hashCode());
+      result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
       return result;
    }
 
@@ -76,15 +75,10 @@ public final class CsExclusaoData implements Serializable {
       if (getClass() != obj.getClass())
          return false;
       CsExclusaoData other = (CsExclusaoData) obj;
-      if (ExclusaoData == null) {
-         if (other.ExclusaoData != null)
+      if (codigo == null) {
+         if (other.codigo != null)
             return false;
-      } else if (!ExclusaoData.equals(other.ExclusaoData))
-         return false;
-      if (cs == null) {
-         if (other.cs != null)
-            return false;
-      } else if (!cs.equals(other.cs))
+      } else if (!codigo.equals(other.codigo))
          return false;
       return true;
    }
