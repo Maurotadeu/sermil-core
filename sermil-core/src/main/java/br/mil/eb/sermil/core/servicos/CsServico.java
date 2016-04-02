@@ -14,14 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.CsDao;
 import br.mil.eb.sermil.core.dao.CsEnderecoDao;
-import br.mil.eb.sermil.core.dao.CsFuncionamentoDao;
 import br.mil.eb.sermil.core.exceptions.AnoBaseNaoEhUnicoException;
 import br.mil.eb.sermil.core.exceptions.ConsultaException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoDataInicioErroException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoDataTerminoErroException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentosSobrepostosException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
-import br.mil.eb.sermil.core.exceptions.PgcNaoExisteException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Cs;
 import br.mil.eb.sermil.modelo.CsEndereco;
@@ -42,9 +40,6 @@ public class CsServico {
 
    @Inject
    CsDao csDao;
-
-   @Inject
-   CsFuncionamentoDao csFuncionamentoDao;
 
    @Inject
    CsEnderecoDao csEnderecoDao;
@@ -106,7 +101,7 @@ public class CsServico {
       if (csCodigo == null) {
          throw new ConsultaException("Informe o código da CS");
       }
-      final List<CsFuncionamento> lista = this.csFuncionamentoDao.findByNamedQuery("CsFuncionamento.listarPorCs", csCodigo);
+      final List<CsFuncionamento> lista = this.recuperar(csCodigo).getCsFuncionamentoCollection();
       if (lista == null || lista.isEmpty()) {
          throw new ConsultaException("Não há funcionamentos cadastrados para a CS " + csCodigo);
       }
@@ -168,10 +163,7 @@ public class CsServico {
       return this.csEnderecoDao.save(csEndereco);
    }
 
-   /** Regras de Negocio para Funcionamento de CS.
-    * @return boolean
-    * @throws PgcNaoExisteException
-    */
+   /* Verificar */
    public boolean isCsFuncionamentoCorreto(final CsFuncionamento funcionamento) throws SermilException {
       // ano base de PGC tem que ser unico
       if (!this.pgcServico.isAnoBaseUnico(funcionamento.getAnoBase())) {
@@ -209,36 +201,3 @@ public class CsServico {
    }
 
 }
-
-
-/*
- * Obter RM.
- * 
- * @param usuRm
- *           Rm a rm do usuario. Tente: Rm rm = ((Usuario) ((SecurityContext)
- *           this.session.get("SPRING_SECURITY_CONTEXT")).getAuthentication()
- *           .getPrincipal()). getOm().getRm();
- * 
- * @param isAdm
- *           se o usuario é ou nao administrador Tente: boolean isAdm =
- *           ServletActionContext.getRequest().isUserInRole("adm");
- * 
- * @return Map codigo -> sigla
-public Map<Byte, String> getRms(Rm usuRm, boolean isAdm) {
-   Map<Byte, String> mappedRms = new HashMap<Byte, String>();
-   List<Rm> rms = rmDao.findAll();
-   for (int i = 0; i < rms.size(); i++) {
-      if (rms.get(i).getCodigo() == 0) {
-         rms.remove(i);
-         break;
-      }
-   }
-   for (Rm rm2 : rms) {
-      if (isAdm)
-         mappedRms.put(rm2.getCodigo(), rm2.getSigla());
-      else if (usuRm.getCodigo() == rm2.getCodigo())
-         mappedRms.put(rm2.getCodigo(), rm2.getSigla());
-   }
-   return mappedRms;
-}
-*/
