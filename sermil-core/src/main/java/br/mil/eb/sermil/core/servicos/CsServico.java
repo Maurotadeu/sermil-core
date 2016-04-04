@@ -57,7 +57,7 @@ public class CsServico {
       }
       final List<Cs> lista = this.csDao.findByNamedQuery("Cs.listarPorRm", rm);
       if (lista == null || lista.isEmpty()) {
-         throw new ConsultaException("Não há CS definidas nesta Região Militar");
+         throw new ConsultaException("Não há CS cadastrada na " + rm + "ª Região Militar");
       }
       return lista;
    }
@@ -68,24 +68,24 @@ public class CsServico {
       }
       final List<Cs> lista = this.csDao.findByNamedQuery("Cs.listarPorNome", nome);
       if (lista == null || lista.isEmpty()) {
-         throw new ConsultaException("Não há CS definidas nesta Região Militar");
+         throw new ConsultaException("Não há CS cadastra com o nome " + nome + ".");
       }
       return lista;
    }
 
-   public List<CsEndereco> listarEnderecos(final Integer municipioCodigo) throws ConsultaException {
+   public List<CsEndereco> listarCsEnderecoMun(final Integer municipioCodigo) throws ConsultaException {
       if (municipioCodigo == null) {
          throw new ConsultaException("Informe o código do Município");
       }
       final List<CsEndereco> lista = this.csEnderecoDao.findByNamedQuery("CsEndereco.listarPorMunicipio", municipioCodigo);
       if (lista == null || lista.isEmpty()) {
-         throw new ConsultaException("Não há endereços de CS cadastrados no Município");
+         throw new ConsultaException("Não há endereços de CS cadastrados no município código " + municipioCodigo);
       }
       return lista;
    }
 
    @RemoteMethod
-   public List<CsEndereco> listarEnderecosCsRm(final Integer rmCodigo) throws ConsultaException {
+   public List<CsEndereco> listarCsEnderecoRm(final Byte rmCodigo) throws ConsultaException {
       if (rmCodigo == null) {
          throw new ConsultaException("Informe o código da Região Militar");
       }
@@ -97,7 +97,7 @@ public class CsServico {
    }
 
    @RemoteMethod
-   public List<CsFuncionamento> listarFuncionamentos(final Integer csCodigo) throws ConsultaException {
+   public List<CsFuncionamento> listarCsFuncionamento(final Integer csCodigo) throws ConsultaException {
       if (csCodigo == null) {
          throw new ConsultaException("Informe o código da CS");
       }
@@ -109,7 +109,7 @@ public class CsServico {
    }
 
    @RemoteMethod
-   public List<CsExclusaoData> listarExclusaoData(final Integer csCodigo) throws ConsultaException {
+   public List<CsExclusaoData> listarCsExclusaoData(final Integer csCodigo) throws ConsultaException {
       if (csCodigo == null) {
          throw new ConsultaException("Informe o código da CS");
       }
@@ -188,14 +188,6 @@ public class CsServico {
       for (CsFuncionamento f : listaFunc) {
          if (funcionamento.getInicioData().before(f.getTerminoData()) || funcionamento.getTerminoData().after(f.getInicioData()))
             throw new FuncionamentosSobrepostosException();
-      }
-      return true;
-   }
-
-   public boolean isCsFeriadosCorretos(final List<CsExclusaoData> exclusaoData, final CsFuncionamento csFuncionamento) throws SermilException {
-      for (CsExclusaoData fer : exclusaoData) {
-         if (fer.getExclusaoData().before(csFuncionamento.getInicioData()) || fer.getExclusaoData().after(csFuncionamento.getTerminoData()))
-            throw new SermilException("Data a ser excluída invalida");
       }
       return true;
    }

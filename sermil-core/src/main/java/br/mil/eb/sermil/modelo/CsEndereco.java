@@ -20,6 +20,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Endereço de funcionamento de CS.
  * @author Anselmo Ribeiro, Abreu Lopes
  * @since 5.3.2
+ * @version 5.3.2
  */
 @Entity
 @Table(name = "CS_ENDERECO")
@@ -47,11 +48,8 @@ public final class CsEndereco implements Serializable {
    private String cep;
 
    @ManyToOne
-   @JoinColumn(name = "municipio_codigo", referencedColumnName = "codigo", insertable = true, updatable = true, nullable = false)
+   @JoinColumn(name = "municipio_codigo", referencedColumnName = "codigo", nullable = false)
    private Municipio municipio;
-
-   //@OneToMany(mappedBy = "csEndereco", fetch = FetchType.LAZY)
-   //private List<CsFuncionamento> csFuncionamentos;
 
    public CsEndereco() {
       super();
@@ -62,6 +60,31 @@ public final class CsEndereco implements Serializable {
       if (cep != null)
          end.append(", CEP: ").append(cep);
       return end.toString();
+   }
+   
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      CsEndereco other = (CsEndereco) obj;
+      if (codigo == null) {
+         if (other.codigo != null)
+            return false;
+      } else if (!codigo.equals(other.codigo))
+         return false;
+      return true;
    }
 
    public Municipio getMunicipio() {
@@ -103,34 +126,5 @@ public final class CsEndereco implements Serializable {
    public void setCep(String cep) {
       this.cep = cep;
    }
-/*
-   public List<CsFuncionamento> getCsFuncionamentos() {
-      return csFuncionamentos;
-   }
 
-   public void setCsFuncionamentos(List<CsFuncionamento> csFuncionamentos) {
-      this.csFuncionamentos = csFuncionamentos;
-   }
-
-   public void addFuncionamento(CsFuncionamento csFuncionamento) throws FuncionamentoJaExisteException {
-      if (this.csFuncionamentos.contains(csFuncionamento)) {
-         throw new FuncionamentoJaExisteException();
-      }
-      if (this.csFuncionamentos == null) {
-         this.csFuncionamentos = new ArrayList<CsFuncionamento>();
-      }
-      this.csFuncionamentos.add(csFuncionamento);
-      if (csFuncionamento.getCsEndereco() == null || csFuncionamento.getCsEndereco() != this) {
-         csFuncionamento.setCsEndereco(this);
-      }
-   }
-
-   public void removeFuncionamento(CsFuncionamento csFuncionamento) throws FuncionamentoNaoExisteException {
-      if (!this.csFuncionamentos.contains(csFuncionamento)) {
-         throw new FuncionamentoNaoExisteException();
-      }
-      this.csFuncionamentos.remove(csFuncionamento);
-      csFuncionamento.setCsEndereco(null);
-   }
-*/   
 }
