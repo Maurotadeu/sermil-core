@@ -14,14 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.CsDao;
 import br.mil.eb.sermil.core.dao.CsEnderecoDao;
-import br.mil.eb.sermil.core.dao.CsFuncionamentoDao;
 import br.mil.eb.sermil.core.exceptions.AnoBaseNaoEhUnicoException;
 import br.mil.eb.sermil.core.exceptions.ConsultaException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoDataInicioErroException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoDataTerminoErroException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentosSobrepostosException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
-import br.mil.eb.sermil.core.exceptions.PgcNaoExisteException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Cs;
 import br.mil.eb.sermil.modelo.CsEndereco;
@@ -44,9 +42,6 @@ public class CsServico {
    CsDao csDao;
 
    @Inject
-   CsFuncionamentoDao csFuncionamentoDao;
-
-   @Inject
    CsEnderecoDao csEnderecoDao;
 
    @Inject
@@ -62,7 +57,7 @@ public class CsServico {
       }
       final List<Cs> lista = this.csDao.findByNamedQuery("Cs.listarPorRm", rm);
       if (lista == null || lista.isEmpty()) {
-         throw new ConsultaException("Não há CS definidas nesta Região Militar");
+         throw new ConsultaException("Não há CS cadastrada na " + rm + "ª Região Militar");
       }
       return lista;
    }
@@ -73,24 +68,24 @@ public class CsServico {
       }
       final List<Cs> lista = this.csDao.findByNamedQuery("Cs.listarPorNome", nome);
       if (lista == null || lista.isEmpty()) {
-         throw new ConsultaException("Não há CS definidas nesta Região Militar");
+         throw new ConsultaException("Não há CS cadastra com o nome " + nome + ".");
       }
       return lista;
    }
 
-   public List<CsEndereco> listarEnderecos(final Integer municipioCodigo) throws ConsultaException {
+   public List<CsEndereco> listarCsEnderecoMun(final Integer municipioCodigo) throws ConsultaException {
       if (municipioCodigo == null) {
          throw new ConsultaException("Informe o código do Município");
       }
       final List<CsEndereco> lista = this.csEnderecoDao.findByNamedQuery("CsEndereco.listarPorMunicipio", municipioCodigo);
       if (lista == null || lista.isEmpty()) {
-         throw new ConsultaException("Não há endereços de CS cadastrados no Município");
+         throw new ConsultaException("Não há endereços de CS cadastrados no município código " + municipioCodigo);
       }
       return lista;
    }
 
    @RemoteMethod
-   public List<CsEndereco> listarEnderecosCsRm(final Integer rmCodigo) throws ConsultaException {
+   public List<CsEndereco> listarCsEnderecoRm(final Byte rmCodigo) throws ConsultaException {
       if (rmCodigo == null) {
          throw new ConsultaException("Informe o código da Região Militar");
       }
@@ -102,11 +97,11 @@ public class CsServico {
    }
 
    @RemoteMethod
-   public List<CsFuncionamento> listarFuncionamentos(final Integer csCodigo) throws ConsultaException {
+   public List<CsFuncionamento> listarCsFuncionamento(final Integer csCodigo) throws ConsultaException {
       if (csCodigo == null) {
          throw new ConsultaException("Informe o código da CS");
       }
-      final List<CsFuncionamento> lista = this.csFuncionamentoDao.findByNamedQuery("CsFuncionamento.listarPorCs", csCodigo);
+      final List<CsFuncionamento> lista = this.recuperar(csCodigo).getCsFuncionamentoCollection();
       if (lista == null || lista.isEmpty()) {
          throw new ConsultaException("Não há funcionamentos cadastrados para a CS " + csCodigo);
       }
@@ -114,7 +109,7 @@ public class CsServico {
    }
 
    @RemoteMethod
-   public List<CsExclusaoData> listarExclusaoData(final Integer csCodigo) throws ConsultaException {
+   public List<CsExclusaoData> listarCsExclusaoData(final Integer csCodigo) throws ConsultaException {
       if (csCodigo == null) {
          throw new ConsultaException("Informe o código da CS");
       }
@@ -168,10 +163,7 @@ public class CsServico {
       return this.csEnderecoDao.save(csEndereco);
    }
 
-   /** Regras de Negocio para Funcionamento de CS.
-    * @return boolean
-    * @throws PgcNaoExisteException
-    */
+   /* Verificar */
    public boolean isCsFuncionamentoCorreto(final CsFuncionamento funcionamento) throws SermilException {
       // ano base de PGC tem que ser unico
       if (!this.pgcServico.isAnoBaseUnico(funcionamento.getAnoBase())) {
@@ -200,45 +192,4 @@ public class CsServico {
       return true;
    }
 
-   public boolean isCsFeriadosCorretos(final List<CsExclusaoData> exclusaoData, final CsFuncionamento csFuncionamento) throws SermilException {
-      for (CsExclusaoData fer : exclusaoData) {
-         if (fer.getExclusaoData().before(csFuncionamento.getInicioData()) || fer.getExclusaoData().after(csFuncionamento.getTerminoData()))
-            throw new SermilException("Data a ser excluída invalida");
-      }
-      return true;
-   }
-
 }
-
-
-/*
- * Obter RM.
- * 
- * @param usuRm
- *           Rm a rm do usuario. Tente: Rm rm = ((Usuario) ((SecurityContext)
- *           this.session.get("SPRING_SECURITY_CONTEXT")).getAuthentication()
- *           .getPrincipal()). getOm().getRm();
- * 
- * @param isAdm
- *           se o usuario é ou nao administrador Tente: boolean isAdm =
- *           ServletActionContext.getRequest().isUserInRole("adm");
- * 
- * @return Map codigo -> sigla
-public Map<Byte, String> getRms(Rm usuRm, boolean isAdm) {
-   Map<Byte, String> mappedRms = new HashMap<Byte, String>();
-   List<Rm> rms = rmDao.findAll();
-   for (int i = 0; i < rms.size(); i++) {
-      if (rms.get(i).getCodigo() == 0) {
-         rms.remove(i);
-         break;
-      }
-   }
-   for (Rm rm2 : rms) {
-      if (isAdm)
-         mappedRms.put(rm2.getCodigo(), rm2.getSigla());
-      else if (usuRm.getCodigo() == rm2.getCodigo())
-         mappedRms.put(rm2.getCodigo(), rm2.getSigla());
-   }
-   return mappedRms;
-}
-*/
