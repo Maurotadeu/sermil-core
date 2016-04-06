@@ -19,20 +19,20 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** CS - Agendamento.
  * @author Abreu Lopes
  * @since 5.2.8
- * @version 5.3.0
+ * @version 5.3.2
  */
 @Entity
 @Table(name = "CS_AGENDAMENTO")
 @PrimaryKey(validation=IdValidation.NULL)
 @NamedQueries({
    @NamedQuery(name = "CsAgendamento.listarPorCs", query = "SELECT c FROM CsAgendamento c WHERE c.pk.csCodigo = ?1"),
-   @NamedQuery(name = "CsAgendamento.listarPorCsData", query = "SELECT c.ra, c.nome, c.email, c.telefone, a.dataSelecao FROM Cidadao c JOIN CsAgendamento a ON c.ra = a.pk.cidadaoRa WHERE a.pk.csCodigo = ?1 AND a.dataSelecao BETWEEN ?2 AND ?3"),
+   @NamedQuery(name = "CsAgendamento.listarPorCsData", query = "SELECT c.ra, c.nome, c.email, c.telefone, a.dataSelecao FROM Cidadao c JOIN CsAgendamento a ON c.ra = a.pk.cidadaoRa WHERE a.pk.csCodigo = ?1 AND a.dataSelecao = ?2"),
    @NamedQuery(name = "CsAgendamento.listarPorRa", query = "SELECT c FROM CsAgendamento c WHERE c.pk.cidadaoRa = ?1"),
    @NamedQuery(name = "CsAgendamento.gruparPorEmail", query = "SELECT c.email, COUNT(c) FROM CsAgendamento c GROUP BY c.email") 
 })
 public final class CsAgendamento implements Serializable {
 
-   private static final long serialVersionUID = 4296531679466838124L;
+   private static final long serialVersionUID = 1L;
 
    @EmbeddedId
    private PK pk;
@@ -47,7 +47,7 @@ public final class CsAgendamento implements Serializable {
       super();
    }
 
-   public CsAgendamento(Short cs, Long ra) {
+   public CsAgendamento(final Integer cs, final Long ra) {
       this.pk = new CsAgendamento.PK(cs, ra);
    }
 
@@ -85,15 +85,15 @@ public final class CsAgendamento implements Serializable {
    /** Chave primária (PK) de CsAgendamento.
     * @author Abreu Lopes
     * @since 5.2.8
-    * @version 5.3.0
+    * @version 5.3.2
     */
    @Embeddable
    public static class PK implements Comparable<CsAgendamento.PK>, Serializable {
 
-      private static final long serialVersionUID = 885577210501039392L;
+      private static final long serialVersionUID = 1L;
 
       @Column(name="CS_CODIGO")
-      private Short csCodigo;
+      private Integer csCodigo;
       
       @Column(name="CIDADAO_RA")
       private Long cidadaoRa;
@@ -102,7 +102,7 @@ public final class CsAgendamento implements Serializable {
          super();
       }
 
-      public PK(final Short csCodigo, final Long cidadaoRa) {
+      public PK(final Integer csCodigo, final Long cidadaoRa) {
          this.setCsCodigo(csCodigo);
          this.setCidadaoRa(cidadaoRa);
       }
@@ -152,11 +152,11 @@ public final class CsAgendamento implements Serializable {
          return this.getCsCodigo().compareTo(o.getCsCodigo()) == 0 ? this.getCidadaoRa().compareTo(o.getCidadaoRa()) : this.getCsCodigo().compareTo(o.getCsCodigo());
       }
 
-      public Short getCsCodigo() {
+      public Integer getCsCodigo() {
          return csCodigo;
       }
 
-      public void setCsCodigo(Short csCodigo) {
+      public void setCsCodigo(Integer csCodigo) {
          this.csCodigo = csCodigo;
       }
 
