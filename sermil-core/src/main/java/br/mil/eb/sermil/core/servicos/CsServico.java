@@ -51,6 +51,7 @@ public class CsServico {
       logger.debug("CsServico iniciado");
    }
 
+   @RemoteMethod
    public List<Cs> listarPorRm(final Byte rm) throws ConsultaException {
       if (rm == null) {
          throw new ConsultaException("Informe o número da Região Militar");
@@ -138,15 +139,19 @@ public class CsServico {
    @Transactional
    @PreAuthorize("hasAnyRole('adm','dsm','smr')")
    public String excluir(final Integer csCodigo) throws SermilException {
-      this.csDao.delete(this.recuperar(csCodigo));
-      return new StringBuilder("CS ").append(csCodigo).append(" excluída").toString();
+      final Cs cs = this.recuperar(csCodigo);
+      this.csDao.delete(cs);
+      logger.info("Excluída: {}", cs);
+      return new StringBuilder(cs.toString()).append(" excluida").toString();
    }
    
    @Transactional
    @PreAuthorize("hasAnyRole('adm','dsm','smr')")
    public String excluirEndereco(final Integer codigo) throws SermilException {
-      this.csEnderecoDao.delete(this.recuperarEndereco(codigo));
-      return new StringBuilder("Endereço cod=").append(codigo).append(" excluído").toString();
+      final CsEndereco csEnd = this.recuperarEndereco(codigo);
+      this.csEnderecoDao.delete(csEnd);
+      logger.info("Excluído: {}", csEnd);
+      return new StringBuilder(csEnd.toString()).append(" excluido").toString();
    }
 
    @Transactional
@@ -159,8 +164,10 @@ public class CsServico {
 
    @Transactional
    @PreAuthorize("hasAnyRole('adm','dsm','smr')")
-   public CsEndereco salvarEndereco(final CsEndereco csEndereco) throws SermilException {
-      return this.csEnderecoDao.save(csEndereco);
+   public String salvarEndereco(final CsEndereco csEndereco) throws SermilException {
+      final CsEndereco csEnd = this.csEnderecoDao.save(csEndereco);
+      logger.info("Salvo: {}", csEnd);
+      return new StringBuilder(csEnd.toString()).append(" salvo").toString();
    }
 
    /* Verificar */
