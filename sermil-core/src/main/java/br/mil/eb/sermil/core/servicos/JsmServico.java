@@ -13,8 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.JsmDao;
-import br.mil.eb.sermil.core.exceptions.CSException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
+import br.mil.eb.sermil.core.exceptions.CsException;
 import br.mil.eb.sermil.core.exceptions.JsmException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
@@ -99,6 +99,7 @@ public class JsmServico {
       if (jsm.getJsmInfo() == null && jsmBd != null && jsmBd.getJsmInfo() != null) {
          jsm.setJsmInfo(jsmBd.getJsmInfo());
       }
+      jsm.setInfor("S");
       return this.jsmDao.save(jsm);
    }
 
@@ -107,7 +108,7 @@ public class JsmServico {
     * @return JSM
     * @throws JsmException
     */
-   public Jsm verificarAOL(Jsm jsm) throws JsmException {
+   public Jsm verificarAOL(final Jsm jsm) throws JsmException {
       final Jsm j = this.jsmDao.findById(jsm.getPk());
       if ("N".equalsIgnoreCase(j.getJsmInfo().getInternet())) {
          throw new JsmException("JSM não realiza alistamento ONLINE.");
@@ -115,13 +116,12 @@ public class JsmServico {
       return j;
    }
 
-   public boolean estaCSDefinidoCerto(Jsm jsm) throws CriterioException, JsmException, CSException {
-      /* REGRAS DE NEGOCIO */
+   public boolean jsmTributariaTemCs(final Jsm jsm) throws CsException, CriterioException, JsmException {
       if (jsm.getTributacao() == null) {
          throw new CriterioException();
       }
-      if ((jsm.isTributaria()) && (jsm.getCs() == null)) {
-         throw new CSException();
+      if (jsm.isTributaria() && jsm.getCs() == null) {
+         throw new CsException();
       }
       return true;
    }

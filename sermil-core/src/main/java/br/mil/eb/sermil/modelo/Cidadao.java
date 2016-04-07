@@ -32,7 +32,7 @@ import br.mil.eb.sermil.tipos.Utils;
 /** Entidade Cidadao. (TABELA CIDADAO)
  * @author Abreu Lopes
  * @since 2.0
- * @version 5.3.0
+ * @version 5.3.2
  */
 @Entity
 @Table(name = "CIDADAO")
@@ -56,19 +56,10 @@ import br.mil.eb.sermil.tipos.Utils;
 public final class Cidadao implements Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = 8406550813811973209L;
+   private static final long serialVersionUID = 1L;
 
    private static final String EMAIL_REGEXP = "^([a-zA-Z0-9_\\.\\-\\+])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";
 
-   /* Deprecated: usar Enum TipoSituacaoMilitar
-   public static final Byte SITUACAO_MILITAR_EXCLUIDO = 0;
-   public static final Byte SITUACAO_MILITAR_ALISTADO = 1;
-   public static final Byte SITUACAO_MILITAR_EXCESSO = 8;
-   public static final Byte SITUACAO_MILITAR_REFRATARIO = 11;
-   public static final Byte SITUACAO_MILITAR_INCORPORADO = 12;
-   public static final Byte SITUACAO_MILITAR_LICENCIADO = 15;
-   */
-   
    @Column(name = "ACUIDADE_AUDITIVA")
    private Byte acuidadeAuditiva;
 
@@ -172,7 +163,9 @@ public final class Cidadao implements Serializable {
 
    private String cpf;
 
-   private Short cs;
+   @ManyToOne
+   @JoinColumn(name = "CS", referencedColumnName = "CODIGO")
+   private Cs cs;
 
    @Column(name = "CSE_INDICACAO")
    private Byte cseIndicacao;
@@ -546,7 +539,7 @@ public final class Cidadao implements Serializable {
       return this.cpf;
    }
 
-   public Short getCs() {
+   public Cs getCs() {
       return this.cs;
    }
 
@@ -916,7 +909,7 @@ public final class Cidadao implements Serializable {
       }
    }
 
-   public void setCs(Short cs) {
+   public void setCs(Cs cs) {
       this.cs = cs;
    }
 

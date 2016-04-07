@@ -40,22 +40,16 @@ import br.mil.eb.sermil.tipos.Utils;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Jsm implements Comparable<Jsm>, Serializable {
 
-   private static final long serialVersionUID = 2006620367074513909L;
-
-   /*DEPRECATED, use Enum TipoTributacao
-   public static final byte OM_Ativa_OFOR = 1;
-   public static final byte OM_Ativa_TG = 2;
-   public static final byte Tiro_de_Guerra = 3;
-   public static final byte OM_Ativa = 4;
-   public static final byte JSM_Desativada = 5;        
-   */
+   private static final long serialVersionUID = 1L;
 
    @EmbeddedId
    private PK pk;
 
    private String descricao;
 
-   private Short cs;
+   @ManyToOne(fetch=FetchType.EAGER)
+   @JoinColumn(name="CS", referencedColumnName="CODIGO", insertable=false, updatable=false, nullable=false)
+   private Cs cs;
 
    private Short delsm;
 
@@ -139,11 +133,11 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
       this.pk.setCsmCodigo(csmCodigo);
    }
 
-   public Short getCs() {
+   public Cs getCs() {
       return this.cs;
    }
 
-   public void setCs(Short cs) {
+   public void setCs(Cs cs) {
       this.cs = cs;
    }
 
