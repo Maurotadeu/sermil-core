@@ -1,5 +1,8 @@
 package br.mil.eb.sermil.core.servicos;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +28,11 @@ import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.CidAuditoria;
+import br.mil.eb.sermil.modelo.CidDocumento;
+import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.Usuario;
+import br.mil.eb.sermil.tipos.TipoEvento;
 
 /** Gerenciamento de informações de Cidadão.
  * @author Abreu Lopes, Anselmo Ribeiro
@@ -113,6 +119,65 @@ public class CidadaoServico {
       cid.addCidAuditoria(aud);
       logger.debug("Cidadão salvo: {}", cid);
       return this.cidadaoDao.save(cid);
+   }
+
+   @PreAuthorize("hasAnyRole('adm','dsm','smr','cs')")
+   @Transactional
+   public Cidadao salvarSelecao(final Cidadao cidadao, final Usuario usr) throws SermilException {
+      final Cidadao cidBd = this.recuperar(cidadao.getRa());
+      if (cidadao.getDiagnostico() != null) {
+        cidBd.setSituacaoMilitar(cidadao.getDiagnostico() == 1 ? 4 : 5);
+      }
+      cidBd.setDispensa(cidadao.getDispensa());
+      cidBd.setAnotacoes(cidadao.getAnotacoes());
+      cidBd.setCs(cidadao.getCs());
+      cidBd.setFsNr(cidadao.getFsNr());
+      cidBd.setDiagnostico(cidadao.getDiagnostico());
+      cidBd.setCid(cidadao.getCid());
+      cidBd.setMedicoCrm(cidadao.getMedicoCrm());
+      cidBd.setAcuidadeVisual(cidadao.getAcuidadeVisual());
+      cidBd.setAcuidadeAuditiva(cidadao.getAcuidadeAuditiva());
+      cidBd.setExpressaoOral(cidadao.getExpressaoOral());
+      cidBd.setTsiP(cidadao.getTsiP());
+      cidBd.setTsiI(cidadao.getTsiI());
+      cidBd.setPadraoPq1Codigo(cidadao.getPadraoPq1Codigo());
+      cidBd.setPadraoPq2Codigo(cidadao.getPadraoPq2Codigo());
+      cidBd.setDesejaServir(cidadao.getDesejaServir());
+      cidBd.setSabeNadar(cidadao.getSabeNadar());
+      cidBd.setCseIndicacao(cidadao.getCseIndicacao());
+      cidBd.setCseResultado(cidadao.getCseResultado());
+      cidBd.setAltura(cidadao.getAltura());
+      cidBd.setForcaMuscular(cidadao.getForcaMuscular());
+      cidBd.setPeso(cidadao.getPeso());
+      cidBd.setCabeca(cidadao.getCabeca());
+      cidBd.setCintura(cidadao.getCintura());
+      cidBd.setCalcado(cidadao.getCalcado());
+      cidBd.setUniforme(cidadao.getUniforme());
+
+      final Calendar dataAtual = Calendar.getInstance();
+      
+      // Documento do sistema (FS)
+      final CidDocumento cd = new CidDocumento(cidBd.getRa(), dataAtual.getTime(), Byte.parseByte("2"));
+      cd.setServico(new StringBuilder("2").append(new DecimalFormat("00").format(cidBd.getJsm().getCsm().getRm().getCodigo())).append(new SimpleDateFormat("yy").format(dataAtual.getTime())).append(new DecimalFormat("000").format(cidBd.getCs())).append("888").toString());
+      cd.setTarefa(Short.parseShort("0"));
+      cd.setDocumento(Byte.parseByte("0"));
+      try {
+        cidBd.addCidDocumento(cd);
+      } catch(SermilException e) {
+         cidBd.getCidDocumentoCollection().remove(cidBd.getCidDocumentoCollection().indexOf(cd));
+         cidBd.addCidDocumento(cd);
+      }
+
+      // Evento de alistamento
+      final CidEvento ce = new CidEvento(cidBd.getRa(), TipoEvento.SELECAO.ordinal(), dataAtual.getTime());
+      ce.setAnotacao("Seleção " + dataAtual.get(Calendar.YEAR));
+      try {
+         cidBd.addCidEvento(ce);
+       } catch(SermilException e) {
+          cidBd.getCidEventoCollection().remove(cidBd.getCidEventoCollection().indexOf(ce));
+          cidBd.addCidEvento(ce);
+       }
+      return this.salvar(cidBd, usr, "SELECAO " + dataAtual.get(Calendar.YEAR));
    }
 
    public Map<String, String> listarAtributos() throws SermilException {
