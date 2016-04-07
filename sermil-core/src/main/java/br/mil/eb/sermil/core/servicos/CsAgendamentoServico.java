@@ -27,7 +27,7 @@ public class CsAgendamentoServico {
 
    @Inject
    private CsAgendamentoDao csAgendamentoDao;
-
+   
    public CsAgendamentoServico() {
       logger.debug("CsAgendamentoServico iniciado");
    }
