@@ -158,7 +158,7 @@ public class CidadaoServico {
       
       // Documento do sistema (FS)
       final CidDocumento cd = new CidDocumento(cidBd.getRa(), dataAtual.getTime(), Byte.parseByte("2"));
-      cd.setServico(new StringBuilder("2").append(new DecimalFormat("00").format(cidBd.getJsm().getCsm().getRm().getCodigo())).append(new SimpleDateFormat("yy").format(dataAtual.getTime())).append(new DecimalFormat("000").format(cidBd.getCs())).append("888").toString());
+      cd.setServico(new StringBuilder("2").append(new DecimalFormat("00").format(cidBd.getJsm().getCsm().getRm().getCodigo())).append(new SimpleDateFormat("yy").format(dataAtual.getTime())).append(new DecimalFormat("000").format(cidBd.getCs().getCodigo())).append("888").toString());
       cd.setTarefa(Short.parseShort("0"));
       cd.setDocumento(Byte.parseByte("0"));
       try {
