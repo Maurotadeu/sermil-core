@@ -1,6 +1,7 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -25,7 +26,7 @@ import br.mil.eb.sermil.tipos.Utils;
 /** Alistamento Online.
  * @author Abreu Lopes
  * @since 3.4
- * @version 5.2.7
+ * @version 5.3.2
  */
 @Entity
 @Table(name="PRE_ALISTAMENTO")
@@ -36,7 +37,6 @@ import br.mil.eb.sermil.tipos.Utils;
 })
 public final class PreAlistamento implements Comparable<PreAlistamento>, Serializable {
 
-  /** serialVersionUID.*/
   private static final long serialVersionUID = 3685757311148877664L;
 
   @Id
@@ -154,10 +154,12 @@ public final class PreAlistamento implements Comparable<PreAlistamento>, Seriali
 
   @Override
   public String toString() {
-    return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo().toString())
-    .append(" - ")
-    .append(this.getProtocoloData() == null ? "DATA" : this.getProtocoloData())
-    .toString();
+    return new StringBuilder(this.getNome() == null ? "NOME" : this.getNome())
+          .append(" - ")
+          .append(this.getMae() == null ? "MAE" : this.getMae())
+          .append(" - ")
+          .append(this.getNascimentoData() == null ? "DT NASC" : new SimpleDateFormat("dd/MM/yy").format(this.getNascimentoData()))
+          .toString();
   }
 
   @Override

@@ -1,56 +1,36 @@
 package br.mil.eb.sermil.core.servicos;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
-import org.springframework.transaction.annotation.Propagation;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.mil.eb.sermil.core.dao.CselDao;
-import br.mil.eb.sermil.core.dao.CselEnderecoDao;
-import br.mil.eb.sermil.core.dao.CselFuncionamentoDao;
-import br.mil.eb.sermil.core.dao.JsmDao;
-import br.mil.eb.sermil.core.dao.PgcDao;
-import br.mil.eb.sermil.core.dao.RmDao;
+import br.mil.eb.sermil.core.dao.CsDao;
+import br.mil.eb.sermil.core.dao.CsEnderecoDao;
 import br.mil.eb.sermil.core.exceptions.AnoBaseNaoEhUnicoException;
-import br.mil.eb.sermil.core.exceptions.CsPersistErrorException;
-import br.mil.eb.sermil.core.exceptions.EntityPersistenceException;
-import br.mil.eb.sermil.core.exceptions.FuncionamentoAnoBaseException;
+import br.mil.eb.sermil.core.exceptions.ConsultaException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoDataInicioErroException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentoDataTerminoErroException;
-import br.mil.eb.sermil.core.exceptions.FuncionamentoDeletarErroException;
-import br.mil.eb.sermil.core.exceptions.FuncionamentoFeriadoErroException;
-import br.mil.eb.sermil.core.exceptions.FuncionamentoJaExisteException;
-import br.mil.eb.sermil.core.exceptions.FuncionamentoNaoExisteException;
 import br.mil.eb.sermil.core.exceptions.FuncionamentosSobrepostosException;
-import br.mil.eb.sermil.core.exceptions.PgcNaoExisteException;
+import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
-import br.mil.eb.sermil.modelo.Csel;
-import br.mil.eb.sermil.modelo.CselEndereco;
-import br.mil.eb.sermil.modelo.CselFeriado;
-import br.mil.eb.sermil.modelo.CselFuncionamento;
-import br.mil.eb.sermil.modelo.Jsm;
+import br.mil.eb.sermil.modelo.Cs;
+import br.mil.eb.sermil.modelo.CsEndereco;
+import br.mil.eb.sermil.modelo.CsExclusaoData;
+import br.mil.eb.sermil.modelo.CsFuncionamento;
 import br.mil.eb.sermil.modelo.Pgc;
-import br.mil.eb.sermil.modelo.Rm;
-import br.mil.eb.sermil.modelo.Usuario;
-import br.mil.eb.sermil.tipos.Alerta;
 
-/**
- * Serviço de CS.
- * 
+/** Serviço de CS.
  * @author Anselmo Ribeiro, Abreu Lopes
  * @version 5.2.4
- * @since 5.2.8
+ * @since 5.3.2
  */
 @Named("csServico")
 @RemoteProxy(name = "csServico")
@@ -59,416 +39,163 @@ public class CsServico {
    protected static final Logger logger = LoggerFactory.getLogger(CsServico.class);
 
    @Inject
-   private Environment env;
+   CsDao csDao;
 
    @Inject
-   CselDao cselDao;
+   CsEnderecoDao csEnderecoDao;
 
    @Inject
-   CselFuncionamentoDao funcionamentoDao;
-
-   @Inject
-   RmDao rmDao;
-
-   @Inject
-   CselEnderecoDao enderecoDao;
-
-   @Inject
-   PgcDao pgcDao;
-
-   @Inject
-   JsmDao jsmDao;
+   PgcServico pgcServico;
 
    public CsServico() {
       logger.debug("CsServico iniciado");
    }
 
-   public Map<Integer, String> getCselEnderecos(Integer cselCodigo) {
-      Map<Integer, String> ret = new HashMap<Integer, String>();
-      List<CselEndereco> enderecos = enderecoDao.findByNamedQuery("listarEnderecosDeCselNative", cselCodigo);
-      enderecos.forEach(end -> ret.put(end.getCodigo(), end.toString()));
-      return ret;
+   @RemoteMethod
+   public List<Cs> listarPorRm(final Byte rm) throws ConsultaException {
+      if (rm == null) {
+         throw new ConsultaException("Informe o número da Região Militar");
+      }
+      final List<Cs> lista = this.csDao.findByNamedQuery("Cs.listarPorRm", rm);
+      if (lista == null || lista.isEmpty()) {
+         throw new ConsultaException("Não há CS cadastrada na " + rm + "ª Região Militar");
+      }
+      return lista;
    }
 
-   public List<CselFuncionamento> listarFuncionamentosDeCsel(Integer cselCodigo) {
-      return funcionamentoDao.findByNamedQuery("Funcionamento.listarFuncionamentosDeCsel", cselCodigo);
+   public List<Cs> listarPorNome(final String nome) throws ConsultaException {
+      if (nome == null) {
+         throw new ConsultaException("Informe o nome da CS");
+      }
+      final List<Cs> lista = this.csDao.findByNamedQuery("Cs.listarPorNome", nome);
+      if (lista == null || lista.isEmpty()) {
+         throw new ConsultaException("Não há CS cadastra com o nome " + nome + ".");
+      }
+      return lista;
    }
 
-   public List<Csel> listarPorRM(Byte rm_codigo) {
-      return (List<Csel>) cselDao.findByNamedQuery("Csel.listarPorRM", rm_codigo);
+   public List<CsEndereco> listarCsEnderecoMun(final Integer municipioCodigo) throws ConsultaException {
+      if (municipioCodigo == null) {
+         throw new ConsultaException("Informe o código do Município");
+      }
+      final List<CsEndereco> lista = this.csEnderecoDao.findByNamedQuery("CsEndereco.listarPorMunicipio", municipioCodigo);
+      if (lista == null || lista.isEmpty()) {
+         throw new ConsultaException("Não há endereços de CS cadastrados no município código " + municipioCodigo);
+      }
+      return lista;
    }
 
-   public List<Csel> listarPorRmDoUsuario(Byte rm_codigo, Usuario usu) {
-      List<Csel> ret = new ArrayList<Csel>();
-      if (usu.getAuthorities().stream().anyMatch(x -> x.getAuthority().contains("adm")))
-         ret = cselDao.findByNamedQuery("Csel.listarPorRM", rm_codigo);
-      else
-         ret = cselDao.findByNamedQuery("Csel.listarPorRM", usu.getOm().getRm().getCodigo());
-      return ret;
+   @RemoteMethod
+   public List<CsEndereco> listarCsEnderecoRm(final Byte rmCodigo) throws ConsultaException {
+      if (rmCodigo == null) {
+         throw new ConsultaException("Informe o código da Região Militar");
+      }
+      final List<CsEndereco> lista = this.csEnderecoDao.findByNamedQuery("CsEndereco.listarPorRm", rmCodigo);
+      if (lista == null || lista.isEmpty()) {
+         throw new ConsultaException("Não há endereços de CS cadastrados na " + rmCodigo + "ª Região Militar");
+      }
+      return lista;
    }
 
-   public List<Csel> listarPorNome(String nome) {
-      return (List<Csel>) cselDao.findByNamedQuery("Csel.listarPorNome", nome);
+   @RemoteMethod
+   public List<CsFuncionamento> listarCsFuncionamento(final Integer csCodigo) throws ConsultaException {
+      if (csCodigo == null) {
+         throw new ConsultaException("Informe o código da CS");
+      }
+      final List<CsFuncionamento> lista = this.recuperar(csCodigo).getCsFuncionamentoCollection();
+      if (lista == null || lista.isEmpty()) {
+         throw new ConsultaException("Não há funcionamentos cadastrados para a CS " + csCodigo);
+      }
+      return lista;
+   }
+
+   @RemoteMethod
+   public List<CsExclusaoData> listarCsExclusaoData(final Integer csCodigo) throws ConsultaException {
+      if (csCodigo == null) {
+         throw new ConsultaException("Informe o código da CS");
+      }
+      final List<CsExclusaoData> lista = this.recuperar(csCodigo).getCsExclusaoDataCollection();
+      if (lista == null || lista.isEmpty()) {
+         throw new ConsultaException("Não há exclusões de data cadastradas para a CS " + csCodigo);
+      }
+      return lista;
+   }
+   
+   public Cs recuperar(final Integer csCodigo) {
+      return this.csDao.findById(csCodigo);
+   }
+
+   public CsEndereco recuperarEndereco(final Integer codigo) throws SermilException {
+      if (codigo == null) {
+         throw new SermilException("Informe o código do Endereço");
+      }
+      final CsEndereco end = this.csEnderecoDao.findById(codigo);
+      if (end == null) {
+         throw new NoDataFoundException(new StringBuilder("Endereço não foi encontrado (cod=").append(codigo).append(")").toString());
+      }
+      return end;
    }
 
    @Transactional
-   public Csel persistir(Csel cs) throws CsPersistErrorException {
-      try {
-         cs = cselDao.save(cs);
-      } catch (Exception e) {
-         logger.error(e.getMessage());
-         e.printStackTrace(); // TODO: tirar stacktrace antes de entrar em
-                              // producao
-         throw new CsPersistErrorException();
-      }
-      return cs;
+   @PreAuthorize("hasAnyRole('adm','dsm','smr')")
+   public String excluir(final Integer csCodigo) throws SermilException {
+      final Cs cs = this.recuperar(csCodigo);
+      this.csDao.delete(cs);
+      logger.info("Excluída: {}", cs);
+      return new StringBuilder(cs.toString()).append(" excluida").toString();
+   }
+   
+   @Transactional
+   @PreAuthorize("hasAnyRole('adm','dsm','smr')")
+   public String excluirEndereco(final Integer codigo) throws SermilException {
+      final CsEndereco csEnd = this.recuperarEndereco(codigo);
+      this.csEnderecoDao.delete(csEnd);
+      logger.info("Excluído: {}", csEnd);
+      return new StringBuilder(csEnd.toString()).append(" excluido").toString();
    }
 
-   public Csel recuperar(Integer cs_codigo) {
-      return cselDao.findById(cs_codigo);
+   @Transactional
+   @PreAuthorize("hasAnyRole('adm','dsm','smr')")
+   public String salvar(final Cs cs) throws SermilException {
+      final Cs csSalva = this.csDao.save(cs);
+      logger.info("Salvo: {}", csSalva);
+      return new StringBuilder(cs.toString()).append(" salva").toString();
    }
 
-   public Map<String, String> getTributacoes() {
-      HashMap<String, String> tributacoes = new HashMap<String, String>();
-      tributacoes.put(Csel.TRIBUTACAO_EB, Csel.TRIBUTACAO_EB);
-      tributacoes.put(Csel.TRIBUTACAO_FAB, Csel.TRIBUTACAO_FAB);
-      tributacoes.put(Csel.TRIBUTACAO_MAR, Csel.TRIBUTACAO_MAR);
-      tributacoes.put(Csel.TRIBUTACAO_TG, Csel.TRIBUTACAO_TG);
-      return tributacoes;
+   @Transactional
+   @PreAuthorize("hasAnyRole('adm','dsm','smr')")
+   public String salvarEndereco(final CsEndereco csEndereco) throws SermilException {
+      final CsEndereco csEnd = this.csEnderecoDao.save(csEndereco);
+      logger.info("Salvo: {}", csEnd);
+      return new StringBuilder(csEnd.toString()).append(" salvo").toString();
    }
 
-   /**
-    * Obter RM.
-    * 
-    * @param usuRm
-    *           Rm a rm do usuario. Tente: Rm rm = ((Usuario) ((SecurityContext)
-    *           this.session.get("SPRING_SECURITY_CONTEXT")).getAuthentication()
-    *           .getPrincipal()). getOm().getRm();
-    * 
-    * @param isAdm
-    *           se o usuario é ou nao administrador Tente: boolean isAdm =
-    *           ServletActionContext.getRequest().isUserInRole("adm");
-    * 
-    * @return Map codigo -> sigla
-    */
-   public Map<Byte, String> getRms(Rm usuRm, boolean isAdm) {
-      Map<Byte, String> mappedRms = new HashMap<Byte, String>();
-      List<Rm> rms = rmDao.findAll();
-      for (int i = 0; i < rms.size(); i++) {
-         if (rms.get(i).getCodigo() == 0) {
-            rms.remove(i);
-            break;
-         }
-      }
-      for (Rm rm2 : rms) {
-         if (isAdm)
-            mappedRms.put(rm2.getCodigo(), rm2.getSigla());
-         else if (usuRm.getCodigo() == rm2.getCodigo())
-            mappedRms.put(rm2.getCodigo(), rm2.getSigla());
-      }
-      return mappedRms;
-   }
-
-   public CselEndereco getEndereco(Integer enderecoCodigo) {
-      return enderecoDao.findById(enderecoCodigo);
-   }
-
-   @Transactional(propagation = Propagation.NESTED)
-   public Csel salvarCselEFuncionamento(Csel cs, CselFuncionamento funcionamento, List<CselFeriado> feriados, CselEndereco endereco)
-         throws FuncionamentoJaExisteException, CsPersistErrorException, AnoBaseNaoEhUnicoException, FuncionamentoDataInicioErroException, FuncionamentoDataTerminoErroException,
-         FuncionamentoFeriadoErroException, FuncionamentosSobrepostosException, FuncionamentoAnoBaseException {
-
-      feriados.forEach(fer -> {
-         if (fer == null)
-            feriados.remove(fer);
-         else
-            fer.setFuncionamento(funcionamento);
-      });
-      funcionamento.setFeriados(feriados);
-
-      // Endereco
-      if (endereco.getCodigo() != null)
-         endereco = enderecoDao.findById(endereco.getCodigo());
-      funcionamento.setEndereco(endereco);
-
-      // Funcionamento
-      cs.addFuncionamento(funcionamento);
-
-      // persistir
-      // if (isFuncionamentoDeCsCorreto(funcionamento) &&
-      // isFeriadosDeFuncionamentoCorretos(feriados, funcionamento))
-      persistir(cs);
-      return cs;
-   }
-
-   /**
-    * Regras de Negocio para Funcionamento de CS
-    * 
-    * @return boolean
-    * @throws PgcNaoExisteException
-    */
-   public boolean isFuncionamentoDeCsCorreto(CselFuncionamento func) throws AnoBaseNaoEhUnicoException, FuncionamentoDataInicioErroException, FuncionamentoDataTerminoErroException,
-         FuncionamentoFeriadoErroException, FuncionamentosSobrepostosException, FuncionamentoAnoBaseException, PgcNaoExisteException {
-
+   /* Verificar */
+   public boolean isCsFuncionamentoCorreto(final CsFuncionamento funcionamento) throws SermilException {
       // ano base de PGC tem que ser unico
-      if (!this.isAnoBaseDePgcEhUnico(func.getAnoBase())) {
-         logger.error("Exite um PGC com dois lancamento de ano base. Ano base: " + func.getAnoBase());
+      if (!this.pgcServico.isAnoBaseUnico(funcionamento.getAnoBase())) {
+         logger.error("Exite um PGC com dois lançamentos de ano base. Ano base: " + funcionamento.getAnoBase());
          throw new AnoBaseNaoEhUnicoException();
       }
-      List<Pgc> pgcs = pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, func.getAnoBase());
-      if (pgcs.size() < 1)
-         throw new PgcNaoExisteException();
-
-      Pgc p = pgcs.get(0);
+      
+      final Pgc pgc = this.pgcServico.listarPcg(funcionamento.getAnoBase()).get(0);
 
       // O inicio da CS nao pode ser antes do inicio no PGC
-      if (func.getInicioData().before(p.getSelecaoGeralInicio()))
+      if (funcionamento.getInicioData().before(pgc.getSelecaoGeralInicio()))
          throw new FuncionamentoDataInicioErroException();
 
       // O termino da CS nao pode ser depois do PGC
-      if (func.getTerminoData().after(p.getSelecaoGeralTermino()))
+      if (funcionamento.getTerminoData().after(pgc.getSelecaoGeralTermino()))
          throw new FuncionamentoDataTerminoErroException();
 
       // Os blocos de cada inicio e termino de funcionamento para o mesmo ano
       // base nao podem se
       // sobrepor
-      List<CselFuncionamento> funcs = cselDao.findById(func.getCsel().getCodigo()).getFuncionamentos();
-      for (CselFuncionamento f : funcs) {
-         if (func.getInicioData().before(f.getTerminoData()) || func.getTerminoData().after(f.getInicioData()))
+      final List<CsFuncionamento> listaFunc = this.csDao.findById(funcionamento.getCs().getCodigo()).getCsFuncionamentoCollection();
+      for (CsFuncionamento f : listaFunc) {
+         if (funcionamento.getInicioData().before(f.getTerminoData()) || funcionamento.getTerminoData().after(f.getInicioData()))
             throw new FuncionamentosSobrepostosException();
       }
-
-      // A CS so pode cadastrar funcionamento com ano base ja cadastrado no PGC
-      List<Pgc> ps = pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, func.getAnoBase());
-      if (ps.size() == 0)
-         throw new FuncionamentoAnoBaseException();
-
-      return true;
-   }
-
-   /**
-    * Regras de Negocio para Feriados de Funcionamento de CS.
-    * 
-    * @return boolean
-    */
-   public boolean isFeriadosDeFuncionamentoCorretos(List<CselFeriado> feriados, CselFuncionamento func) throws FuncionamentoFeriadoErroException {
-      // Os feriados tem que estar dentro do periodo declarado
-      for (CselFeriado fer : feriados) {
-         if (fer.getFeriadoData().before(func.getInicioData()) || fer.getFeriadoData().after(func.getTerminoData()))
-            throw new FuncionamentoFeriadoErroException();
-      }
-      return true;
-   }
-
-   public boolean isAnoBaseDePgcEhUnico(String anoBase) {
-      List<Pgc> pgcs = pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, anoBase);
-      int size = pgcs.size();
-      return size > 1 ? false : true;
-   }
-
-   public List<CselFuncionamento> getFuncionamentosDeCsel(Integer cselCodigo) {
-      return funcionamentoDao.findByNamedQuery("listarFuncionamentosDeCsel", cselCodigo);
-   }
-
-   @Transactional
-   public void deletarFuncionamento(Integer codigo) throws FuncionamentoNaoExisteException, FuncionamentoDeletarErroException {
-      CselFuncionamento func = funcionamentoDao.findById(codigo);
-      if (func == null) {
-         logger.error(new StringBuilder("Usuario tentou deletar Funcionamento de CS mas funcionamento nao existe. Funcionamento codigo =  ").append(codigo).toString());
-         throw new FuncionamentoNaoExisteException();
-      }
-      try {
-         funcionamentoDao.delete(func);
-      } catch (SermilException e) {
-         logger.error("Erro ao deletar funcionamento: " + func.toString());
-         throw new FuncionamentoDeletarErroException();
-      }
-   }
-
-   public List<Pgc> getPgcList() {
-      return pgcDao.findAll();
-   }
-
-   public int rodarDistribuicao() {
-      // TODO retornar de 0 a 100
-      return 0;
-   }
-
-   public boolean distribuicaoJaRodou() {
-      return false;
-   }
-
-   @Transactional
-   public Pgc salvarPgc(Pgc pgc) throws EntityPersistenceException {
-      try {
-         return this.pgcDao.save(pgc);
-      } catch (Exception e) {
-         logger.error(e.getMessage());
-         throw new EntityPersistenceException();
-      }
-   }
-
-   public Map<String, List<Alerta>> getPgcAlertas() {
-      Map<String, List<Alerta>> alertas = new HashMap<String, List<Alerta>>();
-      alertas.put(this.env.getProperty("alistamento"), getAlistamentoAlerta());
-      alertas.put(this.env.getProperty("predispensa"), getPreDispensaAlerta());
-      alertas.put(this.env.getProperty("selecao"), getSelecaoAlerta());
-      alertas.put(this.env.getProperty("distribuicao"), getDistribuicaoAlerta());
-      alertas.put(this.env.getProperty("selecao.complementar"), getSelecaoComplementarAlerta());
-      return alertas;
-   }
-
-   public List<Alerta> getAlistamentoAlerta() {
-      Alerta alerta = new Alerta();
-      alerta.setTitulo(this.env.getProperty("alistamento.lancamento.dados.ano.atual"));
-      alerta.setTipo(Alerta.TIPO_OK);
-      if (!isPgcLancadoParaAnoAtual()) {
-         alerta.addMessage(this.env.getProperty("alistamento.lancamento.dados.ano.atual.motivo"));
-         alerta.setTipo(Alerta.TIPO_ERROR);
-      }
-
-      Alerta alerta2 = new Alerta();
-      alerta2.setTitulo(this.env.getProperty("alistamento.lancamento.dados.proximo.ano"));
-      alerta2.setTipo(Alerta.TIPO_OK);
-      if (!isPgcLancadoParaProximoAno()) {
-         alerta2.addMessage(this.env.getProperty("alistamento.lancamento.dados.proximo.ano.motivo"));
-         alerta2.setTipo(Alerta.TIPO_ERROR);
-      }
-
-      List<Alerta> alertas = new ArrayList<Alerta>();
-      alertas.add(alerta);
-      alertas.add(alerta2);
-      return alertas;
-   }
-
-   public List<Alerta> getPreDispensaAlerta() {
-
-      Alerta alerta = new Alerta();
-      alerta.setTitulo(this.env.getProperty("predispensa.lancamento.parametros.distribuicao"));
-      alerta.setTipo(Alerta.TIPO_OK);
-      byte[] rmCodigo = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-      for (byte i = 0; i < rmCodigo.length; i++) {
-         if (!rmLancouParametrosDistribuicao(i)) {
-            alerta.addMessage(String.valueOf(i + 1) + " " + this.env.getProperty("predispensa.rm.nao.lancou.parametros.distribuicao"));
-            alerta.setTipo(Alerta.TIPO_ERROR);
-         }
-      }
-
-      Alerta alerta2 = new Alerta();
-      alerta2.setTitulo(this.env.getProperty("predispensa.alteracao.dados.cs"));
-      alerta2.setTipo(Alerta.TIPO_OK);
-      for (Csel cs : cselDao.findAll()) {
-         if (isDadosDeCsAlteradosForaDoPrazo(cs.getCodigo())) {
-            alerta2.addMessage(cs.getCodigo() + " " + this.env.getProperty("predispensa.alteracao.dados.cs.msg"));
-            alerta2.setTipo(Alerta.TIPO_ERROR);
-         }
-      }
-
-      Alerta alerta3 = new Alerta();
-      alerta3.setTitulo(this.env.getProperty("predispensa.alteracao.tributacao"));
-      alerta3.setTipo(Alerta.TIPO_OK);
-      // TODO achar jsm que mudaram tributacao
-      List<Jsm> jsms = new ArrayList<Jsm>();
-      jsms.add(new Jsm());
-      for (Jsm jsm : jsms) {
-         if (isTributacaoDeJsmAlteradaForaDoPrazo(jsm.getCsmCodigo(), jsm.getCodigo())) {
-            alerta3.setTipo(Alerta.TIPO_ERROR);
-            alerta3.addMessage(
-                  new StringBuilder().append(jsm.getCodigo()).append("/").append(jsm.getCsmCodigo()).append(" ").append(this.env.getProperty("predispensa.alteracao.tributacao.msg")).toString());
-         }
-      }
-
-      List<Alerta> alertas = new ArrayList<Alerta>();
-      alertas.add(alerta);
-      alertas.add(alerta2);
-      alertas.add(alerta3);
-      return alertas;
-
-   }
-
-   public List<Alerta> getSelecaoAlerta() {
-
-      Alerta alerta = new Alerta();
-      alerta.setTitulo(this.env.getProperty("selecao.periodo.funcionamento.ano.atual"));
-      alerta.setTipo(Alerta.TIPO_OK);
-
-      Alerta alerta2 = new Alerta();
-      alerta2.setTitulo(this.env.getProperty("selecao.periodo.funcionamento.proxomo.ano"));
-      alerta2.setTipo(Alerta.TIPO_OK);
-
-      List<Alerta> alertas = new ArrayList<Alerta>();
-      alertas.add(alerta);
-      alertas.add(alerta2);
-      return alertas;
-
-   }
-
-   public List<Alerta> getDistribuicaoAlerta() {
-      Alerta alerta = new Alerta();
-      alerta.setTitulo(this.env.getProperty("distribuicao.preenchimento.bolnec"));
-      alerta.setTipo(Alerta.TIPO_OK);
-      // TODO alerta.addMessage("Erro tal e tal");
-      // alerta.setTipo(Alerta.TIPO_ERROR);
-      // toda vez que encontrar um erro mudar tipo de alerta para erro ou
-      // warning.
-
-      Alerta alerta2 = new Alerta();
-      alerta2.setTitulo(this.env.getProperty("distribuicao.lancamento.parametros"));
-      alerta2.setTipo(Alerta.TIPO_OK);
-
-      Alerta alerta3 = new Alerta();
-      alerta3.setTitulo(this.env.getProperty("distribuicao.alteracao.grupos.distribuicao"));
-      alerta3.setTipo(Alerta.TIPO_OK);
-
-      Alerta alerta4 = new Alerta();
-      alerta4.setTitulo(this.env.getProperty("distribuicao.consolidacao.bolnec"));
-      alerta4.setTipo(Alerta.TIPO_OK);
-
-      Alerta alerta5 = new Alerta();
-      alerta5.setTitulo(this.env.getProperty("distribuicao.bcciap.carregamento"));
-      alerta5.setTipo(Alerta.TIPO_OK);
-
-      List<Alerta> alertas = new ArrayList<Alerta>();
-      alertas.add(alerta);
-      alertas.add(alerta2);
-      alertas.add(alerta3);
-      alertas.add(alerta4);
-      alertas.add(alerta5);
-      return alertas;
-   }
-
-   public List<Alerta> getSelecaoComplementarAlerta() {
-      List<Alerta> alertas = new ArrayList<Alerta>();
-      return alertas;
-   }
-
-   public boolean isPgcLancadoParaAnoAtual() {
-      int year = Calendar.getInstance().get(Calendar.YEAR);
-      List<Pgc> pgcs = this.pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, String.valueOf(year));
-      if (pgcs.size() > 0)
-         return true;
-      return false;
-   }
-
-   public boolean isPgcLancadoParaProximoAno() {
-      int year = Calendar.getInstance().get(Calendar.YEAR);
-      List<Pgc> pgcs = this.pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, String.valueOf(year + 1));
-      if (pgcs.size() > 0)
-         return true;
-      return false;
-   }
-
-   public boolean rmLancouParametrosDistribuicao(Byte rmCodigo) {
-      // TODO implementar
-      return false;
-   }
-
-   public boolean isDadosDeCsAlteradosForaDoPrazo(Integer csCodigo) {
-      // TODO implementar idDadosAlteradosDeCs
-      return true;
-   }
-
-   public boolean isTributacaoDeJsmAlteradaForaDoPrazo(Byte csmCodigo, Short jsmCodigo) {
       return true;
    }
 

@@ -55,17 +55,19 @@ public abstract class DaoFactory {
 
    public abstract CidFotoDao getCidFotoDao();
 
+   public abstract CsDao getCsDao();
+   
    public abstract CsAgendamentoDao getCsAgendamentoDao();
    
    public abstract CsAnamneseDao getCsAnamneseDao();
    
-   public abstract CselDao getCselDao();
-  
-   public abstract CselEnderecoDao getCselEnderecoDao();
+   public abstract CsEnderecoDao getCsEnderecoDao();
 
-   public abstract CselFeriadoDao getCselFeriadoDao();
+   public abstract CsEntrevistaDao getCsEntrevistaDao();
+
+   public abstract CsExclusaoDataDao getCsExclusaoDataDao();
   
-   public abstract CselFuncionamentoDao getCselFuncionamentoDao();
+   public abstract CsFuncionamentoDao getCsFuncionamentoDao();
   
    public abstract CsmDao getCsmDao();
 
@@ -80,8 +82,6 @@ public abstract class DaoFactory {
    public abstract DstbGdDao getDstbGdDao();
 
    public abstract DstbParametroDao getDstbParametroDao();
-
-   public abstract EntrevistaCsDao getEntrevistaCsDao();
 
    public abstract EstatAlistamentoEscDao getEstatAlistamentoEscDao();
 

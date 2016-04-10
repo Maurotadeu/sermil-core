@@ -1,11 +1,11 @@
-package selenium.admin;
+package br.mil.eb.sermil.core.testes.selenium.admin;
 
 import static org.junit.Assert.fail;
 
 import org.junit.After;
 import org.junit.Before;
 
-import selenium.AbstractTest;
+import br.mil.eb.sermil.core.testes.selenium.AbstractTest;
 
 public class AdminAbstractTest extends AbstractTest {
 

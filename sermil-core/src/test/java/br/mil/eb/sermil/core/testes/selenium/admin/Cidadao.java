@@ -1,4 +1,4 @@
-package selenium.admin;
+package br.mil.eb.sermil.core.testes.selenium.admin;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -13,7 +13,7 @@ public class Cidadao extends AdminAbstractTest {
       this.login();
       this.pesquisarCidadao();
       this.pesquisarCidadaoPorCpf();
-      this.pesquisarCidadaoPorRa();
+      //this.pesquisarCidadaoPorRa();
       this.alistamentoCidadao();
       this.editarAlistamentoCidadao();
       this.logout();
