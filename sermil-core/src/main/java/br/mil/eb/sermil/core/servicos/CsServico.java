@@ -1,8 +1,10 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import br.mil.eb.sermil.core.dao.CselDao;
 import br.mil.eb.sermil.core.dao.CselEnderecoDao;
 import br.mil.eb.sermil.core.dao.CselFuncionamentoDao;
+import br.mil.eb.sermil.core.dao.DominiosDao;
+import br.mil.eb.sermil.core.dao.DstbBolNecDao;
 import br.mil.eb.sermil.core.dao.JsmDao;
+import br.mil.eb.sermil.core.dao.OmDao;
 import br.mil.eb.sermil.core.dao.PgcDao;
 import br.mil.eb.sermil.core.dao.RmDao;
 import br.mil.eb.sermil.core.exceptions.AnoBaseNaoEhUnicoException;
@@ -40,6 +45,7 @@ import br.mil.eb.sermil.modelo.CselEndereco;
 import br.mil.eb.sermil.modelo.CselFeriado;
 import br.mil.eb.sermil.modelo.CselFuncionamento;
 import br.mil.eb.sermil.modelo.Jsm;
+import br.mil.eb.sermil.modelo.Om;
 import br.mil.eb.sermil.modelo.Pgc;
 import br.mil.eb.sermil.modelo.Rm;
 import br.mil.eb.sermil.modelo.Usuario;
@@ -78,6 +84,15 @@ public class CsServico {
 
    @Inject
    JsmDao jsmDao;
+
+   @Inject
+   DstbBolNecDao bolNecDao;
+   
+   @Inject 
+   OmDao omDao;
+
+   @Inject
+   DominiosDao dominiosDao;
 
    public CsServico() {
       logger.debug("CsServico iniciado");
@@ -308,52 +323,67 @@ public class CsServico {
       }
    }
 
-   public Map<String, List<Alerta>> getPgcAlertas() {
-      Map<String, List<Alerta>> alertas = new HashMap<String, List<Alerta>>();
-      alertas.put(this.env.getProperty("alistamento"), getAlistamentoAlerta());
-      alertas.put(this.env.getProperty("predispensa"), getPreDispensaAlerta());
-      alertas.put(this.env.getProperty("selecao"), getSelecaoAlerta());
-      alertas.put(this.env.getProperty("distribuicao"), getDistribuicaoAlerta());
-      alertas.put(this.env.getProperty("selecao.complementar"), getSelecaoComplementarAlerta());
+   public Map<String, List<Alerta>> getPgcAlertas(Map<String, Object> session) {
+      Map<String, List<Alerta>> alertas = new LinkedHashMap<String, List<Alerta>>();
+      alertas.put(this.env.getProperty("alistamento"), getAlistamentoAlerta(session));
+      //alertas.put(this.env.getProperty("predispensa"), getPreDispensaAlerta(session));
+      //alertas.put(this.env.getProperty("selecao"), getAlistamentoAlerta(session));
+      alertas.put(this.env.getProperty("distribuicao"), getDistribuicaoAlerta(session));
+      //alertas.put(this.env.getProperty("selecao.complementar"), getSelecaoComplementarAlerta(session));
       return alertas;
+   } 
+   
+   private void incrementProcessados(Map<String, Object> session){
+      session.put("processados", (int)session.get("processados")+1);
    }
 
-   public List<Alerta> getAlistamentoAlerta() {
+   /**
+    * 01 - Alistamento
+    * @param session 
+    */
+   public List<Alerta> getAlistamentoAlerta(Map<String, Object> session) {
+      List<Alerta> alertas = new ArrayList<Alerta>();
+
+      // PGC - Lançamento dos dados do PGC para o ano atual
       Alerta alerta = new Alerta();
       alerta.setTitulo(this.env.getProperty("alistamento.lancamento.dados.ano.atual"));
       alerta.setTipo(Alerta.TIPO_OK);
       if (!isPgcLancadoParaAnoAtual()) {
          alerta.addMessage(this.env.getProperty("alistamento.lancamento.dados.ano.atual.motivo"));
          alerta.setTipo(Alerta.TIPO_ERROR);
+         incrementProcessados(session);
       }
+      alertas.add(alerta);
 
+      // PGC - Lançamento dos dados do PGC para o próximo ano
+      session.put("processados", (int)session.get("processados")+9);
       Alerta alerta2 = new Alerta();
       alerta2.setTitulo(this.env.getProperty("alistamento.lancamento.dados.proximo.ano"));
       alerta2.setTipo(Alerta.TIPO_OK);
       if (!isPgcLancadoParaProximoAno()) {
          alerta2.addMessage(this.env.getProperty("alistamento.lancamento.dados.proximo.ano.motivo"));
          alerta2.setTipo(Alerta.TIPO_ERROR);
+         incrementProcessados(session);
       }
-
-      List<Alerta> alertas = new ArrayList<Alerta>();
-      alertas.add(alerta);
       alertas.add(alerta2);
+
       return alertas;
    }
 
-   public List<Alerta> getPreDispensaAlerta() {
+   /**
+    * 02 - Pré Dispensa
+    * @param session 
+    */
+   public List<Alerta> getPreDispensaAlerta(Map<String, Object> session) {
+      List<Alerta> alertas = new ArrayList<Alerta>();
 
+      // Pré-Dispensa - Lançamento de Parâmetros da Distribuição
       Alerta alerta = new Alerta();
       alerta.setTitulo(this.env.getProperty("predispensa.lancamento.parametros.distribuicao"));
       alerta.setTipo(Alerta.TIPO_OK);
-      byte[] rmCodigo = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-      for (byte i = 0; i < rmCodigo.length; i++) {
-         if (!rmLancouParametrosDistribuicao(i)) {
-            alerta.addMessage(String.valueOf(i + 1) + " " + this.env.getProperty("predispensa.rm.nao.lancou.parametros.distribuicao"));
-            alerta.setTipo(Alerta.TIPO_ERROR);
-         }
-      }
+      alertas.add(alerta); // TODO criar alerta
 
+      // Pré-Dispensa - Alteração de dados de CS
       Alerta alerta2 = new Alerta();
       alerta2.setTitulo(this.env.getProperty("predispensa.alteracao.dados.cs"));
       alerta2.setTipo(Alerta.TIPO_OK);
@@ -361,9 +391,12 @@ public class CsServico {
          if (isDadosDeCsAlteradosForaDoPrazo(cs.getCodigo())) {
             alerta2.addMessage(cs.getCodigo() + " " + this.env.getProperty("predispensa.alteracao.dados.cs.msg"));
             alerta2.setTipo(Alerta.TIPO_ERROR);
+            incrementProcessados(session);
          }
       }
+      alertas.add(alerta2);
 
+      // Pré-Dispensa - Alteração de tributação de município
       Alerta alerta3 = new Alerta();
       alerta3.setTitulo(this.env.getProperty("predispensa.alteracao.tributacao"));
       alerta3.setTipo(Alerta.TIPO_OK);
@@ -372,72 +405,98 @@ public class CsServico {
       jsms.add(new Jsm());
       for (Jsm jsm : jsms) {
          if (isTributacaoDeJsmAlteradaForaDoPrazo(jsm.getCsmCodigo(), jsm.getCodigo())) {
-            alerta3.setTipo(Alerta.TIPO_ERROR);
             alerta3.addMessage(
                   new StringBuilder().append(jsm.getCodigo()).append("/").append(jsm.getCsmCodigo()).append(" ").append(this.env.getProperty("predispensa.alteracao.tributacao.msg")).toString());
+            alerta3.setTipo(Alerta.TIPO_ERROR);
+            incrementProcessados(session);
          }
       }
-
-      List<Alerta> alertas = new ArrayList<Alerta>();
-      alertas.add(alerta);
-      alertas.add(alerta2);
       alertas.add(alerta3);
+
       return alertas;
 
    }
 
+   /**
+    * 03 - Seleção
+    */
    public List<Alerta> getSelecaoAlerta() {
+      List<Alerta> alertas = new ArrayList<Alerta>();
 
+      // CS - Preenchimento do período de funcionamento para o ano atual por CS
       Alerta alerta = new Alerta();
       alerta.setTitulo(this.env.getProperty("selecao.periodo.funcionamento.ano.atual"));
       alerta.setTipo(Alerta.TIPO_OK);
+      alertas.add(alerta);
 
+      // CS - Preenchimento do período de funcionamento para o proximo ano por
+      // CS
       Alerta alerta2 = new Alerta();
       alerta2.setTitulo(this.env.getProperty("selecao.periodo.funcionamento.proxomo.ano"));
       alerta2.setTipo(Alerta.TIPO_OK);
-
-      List<Alerta> alertas = new ArrayList<Alerta>();
-      alertas.add(alerta);
       alertas.add(alerta2);
+
       return alertas;
 
    }
 
-   public List<Alerta> getDistribuicaoAlerta() {
-      Alerta alerta = new Alerta();
-      alerta.setTitulo(this.env.getProperty("distribuicao.preenchimento.bolnec"));
-      alerta.setTipo(Alerta.TIPO_OK);
-      // TODO alerta.addMessage("Erro tal e tal");
-      // alerta.setTipo(Alerta.TIPO_ERROR);
-      // toda vez que encontrar um erro mudar tipo de alerta para erro ou
-      // warning.
+   /**
+    * 4 - DISTRIBUICAO
+    * @param session 
+    */
+   @Transactional
+   public List<Alerta> getDistribuicaoAlerta(Map<String, Object> session) {
+      List<Alerta> alertas = new ArrayList<Alerta>();
 
+      // Distribuição - Om Sem BolNec na RM
+      Alerta alerta1 = new Alerta();
+      alerta1.setTitulo("Distribuição - Om Sem BolNec na RM");
+      alerta1.setTipo(Alerta.TIPO_OK);
+      List<String> rmCodigos = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12");
+      rmCodigos.forEach(c->{
+         omDao.findByNamedQuery("alerta.OmSemBolnecNaRm", c).forEach(om->{
+            alerta1.addMessage(om.toString() + " não tem BolNec na " + om.getRm().toString());
+            alerta1.setTipo(Alerta.TIPO_WARNING);
+            incrementProcessados(session);
+         });
+      });
+      alertas.add(alerta1);
+
+      // Distribuição - Lançamento de Parâmetros de Distribuição
       Alerta alerta2 = new Alerta();
       alerta2.setTitulo(this.env.getProperty("distribuicao.lancamento.parametros"));
       alerta2.setTipo(Alerta.TIPO_OK);
+      rmCodigos.forEach(c -> {
+         dominiosDao.findByNamedQuery("rm.RmNaoLancouParametroDistribuicao", c).forEach(dom -> {
+            alerta2.addMessage("A " + c + " RM nao lancou os parametro de distribuicao de OM Tipo " + dom.getDescricao());
+            alerta2.setTipo(Alerta.TIPO_ERROR);
+            incrementProcessados(session);
+         });
+      });
+      alertas.add(alerta2);
 
-      Alerta alerta3 = new Alerta();
-      alerta3.setTitulo(this.env.getProperty("distribuicao.alteracao.grupos.distribuicao"));
-      alerta3.setTipo(Alerta.TIPO_OK);
-
-      Alerta alerta4 = new Alerta();
-      alerta4.setTitulo(this.env.getProperty("distribuicao.consolidacao.bolnec"));
-      alerta4.setTipo(Alerta.TIPO_OK);
-
+      // Distribuição - Carregamento de BCC-IAP
       Alerta alerta5 = new Alerta();
       alerta5.setTitulo(this.env.getProperty("distribuicao.bcciap.carregamento"));
       alerta5.setTipo(Alerta.TIPO_OK);
-
-      List<Alerta> alertas = new ArrayList<Alerta>();
-      alertas.add(alerta);
-      alertas.add(alerta2);
-      alertas.add(alerta3);
-      alertas.add(alerta4);
+      rmCodigos.forEach(rmCodigo -> {
+         List<Rm> rms = rmDao.findByNamedQuery("rm.rmComProblemaDeBCCIAP", rmCodigo);
+         if (rms.size() == 1) {
+            alerta5.addMessage(rms.get(0).toString() + " está com discrepância de BCC/IAP");
+            alerta5.setTipo(Alerta.TIPO_ERROR);
+            incrementProcessados(session);
+         }
+      });
       alertas.add(alerta5);
+
       return alertas;
    }
 
-   public List<Alerta> getSelecaoComplementarAlerta() {
+   /**
+    * 05 - Seleção Complementar
+    * @param session 
+    */
+   public List<Alerta> getSelecaoComplementarAlerta(Map<String, Object> session) {
       List<Alerta> alertas = new ArrayList<Alerta>();
       return alertas;
    }
@@ -455,11 +514,6 @@ public class CsServico {
       List<Pgc> pgcs = this.pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, String.valueOf(year + 1));
       if (pgcs.size() > 0)
          return true;
-      return false;
-   }
-
-   public boolean rmLancouParametrosDistribuicao(Byte rmCodigo) {
-      // TODO implementar
       return false;
    }
 
