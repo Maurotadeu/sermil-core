@@ -13,7 +13,7 @@ import javax.persistence.Table;
 /** Entidade CidHabilitacao. (TABELA CID_HABILITACAO)
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.2.6
+ * @version 5.3.2
  */
 @Entity
 @Table(name = "CID_HABILITACAO")
@@ -23,6 +23,10 @@ public class CidHabilitacao implements Comparable<CidHabilitacao>, Serializable 
 
    @EmbeddedId
    private CidHabilitacao.PK pk;
+
+   @ManyToOne
+   @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false)
+   private Cidadao cidadao;
 
    @ManyToOne
    @JoinColumn(name = "HABILITACAO_CODIGO", insertable = false, updatable = false, nullable = false)
@@ -69,6 +73,17 @@ public class CidHabilitacao implements Comparable<CidHabilitacao>, Serializable 
       } else if (!this.pk.equals(other.pk))
          return false;
       return true;
+   }
+
+   public Cidadao getCidadao() {
+     return cidadao;
+   }
+
+   public void setCidadao(Cidadao cid) {
+    this.cidadao = cid;
+    if (!cid.getCidHabilitacaoCollection().contains(this)) {
+      cid.getCidHabilitacaoCollection().add(this);
+    }
    }
 
    public Habilitacao getHabilitacao() {

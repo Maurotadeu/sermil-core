@@ -20,7 +20,7 @@ import javax.persistence.TemporalType;
 /** Entidade CidExar. (TABELA CID_EXAR)
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.2.6
+ * @version 5.3.2
  */
 @Entity
 @Table(name = "CID_EXAR")
@@ -45,16 +45,20 @@ public final class CidExar implements Comparable<CidExar>, Serializable {
 
     private String ip;
 
+    @ManyToOne
+    @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false)
+    private Cidadao cidadao;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OM_CODIGO")
+    @JoinColumn(name = "OM_CODIGO", referencedColumnName = "CODIGO")
     private Om om;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PAIS_CODIGO")
+    @JoinColumn(name = "PAIS_CODIGO", referencedColumnName = "CODIGO")
     private Pais pais;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MUNICIPIO_CODIGO")
+    @JoinColumn(name = "MUNICIPIO_CODIGO", referencedColumnName = "CODIGO")
     private Municipio municipio;
 
     public CidExar() {
@@ -106,6 +110,17 @@ public final class CidExar implements Comparable<CidExar>, Serializable {
         } else if (!this.pk.equals(other.pk))
             return false;
         return true;
+    }
+
+    public Cidadao getCidadao() {
+      return this.cidadao;
+    }
+
+    public void setCidadao(Cidadao cid) {
+      this.cidadao = cid;
+      if (!cid.getCidExarCollection().contains(this)) {
+        cid.getCidExarCollection().add(this);
+      }
     }
 
     public Date getApresentacaoData() {
