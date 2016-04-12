@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -17,7 +19,7 @@ import javax.persistence.TemporalType;
 /** Entidade CidEvento. (Tabela CID_EVENTO)
  * @author Abreu Lopes
  * @since 2.0
- * @version 5.3.0
+ * @version 5.3.2
  */
 @Entity
 @Table(name = "CID_EVENTO")
@@ -26,7 +28,7 @@ import javax.persistence.TemporalType;
                @NamedQuery(name = "Evento.listarPorRa", query = "SELECT e FROM CidEvento e WHERE e.pk.cidadaoRa = ?1") })
 public final class CidEvento implements Comparable<CidEvento>, Serializable {
 
-   private static final long serialVersionUID = -5598327262769541831L;
+   private static final long serialVersionUID = 1L;
 
    @EmbeddedId
    private CidEvento.PK pk;
@@ -35,6 +37,10 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
 
    @Column(name = "BI_ABI_NR")
    private String biAbiNr;
+
+   @ManyToOne
+   @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
+   private Cidadao cidadao;
 
    public CidEvento() {
       this.setPk(new CidEvento.PK());
@@ -103,7 +109,18 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
       this.pk = pk;
    }
 
-   /** Chave primária (PK) de CidEvento.
+   public Cidadao getCidadao() {
+    return cidadao;
+  }
+
+  public void setCidadao(Cidadao cid) {
+    this.cidadao = cid;
+    if (!cid.getCidEventoCollection().contains(this)) {
+      cid.getCidEventoCollection().add(this);
+    }
+  }
+
+  /** Chave primária (PK) de CidEvento.
     * @author Abreu Lopes
     * @since 3.0
     * @version 5.3.0

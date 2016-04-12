@@ -117,8 +117,9 @@ public class CidadaoServico {
    public Cidadao salvar(final Cidadao cid, final Usuario usr, final String msg) throws SermilException {
       final CidAuditoria aud = new CidAuditoria(cid.getRa(), new Date(), msg.substring(0, msg.length() > 500 ? 500 : msg.length()), usr.getAcessoIp(), usr.getCpf());
       cid.addCidAuditoria(aud);
-      logger.debug("Cidadão salvo: {}", cid);
-      return this.cidadaoDao.save(cid);
+      final Cidadao c = this.cidadaoDao.save(cid);
+      logger.debug("{}: salvo", c);
+      return c;
    }
 
    @PreAuthorize("hasAnyRole('adm','dsm','smr','cs')")

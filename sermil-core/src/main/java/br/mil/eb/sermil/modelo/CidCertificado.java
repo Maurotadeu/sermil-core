@@ -21,7 +21,7 @@ import javax.persistence.TemporalType;
 /** Entidade CidCertificado. (TABELA CID_CERTIFICADO)
  * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
- * @version 5.2.6
+ * @version 5.3.2
  */
 @Entity
 @Table(name = "CID_CERTIFICADO")
@@ -33,15 +33,6 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
 
    /** serialVersionUID. */
    private static final long serialVersionUID = 5949927084657236653L;
-
-   /* Deprecated: USAR ENUM TipoCertificado, alguns tipos (4,6) foram abolidos
-    public final static Byte RESERVISTA_1_CATEGORIA_TIPO = 1;
-    public final static Byte RESERVISTA_2_CATEGORIA_TIPO = 2;
-    public final static Byte DISPENSA_DE_INCORPORACAO_PLANO = 3;
-    public final static Byte DISPENSA_DE_INCORPORACAO_COMPUTADOR = 4;
-    public final static Byte ISENCAO = 5;
-    public final static Byte DISPENSA_DE_INCORPORACAO_INFOR = 6;
-    */
 
    @EmbeddedId
    private CidCertificado.PK pk;
@@ -61,12 +52,12 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
 
    private String anulado;
 
-//   @ManyToOne
-//   @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
-//   private Cidadao cidadao;
+   @ManyToOne
+   @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
+   private Cidadao cidadao;
 
    @ManyToOne(fetch = FetchType.LAZY)
-   @JoinColumn(name = "OM_CODIGO", updatable = false, nullable = false)
+   @JoinColumn(name = "OM_CODIGO", referencedColumnName = "CODIGO")
    private Om om;
 
    public CidCertificado() {
@@ -122,7 +113,7 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
       this.setSerie(linha.substring(24, 35).replaceAll("[^A-Z ]", ""));
       this.setResponsavel("Módulo JSM");
    }
-/*
+
    public Cidadao getCidadao() {
       return cidadao;
    }
@@ -133,7 +124,7 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
          cid.getCidCertificadoCollection().add(this);
       }
    }
-*/
+
    public String getMotivo() {
       return motivo;
    }
