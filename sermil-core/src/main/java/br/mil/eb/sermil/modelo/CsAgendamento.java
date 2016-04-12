@@ -19,21 +19,20 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** CS - Agendamento.
  * @author Abreu Lopes
  * @since 5.2.8
- * @version 5.2.8
+ * @version 5.3.2
  */
 @Entity
 @Table(name = "CS_AGENDAMENTO")
 @PrimaryKey(validation=IdValidation.NULL)
 @NamedQueries({
    @NamedQuery(name = "CsAgendamento.listarPorCs", query = "SELECT c FROM CsAgendamento c WHERE c.pk.csCodigo = ?1"),
-   @NamedQuery(name = "CsAgendamento.listarPorCsData", query = "SELECT c.ra, c.nome, c.email, c.telefone, a.dataSelecao FROM Cidadao c JOIN CsAgendamento a ON c.ra = a.pk.cidadaoRa WHERE a.pk.csCodigo = ?1 AND a.dataSelecao BETWEEN ?2 AND ?3"),
+   @NamedQuery(name = "CsAgendamento.listarPorCsData", query = "SELECT c.ra, c.nome, c.email, c.telefone, a.dataSelecao FROM Cidadao c JOIN CsAgendamento a ON c.ra = a.pk.cidadaoRa WHERE a.pk.csCodigo = ?1 AND a.dataSelecao = ?2"),
    @NamedQuery(name = "CsAgendamento.listarPorRa", query = "SELECT c FROM CsAgendamento c WHERE c.pk.cidadaoRa = ?1"),
    @NamedQuery(name = "CsAgendamento.gruparPorEmail", query = "SELECT c.email, COUNT(c) FROM CsAgendamento c GROUP BY c.email") 
 })
 public final class CsAgendamento implements Serializable {
 
-   /** serialVersionUID. */
-   private static final long serialVersionUID = -4660098478693871696L;
+   private static final long serialVersionUID = 1L;
 
    @EmbeddedId
    private PK pk;
@@ -46,6 +45,10 @@ public final class CsAgendamento implements Serializable {
 
    public CsAgendamento() {
       super();
+   }
+
+   public CsAgendamento(final Integer cs, final Long ra) {
+      this.pk = new CsAgendamento.PK(cs, ra);
    }
 
    @Override
@@ -82,12 +85,12 @@ public final class CsAgendamento implements Serializable {
    /** Chave primária (PK) de CsAgendamento.
     * @author Abreu Lopes
     * @since 5.2.8
-    * @version 5.2.8
+    * @version 5.3.2
     */
    @Embeddable
    public static class PK implements Comparable<CsAgendamento.PK>, Serializable {
 
-      private static final long serialVersionUID = -1983860765661998247L;
+      private static final long serialVersionUID = 1L;
 
       @Column(name="CS_CODIGO")
       private Integer csCodigo;

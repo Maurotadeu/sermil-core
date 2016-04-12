@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.exceptions.CertificateNotFoundException;
+import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemDocApresException;
 import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemEventoException;
 import br.mil.eb.sermil.core.exceptions.EventNotFoundException;
 import br.mil.eb.sermil.core.exceptions.OutOfSituationException;
@@ -25,7 +26,7 @@ import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 /** Gerenciamento dos certificados de cidadão.
  * @author Abreu lopes, Anselmo Ribeiro
  * @since 5.1
- * @version 5.2.6
+ * @version 5.3.2
  */
 @Named("certificadoServico")
 public class CertificadoServico {
@@ -33,7 +34,7 @@ public class CertificadoServico {
    protected static final Logger logger = LoggerFactory.getLogger(CertificadoServico.class);
 
    @Inject
-   private CidadaoServico servico;
+   private CidadaoServico cidadaoServico;
 
    public CertificadoServico() {
       logger.debug("CertificadoServico iniciado.");
@@ -41,39 +42,39 @@ public class CertificadoServico {
 
    @Transactional
    public Cidadao anular(final CidCertificado certificado, final Usuario usuario) throws SermilException {
-      final Cidadao cidadao = this.servico.recuperar(certificado.getPk().getCidadaoRa());
+      final Cidadao cidadao = this.cidadaoServico.recuperar(certificado.getPk().getCidadaoRa());
       final CidCertificado cert = (CidCertificado) CollectionUtils.find(cidadao.getCidCertificadoCollection(), new EqualPredicate(certificado));
       cert.setAnulado("S");
       logger.debug("CERTIFICADO: {}", cert);
       logger.debug("USUARIO: {}", usuario);
       logger.debug("CIDADAO: {}", cidadao);
-      return this.servico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO ANULADO: ").append(certificado).toString());
+      return this.cidadaoServico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO ANULADO: ").append(certificado).toString());
    }
 
    @Transactional
    public Cidadao entregar(final CidCertificado certificado, final Usuario usuario) throws SermilException {
-      final Cidadao cidadao = this.servico.recuperar(certificado.getPk().getCidadaoRa());
+      final Cidadao cidadao = this.cidadaoServico.recuperar(certificado.getPk().getCidadaoRa());
       final CidCertificado cert = (CidCertificado) CollectionUtils.find(cidadao.getCidCertificadoCollection(), new EqualPredicate(certificado));
       cert.setEntregue("S");
       logger.debug("CERTIFICADO: {}", cert);
       logger.debug("USUARIO: {}", usuario);
       logger.debug("CIDADAO: {}", cidadao);
-      return this.servico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO ENTREGUE: ").append(certificado).toString());
+      return this.cidadaoServico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO ENTREGUE: ").append(certificado).toString());
    }
 
    @Transactional
    public Cidadao excluir(final CidCertificado certificado, final Usuario usuario) throws SermilException {
-      final Cidadao cidadao = this.servico.recuperar(certificado.getPk().getCidadaoRa());
+      final Cidadao cidadao = this.cidadaoServico.recuperar(certificado.getPk().getCidadaoRa());
       cidadao.getCidCertificadoCollection().remove(certificado);
       logger.debug("CERTIFICADO: {}", certificado);
       logger.debug("USUARIO: {}", usuario);
       logger.debug("CIDADAO: {}", cidadao);
-      return this.servico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO EXCLUIDO: ").append(certificado).toString());
+      return this.cidadaoServico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO EXCLUIDO: ").append(certificado).toString());
    }
 
    @Transactional
    public Cidadao salvar(final CidCertificado certificado, final Usuario usuario) throws SermilException {
-      final Cidadao cidadao = this.servico.recuperar(certificado.getPk().getCidadaoRa());
+      final Cidadao cidadao = this.cidadaoServico.recuperar(certificado.getPk().getCidadaoRa());
       if ((certificado.getPk().getTipo() == TipoCertificado.CR1.ordinal() || certificado.getPk().getTipo() == TipoCertificado.CR1.ordinal()) &&
           cidadao.getSituacaoMilitar() != TipoSituacaoMilitar.LICENCIADO.ordinal()) {
          throw new SermilException("Somente LICENCIADOS possuem Certificado de Reservista.");
@@ -85,29 +86,30 @@ public class CertificadoServico {
       logger.debug("CERTIFICADO: {}", certificado);
       logger.debug("USUARIO: {}", usuario);
       logger.debug("CIDADAO: {}", cidadao);
-      return this.servico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO: ").append(certificado).toString());
+      return this.cidadaoServico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO: ").append(certificado).toString());
    }
 
-   public void podeImprimirCAM(final Cidadao cidadao) throws SermilException {
-      if (cidadao == null) {
+   public boolean podeImprimirCAM(final Cidadao cidadao) throws SermilException {
+      if (cidadao == null || cidadao.getSituacaoMilitar() == null) {
          throw new SermilException("Cidadão não foi informado.");
       }
       if (cidadao.getSituacaoMilitar() == TipoSituacaoMilitar.EXCLUIDO.ordinal() &&
           cidadao.getSituacaoMilitar() == TipoSituacaoMilitar.INCORPORADO.ordinal() &&
           cidadao.getSituacaoMilitar() == TipoSituacaoMilitar.LICENCIADO.ordinal()) {
          throw new SermilException("Para imprimir o CAM, o cidadão NÃO pode já ter sido incorporado nas Forças Armadas.");
-      }      
+      }
+      return true;
    }
 
    /** O cidadao tem que ter Pelo menos um evento do tipo 3, 6, 13, 14 ou 24 e pelo menos um certificado
     *  do tipo 3 (CDI) e tem que estar em uma das situacoes militares: 3, 8, ou 9.
     * @param cidadao
-    * @throws EventNotFoundException
-    * @throws CertificateNotFoundException
-    * @throws OutOfSituationException
-    * @throws CidadaoNaoTemEventoException
+    * @throws SermilException
     */
-   public boolean podeImprimirCDI(final Cidadao cidadao) throws EventNotFoundException, CertificateNotFoundException, OutOfSituationException {
+   public boolean podeImprimirCDI(final Cidadao cidadao) throws SermilException {
+      if (cidadao == null) {
+         throw new SermilException("Cidadão não foi informado.");
+      }
       if (!cidadao.hasEvento(TipoEvento.EXCESSO.ordinal()) && !cidadao.hasEvento(TipoEvento.DISPENSA.ordinal())) {
          throw new EventNotFoundException();
       }
@@ -120,46 +122,20 @@ public class CertificadoServico {
       return true;
    }
 
-   public CidCertificado obterCDI(final Cidadao cidadao) {
-      for (CidCertificado certificado : cidadao.getCidCertificadoCollection()) {
-         if (certificado.getPk().getTipo() == TipoCertificado.CDI.ordinal()) {
-            return certificado;
-         }
+   public boolean podeImprimirCertSitMilitar(final Cidadao cidadao) throws SermilException {
+      if (cidadao == null || cidadao.getSituacaoMilitar() == null) {
+         throw new SermilException("Cidadão não foi informado.");
       }
-      return null;
+      if (cidadao.getSituacaoMilitar() != TipoSituacaoMilitar.LICENCIADO.ordinal()) {
+         throw new SermilException("Cidadão não está na situação LICENCIADO (15).");
+      }
+      if (!cidadao.hasEvento(TipoEvento.LICENCIAMENTO.ordinal())) {
+         throw new CidadaoNaoTemEventoException();
+      }
+      if (cidadao.getCidDocApresColletion().size() <= 0) {
+         throw new CidadaoNaoTemDocApresException();
+      }
+      return true;
    }
-
-  /* *****************************************************************
-   * DEPRECATED: usar Cidadao.hasCertificado(int tipo)
-   * *****************************************************************
-   private boolean temCertificado(final Cidadao cidadao, final int tipo) {
-      final List<CidCertificado> certificados = cidadao.getCidCertificadoCollection();
-      if (certificados != null && certificados.size() > 0) {
-         for (final CidCertificado certificado : certificados) {
-            if (certificado.getPk().getTipo().intValue() == tipo) {
-               return true;
-            }
-         }
-      }
-      return false;
-   }
-
-    private boolean temPeloMenosUmCertificado(final Cidadao cidadao, final Byte[] tipos) {
-        for (Byte tipo : tipos) {
-           if (temCertificado(cidadao, tipo)) {
-              return true;
-           }
-        }
-        return false;
-     }
-
-     private Boolean cidadaoJaTemCdi(final Cidadao cidadao) {
-         final List<CidCertificado> certificados = this.certDao.findByNamedQuery("Certificado.cidadaoTemCdi", cidadao.getRa());
-         if (certificados.isEmpty()) {
-            return false;
-         }
-         return true;
-      }
-    ************************************************************************************/
-
+   
 }

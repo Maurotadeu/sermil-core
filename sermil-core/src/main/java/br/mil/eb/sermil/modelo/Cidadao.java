@@ -24,6 +24,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.tipos.Cpf;
 import br.mil.eb.sermil.tipos.Utils;
@@ -31,7 +32,7 @@ import br.mil.eb.sermil.tipos.Utils;
 /** Entidade Cidadao. (TABELA CIDADAO)
  * @author Abreu Lopes
  * @since 2.0
- * @version 5.2.7
+ * @version 5.3.2
  */
 @Entity
 @Table(name = "CIDADAO")
@@ -55,19 +56,10 @@ import br.mil.eb.sermil.tipos.Utils;
 public final class Cidadao implements Serializable {
 
    /** serialVersionUID. */
-   private static final long serialVersionUID = 8406550813811973209L;
+   private static final long serialVersionUID = 1L;
 
    private static final String EMAIL_REGEXP = "^([a-zA-Z0-9_\\.\\-\\+])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";
 
-   /* Deprecated: usar Enum TipoSituacaoMilitar
-   public static final Byte SITUACAO_MILITAR_EXCLUIDO = 0;
-   public static final Byte SITUACAO_MILITAR_ALISTADO = 1;
-   public static final Byte SITUACAO_MILITAR_EXCESSO = 8;
-   public static final Byte SITUACAO_MILITAR_REFRATARIO = 11;
-   public static final Byte SITUACAO_MILITAR_INCORPORADO = 12;
-   public static final Byte SITUACAO_MILITAR_LICENCIADO = 15;
-   */
-   
    @Column(name = "ACUIDADE_AUDITIVA")
    private Byte acuidadeAuditiva;
 
@@ -171,7 +163,9 @@ public final class Cidadao implements Serializable {
 
    private String cpf;
 
-   private Short cs;
+   @ManyToOne
+   @JoinColumn(name = "CS", referencedColumnName = "CODIGO")
+   private Cs cs;
 
    @Column(name = "CSE_INDICACAO")
    private Byte cseIndicacao;
@@ -545,7 +539,7 @@ public final class Cidadao implements Serializable {
       return this.cpf;
    }
 
-   public Short getCs() {
+   public Cs getCs() {
       return this.cs;
    }
 
@@ -915,7 +909,7 @@ public final class Cidadao implements Serializable {
       }
    }
 
-   public void setCs(Short cs) {
+   public void setCs(Cs cs) {
       this.cs = cs;
    }
 
@@ -1422,4 +1416,51 @@ public final class Cidadao implements Serializable {
       return status;
    }
 
+   public boolean isForaPrazo() throws CriterioException {
+      if (this.getNascimentoData() == null) {
+         throw new CriterioException("Cidadão sem data de nascimento");
+      }
+      boolean status = false;
+      final Calendar dtNasc = Calendar.getInstance();
+      dtNasc.setTime(this.getNascimentoData());
+      final Calendar hoje = Calendar.getInstance();
+      final Calendar jul = Calendar.getInstance();
+      final Calendar dez = Calendar.getInstance();
+      int anoAtual = hoje.get(Calendar.YEAR);
+      jul.set(anoAtual, 6, 1);   // 1 jul
+      dez.set(anoAtual, 11, 31); // 31 dez
+      if (dtNasc.get(Calendar.YEAR) < anoAtual - 18) {
+         status = true;
+      } else if (dtNasc.get(Calendar.YEAR) < anoAtual - 17) {
+         if (hoje.getTimeInMillis() >= jul.getTimeInMillis() && hoje.getTimeInMillis() <= dez.getTimeInMillis()) {
+            status = true;
+         }
+      }
+      return status;
+   }
+
+   public boolean isForaLimiteIdade() throws CriterioException {
+      if (this.getNascimentoData() == null) {
+         throw new CriterioException("Cidadão sem data de nascimento");
+      }
+      final Calendar limInf = Calendar.getInstance();
+      limInf.add(Calendar.YEAR, -17);
+      final Calendar limSup = Calendar.getInstance();
+      limSup.add(Calendar.YEAR, -45);
+      final Calendar dtNasc = Calendar.getInstance();
+      dtNasc.setTime(this.getNascimentoData());
+      if (dtNasc.get(Calendar.YEAR) > limInf.get(Calendar.YEAR) || dtNasc.get(Calendar.YEAR) < limSup.get(Calendar.YEAR)) {
+         return true;
+      }
+      return false;
+   }
+
+   public boolean isAlistadoInternet() {
+      // Usando atributo mobSetor como flag de alistamento internet
+      if (this.getMobSetor() == 1) {
+         return true;
+      }
+      return false;
+   }
+   
 }

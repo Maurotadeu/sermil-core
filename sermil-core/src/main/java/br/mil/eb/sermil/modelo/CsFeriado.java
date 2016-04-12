@@ -33,7 +33,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 
 @NamedQueries({ @NamedQuery(name = "Endereco.listarPorFuncionamento", query = "select f from CselFeriado f where f.funcionamento.codigo = ?1 ") })
 
-public final class CselFeriado implements Serializable {
+public final class CsFeriado implements Serializable {
 
    /** serialVersionUID. */
    private static final long serialVersionUID = 2174684503038866912L;
@@ -44,14 +44,14 @@ public final class CselFeriado implements Serializable {
    private Integer codigo;
 
    @ManyToOne
-   @JoinColumn(name = "csel_funcionamento_codigo", referencedColumnName = "codigo", insertable = true, updatable = true, nullable = false )
-   private CselFuncionamento funcionamento;
+   @JoinColumn(name = "csel_funcionamento_codigo", referencedColumnName = "codigo", insertable = true, updatable = true, nullable = false)
+   private CsFuncionamento funcionamento;
 
    @Column(nullable = false, name = "FER_DATA")
    @Temporal(TemporalType.DATE)
    private Date feriadoData;
 
-   public CselFeriado() {
+   public CsFeriado() {
       super();
    }
 
@@ -60,11 +60,11 @@ public final class CselFeriado implements Serializable {
       return new StringBuilder(new SimpleDateFormat("dd/MM/yyyy").format(feriadoData)).toString();
    }
 
-   public CselFuncionamento getFuncionamento() {
+   public CsFuncionamento getFuncionamento() {
       return funcionamento;
    }
 
-   public void setFuncionamento(CselFuncionamento funcionamento) {
+   public void setFuncionamento(CsFuncionamento funcionamento) {
       this.funcionamento = funcionamento;
    }
 
