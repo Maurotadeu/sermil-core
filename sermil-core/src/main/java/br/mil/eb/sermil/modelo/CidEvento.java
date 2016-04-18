@@ -2,6 +2,8 @@ package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -15,6 +17,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import br.mil.eb.sermil.core.exceptions.SermilException;
 
 /** Entidade CidEvento. (Tabela CID_EVENTO)
  * @author Abreu Lopes
@@ -46,7 +50,7 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
       this.setPk(new CidEvento.PK());
    }
 
-   public CidEvento(final Long ra, final Integer codigo, final Date data) {
+   public CidEvento(final Long ra, final Integer codigo, final Date data) throws SermilException {
       this.setPk(new CidEvento.PK(ra, codigo, data));
    }
 
@@ -144,7 +148,7 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
          super();
       }
 
-      public PK(final Long cidadaoRa, final Integer codigo, final Date data) {
+      public PK(final Long cidadaoRa, final Integer codigo, final Date data) throws SermilException {
          super();
          this.setCidadaoRa(cidadaoRa);
          this.setCodigo(codigo);
@@ -226,7 +230,16 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
          this.codigo = codigo;
       }
 
-      public void setData(Date data) {
+      public void setData(Date data) throws SermilException {
+        final LocalDate hoje = LocalDate.now();
+        final LocalDate jan1950 = LocalDate.of(1950, Month.JANUARY, 1);
+        final LocalDate aux = new java.sql.Date(data.getTime()).toLocalDate();
+        if (aux.isBefore(jan1950)) {
+          throw new SermilException("Data anterior a 1950. Não é válida para cadastramento.");
+        }
+        if (aux.isAfter(hoje)) {
+          throw new SermilException("Data posterior ao dia atual. Não é válida para cadastramento.");
+        }
          this.data = data;
       }
 
