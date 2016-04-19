@@ -14,7 +14,7 @@ import br.mil.eb.sermil.modelo.CidFoto;
 /** Serviço de arquivo de foto de um cidadão.
  * @author Abreu Lopes
  * @since 4.0
- * @version 5.3.1
+ * @version 5.3.2
  */
 @Named("cidFotoServico")
 public class CidFotoServico {
