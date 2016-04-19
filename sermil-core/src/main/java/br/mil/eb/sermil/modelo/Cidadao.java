@@ -1,11 +1,13 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,11 +26,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.tipos.Cpf;
+import br.mil.eb.sermil.tipos.TipoEvento;
 import br.mil.eb.sermil.tipos.Utils;
 
 /** Entidade Cidadao. (TABELA CIDADAO)
@@ -1391,75 +1395,57 @@ public final class Cidadao implements Serializable {
       }
    }
 
-   public boolean hasCertificado(final int tipoCertificado) {
-      boolean status = false;
-      if (this.getCidCertificadoCollection() != null && !this.getCidCertificadoCollection().isEmpty()) {
-         for (final CidCertificado certificado : this.getCidCertificadoCollection()) {
-            if (certificado.getPk().getTipo() == tipoCertificado) {
-               status = true;
-            }
-         }
-      }
-      return status;
+   public boolean hasCertificado(final int tipoCertificado) throws CriterioException {
+     if (CollectionUtils.isEmpty(this.getCidCertificadoCollection())) {
+       throw new CriterioException("Cidadão sem lista de certificados.");
+     }
+     return this.getCidCertificadoCollection().stream().anyMatch(c -> c.getPk().getTipo() == tipoCertificado);
    }
    
-   public boolean hasEvento(final int eventoCodigo) {
-      boolean status = false;
-      if (this.getCidEventoCollection() != null && !this.getCidEventoCollection().isEmpty()) {
-         for (CidEvento evento : this.getCidEventoCollection()) {
-            if (evento.getPk().getCodigo() == eventoCodigo) {
-               status = true;
-            }
-         }
-      }
-      return status;
+   public boolean hasEvento(final int eventoCodigo) throws CriterioException {
+     if (CollectionUtils.isEmpty(this.getCidEventoCollection())) {
+       throw new CriterioException("Cidadão sem lista de eventos.");
+     }
+     return this.getCidEventoCollection().stream().anyMatch(e -> e.getPk().getCodigo() == eventoCodigo);
    }
 
-   public boolean isForaPrazo() throws CriterioException {
+   public Date getAlistamentoData() throws SermilException {
+     final Optional<CidEvento> alist =  this.getCidEventoCollection().stream().filter(e -> e.getPk().getCodigo() == TipoEvento.ALISTAMENTO.getCodigo()).findFirst();
+     if (!alist.isPresent()) {
+       throw new SermilException("Cidadão não tem Data de Alistamento.");
+     }
+     return alist.get().getPk().getData();
+   }
+   
+   public boolean isClasseConvocada(final int anoBase) throws CriterioException {
+     if (this.getNascimentoData() == null) {
+       throw new CriterioException("Cidadão sem data de nascimento.");
+     }
+     int anoNasc =  new java.sql.Date(this.getNascimentoData().getTime()).toLocalDate().getYear();
+     return (anoNasc+18 == anoBase) ? true : false;
+   }
+
+   public boolean isForaPrazo() throws SermilException {
       if (this.getNascimentoData() == null) {
          throw new CriterioException("Cidadão sem data de nascimento");
       }
-      boolean status = false;
-      final Calendar dtNasc = Calendar.getInstance();
-      dtNasc.setTime(this.getNascimentoData());
-      final Calendar hoje = Calendar.getInstance();
-      final Calendar jul = Calendar.getInstance();
-      final Calendar dez = Calendar.getInstance();
-      int anoAtual = hoje.get(Calendar.YEAR);
-      jul.set(anoAtual, 6, 1);   // 1 jul
-      dez.set(anoAtual, 11, 31); // 31 dez
-      if (dtNasc.get(Calendar.YEAR) < anoAtual - 18) {
-         status = true;
-      } else if (dtNasc.get(Calendar.YEAR) < anoAtual - 17) {
-         if (hoje.getTimeInMillis() >= jul.getTimeInMillis() && hoje.getTimeInMillis() <= dez.getTimeInMillis()) {
-            status = true;
-         }
-      }
-      return status;
+      final LocalDate dtAlist =  new java.sql.Date(this.getAlistamentoData().getTime()).toLocalDate();
+      final LocalDate dtNasc =  new java.sql.Date(this.getNascimentoData().getTime()).toLocalDate();
+      return ((dtNasc.getYear()+18 < dtAlist.getYear()) || (this.isClasseConvocada(dtAlist.getYear()) && dtAlist.getMonthValue() > 6)) ? true : false;
    }
 
    public boolean isForaLimiteIdade() throws CriterioException {
       if (this.getNascimentoData() == null) {
          throw new CriterioException("Cidadão sem data de nascimento");
       }
-      final Calendar limInf = Calendar.getInstance();
-      limInf.add(Calendar.YEAR, -17);
-      final Calendar limSup = Calendar.getInstance();
-      limSup.add(Calendar.YEAR, -45);
-      final Calendar dtNasc = Calendar.getInstance();
-      dtNasc.setTime(this.getNascimentoData());
-      if (dtNasc.get(Calendar.YEAR) > limInf.get(Calendar.YEAR) || dtNasc.get(Calendar.YEAR) < limSup.get(Calendar.YEAR)) {
-         return true;
-      }
-      return false;
+      int anoNasc =  new java.sql.Date(this.getNascimentoData().getTime()).toLocalDate().getYear();
+      int anoAtual = LocalDate.now().getYear();
+      return (anoNasc >= anoAtual - 45 && anoNasc <= anoAtual - 17) ? false : true;
    }
 
    public boolean isAlistadoInternet() {
       // Usando atributo mobSetor como flag de alistamento internet
-      if (this.getMobSetor() == 1) {
-         return true;
-      }
-      return false;
+      return (this.getMobSetor() == null || this.getMobSetor() != 1) ? false : true;
    }
    
 }

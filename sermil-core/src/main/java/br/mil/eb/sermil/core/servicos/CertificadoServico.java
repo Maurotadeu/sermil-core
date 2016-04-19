@@ -110,7 +110,7 @@ public class CertificadoServico {
       if (cidadao == null) {
          throw new SermilException("Cidadão não foi informado.");
       }
-      if (!cidadao.hasEvento(TipoEvento.EXCESSO.ordinal()) && !cidadao.hasEvento(TipoEvento.DISPENSA.ordinal())) {
+      if (!cidadao.hasEvento(TipoEvento.EXCESSO.getCodigo()) && !cidadao.hasEvento(TipoEvento.DISPENSA.getCodigo())) {
          throw new EventNotFoundException();
       }
       if (!cidadao.hasCertificado(TipoCertificado.CDI.ordinal())) {
