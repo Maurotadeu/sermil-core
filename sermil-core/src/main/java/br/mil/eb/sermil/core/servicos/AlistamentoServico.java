@@ -179,7 +179,7 @@ public class AlistamentoServico {
       cidadao.addCidDocumento(cd);
 
       // Evento de alistamento
-      final CidEvento ce = new CidEvento(cidadao.getRa(), TipoEvento.ALISTAMENTO.ordinal(), dataAtual);
+      final CidEvento ce = new CidEvento(cidadao.getRa(), TipoEvento.ALISTAMENTO.getCodigo(), dataAtual);
       ce.setAnotacao("Alistado pela Internet");
       cidadao.addCidEvento(ce);
 
