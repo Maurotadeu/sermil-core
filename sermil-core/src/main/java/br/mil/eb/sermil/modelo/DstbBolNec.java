@@ -28,14 +28,14 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 /** Boletim de Necessidade de OM (DSTB_BOLNEC).
  * @author Abreu Lopes
  * @since 3.4
- * @version $Id: DstbBolNec.java 2433 2014-05-22 19:16:47Z wlopes $
+ * @version 5.3.2
  */
 @Entity
 @Table(name = "DSTB_BOLNEC")
 @NamedQueries({
   @NamedQuery(name = "DstbBolNec.listarOm", query = "SELECT o FROM Om o WHERE EXISTS (SELECT DISTINCT b FROM DstbBolNec b WHERE b.pk.omCodigo = o.codigo) ORDER BY o.descricao"),
   @NamedQuery(name = "DstbBolNec.listarPorRm", query = "SELECT b FROM DstbBolNec b WHERE b.om.rm.codigo = ?1 order BY b.om.codigo"),
-  @NamedQuery(name = "DstbBolNec.listarPorOm", query = "SELECT b FROM DstbBolNec b WHERE b.pk.omCodigo = ?1 ORDER BY b.pk.numero")
+  @NamedQuery(name = "DstbBolNec.listarPorOm", query = "SELECT b FROM DstbBolNec b WHERE b.pk.omCodigo = ?1 ORDER BY b.pk.numero"),
 })
 @NamedStoredFunctionQuery(name="DstbBolNec.majorar", functionName="dis_bolnec.majorar", returnParameter=@StoredProcedureParameter(queryParameter="MSG"))
 //@NamedPLSQLStoredFunctionQuery(name="DstbBolNec.majorar", functionName="dis_bolnec.majorar", returnParameter=@PLSQLParameter(name="RESULT", databaseType="VARCHAR2(2000)"))

@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
@@ -17,13 +19,17 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 import br.mil.eb.sermil.core.exceptions.CselJaExisteException;
 import br.mil.eb.sermil.core.exceptions.CselNaoExisteException;
 
-/** Entidade RM.
+/**
+ * Entidade RM.
+ * 
  * @author Abreu Lopes
  * @since 3.0
  * @version 5.2.6
  */
 @Entity
 @NamedQuery(name = "Rm.listar", query = "SELECT r FROM Rm r")
+@NamedNativeQueries({
+      @NamedNativeQuery(resultClass = Rm.class, name = "rm.rmComProblemaDeBCCIAP", query = "select * from rm where CODIGO = ?1 and  (SELECT  COUNT(*) FROM cidadao PARTITION(ano_2015) c JOIN cid_bcc b ON c.ra = b.cidadao_ra JOIN csm m ON c.csm_codigo = m.codigo and  m.RM_CODIGO = ?1) > 1.1*(SELECT  count(*) total FROM cidadao PARTITION(ano_2015) c JOIN jsm j ON c.csm_codigo = j.csm_codigo AND c.jsm_codigo = j.codigo JOIN csm m ON j.csm_codigo = m.codigo WHERE c.situacao_militar = 4 AND c.escolaridade > 9 AND c.dispensa = 0 AND j.tributacao IN (1,2,4) and m.rm_codigo = ?1 )") })
 @PrimaryKey(validation = IdValidation.NULL)
 public final class Rm implements Comparable<Rm>, Serializable {
 
@@ -60,7 +66,7 @@ public final class Rm implements Comparable<Rm>, Serializable {
    public String toString() {
       return this.getSigla() == null ? "RM" : this.getSigla();
    }
-   
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -126,18 +132,19 @@ public final class Rm implements Comparable<Rm>, Serializable {
       this.cselCollection = cselCollection;
    }
 
-   public void addCsel(final Cs csel) throws CselJaExisteException{
-      if(this.cselCollection.contains(csel)) {
+   public void addCsel(final Cs csel) throws CselJaExisteException {
+      if (this.cselCollection.contains(csel)) {
          throw new CselJaExisteException();
       }
-      if(this.cselCollection == null) {
+
+      if (this.cselCollection == null) {
          this.cselCollection = new ArrayList<Cs>();
       }
       this.cselCollection.add(csel);
    }
-   
-   public void removeCsel(final Cs csel) throws CselNaoExisteException{
-      if(!this.cselCollection.contains(csel)) {
+
+   public void removeCsel(final Cs csel) throws CselNaoExisteException {
+      if (!this.cselCollection.contains(csel)) {
          throw new CselNaoExisteException();
       }
       this.cselCollection.remove(csel);

@@ -9,6 +9,8 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedNativeQueries;
+import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -27,6 +29,9 @@ import org.eclipse.persistence.annotations.PrimaryKey;
   @NamedQuery(name = "Om.listarPorRm", query = "SELECT o FROM Om o WHERE o.rm.codigo = ?1 AND o.omTipo BETWEEN 1 AND 9 ORDER BY o.sigla"),
   @NamedQuery(name = "Om.listarPorCriterio", query = "SELECT o FROM Om o WHERE o.omTipo BETWEEN 1 AND 9 AND o.sigla LIKE CONCAT(?1,'%') AND o.municipio.descricao LIKE CONCAT(?2,'%') ORDER BY o.sigla"),
   @NamedQuery(name = "Om.listarPorDescricao", query = "SELECT o FROM Om o WHERE o.omTipo BETWEEN 1 AND 9 AND o.descricao LIKE CONCAT(?1,'%')")
+})
+@NamedNativeQueries({
+   @NamedNativeQuery(resultClass=Om.class, name="alerta.OmSemBolnecNaRm", query="SELECT o.* FROM om o WHERE NOT EXISTS(SELECT null FROM dstb_bolnec b WHERE b.om_codigo = o.codigo) AND o.rm_codigo = ?1  AND o.codigo NOT BETWEEN 83000 AND 89999 AND o.om_tipo IN (1,2,3,4,5,6,7,8) ORDER BY o.codigo")
 })
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Om implements Comparable<Om>, Serializable {
