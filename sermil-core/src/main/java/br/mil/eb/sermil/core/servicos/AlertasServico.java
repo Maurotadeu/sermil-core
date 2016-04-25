@@ -55,23 +55,28 @@ public class AlertasServico {
       return lista.size() > 0 ? true : false;
    }
 
-   public Map<String, List<Alerta>> getPgcAlertas() {
+   public Map<String, List<Alerta>> getPgcAlertas(Map<String, Object> session) {
       final Map<String, List<Alerta>> alertas = new HashMap<String, List<Alerta>>(5);
-      alertas.put(this.env.getProperty("alistamento"), getAlistamentoAlerta());
-      alertas.put(this.env.getProperty("predispensa"), getPreDispensaAlerta());
-      alertas.put(this.env.getProperty("selecao"), getSelecaoAlerta());
-      alertas.put(this.env.getProperty("distribuicao"), getDistribuicaoAlerta());
-      alertas.put(this.env.getProperty("selecao.complementar"), getSelecaoComplementarAlerta());
+      alertas.put(this.env.getProperty("alistamento"), getAlistamentoAlerta(session));
+      alertas.put(this.env.getProperty("predispensa"), getPreDispensaAlerta(session));
+      alertas.put(this.env.getProperty("selecao"), getAlistamentoAlerta(session));
+      alertas.put(this.env.getProperty("distribuicao"), getDistribuicaoAlerta(session));
+      alertas.put(this.env.getProperty("selecao.complementar"), getSelecaoComplementarAlerta(session));
       return alertas;
    }
+   
+   private void incrementAlertsCount(Map<String, Object> session){
+   	session.put("alertsCount", (int) session.get("alertsCount")+1);
+   }
 
-   public List<Alerta> getAlistamentoAlerta() {
+   public List<Alerta> getAlistamentoAlerta(Map<String, Object> session) {
       final Alerta alerta = new Alerta();
       alerta.setTitulo(this.env.getProperty("alistamento.lancamento.dados.ano.atual"));
       alerta.setTipo(Alerta.TIPO_OK);
       if (!existePgcAnoAtual()) {
          alerta.addMessage(this.env.getProperty("alistamento.lancamento.dados.ano.atual.motivo"));
          alerta.setTipo(Alerta.TIPO_ERROR);
+         incrementAlertsCount(session);
       }
       final Alerta alerta2 = new Alerta();
       alerta2.setTitulo(this.env.getProperty("alistamento.lancamento.dados.proximo.ano"));
@@ -79,6 +84,7 @@ public class AlertasServico {
       if (!existePgcProximoAno()) {
          alerta2.addMessage(this.env.getProperty("alistamento.lancamento.dados.proximo.ano.motivo"));
          alerta2.setTipo(Alerta.TIPO_ERROR);
+         incrementAlertsCount(session);
       }
       final List<Alerta> alertas = new ArrayList<Alerta>(2);
       alertas.add(alerta);
@@ -86,7 +92,7 @@ public class AlertasServico {
       return alertas;
    }
 
-   public List<Alerta> getPreDispensaAlerta() {
+   public List<Alerta> getPreDispensaAlerta(Map<String, Object> session) {
       final Alerta alerta = new Alerta();
       alerta.setTitulo(this.env.getProperty("predispensa.lancamento.parametros.distribuicao"));
       alerta.setTipo(Alerta.TIPO_OK);
@@ -95,6 +101,7 @@ public class AlertasServico {
          if (!existeParametroDistribuicao(i)) {
             alerta.addMessage(String.valueOf(i + 1) + " " + this.env.getProperty("predispensa.rm.nao.lancou.parametros.distribuicao"));
             alerta.setTipo(Alerta.TIPO_ERROR);
+            incrementAlertsCount(session);
          }
       }
       final Alerta alerta2 = new Alerta();
@@ -104,6 +111,7 @@ public class AlertasServico {
          if (isDadosCsAlteradosForaDoPrazo(cs.getCodigo())) {
             alerta2.addMessage(cs.getCodigo() + " " + this.env.getProperty("predispensa.alteracao.dados.cs.msg"));
             alerta2.setTipo(Alerta.TIPO_ERROR);
+            incrementAlertsCount(session);
          }
       }
       final Alerta alerta3 = new Alerta();
@@ -117,6 +125,7 @@ public class AlertasServico {
             alerta3.setTipo(Alerta.TIPO_ERROR);
             alerta3.addMessage(
                   new StringBuilder().append(jsm.getCodigo()).append("/").append(jsm.getCsmCodigo()).append(" ").append(this.env.getProperty("predispensa.alteracao.tributacao.msg")).toString());
+            incrementAlertsCount(session);
          }
       }
       final List<Alerta> alertas = new ArrayList<Alerta>(3);
@@ -140,7 +149,7 @@ public class AlertasServico {
       return alertas;
    }
 
-   public List<Alerta> getDistribuicaoAlerta() {
+   public List<Alerta> getDistribuicaoAlerta(Map<String, Object> session) {
       final Alerta alerta1 = new Alerta();
       alerta1.setTitulo(this.env.getProperty("distribuicao.preenchimento.bolnec"));
       alerta1.setTipo(Alerta.TIPO_OK);
@@ -169,7 +178,7 @@ public class AlertasServico {
       return alertas;
    }
 
-   public List<Alerta> getSelecaoComplementarAlerta() {
+   public List<Alerta> getSelecaoComplementarAlerta(Map<String, Object> session) {
       //TODO: implementar SelecaoComplementarAlerta
       final List<Alerta> alertas = new ArrayList<Alerta>();
       return alertas;
