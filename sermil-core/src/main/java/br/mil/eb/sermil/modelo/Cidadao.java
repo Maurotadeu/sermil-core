@@ -1,11 +1,13 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -24,9 +26,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.tipos.Cpf;
+import br.mil.eb.sermil.tipos.TipoEvento;
 import br.mil.eb.sermil.tipos.Utils;
 
 /** Entidade Cidadao. (TABELA CIDADAO)
@@ -48,7 +54,8 @@ import br.mil.eb.sermil.tipos.Utils;
       @NamedQuery(name = "Cidadao.contarPorMaeNascNome", query = "SELECT COUNT(c.ra) FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc AND c.nome LIKE :nome"),
       @NamedQuery(name = "Cidadao.listarPorCsmJsm", query = "SELECT c FROM Cidadao c WHERE c.jsm.pk.csmCodigo = ?1 AND c.jsm.pk.codigo = ?2"),
       @NamedQuery(name = "Cidadao.listarPorFracao", query = "SELECT c FROM Cidadao c WHERE c.qcp.pk.omCodigo = ?1 AND c.qcp.pk.fracaoId = ?2 ORDER BY c.nome"),
-      @NamedQuery(name = "Cidadao.limpaEmail", query = "UPDATE Cidadao c SET c.email = null WHERE c.ra = ?1"), @NamedQuery(name = "Cidadao.listarUnico", query = "SELECT c FROM Cidadao c WHERE c.nome = ?1 AND c.mae = ?2 AND c.nascimentoData = ?3"),
+      @NamedQuery(name = "Cidadao.limpaEmail", query = "UPDATE Cidadao c SET c.email = null WHERE c.ra = ?1"),
+      @NamedQuery(name = "Cidadao.listarUnico", query = "SELECT c FROM Cidadao c WHERE c.nome = ?1 AND c.mae = ?2 AND c.nascimentoData = ?3"),
       @NamedQuery(name = "Cidadao.listarPorCpf", query = "SELECT c FROM Cidadao c WHERE c.cpf = ?1"),
       @NamedQuery(name = "Cidadao.SinpaWS1", query = "SELECT c.ra, c.nome, c.nascimentoData, c.mae, c.sexo, c.cpf, c.idtMilitar, c.situacaoMilitar FROM Cidadao c WHERE c.cpf = ?1"),
       @NamedQuery(name = "Cidadao.SinpaWS2", query = "SELECT c.ra, c.nome, c.nascimentoData, c.mae, c.sexo, c.cpf, c.idtMilitar, c.situacaoMilitar FROM Cidadao c WHERE c.mae = ?1 AND c.nascimentoData = ?2 AND c.nome = ?3")
@@ -894,13 +901,13 @@ public final class Cidadao implements Serializable {
       this.comportamento = comportamento;
    }
 
-   public void setCpf(String cpf) {
-      if (cpf == null || cpf.isEmpty()) {
+   public void setCpf(String cpf) throws SermilException {
+      if (StringUtils.isBlank(cpf)) {
          this.cpf = null;
       } else if (Cpf.isCpf(cpf)) {
          this.cpf = cpf;
       } else {
-         throw new IllegalArgumentException("CPF invalido.");
+         throw new SermilException("Informe um CPF válido.");
       }
    }
 
@@ -945,14 +952,15 @@ public final class Cidadao implements Serializable {
    }
 
    public void setEmail(String email) {
-      this.email = (email == null || email.trim().isEmpty() ? null : email.trim().toLowerCase());
-      if (this.email != null && !this.email.matches(EMAIL_REGEXP)) {
+      if (StringUtils.isBlank(email) && !this.email.matches(EMAIL_REGEXP)) {
          this.email = null;
+      } else {
+        this.email = email.trim().toLowerCase();
       }
    }
 
    public void setEndereco(String endereco) {
-      this.endereco = (endereco == null || endereco.trim().isEmpty() ? null : Utils.limpaAcento(endereco.trim().toUpperCase()));
+      this.endereco = (StringUtils.isBlank(endereco) ? null : Utils.limpaAcento(endereco.trim().toUpperCase()));
    }
 
    public void setEscolaridade(Byte escolaridade) {
@@ -988,7 +996,7 @@ public final class Cidadao implements Serializable {
    }
 
    public void setIdtMilitar(String idtMilitar) {
-      this.idtMilitar = (idtMilitar == null || idtMilitar.trim().isEmpty() ? null : idtMilitar.replaceAll("\\D", "").trim());
+      this.idtMilitar = (StringUtils.isBlank(idtMilitar) ? null : idtMilitar.replaceAll("\\D", "").trim());
    }
 
    public void setJsm(Jsm jsm) {
@@ -996,7 +1004,7 @@ public final class Cidadao implements Serializable {
    }
 
    public void setMae(String mae) {
-      this.mae = (mae == null || mae.trim().isEmpty() ? null : Utils.limpaAcento(mae.toUpperCase()));
+      this.mae = (StringUtils.isBlank(mae) ? null : Utils.limpaAcento(mae.toUpperCase()));
    }
 
    public void setMedicoCrm(String medicoCrm) {
@@ -1023,15 +1031,15 @@ public final class Cidadao implements Serializable {
       this.municipioResidencia = municipioResidencia;
    }
 
-   public void setNascimentoData(Date data) {
+   public void setNascimentoData(Date data) throws SermilException {
       if (data != null) {
          final Calendar cal = Calendar.getInstance();
          if (cal.getTime().before(data)) {
-            throw new IllegalArgumentException("Data maior que a data atual.");
+            throw new SermilException("Data de nascimento maior que a data atual.");
          } else {
             cal.set(1900, 0, 1); // 01-01-1900
             if (cal.getTime().after(data)) {
-               throw new IllegalArgumentException("Data menor que 01/01/1900.");
+               throw new SermilException("Data de nascimento menor que 01/01/1900.");
             }
          }
          this.nascimentoData = data;
@@ -1039,7 +1047,7 @@ public final class Cidadao implements Serializable {
    }
 
    public void setNome(String nome) {
-      this.nome = (nome == null || nome.trim().isEmpty() ? null : Utils.limpaAcento(nome.toUpperCase()));
+      this.nome = (StringUtils.isBlank(nome) ? null : Utils.limpaAcento(nome.toUpperCase()));
    }
 
    public void setOcupacao(Ocupacao ocupacao) {
@@ -1063,7 +1071,7 @@ public final class Cidadao implements Serializable {
    }
 
    public void setPai(String pai) {
-      this.pai = (pai == null || pai.trim().isEmpty() ? null : Utils.limpaAcento(pai.toUpperCase()));
+      this.pai = (StringUtils.isBlank(pai) ? null : Utils.limpaAcento(pai.toUpperCase()));
    }
 
    public void setPaisNascimento(Pais paisNascimento) {
@@ -1099,7 +1107,7 @@ public final class Cidadao implements Serializable {
    }
 
    public void setRg(String rg) {
-      this.rg = (rg == null || rg.trim().isEmpty() ? null : rg.replaceAll("\\W", "").trim().toUpperCase());
+      this.rg = (StringUtils.isBlank(rg) ? null : rg.replaceAll("\\W", "").trim().toUpperCase());
    }
 
    public void setSabeNadar(Byte sabeNadar) {
@@ -1115,7 +1123,7 @@ public final class Cidadao implements Serializable {
    }
 
    public void setTelefone(String telefone) {
-      this.telefone = (telefone == null || telefone.trim().isEmpty() ? null : telefone.replaceAll("\\D", "").trim());
+      this.telefone = (StringUtils.isBlank(telefone) ? null : telefone.replaceAll("\\D", "").trim());
    }
 
    public void setTipoFisico(Byte tipoFisico) {
@@ -1127,7 +1135,7 @@ public final class Cidadao implements Serializable {
    }
 
    public void setTsc(String tsc) {
-      this.tsc = (tsc == null || tsc.trim().isEmpty() ? null : tsc.replaceAll("\\D", "").trim());
+      this.tsc = (StringUtils.isBlank(tsc) ? null : tsc.replaceAll("\\D", "").trim());
    }
 
    public void setTsiI(Byte tsiI) {
@@ -1249,7 +1257,7 @@ public final class Cidadao implements Serializable {
          this.setCidDocApresColletion(new ArrayList<CidDocApres>(1));
       }
       if (this.getCidDocApresColletion().contains(cda)) {
-         throw new SermilException("Documento já existe");
+         throw new SermilException("Documento apresentado já existe");
       }
       this.getCidDocApresColletion().add(cda);
       if (cda.getCidadao() != this) {
@@ -1275,7 +1283,7 @@ public final class Cidadao implements Serializable {
          this.setCidEmpresaCollection(new ArrayList<CidEmpresa>(1));
       }
       if (this.getCidEmpresaCollection().contains(ce)) {
-         throw new SermilException("Empresa jÃ¡ existe");
+         throw new SermilException("Empresa já existe");
       }
       this.getCidEmpresaCollection().add(ce);
       if (ce.getCidadao() != this) {
@@ -1387,75 +1395,57 @@ public final class Cidadao implements Serializable {
       }
    }
 
-   public boolean hasCertificado(final int tipoCertificado) {
-      boolean status = false;
-      if (this.getCidCertificadoCollection() != null && !this.getCidCertificadoCollection().isEmpty()) {
-         for (final CidCertificado certificado : this.getCidCertificadoCollection()) {
-            if (certificado.getPk().getTipo() == tipoCertificado) {
-               status = true;
-            }
-         }
-      }
-      return status;
+   public boolean hasCertificado(final int tipoCertificado) throws CriterioException {
+     if (CollectionUtils.isEmpty(this.getCidCertificadoCollection())) {
+       throw new CriterioException("Cidadão sem lista de certificados.");
+     }
+     return this.getCidCertificadoCollection().stream().anyMatch(c -> c.getPk().getTipo() == tipoCertificado);
    }
    
-   public boolean hasEvento(final int eventoCodigo) {
-      boolean status = false;
-      if (this.getCidEventoCollection() != null && !this.getCidEventoCollection().isEmpty()) {
-         for (CidEvento evento : this.getCidEventoCollection()) {
-            if (evento.getPk().getCodigo() == eventoCodigo) {
-               status = true;
-            }
-         }
-      }
-      return status;
+   public boolean hasEvento(final int eventoCodigo) throws CriterioException {
+     if (CollectionUtils.isEmpty(this.getCidEventoCollection())) {
+       throw new CriterioException("Cidadão sem lista de eventos.");
+     }
+     return this.getCidEventoCollection().stream().anyMatch(e -> e.getPk().getCodigo() == eventoCodigo);
    }
 
-   public boolean isForaPrazo() throws CriterioException {
+   public Date getAlistamentoData() throws SermilException {
+     final Optional<CidEvento> alist =  this.getCidEventoCollection().stream().filter(e -> e.getPk().getCodigo() == TipoEvento.ALISTAMENTO.getCodigo()).findFirst();
+     if (!alist.isPresent()) {
+       throw new SermilException("Cidadão não tem Data de Alistamento.");
+     }
+     return alist.get().getPk().getData();
+   }
+   
+   public boolean isClasseConvocada(final int anoBase) throws CriterioException {
+     if (this.getNascimentoData() == null) {
+       throw new CriterioException("Cidadão sem data de nascimento.");
+     }
+     int anoNasc =  new java.sql.Date(this.getNascimentoData().getTime()).toLocalDate().getYear();
+     return (anoNasc+18 == anoBase) ? true : false;
+   }
+
+   public boolean isForaPrazo() throws SermilException {
       if (this.getNascimentoData() == null) {
          throw new CriterioException("Cidadão sem data de nascimento");
       }
-      boolean status = false;
-      final Calendar dtNasc = Calendar.getInstance();
-      dtNasc.setTime(this.getNascimentoData());
-      final Calendar hoje = Calendar.getInstance();
-      final Calendar jul = Calendar.getInstance();
-      final Calendar dez = Calendar.getInstance();
-      int anoAtual = hoje.get(Calendar.YEAR);
-      jul.set(anoAtual, 6, 1);   // 1 jul
-      dez.set(anoAtual, 11, 31); // 31 dez
-      if (dtNasc.get(Calendar.YEAR) < anoAtual - 18) {
-         status = true;
-      } else if (dtNasc.get(Calendar.YEAR) < anoAtual - 17) {
-         if (hoje.getTimeInMillis() >= jul.getTimeInMillis() && hoje.getTimeInMillis() <= dez.getTimeInMillis()) {
-            status = true;
-         }
-      }
-      return status;
+      final LocalDate dtAlist =  new java.sql.Date(this.getAlistamentoData().getTime()).toLocalDate();
+      final LocalDate dtNasc =  new java.sql.Date(this.getNascimentoData().getTime()).toLocalDate();
+      return ((dtNasc.getYear()+18 < dtAlist.getYear()) || (this.isClasseConvocada(dtAlist.getYear()) && dtAlist.getMonthValue() > 6)) ? true : false;
    }
 
    public boolean isForaLimiteIdade() throws CriterioException {
       if (this.getNascimentoData() == null) {
          throw new CriterioException("Cidadão sem data de nascimento");
       }
-      final Calendar limInf = Calendar.getInstance();
-      limInf.add(Calendar.YEAR, -17);
-      final Calendar limSup = Calendar.getInstance();
-      limSup.add(Calendar.YEAR, -45);
-      final Calendar dtNasc = Calendar.getInstance();
-      dtNasc.setTime(this.getNascimentoData());
-      if (dtNasc.get(Calendar.YEAR) > limInf.get(Calendar.YEAR) || dtNasc.get(Calendar.YEAR) < limSup.get(Calendar.YEAR)) {
-         return true;
-      }
-      return false;
+      int anoNasc =  new java.sql.Date(this.getNascimentoData().getTime()).toLocalDate().getYear();
+      int anoAtual = LocalDate.now().getYear();
+      return (anoNasc >= anoAtual - 45 && anoNasc <= anoAtual - 17) ? false : true;
    }
 
    public boolean isAlistadoInternet() {
       // Usando atributo mobSetor como flag de alistamento internet
-      if (this.getMobSetor() == 1) {
-         return true;
-      }
-      return false;
+      return (this.getMobSetor() == null || this.getMobSetor() != 1) ? false : true;
    }
    
 }
