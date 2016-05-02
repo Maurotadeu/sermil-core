@@ -9,7 +9,7 @@ import javax.persistence.ManyToOne;
 /** Empresa diretamente relacionada a segurança nacional (EDRSN).
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Empresa.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.3.2
  */
 @Entity
 public final class Empresa implements Comparable<Empresa>, Serializable {
@@ -47,9 +47,9 @@ public final class Empresa implements Comparable<Empresa>, Serializable {
   
   @Override
   public String toString() {
-    return new StringBuilder(this.getCodigo() == null ? "COD" : this.getCodigo())
+    return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo())
       .append(" - ")
-      .append(this.getDescricao() == null ? "DESCRICAO" : this.getDescricao())
+      .append(this.getDescricao() == null ? "EMPRESA" : this.getDescricao())
       .toString();
   }
 

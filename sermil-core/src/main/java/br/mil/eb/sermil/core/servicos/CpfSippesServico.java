@@ -2,6 +2,9 @@ package br.mil.eb.sermil.core.servicos;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +37,7 @@ import br.mil.eb.sermil.tipos.CpfInfoSippes;
  * IMPORTANTE: Importar o certificado digital do SIPPES no cacerts da JVM do servidor SERMIL.
  * @author Abreu Lopes
  * @since 5.2.5
- * @version 5.3.0
+ * @version 5.4
  */
 @Named("CpfSippesServico")
 @RemoteProxy(name = "cpfSippesServico")
@@ -61,14 +64,29 @@ public class CpfSippesServico {
    }
 
    @RemoteMethod
-   public CpfInfoSippes pesquisarCpf(final String cpf) throws CPFSippesException, SermilException, URISyntaxException {
+   public CpfInfoSippes pesquisarCpf(final String cpf, final String dtNasc) throws CPFSippesException, SermilException, URISyntaxException {
+      int anoAtual = LocalDate.now().getYear();
+      LocalDate dataNasc;
       //  CPF é inválido
       if (!Cpf.isCpf(cpf)) {
          throw new CPFSippesException("CPF inválido, informe um número de CPF válido.");
       };
+      // Data de nascimento (Somente classe atual)
+      if (dtNasc == null) {
+        throw new CPFSippesException("Data de Nascimento inválida.(NULA)");
+      } else {
+        try {
+          dataNasc = new java.sql.Date(new SimpleDateFormat("dd/MM/yyyy").parse(dtNasc).getTime()).toLocalDate();
+        } catch (ParseException pe) {
+          throw new CPFSippesException("Data de Nascimento inválida. (Formato aceito dd/mm/yyyy)");
+        }      
+      }
+      if (dataNasc.getYear() + 18 != anoAtual) {
+        throw new SermilException("Cidadão não pertence à classe atual de alistamento (18 anos de idade).<br/>Dirija-se a uma Junta de Serviço Militar.");
+      }
       // Verifica se o CPF já existe na base de dados
       if (this.cidadaoServico.isCPFCadastrado(cpf)) {
-         throw new CPFSippesException("CPF já foi cadastrado no sistema. Procure o órgão de Serviço Militar se necessário.");
+         //throw new CPFSippesException("CPF já foi cadastrado no sistema.<br/>Dirija-se a uma Junta de Serviço Militar.");
       }
       // Usando a implementação default do Spring para REST-RS
       final RestTemplate restClient = new RestTemplate();
@@ -89,6 +107,8 @@ public class CpfSippesServico {
       // Tratamento da Resposta do servidor
       if (info != null && info.getErro() != null) {
          throw new SermilException(info.getErro());
+      } else if (!dataNasc.equals(new java.sql.Date(info.getDataNascimento().getTime()).toLocalDate())) {
+        throw new SermilException("Data de Nascimento informada é diferente da data de Nascimento do CPF.<br/>Dirija-se a uma Junta de Serviço Militar.");
       } else {
          log.debug("JAX-RS: {}", info);
          return info;

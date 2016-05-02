@@ -28,6 +28,7 @@ import br.mil.eb.sermil.modelo.CidDocumento;
 import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.Jsm;
+import br.mil.eb.sermil.modelo.Ocupacao;
 import br.mil.eb.sermil.modelo.PreAlistamento;
 import br.mil.eb.sermil.modelo.RaMestre;
 import br.mil.eb.sermil.tipos.Ra;
@@ -39,7 +40,7 @@ import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 /** Alistamento de Cidadão.
  * @author Abreu Lopes
  * @since 5.2.7
- * @version 5.3.2
+ * @version 5.4
  */
 @Named("alistamentoServico")
 public class AlistamentoServico {
@@ -112,7 +113,6 @@ public class AlistamentoServico {
       cidadao.setEstadoCivil(alistamento.getEstadoCivil());
       cidadao.setSexo(alistamento.getSexo());
       cidadao.setEscolaridade(alistamento.getEscolaridade());
-      cidadao.setOcupacao(alistamento.getOcupacao());
       cidadao.setVinculacaoAno(Calendar.getInstance().get(Calendar.YEAR));
       cidadao.setZonaResidencial(alistamento.getZonaResidencial());
       cidadao.setMunicipioResidencia(alistamento.getMunicipioResidencia());
@@ -127,7 +127,11 @@ public class AlistamentoServico {
       cidadao.setCs(alistamento.getJsm().getCs());
       cidadao.setAtualizacaoData(dataAtual);
       cidadao.setMobDestino(Byte.decode("1")); // Flag indicando Alistamento Internet
-      
+      if (alistamento.getOcupacao() == null || StringUtils.isBlank(alistamento.getOcupacao().getCodigo())) {
+        cidadao.setOcupacao(new Ocupacao("999999"));
+      } else {
+        cidadao.setOcupacao(alistamento.getOcupacao());
+      }      
       // Verifica os limites de idade
       if (cidadao.isForaLimiteIdade()) {
          throw new SermilException("Alistamento permitido somente dos 17 aos 45 anos. Procure a JSM se for o caso.");

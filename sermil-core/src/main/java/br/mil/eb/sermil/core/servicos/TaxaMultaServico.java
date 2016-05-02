@@ -5,8 +5,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,10 +18,9 @@ import br.mil.eb.sermil.modelo.TaxaMulta;
 /** Serviços de Taxa/Multa.
  * @author Abreu Lopes, Aryene
  * @since 5.2.6
- * @version 5.2.6
+ * @version 5.4
  */
 @Named("taxaMultaServico")
-@RemoteProxy(name = "taxaMultaServico")
 public class TaxaMultaServico {
 
    protected static final Logger logger = LoggerFactory.getLogger(TaxaMultaServico.class);
@@ -43,12 +40,10 @@ public class TaxaMultaServico {
       return lista;
    }
 
-   @RemoteMethod
    public Object[] listarArtigo() throws SermilException {
       return this.tmDao.findByNamedQuery("TaxaMulta.listarArtigo").toArray(new Object[0]);
    }
 
-   @RemoteMethod
    public TaxaMulta[] listarPorArtigo(final Integer artigo) throws SermilException {
       return this.tmDao.findByNamedQuery("TaxaMulta.listarPorArtigo", artigo).toArray(new TaxaMulta[0]);
    }

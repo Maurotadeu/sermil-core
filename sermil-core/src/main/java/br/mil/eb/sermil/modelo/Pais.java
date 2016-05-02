@@ -13,7 +13,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Entidade País.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.2.6
+ * @version 5.3.2
  */
 @Entity
 @NamedQuery(name = "Pais.listar", query = "SELECT p FROM Pais p ORDER BY p.descricao")
@@ -53,7 +53,7 @@ public final class Pais implements Comparable<Pais>, Serializable {
   public String toString() {
     return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo().toString())
       .append(" - ")
-      .append(this.getDescricao() == null ? "DESCRICAO" : this.getDescricao())
+      .append(this.getDescricao() == null ? "PAIS" : this.getDescricao())
       .toString();
   }
 

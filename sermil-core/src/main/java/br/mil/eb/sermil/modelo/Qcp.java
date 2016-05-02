@@ -2,6 +2,7 @@ package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
@@ -15,7 +16,7 @@ import javax.persistence.Table;
 /** Quadro de Cargos (QC).
  * @author Abreu Lopes
  * @since 3.4
- * @version $Id: Qcp.java 2344 2013-10-17 14:45:09Z gardino $
+ * @version 5.3.2
  */
 @Entity
 @Table(name="QCP") 
@@ -63,31 +64,31 @@ public final class Qcp implements Comparable<Qcp>, Serializable {
   @Column(name = "CARGO_NB_EV")
   private String cargoNbEv;
 
-  @ManyToOne
+  @ManyToOne(cascade=CascadeType.REFRESH)
   @JoinColumn(name = "QM_CODIGO", insertable = false, updatable = false)
   private Qm qm;
 
-  @ManyToOne
+  @ManyToOne(cascade=CascadeType.REFRESH)
   @JoinColumn(name = "POSTO_GRADUACAO_CODIGO", insertable = false, updatable = false)
   private PostoGraduacao postoGraduacao;
 
-  @ManyToOne
+  @ManyToOne(cascade=CascadeType.REFRESH)
   @JoinColumn(name = "HABILITACAO_1_CODIGO", insertable = false, updatable = false)
   private QcpHabilitacao habilitacao1;
 
-  @ManyToOne
+  @ManyToOne(cascade=CascadeType.REFRESH)
   @JoinColumn(name = "HABILITACAO_2_CODIGO", insertable = false, updatable = false)
   private QcpHabilitacao habilitacao2;
 
-  @ManyToOne
+  @ManyToOne(cascade=CascadeType.REFRESH)
   @JoinColumn(name = "QCP_LEGENDA_CODIGO", insertable = false, updatable = false)
   private QcpLegenda qcpLegenda;
 
-  @ManyToOne
+  @ManyToOne(cascade=CascadeType.REFRESH)
   @JoinColumn(name = "QCP_OBS_CODIGO", insertable = false, updatable = false)
   private QcpObservacao qcpObservacao;
 
-  @ManyToOne
+  @ManyToOne(cascade=CascadeType.REFRESH)
   @JoinColumn(name = "OM_CODIGO", insertable = false, updatable = false)
   private Om om;
 

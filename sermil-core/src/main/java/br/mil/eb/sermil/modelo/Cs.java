@@ -28,7 +28,7 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 /** Entidade CS (Comissao de Selecao).
  * @author Anselmo Ribeiro, Abreu lopes
  * @since 5.2.3
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @Table(name = "CS")
@@ -39,7 +39,7 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Cs implements Serializable {
 
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 8846493879279340834L;
 
    @Id
    @GeneratedValue(strategy=GenerationType.TABLE, generator="CS")
@@ -55,15 +55,15 @@ public final class Cs implements Serializable {
    @Column
    private Integer numero;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name = "RM_CODIGO", referencedColumnName = "CODIGO", nullable = false)
    private Rm rm;
 
-   @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, orphanRemoval=true)
+   @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, cascade = CascadeType.ALL , orphanRemoval = true)
    @JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO")
    private List<CsExclusaoData> csExclusaoDataCollection;
 
-   @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, cascade=CascadeType.ALL , orphanRemoval=true)
+   @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, cascade = CascadeType.ALL , orphanRemoval = true)
    @JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO")
    private List<CsFuncionamento> csFuncionamentoCollection;
 

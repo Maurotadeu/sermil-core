@@ -16,14 +16,14 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Entrevista de cidadao na Comissão de Seleção.
  * @author Anselmo Ribeiro, Abreu Lopes
  * @since 5.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @Table(name = "CS_ENTREVISTA")
 @PrimaryKey(validation = IdValidation.NULL)
 public final class CsEntrevista implements Serializable {
 
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 8912995736225963946L;
 
    @Id
    @Column(name = "CIDADAO_RA") 

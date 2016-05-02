@@ -6,8 +6,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,10 +20,9 @@ import br.mil.eb.sermil.modelo.Delegacia;
 /** Serviços de Delegacia de Serviço Militar (DelSM).
  * @author Abreu Lopes
  * @since 5.0
- * @version 5.2.3
+ * @version 5.4
  */
 @Named("delegaciaServico")
-@RemoteProxy(name="delegaciaServico")
 public class DelegaciaServico {
 
   protected static final Logger logger = LoggerFactory.getLogger(DelegaciaServico.class);
@@ -58,7 +55,6 @@ public class DelegaciaServico {
     return lista;
   }
 
-  @RemoteMethod
   public Object[] listarPorCsm(final Byte csm) throws SermilException {
     final List<Delegacia> lista = this.dao.findByNamedQuery("Del.listarPorCsm", csm);
     return lista.toArray(new Delegacia[0]);

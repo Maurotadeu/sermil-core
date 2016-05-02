@@ -18,7 +18,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Delegacia de Serviço Militar.
  * @author Abreu Lopes
  * @since 4.0
- * @version 5.2.4
+ * @version 5.4
  */
 @Entity
 @NamedQueries({
@@ -28,7 +28,6 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation=IdValidation.NULL)
 public class Delegacia implements Serializable {
 
-  /** serialVersionUID.*/
   private static final long serialVersionUID = 6148473059170164840L;
 
   @EmbeddedId
@@ -46,7 +45,7 @@ public class Delegacia implements Serializable {
   @JoinColumn(name = "DELEGADO", referencedColumnName="CPF")
   private Usuario delegado;
 
-  @OneToOne
+  @OneToOne(cascade = CascadeType.REFRESH)
   @JoinColumn(name="OM_CODIGO", referencedColumnName="CODIGO")
   private Om om;
 
