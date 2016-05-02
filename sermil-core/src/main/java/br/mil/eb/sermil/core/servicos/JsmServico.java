@@ -5,7 +5,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,6 +17,7 @@ import br.mil.eb.sermil.core.exceptions.JsmException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Jsm;
+import br.mil.eb.sermil.modelo.JsmInfo;
 
 /** Gerenciamento de Junta de Serviço Militar (JSM).
  * @author Abreu Lopes
@@ -75,7 +75,10 @@ public class JsmServico {
       if (jsm.getJsmInfo() == null && jsmBd != null && jsmBd.getJsmInfo() != null) {
          jsm.setJsmInfo(jsmBd.getJsmInfo());
       }
-      if (StringUtils.isBlank(jsm.getJsmInfo().getInternet())) {
+      if (jsm.getJsmInfo() == null) {
+        jsm.setJsmInfo(new JsmInfo());
+        jsm.getJsmInfo().getPk().setCsmCodigo(jsm.getPk().getCsmCodigo());
+        jsm.getJsmInfo().getPk().setJsmCodigo(jsm.getPk().getCodigo());
         jsm.getJsmInfo().setInternet("N");
       }
       jsm.setInfor("S");

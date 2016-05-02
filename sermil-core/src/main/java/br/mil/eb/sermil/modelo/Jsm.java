@@ -62,12 +62,12 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
    @PrimaryKeyJoinColumn
    private JsmInfo jsmInfo;
 
-   @OneToOne(mappedBy="jsm", fetch=FetchType.EAGER, cascade={CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval=false)
-   @PrimaryKeyJoinColumn
-   private RaMestre raMestre;
+   //@OneToOne(mappedBy="jsm", fetch=FetchType.EAGER, cascade=CascadeType.REFRESH, orphanRemoval=false)
+   //@PrimaryKeyJoinColumn
+   //private RaMestre raMestre;
 
    @ManyToOne(cascade=CascadeType.REFRESH)
-   @JoinColumn(name="MUNICIPIO_CODIGO", referencedColumnName="CODIGO", insertable=false, updatable=false, nullable=false)
+   @JoinColumn(name="MUNICIPIO_CODIGO", referencedColumnName="CODIGO", nullable=false)
    private Municipio municipio;
 
    @ManyToOne(cascade=CascadeType.REFRESH)
@@ -212,7 +212,7 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
    public void setPk(PK pk) {
       this.pk = pk;
    }
-
+   /*
    public RaMestre getRaMestre() {
       return this.raMestre;
    }
@@ -220,7 +220,8 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
    public void setRaMestre(RaMestre raMestre) {
       this.raMestre = raMestre;
    }
-
+   */
+   
    /* Telefone obtido indiretamente de JsmInfo, não existe atributo telefone em Jsm. */
    public String getTelefone() {
       final StringBuilder sb = new StringBuilder("");

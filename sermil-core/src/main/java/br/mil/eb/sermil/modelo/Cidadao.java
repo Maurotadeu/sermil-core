@@ -900,13 +900,9 @@ public final class Cidadao implements Serializable {
       this.comportamento = comportamento;
    }
 
-   public void setCpf(String cpf) throws SermilException {
-      if (StringUtils.isBlank(cpf)) {
-         this.cpf = null;
-      } else if (Cpf.isCpf(cpf)) {
+   public void setCpf(String cpf) {
+      if (!StringUtils.isBlank(cpf) && Cpf.isCpf(cpf)) {
          this.cpf = cpf;
-      } else {
-         throw new SermilException("Informe um CPF válido.");
       }
    }
 
@@ -951,9 +947,7 @@ public final class Cidadao implements Serializable {
    }
 
    public void setEmail(String email) {
-      if (StringUtils.isBlank(email) && !this.email.matches(EMAIL_REGEXP)) {
-         this.email = null;
-      } else {
+      if (!StringUtils.isBlank(email) && this.email.matches(EMAIL_REGEXP)) {
         this.email = email.trim().toLowerCase();
       }
    }
