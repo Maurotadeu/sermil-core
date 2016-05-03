@@ -2,6 +2,7 @@ package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -15,7 +16,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Circunscrição de Serviço Militar.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Csm.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.3.2
  */
 @Entity
 @NamedQueries({
@@ -37,7 +38,7 @@ public final class Csm implements Comparable<Csm>, Serializable {
 
   private String ativo;
   
-  @ManyToOne
+  @ManyToOne(cascade=CascadeType.REFRESH)
   @JoinColumn(name="RM_CODIGO", nullable=false)
   private Rm rm;
 
@@ -76,7 +77,7 @@ public final class Csm implements Comparable<Csm>, Serializable {
 
   @Override
   public String toString() {
-    return this.getSigla() == null ? "SIGLA" : this.getSigla();
+    return this.getSigla() == null ? "CSM" : this.getSigla();
   }
 
   public Byte getCodigo() {

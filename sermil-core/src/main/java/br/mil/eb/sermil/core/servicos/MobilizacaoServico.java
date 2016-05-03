@@ -111,7 +111,7 @@ public class MobilizacaoServico {
       }
       final CidEvento evento = new CidEvento();
       evento.getPk().setCidadaoRa(cid.getRa());
-      evento.getPk().setCodigo(TipoEvento.ALISTAMENTO.ordinal());
+      evento.getPk().setCodigo(TipoEvento.ALISTAMENTO.getCodigo());
       evento.getPk().setData(dataEvento.getTime());
       evento.setAnotacao(msg);
       cid.addCidEvento(evento);

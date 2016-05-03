@@ -13,7 +13,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Ocupação.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Ocupacao.java 2467 2014-06-12 14:17:52Z wlopes $
+ * @version 5.3.2
  */
 @Entity
 @NamedQueries({
@@ -73,7 +73,7 @@ public final class Ocupacao implements Comparable<Ocupacao>, Serializable {
   public String toString() {
     return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo())
       .append(" - ")
-      .append(this.getDescricao() == null ? "DESCRICAO" : this.getDescricao())
+      .append(this.getDescricao() == null ? "OCUPACAO" : this.getDescricao())
       .toString();
   }
 

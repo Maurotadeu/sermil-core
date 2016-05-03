@@ -10,7 +10,7 @@ import javax.persistence.NamedQuery;
 /** Habilitação.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Habilitacao.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.3.2
  */
 @Entity
 @NamedQuery(name = "Habilitacao.listar", query = "SELECT h FROM Habilitacao h ORDER BY h.descricao")
@@ -49,9 +49,9 @@ public final class Habilitacao implements Comparable<Habilitacao>, Serializable 
   
   @Override
   public String toString() {
-    return new StringBuilder(this.getCodigo() == null ? "COD" : this.getCodigo())
+    return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo())
                .append(" - ")
-               .append(this.getDescricao() == null ? "DESC" : this.getDescricao())
+               .append(this.getDescricao() == null ? "HABILITACAO" : this.getDescricao())
                .toString();
   }
 

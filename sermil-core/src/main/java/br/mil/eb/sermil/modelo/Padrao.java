@@ -11,7 +11,7 @@ import javax.persistence.NamedQuery;
 /** Padrão Funcional.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Padrao.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.3.2
  */
 @Entity
 @NamedQueries({
@@ -92,9 +92,9 @@ public final class Padrao implements Comparable<Padrao>, Serializable {
   
   @Override
   public String toString() {
-    return new StringBuilder(this.getOrdemNr() == null ? "NULO" : this.getOrdemNr().toString())
+    return new StringBuilder(this.getOrdemNr() == null ? "CODIGO" : this.getOrdemNr().toString())
       .append(" - ")
-      .append(this.getCodigo() == null ? "NULO" : this.getCodigo())
+      .append(this.getCodigo() == null ? "PADRAO" : this.getCodigo())
       .toString();
   }
 

@@ -2,6 +2,7 @@ package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -12,7 +13,7 @@ import javax.persistence.NamedQuery;
 /** Qualificação Militar (QM).
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Qm.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.3.2
  */
 @Entity
 @NamedQueries(value = {
@@ -40,7 +41,7 @@ public final class Qm implements Comparable<Qm>, Serializable {
 
   private String tipo;
 
-  @ManyToOne
+  @ManyToOne(cascade=CascadeType.REFRESH)
   @JoinColumn(name = "ARMA_QD_SV_CODIGO")
   private ArmaQdSv armaQdSv;
 
@@ -95,9 +96,9 @@ public final class Qm implements Comparable<Qm>, Serializable {
 
   @Override
   public String toString() {
-    return new StringBuilder(this.getCodigo() == null ? "NULO" : this.getCodigo())
+    return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo())
     .append(" - ")
-    .append(this.getDescricao() == null ? "NULO" : this.getDescricao())
+    .append(this.getDescricao() == null ? "QM" : this.getDescricao())
     .toString();
   }
 

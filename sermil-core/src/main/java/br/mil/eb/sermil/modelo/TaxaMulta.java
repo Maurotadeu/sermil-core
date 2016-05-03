@@ -17,7 +17,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Entidade Taxa/Multa.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.2.6
+ * @version 5.4
  */
 @Entity
 @Table(name = "TAXA_MULTA")
@@ -117,7 +117,7 @@ public final class TaxaMulta implements Serializable {
     /** Chave primária (PK) de Taxa/Multa.
      * @author Abreu Lopes
      * @since 3.0
-     * @version $Id$
+     * @version 5.4
      */
     @Embeddable
     public static class PK implements Serializable {

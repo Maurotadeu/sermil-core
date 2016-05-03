@@ -12,7 +12,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Escolaridade.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Escolaridade.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.3.2
  */
 @Entity
 @NamedQuery(name = "Escolaridade.listar", query = "SELECT e FROM Escolaridade e")
@@ -39,9 +39,9 @@ public final class Escolaridade implements Comparable<Escolaridade>, Serializabl
   
   @Override
   public String toString() {
-    return new StringBuilder(this.getReferencia() == null ? "NULO" : this.getReferencia().toString())
+    return new StringBuilder(this.getReferencia() == null ? "REF" : this.getReferencia().toString())
       .append(" - ")
-      .append(this.getDescricao() == null ? "NULO" : this.getDescricao())
+      .append(this.getDescricao() == null ? "ESCOLARIDADE" : this.getDescricao())
       .toString();
   }
 

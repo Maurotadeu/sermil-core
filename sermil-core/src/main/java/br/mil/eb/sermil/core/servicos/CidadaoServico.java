@@ -170,7 +170,7 @@ public class CidadaoServico {
     }
 
     // Evento de alistamento
-    final CidEvento ce = new CidEvento(cidBd.getRa(), TipoEvento.SELECAO.ordinal(), dataAtual.getTime());
+    final CidEvento ce = new CidEvento(cidBd.getRa(), TipoEvento.SELECAO.getCodigo(), dataAtual.getTime());
     ce.setAnotacao("Seleção " + dataAtual.get(Calendar.YEAR));
     try {
       cidBd.addCidEvento(ce);
