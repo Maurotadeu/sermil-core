@@ -64,8 +64,6 @@ public final class Cidadao implements Serializable {
 
    private static final long serialVersionUID = 3157254435214343492L;
 
-   private static final String EMAIL_REGEXP = "^([a-zA-Z0-9_\\.\\-\\+])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";
-
    @Column(name = "ACUIDADE_AUDITIVA")
    private Byte acuidadeAuditiva;
 
@@ -947,9 +945,7 @@ public final class Cidadao implements Serializable {
    }
 
    public void setEmail(String email) {
-      if (!StringUtils.isBlank(email) && this.email.matches(EMAIL_REGEXP)) {
-        this.email = email.trim().toLowerCase();
-      }
+     this.email = (StringUtils.isBlank(email) ? null : email.trim().toLowerCase());
    }
 
    public void setEndereco(String endereco) {
@@ -1100,7 +1096,7 @@ public final class Cidadao implements Serializable {
    }
 
    public void setRg(String rg) {
-      this.rg = (StringUtils.isBlank(rg) ? null : rg.replaceAll("\\W", "").trim().toUpperCase());
+      this.rg = (StringUtils.isBlank(rg) ? null : rg.trim().toUpperCase());
    }
 
    public void setSabeNadar(Byte sabeNadar) {
