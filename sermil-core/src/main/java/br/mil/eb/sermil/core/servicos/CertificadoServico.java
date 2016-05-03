@@ -129,7 +129,7 @@ public class CertificadoServico {
       if (cidadao.getSituacaoMilitar() != TipoSituacaoMilitar.LICENCIADO.ordinal()) {
          throw new SermilException("Cidadão não está na situação LICENCIADO (15).");
       }
-      if (!cidadao.hasEvento(TipoEvento.LICENCIAMENTO.ordinal())) {
+      if (!cidadao.hasEvento(TipoEvento.LICENCIAMENTO.getCodigo())) {
          throw new CidadaoNaoTemEventoException();
       }
       if (cidadao.getCidDocApresColletion().size() <= 0) {

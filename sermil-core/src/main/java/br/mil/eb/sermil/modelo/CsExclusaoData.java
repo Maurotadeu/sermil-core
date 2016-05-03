@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,7 +25,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Exclusão de datas de funcionamento da CS.
  * @author Anselmo Ribeiro, Abreu Lopes
  * @since 5.3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @Table(name = "CS_EXCLUSAO_DATA")
@@ -34,14 +35,14 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation = IdValidation.NULL)
 public final class CsExclusaoData implements Serializable {
 
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = -1291977020265834199L;
 
    @Id
    @GeneratedValue(strategy = GenerationType.TABLE, generator = "CS_EXCLUSAO_DATA")
    @TableGenerator(name = "CS_EXCLUSAO_DATA", allocationSize = 1)
    private Integer codigo;
 
-   @ManyToOne
+   @ManyToOne(cascade = CascadeType.REFRESH)
    @JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO", nullable = false)
    private Cs cs;
 

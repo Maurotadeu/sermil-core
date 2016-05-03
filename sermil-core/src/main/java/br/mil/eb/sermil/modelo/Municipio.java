@@ -1,29 +1,24 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
-import br.mil.eb.sermil.core.exceptions.EnderecoJaExisteException;
-import br.mil.eb.sermil.core.exceptions.EnderecoNaoExisteException;
 import br.mil.eb.sermil.tipos.Utils;
 
 /** Entidade Município.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.2.6
+ * @version 5.3.2
  */
 @Entity
 @NamedQueries({
@@ -46,13 +41,9 @@ public final class Municipio implements Serializable {
 
    private String sigla;
 
-   @ManyToOne(fetch = FetchType.EAGER)
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name = "UF_SIGLA", nullable = false)
    private Uf uf;
-
-   /** Endereços de CS. */
-   @OneToMany(mappedBy = "municipio", fetch = FetchType.EAGER)
-   private List<CsEndereco> enderecosDeCsel;
 
    public Municipio() {
    }
@@ -108,28 +99,4 @@ public final class Municipio implements Serializable {
       this.uf = uf;
    }
 
-   public List<CsEndereco> getEnderecosDeCsel() {
-      return enderecosDeCsel;
-   }
-
-   public void setEnderecosDeCsel(List<CsEndereco> enderecosDeCsel) {
-      this.enderecosDeCsel = enderecosDeCsel;
-   }
-
-   public void addEnderecoDeCsel(CsEndereco endereco) throws EnderecoJaExisteException {
-      if (this.enderecosDeCsel.contains(endereco))
-         throw new EnderecoJaExisteException();
-      if (this.enderecosDeCsel == null)
-         this.enderecosDeCsel = new ArrayList<CsEndereco>();
-      this.enderecosDeCsel.add(endereco);
-      if (endereco.getMunicipio() == null || endereco.getMunicipio() != this)
-         endereco.setMunicipio(this);
-   }
-   
-   public void removeEnderecoDeCsel(CsEndereco endereco) throws EnderecoNaoExisteException {
-      if(!this.enderecosDeCsel.contains(endereco))
-         throw new EnderecoNaoExisteException();
-      this.enderecosDeCsel.remove(endereco);
-      endereco.setMunicipio(null);
-   }
 }

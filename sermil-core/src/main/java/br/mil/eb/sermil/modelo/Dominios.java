@@ -5,27 +5,21 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
-/**
- * Domínios do sistema.
- * 
+/** Domínios (ID/VALOR).
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Dominios.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
-@NamedQueries({ @NamedQuery(name = "Dominios.listar", query = "SELECT d FROM Dominios d ORDER BY d.pk.id, d.pk.valor"),
-      @NamedQuery(name = "Dominios.listarPorId", query = "SELECT d FROM Dominios d WHERE d.pk.id = ?1 ORDER BY d.pk.valor") })
-@NamedNativeQueries({
-      @NamedNativeQuery(resultClass = Dominios.class, name = "rm.RmNaoLancouParametroDistribuicao", query = "select d.* from DOMINIOS d where id=60 and d.VALOR in ( select distinct om.om_tipo from om inner join rm on rm.codigo = om.rm_codigo where rm.codigo = ?1  and om.OM_TIPO not in ( select distinct(p.om_tipo) from DSTB_PARAMETRO p inner join rm rm2 on rm2.CODIGO = p.RM_CODIGO where rm2.CODIGO = ?1 and EXTRACT(year FROM p.GPT_A_DATA) = (select extract( year from trunc(sysdate, 'YYYY')) from dual) and EXTRACT(year FROM p.GPT_B_DATA) = (select extract( year from trunc(sysdate, 'YYYY')) from dual)+1 ) ) ") 
+@NamedQueries({
+  @NamedQuery(name = "Dominios.listar", query = "SELECT d FROM Dominios d ORDER BY d.pk.id, d.pk.valor"),
+  @NamedQuery(name = "Dominios.listarPorId", query = "SELECT d FROM Dominios d WHERE d.pk.id = ?1 ORDER BY d.pk.valor")
 })
 public final class Dominios implements Comparable<Dominios>, Serializable {
 
-   /** serialVersionUID. */
    private static final long serialVersionUID = -5090737257099795858L;
 
    @EmbeddedId
@@ -50,8 +44,11 @@ public final class Dominios implements Comparable<Dominios>, Serializable {
 
    @Override
    public String toString() {
-      return new StringBuilder(this.getPk().getId().toString()).append(" - ").append(this.getDominio()).append(" (").append(this.getPk().getValor()).append(" = ").append(this.getDescricao())
-            .append(")").toString();
+      return new StringBuilder(this.getPk().getId().toString())
+          .append(" - ").append(this.getDominio())
+          .append(" (").append(this.getPk().getValor())
+          .append(" = ").append(this.getDescricao())
+          .append(")").toString();
    }
 
    public String getDescricao() {

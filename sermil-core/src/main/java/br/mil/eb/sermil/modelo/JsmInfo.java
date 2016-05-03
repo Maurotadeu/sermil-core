@@ -19,7 +19,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Junta de Serviço Militar - Informações complementares.
  * @author Abreu Lopes
  * @since 3.4
- * @version $Id: JsmInfo.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "JSM_INFO")
@@ -172,7 +172,7 @@ public final class JsmInfo implements Serializable {
   /** Chave primária (PK) de JsmInfo.
    * @author Abreu Lopes
    * @since 3.4
-   * @version $Id: JsmInfo.java 1637 2011-11-25 13:52:11Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Serializable {

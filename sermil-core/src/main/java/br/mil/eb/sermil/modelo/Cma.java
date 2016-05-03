@@ -11,7 +11,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Entidade CMA (Comando Militar de Área).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.2.6
+ * @version 5.3.2
  */
 @Entity
 @PrimaryKey(validation=IdValidation.NULL)

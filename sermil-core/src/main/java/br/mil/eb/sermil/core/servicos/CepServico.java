@@ -15,7 +15,7 @@ import br.mil.eb.sermil.modelo.Cep;
 /** Serviço de informações de CEP. (View CEP)
  * @author Abreu Lopes
  * @since 5.1
- * @version $Id$
+ * @version 5.4
  */
 @Named("cepServico")
 @RemoteProxy(name="cepServico")

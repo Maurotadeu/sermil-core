@@ -5,8 +5,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,15 +17,14 @@ import br.mil.eb.sermil.core.exceptions.JsmException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Jsm;
-import br.mil.eb.sermil.modelo.Municipio;
+import br.mil.eb.sermil.modelo.JsmInfo;
 
 /** Gerenciamento de Junta de Serviço Militar (JSM).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Named("jsmServico")
-@RemoteProxy(name = "jsmServico")
 public class JsmServico {
 
    protected static final Logger logger = LoggerFactory.getLogger(JsmServico.class);
@@ -58,46 +55,31 @@ public class JsmServico {
       return lista;
    }
 
+   public Jsm[] listarPorCsm(final Byte csm) throws SermilException {
+     final List<Jsm> lista = this.jsmDao.findByNamedQuery("Jsm.listarPorCsm", csm);
+     return lista.toArray(new Jsm[0]);
+   }
+
    @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob','md')")
    public Jsm recuperar(final Byte csmCodigo, final Short codigo) throws SermilException {
       return this.jsmDao.findById(new Jsm.PK(csmCodigo, codigo));
    }
 
-   /** Realiza a conversão explícita dos códigos de CSM/JSM para uso no javascript (DWR).
-    * @param csm código da CSM
-    * @param jsm código da JSM
-    * @return JSM
-    * @throws SermilException exceção da aplicação
-    */
-   @RemoteMethod
-   public Jsm recuperarJsm(final String csm, final String jsm) throws SermilException {
-      return this.recuperar(Byte.valueOf(csm), Short.valueOf(jsm));
-   }
-
-   @RemoteMethod
-   public Object[] listarPorCsm(final Byte csm) throws SermilException {
-      // final List<Jsm> lista = jsmDao.findByNamedQuery("Jsm.listarPorCsm", csm);
-      // return lista.toArray(new Jsm[0]);
-      final List<Object[]> lista = this.jsmDao.findBySQL("SELECT codigo, descricao||' ('||codigo||')' FROM jsm WHERE csm_codigo = ? ORDER BY descricao", csm);
-      Object[] o = lista.toArray();
-      return o;
-   }
-
-   public Jsm[] listarPorCsmRa(final Byte csm) throws SermilException {
-      final List<Jsm> lista = this.jsmDao.findByNamedQuery("Jsm.listarPorCsm", csm);
-      return lista.toArray(new Jsm[0]);
-   }
-
-   public List<Jsm> listarPorMunicipio(final Municipio mun) throws SermilException {
-      return this.jsmDao.findByNamedQuery("Jsm.listarInternet", mun.getCodigo());
-   }
-
    @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm')")
    @Transactional
    public Jsm salvar(final Jsm jsm) throws SermilException {
+      if (jsm.getCs() != null && jsm.getCs().getCodigo() == null) {
+        jsm.setCs(null);
+      }
       final Jsm jsmBd = this.recuperar(jsm.getPk().getCsmCodigo(), jsm.getPk().getCodigo());
       if (jsm.getJsmInfo() == null && jsmBd != null && jsmBd.getJsmInfo() != null) {
          jsm.setJsmInfo(jsmBd.getJsmInfo());
+      }
+      if (jsm.getJsmInfo() == null) {
+        jsm.setJsmInfo(new JsmInfo());
+        jsm.getJsmInfo().getPk().setCsmCodigo(jsm.getPk().getCsmCodigo());
+        jsm.getJsmInfo().getPk().setJsmCodigo(jsm.getPk().getCodigo());
+        jsm.getJsmInfo().setInternet("N");
       }
       jsm.setInfor("S");
       return this.jsmDao.save(jsm);

@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.persistence.annotations.IdValidation;
@@ -25,7 +26,7 @@ import br.mil.eb.sermil.tipos.Utils;
 /** Junta de Serviço Militar (JSM).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @NamedQueries({
@@ -40,15 +41,15 @@ import br.mil.eb.sermil.tipos.Utils;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Jsm implements Comparable<Jsm>, Serializable {
 
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = -483015668504217291L;
 
    @EmbeddedId
    private PK pk;
 
    private String descricao;
 
-   @ManyToOne(fetch=FetchType.EAGER)
-   @JoinColumn(name="CS", referencedColumnName="CODIGO", insertable=false, updatable=false, nullable=false)
+   @ManyToOne(optional = true)
+   @JoinColumn(name="CS", referencedColumnName="CODIGO")
    private Cs cs;
 
    private Short delsm;
@@ -58,16 +59,18 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
    private String infor;
 
    @OneToOne(mappedBy="jsm", fetch=FetchType.EAGER, cascade=CascadeType.ALL, orphanRemoval=true)
+   @PrimaryKeyJoinColumn
    private JsmInfo jsmInfo;
 
-   @OneToOne(mappedBy="jsm", fetch=FetchType.EAGER, cascade={CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval=false)
-   private RaMestre raMestre;
+   //@OneToOne(mappedBy="jsm", fetch=FetchType.EAGER, cascade=CascadeType.REFRESH, orphanRemoval=false)
+   //@PrimaryKeyJoinColumn
+   //private RaMestre raMestre;
 
-   @ManyToOne(fetch=FetchType.EAGER)
-   @JoinColumn(name="MUNICIPIO_CODIGO", referencedColumnName="CODIGO", insertable=false, updatable=false, nullable=false)
+   @ManyToOne(cascade=CascadeType.REFRESH)
+   @JoinColumn(name="MUNICIPIO_CODIGO", referencedColumnName="CODIGO", nullable=false)
    private Municipio municipio;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name="CSM_CODIGO", referencedColumnName="CODIGO", insertable=false, updatable=false, nullable=false)
    private Csm csm;
 
@@ -113,7 +116,7 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
    public String toString() {
       return new StringBuilder(this.getPk().toString())
             .append(" - ")
-            .append(this.getDescricao() == null ? "DESCRICAO" : this.getDescricao())
+            .append(this.getDescricao() == null ? "JSM DESCRICAO" : this.getDescricao())
             .toString();
    }
 
@@ -209,7 +212,7 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
    public void setPk(PK pk) {
       this.pk = pk;
    }
-
+   /*
    public RaMestre getRaMestre() {
       return this.raMestre;
    }
@@ -217,7 +220,8 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
    public void setRaMestre(RaMestre raMestre) {
       this.raMestre = raMestre;
    }
-
+   */
+   
    /* Telefone obtido indiretamente de JsmInfo, não existe atributo telefone em Jsm. */
    public String getTelefone() {
       final StringBuilder sb = new StringBuilder("");

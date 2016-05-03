@@ -32,7 +32,7 @@ import br.mil.eb.sermil.tipos.ArquivoCabecalho;
 /** Processamento de carga do arquivo de averbações do Módulo JSM (SASM).
  * @author Abreu Lopes, Gardino
  * @since 4.0
- * @version 5.2.8
+ * @version 5.4
  */
 @Named("entradaAverbacaoJsmServico")
 public class EntradaAverbacaoJsmServico {
@@ -83,6 +83,11 @@ public class EntradaAverbacaoJsmServico {
         switch (linha.substring(0, 2)) {
         case "01": // Certificado
           try {
+            stmt = con.prepareStatement("DELETE FROM CID_CERTIFICADO WHERE CIDADAO_RA = ? AND TIPO = ?");
+            stmt.setLong(1, Long.valueOf(linha.substring(2, 14)));
+            stmt.setInt(2, this.converteTipoCertificado(Integer.parseInt(linha.substring(14, 16))));
+            stmt.execute();
+            stmt.close();
             stmt = con.prepareStatement("INSERT INTO CID_CERTIFICADO (CIDADAO_RA,TIPO,DATA,NUMERO,SERIE,RESPONSAVEL) VALUES(?, ?, ?, ?, ?, ?)");
             stmt.setLong(1, Long.valueOf(linha.substring(2, 14)));
             stmt.setInt(2, this.converteTipoCertificado(Integer.parseInt(linha.substring(14, 16))));

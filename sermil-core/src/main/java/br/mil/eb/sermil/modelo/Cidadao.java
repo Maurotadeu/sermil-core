@@ -38,7 +38,7 @@ import br.mil.eb.sermil.tipos.Utils;
 /** Entidade Cidadao. (TABELA CIDADAO)
  * @author Abreu Lopes
  * @since 2.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @Table(name = "CIDADAO")
@@ -62,10 +62,7 @@ import br.mil.eb.sermil.tipos.Utils;
 })
 public final class Cidadao implements Serializable {
 
-   /** serialVersionUID. */
-   private static final long serialVersionUID = 1L;
-
-   private static final String EMAIL_REGEXP = "^([a-zA-Z0-9_\\.\\-\\+])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$";
+   private static final long serialVersionUID = 3157254435214343492L;
 
    @Column(name = "ACUIDADE_AUDITIVA")
    private Byte acuidadeAuditiva;
@@ -87,7 +84,7 @@ public final class Cidadao implements Serializable {
 
    private Byte calcado;
 
-   @ManyToOne
+   @ManyToOne(cascade = CascadeType.REFRESH)
    @JoinColumn(name = "CARGO_MILITAR_CODIGO", referencedColumnName = "CODIGO")
    private CargoMilitar cargoMilitar;
 
@@ -107,7 +104,7 @@ public final class Cidadao implements Serializable {
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidAverbacao> cidAverbacaoCollection;
 
-   @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+   @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
    private CidBcc cidBcc;
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
@@ -131,10 +128,10 @@ public final class Cidadao implements Serializable {
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidEmpresa> cidEmpresaCollection;
 
-   @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+   @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
    private CidEximido cidEximido;
 
-   @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
+   @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
    @PrimaryKeyJoinColumn
    private CidFoto cidFoto;
 
@@ -165,7 +162,7 @@ public final class Cidadao implements Serializable {
 
    private String cpf;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name = "CS", referencedColumnName = "CODIGO")
    private Cs cs;
 
@@ -224,8 +221,8 @@ public final class Cidadao implements Serializable {
    @Column(name = "IDT_MILITAR")
    private String idtMilitar;
 
-   @ManyToOne
-   @JoinColumns({ @JoinColumn(name = "CSM_CODIGO", referencedColumnName = "CSM_CODIGO"), @JoinColumn(name = "JSM_CODIGO", referencedColumnName = "CODIGO") })
+   @ManyToOne(cascade=CascadeType.REFRESH)
+   @JoinColumns({@JoinColumn(name = "CSM_CODIGO", referencedColumnName = "CSM_CODIGO"), @JoinColumn(name = "JSM_CODIGO", referencedColumnName = "CODIGO")})
    private Jsm jsm;
 
    private String mae;
@@ -242,11 +239,11 @@ public final class Cidadao implements Serializable {
    @Column(name = "MOB_SITUACAO")
    private Byte mobSituacao;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name = "MUNICIPIO_NASCIMENTO_CODIGO", referencedColumnName = "CODIGO")
    private Municipio municipioNascimento;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name = "MUNICIPIO_RESIDENCIA_CODIGO", referencedColumnName = "CODIGO")
    private Municipio municipioResidencia;
 
@@ -256,11 +253,11 @@ public final class Cidadao implements Serializable {
 
    private String nome;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name = "OCUPACAO_CODIGO", referencedColumnName = "CODIGO")
    private Ocupacao ocupacao;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name = "OM_CODIGO", referencedColumnName = "CODIGO")
    private Om om;
 
@@ -275,11 +272,11 @@ public final class Cidadao implements Serializable {
 
    private String pai;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name = "PAIS_NASCIMENTO_CODIGO", referencedColumnName = "CODIGO")
    private Pais paisNascimento;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name = "PAIS_RESIDENCIA_CODIGO", referencedColumnName = "CODIGO")
    private Pais paisResidencia;
 
@@ -288,15 +285,15 @@ public final class Cidadao implements Serializable {
 
    private Short peso;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name = "POSTO_GRADUACAO_CODIGO", referencedColumnName = "CODIGO")
    private PostoGraduacao postoGraduacao;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumns({ @JoinColumn(name = "QCP_OM_CODIGO", referencedColumnName = "OM_CODIGO"), @JoinColumn(name = "QCP_FRACAO_ID", referencedColumnName = "FRACAO_ID") })
    private Qcp qcp;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name = "QM_CODIGO", referencedColumnName = "CODIGO")
    private Qm qm;
 
@@ -901,13 +898,9 @@ public final class Cidadao implements Serializable {
       this.comportamento = comportamento;
    }
 
-   public void setCpf(String cpf) throws SermilException {
-      if (StringUtils.isBlank(cpf)) {
-         this.cpf = null;
-      } else if (Cpf.isCpf(cpf)) {
+   public void setCpf(String cpf) {
+      if (!StringUtils.isBlank(cpf) && Cpf.isCpf(cpf)) {
          this.cpf = cpf;
-      } else {
-         throw new SermilException("Informe um CPF válido.");
       }
    }
 
@@ -952,11 +945,7 @@ public final class Cidadao implements Serializable {
    }
 
    public void setEmail(String email) {
-      if (StringUtils.isBlank(email) && !this.email.matches(EMAIL_REGEXP)) {
-         this.email = null;
-      } else {
-        this.email = email.trim().toLowerCase();
-      }
+     this.email = (StringUtils.isBlank(email) ? null : email.trim().toLowerCase());
    }
 
    public void setEndereco(String endereco) {
@@ -1107,7 +1096,7 @@ public final class Cidadao implements Serializable {
    }
 
    public void setRg(String rg) {
-      this.rg = (StringUtils.isBlank(rg) ? null : rg.replaceAll("\\W", "").trim().toUpperCase());
+      this.rg = (StringUtils.isBlank(rg) ? null : rg.trim().toUpperCase());
    }
 
    public void setSabeNadar(Byte sabeNadar) {

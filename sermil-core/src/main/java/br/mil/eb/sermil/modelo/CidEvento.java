@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
@@ -23,16 +24,17 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 /** Entidade CidEvento. (Tabela CID_EVENTO)
  * @author Abreu Lopes
  * @since 2.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @Table(name = "CID_EVENTO")
 @NamedQueries({@NamedQuery(name = "Evento.cidadaoPodeImprimirCdi", query = "SELECT e.pk.cidadaoRa FROM CidEvento e WHERE e.pk.cidadaoRa = ?1 and e.pk.codigo in (3,6,13,14,24)"),
                @NamedQuery(name = "Evento.listarPorCodigo", query = "SELECT e FROM CidEvento e WHERE e.pk.cidadaoRa = ?1 and e.pk.codigo = ?2"),
-               @NamedQuery(name = "Evento.listarPorRa", query = "SELECT e FROM CidEvento e WHERE e.pk.cidadaoRa = ?1") })
+               @NamedQuery(name = "Evento.listarPorRa", query = "SELECT e FROM CidEvento e WHERE e.pk.cidadaoRa = ?1")
+})
 public final class CidEvento implements Comparable<CidEvento>, Serializable {
 
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 1473835585849221630L;
 
    @EmbeddedId
    private CidEvento.PK pk;
@@ -42,7 +44,7 @@ public final class CidEvento implements Comparable<CidEvento>, Serializable {
    @Column(name = "BI_ABI_NR")
    private String biAbiNr;
 
-   @ManyToOne
+   @ManyToOne(cascade = CascadeType.REFRESH)
    @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
    private Cidadao cidadao;
 

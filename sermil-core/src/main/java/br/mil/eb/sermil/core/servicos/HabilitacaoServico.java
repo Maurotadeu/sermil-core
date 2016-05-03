@@ -17,7 +17,7 @@ import br.mil.eb.sermil.modelo.Habilitacao;
 /** Serviço de Habilitação Militar.
  * @author Abreu Lopes
  * @since 4.0
- * @version $Id: HabilitacaoServico.java 2427 2014-05-15 13:23:38Z wlopes $
+ * @version 5.4
  */
 @Named("habilitacaoServico")
 @RemoteProxy(name="habilitacaoServico")

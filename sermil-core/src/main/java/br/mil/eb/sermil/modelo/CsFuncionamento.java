@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,8 +13,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -27,7 +26,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Periodos e Locais de funcionamento das CSs.
  * @author Anselmo Ribeiro, Abreu Lopes
- * @since 5.3.2
+ * @since 5.4
  */
 @Entity
 @Table(name = "CS_FUNCIONAMENTO")
@@ -35,13 +34,10 @@ import org.eclipse.persistence.annotations.PrimaryKey;
    @NamedQuery(name = "CsFuncionamento.listarPorCs", query = "select f from CsFuncionamento f where f.cs.codigo = ?1"),
    @NamedQuery(name = "CsFuncionamento.listarPorCsAno", query = "select f from CsFuncionamento f where f.cs.codigo = ?1 and f.anoBase = ?2")
 })
-@NamedNativeQueries({
-   @NamedNativeQuery(resultClass=CsFuncionamento.class, name="CsFuncionamento.listarPorCsNativo", query="select f.* from cs inner join CS_FUNCIONAMENTO f on f.CS_CODIGO = cs.CODIGO where cs.codigo = ?1")
-})
 @PrimaryKey(validation = IdValidation.NULL)
 public final class CsFuncionamento implements Serializable {
 
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 8060897827910910048L;
 
    @Id
    @GeneratedValue(strategy = GenerationType.TABLE, generator = "CS_FUNCIONAMENTO")
@@ -59,7 +55,7 @@ public final class CsFuncionamento implements Serializable {
    @Temporal(TemporalType.DATE)
    private Date terminoData;
 
-   @ManyToOne
+   @ManyToOne(cascade = CascadeType.REFRESH)
    @JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO", nullable = false)
    private Cs cs;
 

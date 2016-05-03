@@ -1,6 +1,7 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -19,7 +20,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** CS - Agendamento.
  * @author Abreu Lopes
  * @since 5.2.8
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @Table(name = "CS_AGENDAMENTO")
@@ -32,7 +33,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 })
 public final class CsAgendamento implements Serializable {
 
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 4296531679466838124L;
 
    @EmbeddedId
    private PK pk;
@@ -53,7 +54,7 @@ public final class CsAgendamento implements Serializable {
 
    @Override
    public String toString() {
-      return this.getPk().toString();
+      return new StringBuilder("AGENDAMENTO: ").append(this.getPk()).append(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(this.getDataSelecao())).toString();
    }
    
    @Override
@@ -85,12 +86,12 @@ public final class CsAgendamento implements Serializable {
    /** Chave primária (PK) de CsAgendamento.
     * @author Abreu Lopes
     * @since 5.2.8
-    * @version 5.3.2
+    * @version 5.4
     */
    @Embeddable
    public static class PK implements Comparable<CsAgendamento.PK>, Serializable {
 
-      private static final long serialVersionUID = 1L;
+      private static final long serialVersionUID = 4663394082030794278L;
 
       @Column(name="CS_CODIGO")
       private Integer csCodigo;
