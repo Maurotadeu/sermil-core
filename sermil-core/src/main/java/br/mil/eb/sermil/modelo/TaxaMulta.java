@@ -22,8 +22,8 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @Entity
 @Table(name = "TAXA_MULTA")
 @NamedQueries({
-    @NamedQuery(name = "TaxaMulta.listarArtigo", query = "SELECT DISTINCT t.pk.artigo FROM TaxaMulta t"),
-    @NamedQuery(name = "TaxaMulta.listarPorArtigo", query = "SELECT t FROM TaxaMulta t WHERE t.pk.artigo = ?1 ")
+    @NamedQuery(name = "TaxaMulta.listarArtigo", query = "SELECT DISTINCT t.pk.artigo, t.pk.artigo FROM TaxaMulta t"),
+    @NamedQuery(name = "TaxaMulta.listarPorArtigo", query = "SELECT DISTINCT t.pk.numero, t.pk.numero FROM TaxaMulta t WHERE t.pk.artigo = ?1")
 })
 @PrimaryKey(validation=IdValidation.NULL)
 public final class TaxaMulta implements Serializable {

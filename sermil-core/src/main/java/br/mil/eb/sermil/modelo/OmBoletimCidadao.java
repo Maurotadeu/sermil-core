@@ -17,7 +17,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** OM Boletim de Incorporação Cidadão (Tabela OM_BOLETIM_CIDADAO).
  * @author Abreu Lopes, gardino
  * @since 4.6
- * @version $Id: OmBoletimCidadao.java 2436 2014-05-27 13:26:23Z wlopes $
+ * @version $Id: 5.4
  */
 @Entity
 @Table(name="OM_BOLETIM_CIDADAO")

@@ -8,6 +8,9 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
+
 /** Padrão Funcional.
  * @author Abreu Lopes
  * @since 3.0
@@ -18,7 +21,7 @@ import javax.persistence.NamedQuery;
    @NamedQuery(name = "Padrao.listar", query = "SELECT p.codigo FROM Padrao p WHERE SUBSTRING(p.codigo,2,2) != '99' AND p.codigo NOT IN ('F01','F02')"),
    @NamedQuery(name = "Padrao.padroesOrdenados", query = "SELECT p FROM Padrao p order by p.codigo ")   
 })
-
+@PrimaryKey(validation=IdValidation.NULL)
 public final class Padrao implements Comparable<Padrao>, Serializable {
 
   /** serialVersionUID. */

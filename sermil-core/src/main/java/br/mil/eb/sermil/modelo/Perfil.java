@@ -6,13 +6,17 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
+
 /** Perfil de acesso.
  * @author Abreu Lopes
  * @since 3.5
- * @version $Id: Perfil.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @NamedQuery(name = "Perfil.listar", query = "SELECT p FROM Perfil p")
+@PrimaryKey(validation=IdValidation.NULL)
 public final class Perfil implements Comparable<Perfil>, Serializable {
 
   private static final long serialVersionUID = -2139527113542785550L;

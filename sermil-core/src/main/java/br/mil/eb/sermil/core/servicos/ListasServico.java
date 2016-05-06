@@ -25,7 +25,10 @@ import br.mil.eb.sermil.tipos.Lista;
 public class ListasServico {
 
    protected static final Logger logger = LoggerFactory.getLogger(ListasServico.class);
-
+   
+   @Inject
+   private TaxaMultaServico taxaMultaServico;
+   
    @Inject
    private JsmDao jsmDao;
 
@@ -35,7 +38,8 @@ public class ListasServico {
 
    @RemoteMethod
    public Lista[] listarArtigo() throws SermilException {
-     return this.execute("SELECT DISTINCT TO_CHAR(artigo), TO_CHAR(artigo) FROM taxa_multa ORDER BY artigo");
+     return this.taxaMultaServico.listarArtigo();
+     //return this.execute("SELECT DISTINCT TO_CHAR(artigo), TO_CHAR(artigo) FROM taxa_multa ORDER BY artigo");
    }
 
    @RemoteMethod
