@@ -5,13 +5,22 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Empresa diretamente relacionada a segurança nacional (EDRSN).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
+@NamedQueries({
+  @NamedQuery(name = "Empresa.listar", query = "SELECT DISTINCT e.codigo, e.descricao FROM Empresa e ORDER BY e.descricao")
+})
+@PrimaryKey(validation=IdValidation.NULL)
 public final class Empresa implements Comparable<Empresa>, Serializable {
 
   private static final long serialVersionUID = -2441628302226227645L;

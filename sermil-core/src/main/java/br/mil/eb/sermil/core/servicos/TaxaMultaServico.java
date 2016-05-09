@@ -43,13 +43,15 @@ public class TaxaMultaServico {
       return lista;
    }
 
-   public Lista[] listarArtigo() throws SermilException {
-     TypedQuery<Object[]> query = this.tmDao.getEntityManager().createNamedQuery("TaxaMulta.listarArtigo", Object[].class);
-     return query.getResultList().stream().map(o -> new Lista(((Short)o[0]).toString(), ((Short)o[1]).toString())).collect(Collectors.toList()).toArray(new Lista[0]);
+   public Lista[] listarArtigos() throws SermilException {
+     final TypedQuery<Object[]> query = this.tmDao.getEntityManager().createNamedQuery("TaxaMulta.listarArtigos", Object[].class);
+     return query.getResultList().stream().map(o -> new Lista(((Short)o[0]).toString(), ((Short)o[0]).toString())).collect(Collectors.toList()).toArray(new Lista[0]);
    }
 
-   public TaxaMulta[] listarPorArtigo(final Integer artigo) throws SermilException {
-      return this.tmDao.findByNamedQuery("TaxaMulta.listarPorArtigo", artigo).toArray(new TaxaMulta[0]);
+   public Lista[] listarPorArtigo(final Short artigo) throws SermilException {
+     final TypedQuery<Object[]> query = this.tmDao.getEntityManager().createNamedQuery("TaxaMulta.listarPorArtigo", Object[].class);
+     query.setParameter(1, artigo);
+     return query.getResultList().stream().map(o -> new Lista(((Short)o[0]).toString(), (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
    }
 
    public TaxaMulta recuperar(TaxaMulta.PK pk) throws SermilException {

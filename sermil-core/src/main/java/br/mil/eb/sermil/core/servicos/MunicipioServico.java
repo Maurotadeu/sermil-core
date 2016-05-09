@@ -5,9 +5,11 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.TypedQuery;
 
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
@@ -21,6 +23,7 @@ import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Municipio;
+import br.mil.eb.sermil.tipos.Lista;
 
 /** Gerenciamento de informações de Municípios. (Tabela MUNICIPIO)
  * @author Abreu Lopes
@@ -52,7 +55,7 @@ public class MunicipioServico {
       lista = new ArrayList<Municipio>(1);
       lista.add(this.municipioDao.findById(mun.getCodigo()));
     } else if (mun.getUf() != null && !mun.getUf().getSigla().isEmpty()) {
-      lista = this.municipioDao.findByNamedQuery("Municipio.listarPorUf", mun.getUf().getSigla());
+      lista = this.municipioDao.findByNamedQuery("Municipio.listar", mun.getUf().getSigla());
     } else if (mun.getDescricao() != null) {
       lista = this.municipioDao.findByNamedQuery("Municipio.listarPorDescricao", mun.getDescricao());
     }
@@ -60,6 +63,12 @@ public class MunicipioServico {
       throw new NoDataFoundException();
     }
     return lista;
+  }
+
+  public Lista[] listarPorUf(final String uf) throws SermilException {
+    final TypedQuery<Object[]> query = this.municipioDao.getEntityManager().createNamedQuery("Municipio.listarPorUf", Object[].class);
+    query.setParameter(1, uf);
+    return query.getResultList().stream().map(o -> new Lista(((Integer)o[0]).toString(), (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
   }
 
   public Municipio recuperar(final Integer codigo) throws SermilException {

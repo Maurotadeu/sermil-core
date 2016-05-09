@@ -22,7 +22,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
  */
 @Entity
 @NamedQueries({
-  @NamedQuery(name = "Del.listarPorCsm", query = "SELECT d FROM Delegacia d WHERE d.pk.csmCodigo = ?1"),
+  @NamedQuery(name = "Del.listarPorCsm", query = "SELECT d.pk.codigo, d.pk.codigo FROM Delegacia d WHERE d.pk.csmCodigo = ?1"),
   @NamedQuery(name = "Del.listarPorMun", query = "SELECT d FROM Delegacia d WHERE d.om.municipio.codigo = ?1")
 })
 @PrimaryKey(validation=IdValidation.NULL)

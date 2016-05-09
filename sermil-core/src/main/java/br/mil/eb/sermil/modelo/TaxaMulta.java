@@ -11,6 +11,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
@@ -20,10 +22,11 @@ import org.eclipse.persistence.annotations.PrimaryKey;
  * @version 5.4
  */
 @Entity
+@Cache(type=CacheType.FULL, size=15)
 @Table(name = "TAXA_MULTA")
 @NamedQueries({
-    @NamedQuery(name = "TaxaMulta.listarArtigo", query = "SELECT DISTINCT t.pk.artigo, t.pk.artigo FROM TaxaMulta t"),
-    @NamedQuery(name = "TaxaMulta.listarPorArtigo", query = "SELECT DISTINCT t.pk.numero, t.pk.numero FROM TaxaMulta t WHERE t.pk.artigo = ?1")
+    @NamedQuery(name = "TaxaMulta.listarArtigos", query = "SELECT DISTINCT t.pk.artigo, 1 FROM TaxaMulta t ORDER BY t.pk.artigo"),
+    @NamedQuery(name = "TaxaMulta.listarPorArtigo", query = "SELECT DISTINCT t.pk.numero, t.descricao FROM TaxaMulta t WHERE t.pk.artigo = ?1 ORDER BY t.pk.numero")
 })
 @PrimaryKey(validation=IdValidation.NULL)
 public final class TaxaMulta implements Serializable {

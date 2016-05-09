@@ -10,6 +10,8 @@ import javax.persistence.NamedNativeQueries;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
@@ -19,6 +21,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
  * @version 5.4
  */
 @Entity
+@Cache(type=CacheType.FULL, size=15)
 @NamedQuery(name = "Rm.listar", query = "SELECT r FROM Rm r")
 @NamedNativeQueries({
   @NamedNativeQuery(resultClass = Rm.class, name = "rm.rmComProblemaDeBCCIAP", query = "select * from rm where CODIGO = ?1 and  (SELECT  COUNT(*) FROM cidadao PARTITION(ano_2015) c JOIN cid_bcc b ON c.ra = b.cidadao_ra JOIN csm m ON c.csm_codigo = m.codigo and  m.RM_CODIGO = ?1) > 1.1*(SELECT  count(*) total FROM cidadao PARTITION(ano_2015) c JOIN jsm j ON c.csm_codigo = j.csm_codigo AND c.jsm_codigo = j.codigo JOIN csm m ON j.csm_codigo = m.codigo WHERE c.situacao_militar = 4 AND c.escolaridade > 9 AND c.dispensa = 0 AND j.tributacao IN (1,2,4) and m.rm_codigo = ?1 )")

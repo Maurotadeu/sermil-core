@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
@@ -18,13 +20,15 @@ import br.mil.eb.sermil.tipos.Utils;
 /** Entidade Município.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
+@Cache(type=CacheType.FULL, size=5600)
 @NamedQueries({
-  @NamedQuery(name = "Municipio.listarPorUf", query = "SELECT m FROM Municipio m WHERE m.uf.sigla LIKE ?1 ORDER BY m.descricao"),
+  @NamedQuery(name = "Municipio.listar", query = "SELECT m FROM Municipio m WHERE m.uf.sigla LIKE ?1 ORDER BY m.descricao"),
   @NamedQuery(name = "Municipio.listarPorDescricao", query = "SELECT m FROM Municipio m WHERE m.descricao LIKE CONCAT(?1,'%') ORDER BY m.descricao"),
-  @NamedQuery(name = "Municipio.listarPorRmCsm", query = "SELECT DISTINCT m.codigo, m.descricao, m.uf.sigla, m.sigla, m.ddd, c.codigo, c.rm.codigo FROM Municipio m, Jsm j, Csm c WHERE m.codigo = j.municipio.codigo AND j.csm.codigo = c.codigo AND m.descricao LIKE CONCAT(?1,'%') ORDER BY m.descricao")
+  @NamedQuery(name = "Municipio.listarPorRmCsm", query = "SELECT DISTINCT m.codigo, m.descricao, m.uf.sigla, m.sigla, m.ddd, c.codigo, c.rm.codigo FROM Municipio m, Jsm j, Csm c WHERE m.codigo = j.municipio.codigo AND j.csm.codigo = c.codigo AND m.descricao LIKE CONCAT(?1,'%') ORDER BY m.descricao"),
+  @NamedQuery(name = "Municipio.listarPorUf", query = "SELECT m.codigo, m.descricao FROM Municipio m WHERE m.uf.sigla LIKE ?1 ORDER BY m.descricao")
 })
 @PrimaryKey(validation = IdValidation.NULL)
 public final class Municipio implements Serializable {

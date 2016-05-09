@@ -12,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
-import br.mil.eb.sermil.core.exceptions.ExarException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.CidCertificado;
 import br.mil.eb.sermil.modelo.CidExar;
@@ -24,7 +23,7 @@ import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 /** Gerenciamento de Apresentação de Reservista (EXAR).
  * @author Abreu Lopes
  * @since 4.0
- * @version 5.2.6
+ * @version 5.4
  */
 @Named("exarServico")
 public class ExarServico {
@@ -40,7 +39,7 @@ public class ExarServico {
 
    public String gerarAutenticador(final Long ra, final Byte nrApres) throws SermilException {
       if (ra == null || nrApres == null) {
-         throw new ExarException("ERRO: informe o RA do cidadão e o número da apresentação.");
+         throw new SermilException("Informe o RA do cidadão e o número da apresentação.");
       }
       final Cidadao cid = this.cidadaoServico.recuperar(ra);
       CidExar apres = null;
@@ -50,7 +49,7 @@ public class ExarServico {
          }
       }
       if (apres == null) {
-         throw new ExarException("Apresentação do EXAR não está cadastrada, verifique o cadastro do cidadão.");
+         throw new SermilException("Apresentação do EXAR não está cadastrada, verifique o cadastro do cidadão.");
       }
       byte[] b = (cid.getNome() + cid.getMae() + apres.getApresentacaoData()).getBytes();
       StringBuilder sb = new StringBuilder();
@@ -66,11 +65,11 @@ public class ExarServico {
    @Transactional
    public Cidadao adicionarApresentacao(final CidExar apresentacao, final Usuario usr) throws SermilException {
       if (apresentacao == null || apresentacao.getPk() == null || apresentacao.getPk().getCidadaoRa() == null) {
-         throw new ExarException("ERRO: Informe o RA do cidadão para cadastrar uma apresentação do EXAR.");
+         throw new SermilException("Informe o RA do cidadão para cadastrar uma apresentação do EXAR.");
       }
       final Cidadao cid = this.cidadaoServico.recuperar(apresentacao.getPk().getCidadaoRa());
       if (!isExarLiberado(cid)) {
-         throw new ExarException("ERRO: Para cadastrar uma apresentação o cidadão deve estar na situação LICENCIADO, ou EXCESSO com CDI em Situação Especial cadastrado.");
+         throw new SermilException("Para cadastrar uma apresentação o cidadão deve estar na situação LICENCIADO, ou EXCESSO com CDI em Situação Especial cadastrado.");
       }
 
       final List<CidExar> lista = new ArrayList<CidExar>(apresentacao.getPk().getApresentacaoQtd());
@@ -106,10 +105,6 @@ public class ExarServico {
       return this.cidadaoServico.salvar(cid, usr, new StringBuilder("APRESENTAÇÃO EXCLUÍDA: ").append(apresentacao).toString());
    }
 
-   /** Regrs para permitir inclusão de apresentação do EXAR.
-    * @param cid Cidadão
-    * @return true permitido
-    */
    private boolean isExarLiberado(final Cidadao cid) {
       boolean status = false;
       if(cid.getSituacaoMilitar() == TipoSituacaoMilitar.LICENCIADO.ordinal()) {

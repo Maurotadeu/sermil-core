@@ -1,9 +1,11 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Jsm;
 import br.mil.eb.sermil.modelo.JsmInfo;
+import br.mil.eb.sermil.tipos.Lista;
 
 /** Gerenciamento de Junta de Serviço Militar (JSM).
  * @author Abreu Lopes
@@ -55,9 +58,22 @@ public class JsmServico {
       return lista;
    }
 
-   public Jsm[] listarPorCsm(final Byte csm) throws SermilException {
-     final List<Jsm> lista = this.jsmDao.findByNamedQuery("Jsm.listarPorCsm", csm);
-     return lista.toArray(new Jsm[0]);
+   public Lista[] listarPorCsm(final Byte csm) throws SermilException {
+     final TypedQuery<Object[]> query = this.jsmDao.getEntityManager().createNamedQuery("Jsm.listarPorCsm2", Object[].class);
+     query.setParameter(1, csm);
+     return query.getResultList().stream().map(o -> new Lista(((Short)o[0]).toString(), (String)o[1] + "(" + ((Short)o[0]).toString() + ")")).collect(Collectors.toList()).toArray(new Lista[0]);
+   }
+
+   public Lista[] listarCsmDotJsm(final Integer mun) throws SermilException {
+     final TypedQuery<Object[]> query = this.jsmDao.getEntityManager().createNamedQuery("Jsm.listarPorMun", Object[].class);
+     query.setParameter(1, mun);
+     return query.getResultList().stream().map(o -> new Lista(((Short)o[0]).toString() + "." + ((Short)o[1]).toString(), (String)o[2])).collect(Collectors.toList()).toArray(new Lista[0]);
+   }
+
+   public Lista[] listarPorMun(final Integer mun) throws SermilException {
+     final TypedQuery<Object[]> query = this.jsmDao.getEntityManager().createNamedQuery("Jsm.listarPorMun", Object[].class);
+     query.setParameter(1, mun);
+     return query.getResultList().stream().map(o -> new Lista(((Short)o[1]).toString(), (String)o[2] + "(" + ((Short)o[1]).toString() + ")")).collect(Collectors.toList()).toArray(new Lista[0]);
    }
 
    @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob','md')")

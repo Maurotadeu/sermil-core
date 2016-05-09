@@ -30,9 +30,11 @@ import br.mil.eb.sermil.tipos.Utils;
  */
 @Entity
 @NamedQueries({
-   @NamedQuery(name = "Jsm.listarPorCsm", query = "SELECT j FROM Jsm j WHERE j.pk.csmCodigo = ?1 ORDER BY j.descricao"),
+  @NamedQuery(name = "Jsm.listarPorCsm", query = "SELECT j FROM Jsm j WHERE j.pk.csmCodigo = ?1 ORDER BY j.descricao"),
+  @NamedQuery(name = "Jsm.listarPorCsm2", query = "SELECT j.pk.codigo, j.descricao FROM Jsm j WHERE j.pk.csmCodigo = ?1 ORDER BY j.descricao"),
    @NamedQuery(name = "Jsm.listarPorDescricao", query = "SELECT j FROM Jsm j WHERE j.descricao LIKE CONCAT(?1,'%')"),
-   @NamedQuery(name = "Jsm.listarPorMunicipio", query = "SELECT j FROM Jsm j WHERE j.municipio.codigo = ?1"),
+   @NamedQuery(name = "Jsm.listarPorMunicipio", query = "SELECT j FROM Jsm j WHERE j.municipio.codigo = ?1 ORDER BY j.descricao"),
+   @NamedQuery(name = "Jsm.listarPorMun", query = "SELECT j.pk.csmCodigo, j.pk.codigo, j.descricao FROM Jsm j WHERE j.municipio.codigo = ?1 ORDER BY j.descricao"),
    @NamedQuery(name = "Jsm.listarPorTributacao", query = "SELECT j.tributacao, COUNT(j) FROM Jsm j WHERE j.csm.rm.codigo = ?1 GROUP BY j.tributacao"),
    //@NamedQuery(name = "Jsm.listarPorUfAno", query = "SELECT m.descricao, m.latitude, m.longitude, j.pk.csmCodigo, j.pk.codigo, COUNT(c.ra) FROM Jsm j JOIN Municipio m ON j.municipio.codigo = m.codigo JOIN Cidadao c ON c.jsm.pk.csmCodigo = j.pk.csm.codigo AND c.jsm.pk.codigo = j.pk.codigo WHERE m.uf.sigla = ?1 AND c.vinculacao_ano = ?2 GROUP BY m.descricao, m.latitude, m.longitude, j.pk.csmCodigo, j.pk.codigo"),
    @NamedQuery(name = "Jsm.listarPorRm", query = "SELECT j FROM Jsm j WHERE EXISTS (SELECT c FROM Csm c WHERE c.codigo = j.pk.csmCodigo AND c.rm.codigo = ?1) AND j.tributacao <> 0 AND j.tributacao <> 5"),

@@ -1,18 +1,19 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.TypedQuery;
 
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.mil.eb.sermil.core.dao.HabilitacaoDao;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Habilitacao;
+import br.mil.eb.sermil.tipos.Lista;
 
 /** Serviço de Habilitação Militar.
  * @author Abreu Lopes
@@ -20,30 +21,28 @@ import br.mil.eb.sermil.modelo.Habilitacao;
  * @version 5.4
  */
 @Named("habilitacaoServico")
-@RemoteProxy(name="habilitacaoServico")
 public class HabilitacaoServico {
 
   protected static final Logger logger = LoggerFactory.getLogger(HabilitacaoServico.class);
 
   @Inject
-  private HabilitacaoDao habilitacaoDao;
+  private HabilitacaoDao habDao;
   
   public HabilitacaoServico() {
     logger.debug("HabilitacaoServico iniciado");
   }
   
   public List<Habilitacao> listar() {
-    return this.habilitacaoDao.findAll();
+    return this.habDao.findAll();
   }
 
-  @RemoteMethod
-  public Habilitacao[] listarHabilitacao() throws SermilException {
-    List<Habilitacao> lista = this.listar();
-    return lista.toArray(new Habilitacao[0]);
+  public Lista[] listarHabilitacoes() throws SermilException {
+    final TypedQuery<Object[]> query = this.habDao.getEntityManager().createNamedQuery("Habilitacao.listar", Object[].class);
+    return query.getResultList().stream().map(o -> new Lista((String)o[0], (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
   }
   
   public Habilitacao recuperar(String codigo) throws SermilException {
-    return this.habilitacaoDao.findById(codigo);
+    return this.habDao.findById(codigo);
   }
 
 }

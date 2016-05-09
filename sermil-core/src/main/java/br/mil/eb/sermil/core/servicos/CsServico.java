@@ -1,9 +1,11 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.TypedQuery;
 
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
@@ -29,6 +31,7 @@ import br.mil.eb.sermil.modelo.Cs;
 import br.mil.eb.sermil.modelo.CsEndereco;
 import br.mil.eb.sermil.modelo.CsExclusaoData;
 import br.mil.eb.sermil.modelo.CsFuncionamento;
+import br.mil.eb.sermil.tipos.Lista;
 
 /** Serviço de CS.
  * @author Anselmo Ribeiro, Abreu Lopes
@@ -79,6 +82,12 @@ public class CsServico {
 
    public CsServico() {
       logger.debug("CsServico iniciado");
+   }
+
+   public Lista[] listarCsPorRm(final Byte rm) throws SermilException {
+     final TypedQuery<Object[]> query = this.csDao.getEntityManager().createNamedQuery("Cs.listarCsPorRm", Object[].class);
+     query.setParameter(1, rm);
+     return query.getResultList().stream().map(o -> new Lista(((Integer)o[0]).toString(), (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
    }
 
    @RemoteMethod
