@@ -97,6 +97,12 @@ public class JsmServico {
         jsm.getJsmInfo().getPk().setJsmCodigo(jsm.getPk().getCodigo());
         jsm.getJsmInfo().setInternet("N");
       }
+      if(jsm.getJsmInfo().getInternet() == null){
+        jsm.getJsmInfo().setInternet("N");
+      }
+      if(jsm.getJsmInfo().getJsm() == null){
+        jsm.getJsmInfo().setJsm(jsmBd);
+      }
       jsm.setInfor("S");
       return this.jsmDao.save(jsm);
    }
