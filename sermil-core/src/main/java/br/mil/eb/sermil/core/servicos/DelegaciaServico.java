@@ -31,7 +31,7 @@ public class DelegaciaServico {
   protected static final Logger logger = LoggerFactory.getLogger(DelegaciaServico.class);
 
   @Inject
-  private DelegaciaDao delDao;
+  private DelegaciaDao dsmDao;
 
   public DelegaciaServico() {
     logger.debug("DelegaciaServico iniciado");
@@ -43,13 +43,13 @@ public class DelegaciaServico {
     }
     List<Delegacia> lista = null;
     if (del.getOm().getMunicipio().getCodigo() != null) {
-      lista = this.delDao.findByNamedQuery("Del.listarPorMun", del.getOm().getMunicipio().getCodigo());
+      lista = this.dsmDao.findByNamedQuery("Del.listarPorMun", del.getOm().getMunicipio().getCodigo());
     } else {
       if (del.getPk().getCsmCodigo() != null && del.getPk().getCodigo() != null) {
         lista = new ArrayList<Delegacia>(1);
         lista.add(this.recuperar(del.getPk().getCsmCodigo(), del.getPk().getCodigo()));
       } else if (del.getPk().getCsmCodigo() != null && del.getPk().getCodigo() == null) {
-        lista = this.delDao.findByNamedQuery("Del.listarPorCsm", del.getPk().getCsmCodigo());
+        lista = this.dsmDao.findByNamedQuery("Del.listarPorCsm", del.getPk().getCsmCodigo());
       }
     }
     if (lista == null || lista.isEmpty()) {
@@ -59,19 +59,19 @@ public class DelegaciaServico {
   }
 
   public Lista[] listarPorCsm(final Byte csm) throws SermilException {
-    final TypedQuery<Object[]> query = this.delDao.getEntityManager().createNamedQuery("Del.listarPorCsm", Object[].class);
+    final TypedQuery<Object[]> query = this.dsmDao.getEntityManager().createNamedQuery("Del.listarPorCsm", Object[].class);
     query.setParameter(1, csm);
-    return query.getResultList().stream().map(o -> new Lista(((Byte)o[0]).toString(), ((Byte)o[1]).toString())).collect(Collectors.toList()).toArray(new Lista[0]);
+    return query.getResultList().stream().map(o -> new Lista(((Byte)o[0]).toString(), ((Byte)o[0]).toString())).collect(Collectors.toList()).toArray(new Lista[0]);
   }
 
   public Delegacia recuperar(final Byte csmCodigo, final Byte codigo) throws SermilException {
-    return this.delDao.findById(new Delegacia.PK(csmCodigo, codigo));
+    return this.dsmDao.findById(new Delegacia.PK(csmCodigo, codigo));
   }
 
   @PreAuthorize("hasAnyRole('adm','dsm','del')")
   @Transactional
   public Delegacia salvar(final Delegacia del) throws SermilException {
-    return this.delDao.save(del);
+    return this.dsmDao.save(del);
   }
 
 }

@@ -51,7 +51,7 @@ public class TaxaMultaServico {
    public Lista[] listarPorArtigo(final Short artigo) throws SermilException {
      final TypedQuery<Object[]> query = this.tmDao.getEntityManager().createNamedQuery("TaxaMulta.listarPorArtigo", Object[].class);
      query.setParameter(1, artigo);
-     return query.getResultList().stream().map(o -> new Lista(((Short)o[0]).toString(), (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
+     return query.getResultList().stream().map(o -> new Lista(((Short)o[0]).toString(), ((Short)o[0]).toString() + " - " + (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
    }
 
    public TaxaMulta recuperar(TaxaMulta.PK pk) throws SermilException {
