@@ -17,6 +17,7 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.CidadaoDao;
@@ -34,7 +35,6 @@ import br.mil.eb.sermil.modelo.RaMestre;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.Ra;
 import br.mil.eb.sermil.tipos.TipoEvento;
-import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 
 /** Serviço de Mobilização de Pessoal.
  * @author Abreu Lopes
@@ -57,6 +57,7 @@ public class MobilizacaoServico {
   }
 
   @Transactional
+  @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm','mob')")
   public Cidadao cadastrar(final Cidadao cid, final Date dtAlist, final CidDocApres cda, final Usuario usr, final String msg) throws SermilException {
     // Verificar se já está cadastrado
     if (!StringUtils.isBlank(cid.getCpf()) && !this.cidadaoDao.findByNamedQuery("Cidadao.listarPorCpf", cid.getCpf()).isEmpty()) {
@@ -92,6 +93,9 @@ public class MobilizacaoServico {
     if (cid.getOm() != null && cid.getOm().getCodigo() == null) {
       cid.setOm(null);
     }
+    if (cid.getOcupacao() != null && StringUtils.isBlank(cid.getOcupacao().getCodigo())) {
+      cid.setOcupacao(null);
+    }
 
     // Gerar RA se for nulo
     if (cid.getRa() == null) {
@@ -111,16 +115,9 @@ public class MobilizacaoServico {
       new Ra(cid.getRa());
     }
 
-    // Gerar Evento
-    if (cid.getSituacaoMilitar() == TipoSituacaoMilitar.ALISTADO.ordinal()) {
-      final Calendar dataEvento = Calendar.getInstance();
-      if (dtAlist != null) {
-        dataEvento.setTime(dtAlist);
-      }
-      final CidEvento evento = new CidEvento();
-      evento.getPk().setCidadaoRa(cid.getRa());
-      evento.getPk().setCodigo(TipoEvento.ALISTAMENTO.getCodigo());
-      evento.getPk().setData(dataEvento.getTime());
+    // Gerar Evento Alistamento
+    if (dtAlist != null) {
+      final CidEvento evento = new CidEvento(cid.getRa(), TipoEvento.ALISTAMENTO.getCodigo(), dtAlist);
       evento.setAnotacao(msg);
       cid.addCidEvento(evento);
     }
@@ -140,6 +137,7 @@ public class MobilizacaoServico {
     return cid;
   }
 
+  @PreAuthorize("hasAnyRole('adm','dsm','smr','om','mob')")
   public List<Object[]> pesquisar(final Cidadao cidadao, final String dataLic) throws SermilException {
     if (cidadao == null) {
       throw new CriterioException();
