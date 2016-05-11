@@ -87,11 +87,14 @@ public class MobilizacaoServico {
     if (cid.getDispensa() == null) {
       cid.setDispensa(Byte.valueOf("0"));
     }
-    if (cid.getPostoGraduacao() != null && cid.getPostoGraduacao().getCodigo() == null) {
+    if (cid.getPostoGraduacao() != null && StringUtils.isBlank(cid.getPostoGraduacao().getCodigo())) {
       cid.setPostoGraduacao(null);
     }
     if (cid.getOm() != null && cid.getOm().getCodigo() == null) {
       cid.setOm(null);
+    }
+    if (cid.getQm() != null && StringUtils.isBlank(cid.getQm().getCodigo())) {
+      cid.setQm(null);
     }
     if (cid.getOcupacao() != null && StringUtils.isBlank(cid.getOcupacao().getCodigo())) {
       cid.setOcupacao(null);
