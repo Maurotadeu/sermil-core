@@ -7,16 +7,19 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Entidade País.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
-@NamedQuery(name = "Pais.listar", query = "SELECT p FROM Pais p ORDER BY p.descricao")
+@Cache(type=CacheType.FULL, size=260)
+@NamedQuery(name = "Pais.listar", query = "SELECT p.codigo, p.descricao FROM Pais p ORDER BY p.descricao")
 @PrimaryKey(validation = IdValidation.NULL)
 public final class Pais implements Comparable<Pais>, Serializable {
 

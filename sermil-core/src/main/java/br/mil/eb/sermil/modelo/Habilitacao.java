@@ -7,16 +7,19 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
+
 /** Habilitação.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
-@NamedQuery(name = "Habilitacao.listar", query = "SELECT h FROM Habilitacao h ORDER BY h.descricao")
+@Cache(type=CacheType.FULL, size=3070)
+@NamedQuery(name = "Habilitacao.listar", query = "SELECT h.codigo, h.descricao FROM Habilitacao h ORDER BY h.descricao")
 public final class Habilitacao implements Comparable<Habilitacao>, Serializable {
 
-  /** serialVersionUID. */
   private static final long serialVersionUID = -6018755254258650309L;
 
   @Id

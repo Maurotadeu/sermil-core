@@ -7,14 +7,18 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
+
 /** QCP_HABILITACAO.
  * @author Neckel
  * @since 3.4
- * @version $Id: QcpHabilitacao.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "QCP_HABILITACAO")
 @NamedQuery(name = "QcpHabilitacao.listar", query = "SELECT a FROM QcpHabilitacao a ORDER BY a.codigo")
+@PrimaryKey(validation=IdValidation.NULL)
 public final class QcpHabilitacao implements Serializable {
 
   /** serialVersionUID. */

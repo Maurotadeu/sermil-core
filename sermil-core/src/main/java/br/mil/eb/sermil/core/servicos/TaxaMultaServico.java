@@ -1,9 +1,11 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import br.mil.eb.sermil.core.exceptions.EntityPersistenceErrorException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.TaxaMulta;
+import br.mil.eb.sermil.tipos.Lista;
 
 /** Serviços de Taxa/Multa.
  * @author Abreu Lopes, Aryene
@@ -40,12 +43,15 @@ public class TaxaMultaServico {
       return lista;
    }
 
-   public Object[] listarArtigo() throws SermilException {
-      return this.tmDao.findByNamedQuery("TaxaMulta.listarArtigo").toArray(new Object[0]);
+   public Lista[] listarArtigos() throws SermilException {
+     final TypedQuery<Object[]> query = this.tmDao.getEntityManager().createNamedQuery("TaxaMulta.listarArtigos", Object[].class);
+     return query.getResultList().stream().map(o -> new Lista(((Short)o[0]).toString(), ((Short)o[0]).toString())).collect(Collectors.toList()).toArray(new Lista[0]);
    }
 
-   public TaxaMulta[] listarPorArtigo(final Integer artigo) throws SermilException {
-      return this.tmDao.findByNamedQuery("TaxaMulta.listarPorArtigo", artigo).toArray(new TaxaMulta[0]);
+   public Lista[] listarPorArtigo(final Short artigo) throws SermilException {
+     final TypedQuery<Object[]> query = this.tmDao.getEntityManager().createNamedQuery("TaxaMulta.listarPorArtigo", Object[].class);
+     query.setParameter(1, artigo);
+     return query.getResultList().stream().map(o -> new Lista(((Short)o[0]).toString(), ((Short)o[0]).toString() + " - " + (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
    }
 
    public TaxaMulta recuperar(TaxaMulta.PK pk) throws SermilException {

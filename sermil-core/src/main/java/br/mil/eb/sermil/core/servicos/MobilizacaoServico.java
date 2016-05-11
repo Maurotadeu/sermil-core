@@ -14,12 +14,15 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.CidadaoDao;
 import br.mil.eb.sermil.core.dao.RaMestreDao;
+import br.mil.eb.sermil.core.exceptions.CPFDuplicadoException;
 import br.mil.eb.sermil.core.exceptions.CidadaoCadastradoException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.RaMestreException;
@@ -32,12 +35,11 @@ import br.mil.eb.sermil.modelo.RaMestre;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.Ra;
 import br.mil.eb.sermil.tipos.TipoEvento;
-import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 
 /** Serviço de Mobilização de Pessoal.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Named("mobilizacaoServico")
 public class MobilizacaoServico {
@@ -55,9 +57,15 @@ public class MobilizacaoServico {
   }
 
   @Transactional
+  @PreAuthorize("hasAnyRole('adm','dsm','csm','del','jsm','mob')")
   public Cidadao cadastrar(final Cidadao cid, final Date dtAlist, final CidDocApres cda, final Usuario usr, final String msg) throws SermilException {
     // Verificar se já está cadastrado
+    if (!StringUtils.isBlank(cid.getCpf()) && !this.cidadaoDao.findByNamedQuery("Cidadao.listarPorCpf", cid.getCpf()).isEmpty()) {
+      logger.debug("CPF já cadastrado: CPF={}", cid.getCpf());
+      throw new CPFDuplicadoException(cid.getCpf());
+    }
     if (!this.cidadaoDao.findByNamedQuery("Cidadao.listarUnico", cid.getNome(), cid.getMae(), cid.getNascimentoData()).isEmpty()) {
+      logger.debug("Cidadao já Alistado: {}", cid);
       throw new CidadaoCadastradoException(cid.getNome(), cid.getMae(), cid.getNascimentoData());
     }
     // Verificar Data de Nascimento
@@ -73,16 +81,23 @@ public class MobilizacaoServico {
 
     // Configurar Cidadão
     final Calendar cal = Calendar.getInstance();
+    cid.setAtualizacaoData(cal.getTime());
     cal.setTime(cid.getNascimentoData());
     cid.setVinculacaoAno(cal.get(Calendar.YEAR) + 18);
     if (cid.getDispensa() == null) {
       cid.setDispensa(Byte.valueOf("0"));
     }
-    if (cid.getPostoGraduacao() != null && cid.getPostoGraduacao().getCodigo() == null) {
+    if (cid.getPostoGraduacao() != null && StringUtils.isBlank(cid.getPostoGraduacao().getCodigo())) {
       cid.setPostoGraduacao(null);
     }
     if (cid.getOm() != null && cid.getOm().getCodigo() == null) {
       cid.setOm(null);
+    }
+    if (cid.getQm() != null && StringUtils.isBlank(cid.getQm().getCodigo())) {
+      cid.setQm(null);
+    }
+    if (cid.getOcupacao() != null && StringUtils.isBlank(cid.getOcupacao().getCodigo())) {
+      cid.setOcupacao(null);
     }
 
     // Gerar RA se for nulo
@@ -103,16 +118,9 @@ public class MobilizacaoServico {
       new Ra(cid.getRa());
     }
 
-    // Gerar Evento
-    if (cid.getSituacaoMilitar() == TipoSituacaoMilitar.ALISTADO.ordinal()) {
-      final Calendar dataEvento = Calendar.getInstance();
-      if (dtAlist != null) {
-        dataEvento.setTime(dtAlist);
-      }
-      final CidEvento evento = new CidEvento();
-      evento.getPk().setCidadaoRa(cid.getRa());
-      evento.getPk().setCodigo(TipoEvento.ALISTAMENTO.getCodigo());
-      evento.getPk().setData(dataEvento.getTime());
+    // Gerar Evento Alistamento
+    if (dtAlist != null) {
+      final CidEvento evento = new CidEvento(cid.getRa(), TipoEvento.ALISTAMENTO.getCodigo(), dtAlist);
       evento.setAnotacao(msg);
       cid.addCidEvento(evento);
     }
@@ -132,6 +140,7 @@ public class MobilizacaoServico {
     return cid;
   }
 
+  @PreAuthorize("hasAnyRole('adm','dsm','smr','om','mob')")
   public List<Object[]> pesquisar(final Cidadao cidadao, final String dataLic) throws SermilException {
     if (cidadao == null) {
       throw new CriterioException();

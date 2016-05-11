@@ -7,16 +7,20 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Ocupação.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
+@Cache(type=CacheType.FULL, size=2570)
 @NamedQueries({
+  @NamedQuery(name = "Ocupacao.listar", query = "SELECT o.codigo, o.descricao FROM Ocupacao o ORDER BY o.descricao"),
   @NamedQuery(name = "Ocupacao.listarPorDescricao", query = "SELECT o FROM Ocupacao o WHERE o.descricao LIKE CONCAT(?1,'%') ORDER BY o.descricao"),
   @NamedQuery(name = "Ocupacao.listarPorOrdem", query = "SELECT o FROM Ocupacao o ORDER BY o.descricao")
 })

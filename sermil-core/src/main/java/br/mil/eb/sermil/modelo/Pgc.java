@@ -15,6 +15,9 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
+
 /**
  * Plano Geral de Convocacao (PGC).
  * 
@@ -27,6 +30,7 @@ import javax.persistence.TemporalType;
 @NamedQueries({ 
    @NamedQuery(name = Pgc.NQ_FINDBY_ANO_BASE, query = "select p from Pgc p where p.anoBase = ?1 ") 
    })
+@PrimaryKey(validation=IdValidation.NULL)
 public final class Pgc implements Serializable {
 
    /** serialVersionUID. */

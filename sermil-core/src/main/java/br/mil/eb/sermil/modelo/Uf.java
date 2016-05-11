@@ -6,15 +6,18 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Entidade UF.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.2.6
+ * @version 5.4
  */
 @Entity
+@Cache(type=CacheType.FULL, size=30)
 @NamedQuery(name = "Uf.listar", query = "SELECT u FROM Uf u ORDER BY u.sigla")
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Uf implements Comparable<Uf>, Serializable {

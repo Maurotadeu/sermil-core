@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
@@ -15,6 +17,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
  * @version 5.3.2
  */
 @Entity
+@Cache(type=CacheType.FULL, size=35)
 @NamedQuery(name = "Escolaridade.listar", query = "SELECT e FROM Escolaridade e")
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Escolaridade implements Comparable<Escolaridade>, Serializable {

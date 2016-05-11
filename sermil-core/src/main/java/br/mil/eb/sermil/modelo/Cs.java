@@ -33,8 +33,9 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 @Entity
 @Table(name = "CS")
 @NamedQueries({
-   @NamedQuery(name = "Cs.listarPorRm", query = "select c from Cs c where c.rm.codigo = ?1"),
-   @NamedQuery(name = "Cs.listarPorNome", query = "select c from Cs c where c.nome = ?1") 
+  @NamedQuery(name = "Cs.listarCsPorRm", query = "SELECT DISTINCT c.codigo, c.nome FROM Cs c WHERE c.rm.codigo = ?1"),
+  @NamedQuery(name = "Cs.listarPorRm", query = "select c from Cs c where c.rm.codigo = ?1"),
+  @NamedQuery(name = "Cs.listarPorNome", query = "select c from Cs c where c.nome = ?1") 
 })
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Cs implements Serializable {

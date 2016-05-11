@@ -13,11 +13,13 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Informações de Organização Militar (OM).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @Table(name="OM_CABECALHO")
@@ -25,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
    @NamedQuery(name = "Cabecalho.listarPorOm", query = "SELECT c FROM OmCabecalho c where c.om.codigo = ?1"),
    @NamedQuery(name = "Cabecalho.listar", query = "SELECT DISTINCT c.om FROM OmCabecalho c")
 })
+@PrimaryKey(validation=IdValidation.NULL)
 public final class OmCabecalho implements Serializable {
 
    private static final long serialVersionUID = -9196978082126404086L;
@@ -82,7 +85,7 @@ public final class OmCabecalho implements Serializable {
    public String toString() {
       return new StringBuilder(this.getOm() == null ? "CODOM" : this.getOm().getCodigo().toString())
             .append(" - ")
-            .append(this.getOmDescricao() == null ? "DESCRICAO" : this.getOmDescricao())
+            .append(this.getOmDescricao() == null ? "OM CABECALHO" : this.getOmDescricao())
             .toString();
    }
 

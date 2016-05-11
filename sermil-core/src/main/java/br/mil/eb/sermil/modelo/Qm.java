@@ -10,14 +10,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
+
 /** Qualificação Militar (QM).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
+@Cache(type=CacheType.FULL, size=600)
 @NamedQueries(value = {
-  @NamedQuery(name = "Qm.listar", query = "SELECT q FROM Qm q ORDER BY q.codigo"),
+  @NamedQuery(name = "Qm.listar", query = "SELECT q.codigo, q.descricao FROM Qm q ORDER BY q.codigo"),
   @NamedQuery(name = "Qm.listaCbSd", query = "SELECT q FROM Qm q WHERE SUBSTRING(q.codigo,1,1) IN ('0','1','2','3') ORDER BY q.codigo"),
   @NamedQuery(name = "Qm.listaStSgt", query = "SELECT q FROM Qm q WHERE SUBSTRING(q.codigo,1,1) = '5' ORDER BY q.codigo"),
   @NamedQuery(name = "Qm.listaQao", query = "SELECT q FROM Qm q WHERE SUBSTRING(q.codigo,1,1) = '6' ORDER BY q.codigo"),
@@ -27,6 +33,7 @@ import javax.persistence.NamedQuery;
   @NamedQuery(name = "Qm.listaOtt", query = "SELECT q FROM Qm q WHERE SUBSTRING(q.codigo,1,1) = 'T' ORDER BY q.codigo"),
   @NamedQuery(name = "Qm.listaStt", query = "SELECT q FROM Qm q WHERE SUBSTRING(q.codigo,1,1) = 'S' ORDER BY q.codigo")
 })
+@PrimaryKey(validation=IdValidation.NULL)
 public final class Qm implements Comparable<Qm>, Serializable {
 
   /** serialVersionUID.*/
