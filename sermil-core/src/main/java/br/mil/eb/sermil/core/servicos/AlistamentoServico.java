@@ -125,7 +125,7 @@ public class AlistamentoServico {
       cidadao.setDesejaServir(alistamento.getDesejaServir());
       cidadao.setCs(jsm.getCs());
       cidadao.setAtualizacaoData(dataAtual);
-      cidadao.setMobDestino(Byte.decode("1")); // Flag indicando Alistamento Internet
+      cidadao.setMobSetor(1); // Flag indicando Alistamento Internet
       if (alistamento.getOcupacao() != null && (StringUtils.isBlank(alistamento.getOcupacao().getCodigo()) || "-1".equals(alistamento.getOcupacao().getCodigo()) )) {
         alistamento.setOcupacao(null);
       }

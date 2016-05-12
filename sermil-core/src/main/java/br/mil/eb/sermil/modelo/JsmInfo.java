@@ -2,7 +2,6 @@ package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -26,12 +25,12 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation = IdValidation.NULL)
 public final class JsmInfo implements Serializable {
 
-  /** serialVersionUID.*/
-  private static final long serialVersionUID = -4916095032074170431L;
+  private static final long serialVersionUID = -1212315790442679823L;
 
   @EmbeddedId
   private PK pk;
 
+  @Column(insertable=false, updatable=false, nullable=false)
   private String internet;
 
   private String endereco;
@@ -46,7 +45,7 @@ public final class JsmInfo implements Serializable {
 
   private String autoridade;
 
-  private Date retorno;
+  //private Date retorno;
   
   @OneToOne
   @JoinColumns({
@@ -160,7 +159,7 @@ public final class JsmInfo implements Serializable {
   public void setAutoridade(String autoridade) {
     this.autoridade = autoridade;
   }
-
+  /*
   public Date getRetorno() {
     return retorno;
   }
@@ -168,7 +167,8 @@ public final class JsmInfo implements Serializable {
   public void setRetorno(Date retorno) {
     this.retorno = retorno;
   }
-
+  */
+  
   /** Chave primária (PK) de JsmInfo.
    * @author Abreu Lopes
    * @since 3.4
