@@ -15,7 +15,7 @@ import javax.persistence.NamedQuery;
  */
 @Entity
 @NamedQueries({
-  @NamedQuery(name = "Dominios.listar", query = "SELECT d FROM Dominios d ORDER BY d.pk.id, d.pk.valor"),
+  @NamedQuery(name = "Dominios.listar", query = "SELECT DISTINCT d.pk.id, d.dominio FROM Dominios d ORDER BY d.dominio"),
   @NamedQuery(name = "Dominios.listarPorId", query = "SELECT d FROM Dominios d WHERE d.pk.id = ?1 ORDER BY d.pk.valor")
 })
 public final class Dominios implements Comparable<Dominios>, Serializable {
