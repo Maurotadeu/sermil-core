@@ -28,6 +28,8 @@ import javax.persistence.TemporalType;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
@@ -41,24 +43,25 @@ import br.mil.eb.sermil.tipos.Utils;
  * @version 5.4
  */
 @Entity
-@Table(name = "CIDADAO")
+@Table(name="CIDADAO")
+@Cache(type=CacheType.SOFT, size=64000, expiry=360000)
 @NamedQueries({
-      @NamedQuery(name = "Cidadao.listarPorOmSituacao", query = "SELECT c.ra, c.nome, c.padraoCodigo, c.gptIncorp FROM Cidadao c JOIN c.cidEventoCollection e WHERE c.om.codigo = ?1 AND e.pk.codigo = 7 AND SUBSTRING(e.pk.data, 7, 8) = ?2  AND c.situacaoMilitar = ?3  order by c.gptIncorp"),
-      @NamedQuery(name = "Cidadao.listarDistribuidos", query = "SELECT c.ra, c.nome, c.padraoCodigo, c.gptIncorp  FROM Cidadao c WHERE c.om.codigo = ?1 AND c.vinculacaoAno = ?2 AND c.situacaoMilitar = 7 ORDER BY c.gptIncorp"),
-      @NamedQuery(name = "Cidadao.gruparPorSituacao", query = "SELECT c.situacaoMilitar, c.vinculacaoAno, COUNT(c) FROM Cidadao c WHERE c.vinculacaoAno BETWEEN ?1 AND ?2 GROUP BY c.situacaoMilitar, c.vinculacaoAno"),
-      @NamedQuery(name = "Cidadao.gruparPorForca", query = "SELECT c.desejaServir, c.forcaArmada, COUNT(c) FROM Cidadao c JOIN c.cidEventoCollection e WHERE c.vinculacaoAno = ?1 AND c.jsm.csm.rm.codigo = ?2 AND e.pk.codigo = 7 AND e.pk.data BETWEEN ?3 AND ?4 AND c.desejaServir IS NOT NULL AND c.forcaArmada IS NOT NULL GROUP BY c.desejaServir, c.forcaArmada"),
-      @NamedQuery(name = "Cidadao.listarPorMaeNasc", query = "SELECT c FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc ORDER BY c.mae ASC"),
-      @NamedQuery(name = "Cidadao.listarPorMaeNascNome", query = "SELECT c FROM Cidadao c WHERE c.mae = ?1 AND c.nascimentoData = ?2 AND c.nome = ?3 ORDER BY c.mae ASC"),
-      @NamedQuery(name = "Cidadao.contarPorMae", query = "SELECT COUNT(c.ra) FROM Cidadao c WHERE c.mae LIKE :mae"),
-      @NamedQuery(name = "Cidadao.contarPorMaeNasc", query = "SELECT COUNT(c.ra) FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc"),
-      @NamedQuery(name = "Cidadao.contarPorMaeNascNome", query = "SELECT COUNT(c.ra) FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc AND c.nome LIKE :nome"),
-      @NamedQuery(name = "Cidadao.listarPorCsmJsm", query = "SELECT c FROM Cidadao c WHERE c.jsm.pk.csmCodigo = ?1 AND c.jsm.pk.codigo = ?2"),
-      @NamedQuery(name = "Cidadao.listarPorFracao", query = "SELECT c FROM Cidadao c WHERE c.qcp.pk.omCodigo = ?1 AND c.qcp.pk.fracaoId = ?2 ORDER BY c.nome"),
-      @NamedQuery(name = "Cidadao.limpaEmail", query = "UPDATE Cidadao c SET c.email = null WHERE c.ra = ?1"),
-      @NamedQuery(name = "Cidadao.listarUnico", query = "SELECT c FROM Cidadao c WHERE c.nome = ?1 AND c.mae = ?2 AND c.nascimentoData = ?3"),
-      @NamedQuery(name = "Cidadao.listarPorCpf", query = "SELECT c FROM Cidadao c WHERE c.cpf = ?1"),
-      @NamedQuery(name = "Cidadao.SinpaWS1", query = "SELECT c.ra, c.nome, c.nascimentoData, c.mae, c.sexo, c.cpf, c.idtMilitar, c.situacaoMilitar FROM Cidadao c WHERE c.cpf = ?1"),
-      @NamedQuery(name = "Cidadao.SinpaWS2", query = "SELECT c.ra, c.nome, c.nascimentoData, c.mae, c.sexo, c.cpf, c.idtMilitar, c.situacaoMilitar FROM Cidadao c WHERE c.mae = ?1 AND c.nascimentoData = ?2 AND c.nome = ?3")
+  @NamedQuery(name = "Cidadao.listarPorCsmJsm", query = "SELECT c FROM Cidadao c WHERE c.jsm.pk.csmCodigo = ?1 AND c.jsm.pk.codigo = ?2"),
+  @NamedQuery(name = "Cidadao.listarPorFracao", query = "SELECT c FROM Cidadao c WHERE c.qcp.pk.omCodigo = ?1 AND c.qcp.pk.fracaoId = ?2 ORDER BY c.nome"),
+  @NamedQuery(name = "Cidadao.listarUnico", query = "SELECT c FROM Cidadao c WHERE c.nome = ?1 AND c.mae = ?2 AND c.nascimentoData = ?3 ORDER BY c.nome"),
+  @NamedQuery(name = "Cidadao.listarPorCpf", query = "SELECT c FROM Cidadao c WHERE c.cpf = ?1"),
+  @NamedQuery(name = "Cidadao.listarPorMaeNasc", query = "SELECT c FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc ORDER BY c.mae ASC"),
+  @NamedQuery(name = "Cidadao.listarPorMaeNascNome", query = "SELECT c FROM Cidadao c WHERE c.mae = ?1 AND c.nascimentoData = ?2 AND c.nome = ?3 ORDER BY c.mae ASC"),
+  @NamedQuery(name = "Cidadao.listarPorOmSituacao", query = "SELECT c.ra, c.nome, c.padraoCodigo, c.gptIncorp FROM Cidadao c JOIN c.cidEventoCollection e WHERE c.om.codigo = ?1 AND e.pk.codigo = 7 AND SUBSTRING(e.pk.data, 7, 8) = ?2  AND c.situacaoMilitar = ?3  order by c.gptIncorp"),
+  @NamedQuery(name = "Cidadao.listarDistribuidos", query = "SELECT c.ra, c.nome, c.padraoCodigo, c.gptIncorp  FROM Cidadao c WHERE c.om.codigo = ?1 AND c.vinculacaoAno = ?2 AND c.situacaoMilitar = 7 ORDER BY c.gptIncorp"),
+  @NamedQuery(name = "Cidadao.gruparPorSituacao", query = "SELECT c.situacaoMilitar, c.vinculacaoAno, COUNT(c) FROM Cidadao c WHERE c.vinculacaoAno BETWEEN ?1 AND ?2 GROUP BY c.situacaoMilitar, c.vinculacaoAno"),
+  @NamedQuery(name = "Cidadao.gruparPorForca", query = "SELECT c.desejaServir, c.forcaArmada, COUNT(c) FROM Cidadao c JOIN c.cidEventoCollection e WHERE c.vinculacaoAno = ?1 AND c.jsm.csm.rm.codigo = ?2 AND e.pk.codigo = 7 AND e.pk.data BETWEEN ?3 AND ?4 AND c.desejaServir IS NOT NULL AND c.forcaArmada IS NOT NULL GROUP BY c.desejaServir, c.forcaArmada"),
+  @NamedQuery(name = "Cidadao.contarPorMae", query = "SELECT COUNT(c.ra) FROM Cidadao c WHERE c.mae LIKE :mae"),
+  @NamedQuery(name = "Cidadao.contarPorMaeNasc", query = "SELECT COUNT(c.ra) FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc"),
+  @NamedQuery(name = "Cidadao.contarPorMaeNascNome", query = "SELECT COUNT(c.ra) FROM Cidadao c WHERE c.mae LIKE :mae AND c.nascimentoData = :nasc AND c.nome LIKE :nome"),
+  @NamedQuery(name = "Cidadao.limpaEmail", query = "UPDATE Cidadao c SET c.email = null WHERE c.ra = ?1"),
+  @NamedQuery(name = "Cidadao.SinpaWS1", query = "SELECT c.ra, c.nome, c.nascimentoData, c.mae, c.sexo, c.cpf, c.idtMilitar, c.situacaoMilitar FROM Cidadao c WHERE c.cpf = ?1"),
+  @NamedQuery(name = "Cidadao.SinpaWS2", query = "SELECT c.ra, c.nome, c.nascimentoData, c.mae, c.sexo, c.cpf, c.idtMilitar, c.situacaoMilitar FROM Cidadao c WHERE c.mae = ?1 AND c.nascimentoData = ?2 AND c.nome = ?3")
 })
 public final class Cidadao implements Serializable {
 
