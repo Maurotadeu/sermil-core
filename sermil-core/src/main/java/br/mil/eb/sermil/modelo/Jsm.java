@@ -42,7 +42,7 @@ import br.mil.eb.sermil.tipos.Utils;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Jsm implements Comparable<Jsm>, Serializable {
 
-  private static final long serialVersionUID = -483015668504217291L;
+  private static final long serialVersionUID = 7006554438114471330L;
 
   @EmbeddedId
   private PK pk;
@@ -77,6 +77,7 @@ public final class Jsm implements Comparable<Jsm>, Serializable {
 
   public Jsm(final Byte csm, final Short jsm) {
     this.setPk(new Jsm.PK(csm, jsm));
+    this.setCsm(new Csm(csm));
   }
 
   @Override
