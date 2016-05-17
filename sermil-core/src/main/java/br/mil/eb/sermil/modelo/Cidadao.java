@@ -32,6 +32,7 @@ import org.eclipse.persistence.annotations.Cache;
 import org.eclipse.persistence.annotations.CacheType;
 
 import br.mil.eb.sermil.core.exceptions.CriterioException;
+import br.mil.eb.sermil.core.exceptions.ObjectDuplicatedException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.tipos.Cpf;
 import br.mil.eb.sermil.tipos.TipoEvento;
@@ -1171,7 +1172,7 @@ public final class Cidadao implements Serializable {
          this.setCidAdiamentoCollection(new ArrayList<CidAdiamento>(1));
       }
       if (this.getCidAdiamentoCollection().contains(ca)) {
-         throw new SermilException("Adiamente já existe");
+         throw new ObjectDuplicatedException("Adiamento já existe", ca);
       }
       this.getCidAdiamentoCollection().add(ca);
       if (ca.getCidadao() != this) {
@@ -1184,7 +1185,7 @@ public final class Cidadao implements Serializable {
          this.setCidArrecadacaoCollection(new ArrayList<CidArrecadacao>(1));
       }
       if (this.getCidArrecadacaoCollection().contains(ca)) {
-         throw new SermilException("Arrecadação já existe");
+         throw new ObjectDuplicatedException("Arrecadação já existe", ca);
       }
       this.getCidArrecadacaoCollection().add(ca);
       if (ca.getCidadao() != this) {
@@ -1197,7 +1198,7 @@ public final class Cidadao implements Serializable {
          this.setCidAuditoriaCollection(new ArrayList<CidAuditoria>(1));
       }
       if (this.getCidAuditoriaCollection().contains(ca)) {
-         throw new SermilException("Auditoria já existe");
+         throw new ObjectDuplicatedException("Auditoria já existe", ca);
       }
       this.getCidAuditoriaCollection().add(ca);
       if (ca.getCidadao() != this) {
@@ -1210,7 +1211,7 @@ public final class Cidadao implements Serializable {
          this.setCidAverbacaoCollection(new ArrayList<CidAverbacao>(1));
       }
       if (this.getCidAverbacaoCollection().contains(cv)) {
-         throw new SermilException("Averbação já existe");
+         throw new ObjectDuplicatedException("Averbação já existe", cv);
       }
       this.getCidAverbacaoCollection().add(cv);
       if (cv.getCidadao() != this) {
@@ -1223,7 +1224,7 @@ public final class Cidadao implements Serializable {
          this.setCidCertificadoCollection(new ArrayList<CidCertificado>(1));
       }
       if (this.getCidCertificadoCollection().contains(cc)) {
-         throw new SermilException("Certificado já existe");
+         throw new ObjectDuplicatedException("Certificado já existe", cc);
       }
       this.getCidCertificadoCollection().add(cc);
       if (cc.getCidadao() != this) {
@@ -1236,7 +1237,7 @@ public final class Cidadao implements Serializable {
          this.setCidContatoCollection(new ArrayList<CidContato>(1));
       }
       if (this.getCidContatoCollection().contains(cc)) {
-         throw new SermilException("Contato já existe");
+        throw new ObjectDuplicatedException("Contato já existe", cc);
       }
       this.getCidContatoCollection().add(cc);
       if (cc.getCidadao() != this) {
@@ -1249,7 +1250,7 @@ public final class Cidadao implements Serializable {
          this.setCidDocApresColletion(new ArrayList<CidDocApres>(1));
       }
       if (this.getCidDocApresColletion().contains(cda)) {
-         throw new SermilException("Documento apresentado já existe");
+        throw new ObjectDuplicatedException("Documento já existe", cda);
       }
       this.getCidDocApresColletion().add(cda);
       if (cda.getCidadao() != this) {
@@ -1262,7 +1263,7 @@ public final class Cidadao implements Serializable {
          this.setCidDocumentoCollection(new ArrayList<CidDocumento>(1));
       }
       if (this.getCidDocumentoCollection().contains(cd)) {
-         throw new SermilException("Documento já existe");
+        throw new ObjectDuplicatedException("Documento já existe", cd);
       }
       this.getCidDocumentoCollection().add(cd);
       if (cd.getCidadao() != this) {
@@ -1275,7 +1276,7 @@ public final class Cidadao implements Serializable {
          this.setCidEmpresaCollection(new ArrayList<CidEmpresa>(1));
       }
       if (this.getCidEmpresaCollection().contains(ce)) {
-         throw new SermilException("Empresa já existe");
+        throw new ObjectDuplicatedException("Empresa já existe", ce);
       }
       this.getCidEmpresaCollection().add(ce);
       if (ce.getCidadao() != this) {
@@ -1288,7 +1289,7 @@ public final class Cidadao implements Serializable {
          this.setCidEventoCollection(new ArrayList<CidEvento>(1));
       }
       if (this.getCidEventoCollection().contains(ce)) {
-         throw new SermilException("Evento já existe");
+         throw new ObjectDuplicatedException("Evento já existe", ce);
       }
       this.getCidEventoCollection().add(ce);
       if (ce.getCidadao() != this) {
@@ -1301,7 +1302,7 @@ public final class Cidadao implements Serializable {
          this.setCidExarCollection(new ArrayList<CidExar>(1));
       }
       if (this.getCidExarCollection().contains(cx)) {
-         throw new SermilException("Apresentação já existe");
+         throw new ObjectDuplicatedException("Apresentação já existe", cx);
       }
       this.getCidExarCollection().add(cx);
       if (cx.getCidadao() != this) {
@@ -1314,7 +1315,7 @@ public final class Cidadao implements Serializable {
          this.setCidHabilitacaoCollection(new ArrayList<CidHabilitacao>(1));
       }
       if (this.getCidHabilitacaoCollection().contains(ch)) {
-         throw new SermilException("Habilitação já existe");
+        throw new ObjectDuplicatedException("Habilitação já existe", ch);
       }
       this.getCidHabilitacaoCollection().add(ch);
       if (ch.getCidadao() != this) {
@@ -1327,7 +1328,7 @@ public final class Cidadao implements Serializable {
          this.setCidMobilizacaoCollection(new ArrayList<CidMobilizacao>(1));
       }
       if (this.getCidMobilizacaoCollection().contains(cm)) {
-         throw new SermilException("Mobilização já existe");
+        throw new ObjectDuplicatedException("Mobilização já existe", cm);
       }
       this.getCidMobilizacaoCollection().add(cm);
       if (cm.getCidadao() != this) {
@@ -1340,7 +1341,7 @@ public final class Cidadao implements Serializable {
          this.setCidMovimentacaoCollection(new ArrayList<CidMovimentacao>(1));
       }
       if (this.getCidMovimentacaoCollection().contains(cm)) {
-         throw new SermilException("Movimentação já existe");
+        throw new ObjectDuplicatedException("Movimentação já existe", cm);
       }
       this.getCidMovimentacaoCollection().add(cm);
       if (cm.getCidadao() != this) {
@@ -1353,7 +1354,7 @@ public final class Cidadao implements Serializable {
          this.setCidPromocaoCollection(new ArrayList<CidPromocao>(1));
       }
       if (this.getCidPromocaoCollection().contains(cp)) {
-         throw new SermilException("Promoção já existe");
+        throw new ObjectDuplicatedException("Promoção já existe", cp);
       }
       this.getCidPromocaoCollection().add(cp);
       if (cp.getCidadao() != this) {
@@ -1366,7 +1367,7 @@ public final class Cidadao implements Serializable {
          this.setCidQualidadeReservaCollection(new ArrayList<CidQualidadeReserva>(1));
       }
       if (this.getCidQualidadeReservaCollection().contains(cqr)) {
-         throw new SermilException("Pesquisa do EXAR já existe");
+        throw new ObjectDuplicatedException("Qualidade da Reserva já existe", cqr);
       }
       this.getCidQualidadeReservaCollection().add(cqr);
       if (cqr.getCidadao() != this) {
@@ -1379,7 +1380,7 @@ public final class Cidadao implements Serializable {
          this.setCidRequerimentoCollection(new ArrayList<CidRequerimento>(1));
       }
       if (this.getCidRequerimentoCollection().contains(cr)) {
-         throw new SermilException("Requerimento já existe");
+        throw new ObjectDuplicatedException("Requerimento já existe", cr);
       }
       this.getCidRequerimentoCollection().add(cr);
       if (cr.getCidadao() != this) {
