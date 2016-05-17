@@ -95,65 +95,65 @@ public final class Cidadao implements Serializable {
 
    private String cid;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidAdiamento> cidAdiamentoCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidArrecadacao> cidArrecadacaoCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER)
    private List<CidAuditoria> cidAuditoriaCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidAverbacao> cidAverbacaoCollection;
 
-   @OneToOne(mappedBy = "cidadao", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+   @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
    private CidBcc cidBcc;
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidCertificado> cidCertificadoCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidContato> cidContatoCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidDocApres> cidDocApresColletion;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER)
    private List<CidDocumento> cidDocumentoCollection;
 
    @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidEvento> cidEventoCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidExar> cidExarCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidEmpresa> cidEmpresaCollection;
 
-   @OneToOne(mappedBy = "cidadao", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+   @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
    private CidEximido cidEximido;
 
    @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
    @PrimaryKeyJoinColumn
    private CidFoto cidFoto;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidHabilitacao> cidHabilitacaoCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidMobilizacao> cidMobilizacaoCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidMovimentacao> cidMovimentacaoCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidPromocao> cidPromocaoCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidQualidadeReserva> cidQualidadeReservaCollection;
 
-   @OneToMany(mappedBy = "cidadao", fetch = FetchType.LAZY, orphanRemoval = true)
+   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
    private List<CidRequerimento> cidRequerimentoCollection;
 
    private Short cintura;
