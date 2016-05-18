@@ -99,15 +99,18 @@ public class OmServico {
 
    @Transactional
    public String salvar(final Om om) throws SermilException {
-      if (om == null) {
+      if (om == null || om.getCodigo() == null) {
          throw new SermilException("Não há dados de OM a serem salvos");
       }
       logger.debug("OM = {}", om);
-      final OmCabecalho info = this.recuperar(om.getCodigo()).getOmCabecalho();
-      if (info != null && om.getOmCabecalho() == null) {
-         om.setOmCabecalho(info);
-      } else if (om.getOmCabecalho() == null) {
+      final Om omBd = this.omDao.findById(om.getCodigo());
+      if (omBd != null && omBd.getOmCabecalho() != null && om.getOmCabecalho() == null) {
+         logger.info("OM Cab = {}", om.getOmCabecalho());
+         om.setOmCabecalho(omBd.getOmCabecalho());
+      }
+      if (om.getOmCabecalho() == null) {
          om.setOmCabecalho(new OmCabecalho(om));
+         logger.info("OM Cab = {}", om.getOmCabecalho());
       }
       this.omDao.save(om);
       return new StringBuilder(om.toString()).append(" : informações de OM salvas").toString();

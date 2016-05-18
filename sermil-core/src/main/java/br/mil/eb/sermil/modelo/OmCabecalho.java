@@ -12,7 +12,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
@@ -76,9 +75,9 @@ public final class OmCabecalho implements Serializable {
 
    public OmCabecalho(Om om){
       this.om = om;
-      this.setOmDescricao(StringUtils.isBlank(om.getDescricao()) ? "NOME DA OM" : om.getDescricao());
-      this.setRm(StringUtils.isBlank(om.getRm().getDescricao()) ? "NOME DA RM" : om.getRm().getDescricao());
-     this.setCmdoMil(StringUtils.isBlank(om.getRm().getCma().getDescricao()) ? "CMDO MIL AREA" : om.getRm().getCma().getDescricao());
+      this.setOmDescricao("DESCRICAO DA OM");
+      this.setRm("REGIAO MILITAR");
+      this.setCmdoMil("CMDO MIL AREA");
    }
 
    @Override
