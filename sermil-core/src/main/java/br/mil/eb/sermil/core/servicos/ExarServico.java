@@ -80,12 +80,12 @@ public class ExarServico {
          apr.getPk().setApresentacaoQtd((byte) i);
          apr.getPk().setCidadaoRa(apresentacao.getPk().getCidadaoRa());
          apr.setApresentacaoData(apresentacao.getApresentacaoData());
-         apr.setApresentacaoForma(apresentacao.getApresentacaoTipo());
+         apr.setApresentacaoForma(apresentacao.getApresentacaoForma());
          apr.setApresentacaoTipo(apresentacao.getApresentacaoTipo());
+         apr.setIp(apresentacao.getIp());
          apr.setMunicipio(apresentacao.getMunicipio());
          apr.setOm(apresentacao.getOm());
          apr.setPais(apresentacao.getPais());
-         apr.setIp(apresentacao.getIp());
          lista.add(apr);
       }
       for (CidExar ce : lista) {

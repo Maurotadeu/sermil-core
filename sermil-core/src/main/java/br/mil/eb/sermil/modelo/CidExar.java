@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
@@ -20,7 +21,7 @@ import javax.persistence.TemporalType;
 /** Entidade CidExar. (TABELA CID_EXAR)
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @Table(name = "CID_EXAR")
@@ -49,15 +50,15 @@ public final class CidExar implements Comparable<CidExar>, Serializable {
     @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false)
     private Cidadao cidadao;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.REFRESH)
     @JoinColumn(name = "OM_CODIGO", referencedColumnName = "CODIGO")
     private Om om;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.REFRESH)
     @JoinColumn(name = "PAIS_CODIGO", referencedColumnName = "CODIGO")
     private Pais pais;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.REFRESH)
     @JoinColumn(name = "MUNICIPIO_CODIGO", referencedColumnName = "CODIGO")
     private Municipio municipio;
 
