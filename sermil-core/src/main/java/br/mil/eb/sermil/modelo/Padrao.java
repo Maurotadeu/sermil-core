@@ -16,7 +16,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Padrão Funcional.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @Cache(type=CacheType.FULL, size=85)
@@ -27,8 +27,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Padrao implements Comparable<Padrao>, Serializable {
 
-  /** serialVersionUID. */
-  private static final long serialVersionUID = -116567940870452513L;
+  private static final long serialVersionUID = -4609228894032219845L;
 
   @Id
   private String codigo;
@@ -102,6 +101,31 @@ public final class Padrao implements Comparable<Padrao>, Serializable {
       .append(" - ")
       .append(this.getCodigo() == null ? "PADRAO" : this.getCodigo())
       .toString();
+  }
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Padrao other = (Padrao) obj;
+    if (codigo == null) {
+      if (other.codigo != null)
+        return false;
+    } else if (!codigo.equals(other.codigo))
+      return false;
+    return true;
   }
 
   public String getCodigo() {

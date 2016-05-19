@@ -17,7 +17,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** OM Boletim de Incorporação Cidadão (Tabela OM_BOLETIM_CIDADAO).
  * @author Abreu Lopes, gardino
  * @since 4.6
- * @version $Id: 5.4
+ * @version 5.4
  */
 @Entity
 @Table(name="OM_BOLETIM_CIDADAO")
@@ -53,6 +53,31 @@ public final class OmBoletimCidadao implements Comparable<OmBoletimCidadao>, Ser
     this.setPk(new OmBoletimCidadao.PK());
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((this.pk == null) ? 0 : this.pk.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    OmBoletimCidadao other = (OmBoletimCidadao) obj;
+    if (this.pk == null) {
+      if (other.pk != null)
+        return false;
+    } else if (!this.pk.equals(other.pk))
+      return false;
+    return true;
+  }
+  
   public OmBoletimCidadao.PK getPk() {
     return this.pk;
   }
@@ -107,35 +132,15 @@ public final class OmBoletimCidadao implements Comparable<OmBoletimCidadao>, Ser
     return this.getPk().compareTo(o.getPk());
   }
 
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((this.pk == null) ? 0 : this.pk.hashCode());
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    OmBoletimCidadao other = (OmBoletimCidadao) obj;
-    if (this.pk == null) {
-      if (other.pk != null)
-        return false;
-    } else if (!this.pk.equals(other.pk))
-      return false;
-    return true;
-  }
-
+  /** Chave primária (PK) OmBoletimCidadao.
+   * @author Abreu Lopes
+   * @since 4.0
+   * @version 5.4
+   */
   @Embeddable
   public static class PK implements Comparable<OmBoletimCidadao.PK>, Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -694771974282602825L;
 
     @Column(name="CIDADAO_RA")
     private Long cidadaoRa;
@@ -159,21 +164,6 @@ public final class OmBoletimCidadao implements Comparable<OmBoletimCidadao>, Ser
         status = this.getCidadaoRa().compareTo(o.getCidadaoRa());
       }
       return status;
-    }
-
-    public String getGptIncorp() {
-      return gptIncorp;
-    }
-
-    public void setGptIncorp(String gptIncorp) {
-      this.gptIncorp = gptIncorp;
-    }
-
-    public Long getCidadaoRa() {
-      return this.cidadaoRa;
-    }
-    public void setCidadaoRa(Long cidadaoRa) {
-      this.cidadaoRa = cidadaoRa;
     }
 
     @Override
@@ -205,6 +195,21 @@ public final class OmBoletimCidadao implements Comparable<OmBoletimCidadao>, Ser
       } else if (!this.cidadaoRa.equals(other.cidadaoRa))
         return false;
       return true;
+    }
+
+    public String getGptIncorp() {
+      return gptIncorp;
+    }
+
+    public void setGptIncorp(String gptIncorp) {
+      this.gptIncorp = gptIncorp;
+    }
+
+    public Long getCidadaoRa() {
+      return this.cidadaoRa;
+    }
+    public void setCidadaoRa(Long cidadaoRa) {
+      this.cidadaoRa = cidadaoRa;
     }
 
   } 

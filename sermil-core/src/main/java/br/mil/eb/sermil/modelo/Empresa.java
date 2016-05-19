@@ -62,6 +62,32 @@ public final class Empresa implements Comparable<Empresa>, Serializable {
       .toString();
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((this.codigo == null) ? 0 : this.codigo.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Empresa other = (Empresa) obj;
+    if (this.codigo == null) {
+      if (other.codigo != null)
+        return false;
+    } else if (!this.codigo.equals(other.codigo))
+      return false;
+    return true;
+  }
+  
   public Byte getAtividade() {
     return this.atividade;
   }
@@ -132,32 +158,6 @@ public final class Empresa implements Comparable<Empresa>, Serializable {
 
   public void setTelefone(String telefone) {
     this.telefone = telefone;
-  }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result
-        + ((this.codigo == null) ? 0 : this.codigo.hashCode());
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    Empresa other = (Empresa) obj;
-    if (this.codigo == null) {
-      if (other.codigo != null)
-        return false;
-    } else if (!this.codigo.equals(other.codigo))
-      return false;
-    return true;
   }
 
 }

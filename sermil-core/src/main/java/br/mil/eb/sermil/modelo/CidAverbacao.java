@@ -15,10 +15,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.mil.eb.sermil.core.exceptions.SermilException;
+
 /** Averbações de cidadão.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CidAverbacao.java 2426 2014-05-14 15:01:41Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "CID_AVERBACAO")
@@ -53,7 +55,7 @@ public final class CidAverbacao implements Comparable<CidAverbacao>, Serializabl
   public String toString() {
     return new StringBuilder(this.getPk().getData() == null ? "DATA" : DateFormat.getDateInstance(DateFormat.MEDIUM).format(this.getPk().getData()))
     .append(" - ")
-    .append(this.getDescricao() == null ? "DESC" : this.getDescricao())
+    .append(this.getDescricao() == null ? "AVERBACAO" : this.getDescricao())
     .toString();
   }
 
@@ -133,15 +135,14 @@ public final class CidAverbacao implements Comparable<CidAverbacao>, Serializabl
     this.responsavel = responsavel;
   }
 
-  /** Chave primária (PK) de CidAverbação.
+  /** Chave primária (PK) CidAverbacao.
    * @author Abreu Lopes
    * @since 3.0
-   * @version $Id: CidAverbacao.java 2426 2014-05-14 15:01:41Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<CidAverbacao.PK>, Serializable {
 
-    /** serialVersionUID. */
     private static final long serialVersionUID = -6045393147997775112L;
 
     @Column(name = "CIDADAO_RA")
@@ -167,10 +168,8 @@ public final class CidAverbacao implements Comparable<CidAverbacao>, Serializabl
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-          + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
-      result = prime * result
-          + ((this.data == null) ? 0 : this.data.hashCode());
+      result = prime * result + ((cidadaoRa == null) ? 0 : cidadaoRa.hashCode());
+      result = prime * result + ((data == null) ? 0 : data.hashCode());
       return result;
     }
 
@@ -183,15 +182,15 @@ public final class CidAverbacao implements Comparable<CidAverbacao>, Serializabl
       if (getClass() != obj.getClass())
         return false;
       PK other = (PK) obj;
-      if (this.cidadaoRa == null) {
+      if (cidadaoRa == null) {
         if (other.cidadaoRa != null)
           return false;
-      } else if (!this.cidadaoRa.equals(other.cidadaoRa))
+      } else if (!cidadaoRa.equals(other.cidadaoRa))
         return false;
-      if (this.data == null) {
+      if (data == null) {
         if (other.data != null)
           return false;
-      } else if (!this.data.equals(other.data))
+      } else if (!data.equals(other.data))
         return false;
       return true;
     }
@@ -208,14 +207,14 @@ public final class CidAverbacao implements Comparable<CidAverbacao>, Serializabl
       this.cidadaoRa = cidadaoRa;
     }
 
-    public void setData(Date data) {
-      Calendar cal = Calendar.getInstance();
+    public void setData(Date data) throws SermilException {
+      final Calendar cal = Calendar.getInstance();
       if (cal.getTime().before(data)) {
-        throw new IllegalArgumentException("Data maior que a data atual.");
+        throw new SermilException("Data maior que a data atual.");
       } else {
         cal.set(1970, 0, 1); // 01-01-1970
         if (cal.getTime().after(data)) {
-          throw new IllegalArgumentException("Data menor que 01/01/1970.");
+          throw new SermilException("Data menor que 01/01/1970.");
         }
       }
       this.data = data;

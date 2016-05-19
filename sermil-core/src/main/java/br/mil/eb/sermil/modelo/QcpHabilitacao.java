@@ -21,7 +21,6 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class QcpHabilitacao implements Serializable {
 
-  /** serialVersionUID. */
   private static final long serialVersionUID = 8299663748487294314L;
 
   @Id
@@ -32,6 +31,11 @@ public final class QcpHabilitacao implements Serializable {
 	public QcpHabilitacao() {
 		super();
 	}
+
+  @Override
+  public String toString() {
+    return this.getDescricao() == null ? "NULO" : this.getDescricao();
+  }
 
 	public String getCodigo() {
 		return this.codigo;
@@ -47,11 +51,6 @@ public final class QcpHabilitacao implements Serializable {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
-	}
-
-	@Override
-	public String toString() {
-		return this.getDescricao() == null ? "NULO" : this.getDescricao();
 	}
 
 }

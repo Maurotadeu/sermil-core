@@ -17,7 +17,7 @@ import javax.persistence.TemporalType;
 /** Documento de entrada de informação do cidadão.
  * @author Abreu Lopes
  * @since 2.0
- * @version $Id: CidDocumento.java 2423 2014-05-13 17:00:54Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "CID_DOCUMENTO")
@@ -137,7 +137,7 @@ public final class CidDocumento implements Comparable<CidDocumento>, Serializabl
   /** Chave primária (PK) de CidDocumento.
    * @author Abreu Lopes
    * @since 3.0
-   * @version $Id: CidDocumento.java 2423 2014-05-13 17:00:54Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<CidDocumento.PK>, Serializable {
@@ -182,12 +182,9 @@ public final class CidDocumento implements Comparable<CidDocumento>, Serializabl
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-          + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
-      result = prime * result
-          + ((this.data == null) ? 0 : this.data.hashCode());
-      result = prime * result
-          + ((this.tipo == null) ? 0 : this.tipo.hashCode());
+      result = prime * result + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
+      result = prime * result + ((this.data == null) ? 0 : this.data.hashCode());
+      result = prime * result + ((this.tipo == null) ? 0 : this.tipo.hashCode());
       return result;
     }
 

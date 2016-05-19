@@ -33,8 +33,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Qcp implements Comparable<Qcp>, Serializable {
 
-  /** serialVersionUID. */
-  private static final long serialVersionUID = -471838432443953608L;
+  private static final long serialVersionUID = 3337268773911606699L;
 
   @EmbeddedId
   private PK pk;
@@ -107,8 +106,41 @@ public final class Qcp implements Comparable<Qcp>, Serializable {
   }
 
   @Override
+  public String toString() {
+    return new StringBuilder(this.getPk().toString())
+    .append(" - ")
+    .append(this.getCargoDescricao())
+    .toString();
+  }
+
+  @Override
   public int compareTo(Qcp o) {
     return this.getPk().compareTo(o.getPk());
+  }
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((pk == null) ? 0 : pk.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Qcp other = (Qcp) obj;
+    if (pk == null) {
+      if (other.pk != null)
+        return false;
+    } else if (!pk.equals(other.pk))
+      return false;
+    return true;
   }
 
   public PK getPk() {
@@ -255,14 +287,6 @@ public final class Qcp implements Comparable<Qcp>, Serializable {
     this.qcpObservacao = qcpObservacao;
   }
 
-  @Override
-  public String toString() {
-    return new StringBuilder(this.getPk().toString())
-    .append(" - ")
-    .append(this.getCargoDescricao())
-    .toString();
-  }
-
   /** Chave primária (PK) de Qcp.
    * @author Abreu Lopes
    * @since 3.0
@@ -271,7 +295,6 @@ public final class Qcp implements Comparable<Qcp>, Serializable {
   @Embeddable
   public static class PK implements Comparable<Qcp.PK>, Serializable {
 
-    /** serialVersionUID. */
     private static final long serialVersionUID = -4957470859211162903L;
 
     @Column(name="OM_CODIGO")
@@ -294,6 +317,45 @@ public final class Qcp implements Comparable<Qcp>, Serializable {
       return this.getOmCodigo().compareTo(o.getOmCodigo()) == 0 ? this.getFracaoId().compareTo(o.getFracaoId()) : this.getOmCodigo().compareTo(o.getOmCodigo());
     }
 
+    @Override
+    public String toString() {
+      return new StringBuilder(this.getOmCodigo() == null ? "COD" : this.getOmCodigo().toString())
+      .append(" - ")
+      .append(this.getFracaoId() == null ? "QCP" : this.getFracaoId())
+      .toString();
+    }
+    
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((fracaoId == null) ? 0 : fracaoId.hashCode());
+      result = prime * result + ((omCodigo == null) ? 0 : omCodigo.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      PK other = (PK) obj;
+      if (fracaoId == null) {
+        if (other.fracaoId != null)
+          return false;
+      } else if (!fracaoId.equals(other.fracaoId))
+        return false;
+      if (omCodigo == null) {
+        if (other.omCodigo != null)
+          return false;
+      } else if (!omCodigo.equals(other.omCodigo))
+        return false;
+      return true;
+    }
+
     public Integer getOmCodigo() {
       return this.omCodigo;
     }
@@ -308,36 +370,6 @@ public final class Qcp implements Comparable<Qcp>, Serializable {
 
     public void setFracaoId(String fracaoId) {
       this.fracaoId = fracaoId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (o == this) {
-        return true;
-      }
-      if ( ! (o instanceof PK)) {
-        return false;
-      }
-      PK other = (PK) o;
-      return (this.omCodigo == other.omCodigo)
-          && this.fracaoId.equals(other.fracaoId);
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int hash = 17;
-      hash = hash * prime + ((int) (this.omCodigo ^ (this.omCodigo >>> 32)));
-      hash = hash * prime + this.fracaoId.hashCode();
-      return hash;
-    }
-
-    @Override
-    public String toString() {
-      return new StringBuilder(this.getOmCodigo() == null ? "NULO" : this.getOmCodigo().toString())
-      .append(" - ")
-      .append(this.getFracaoId() == null ? "NULO" : this.getFracaoId())
-      .toString();
     }
 
   }

@@ -15,10 +15,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.mil.eb.sermil.core.exceptions.SermilException;
+
 /** Exercício de mobilização.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CidMobilizacao.java 2428 2014-05-15 13:23:47Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "CID_MOBILIZACAO")
@@ -43,7 +45,7 @@ public final class CidMobilizacao implements Comparable<CidMobilizacao>, Seriali
     this.setPk(new CidMobilizacao.PK());
   }
 
-  public CidMobilizacao(final Long ra, final Date data) {
+  public CidMobilizacao(final Long ra, final Date data) throws SermilException {
     this.setPk(new CidMobilizacao.PK(ra, data));
   }
 
@@ -56,7 +58,7 @@ public final class CidMobilizacao implements Comparable<CidMobilizacao>, Seriali
   public String toString() {
     return new StringBuilder(this.getOm() == null ? "OM" : this.getOm().toString())
       .append(" - ")
-      .append(this.getPk().getApresentacaoData() == null ? "DATA" : DateFormat.getDateInstance(DateFormat.MEDIUM).format(this.getPk().getApresentacaoData()))
+      .append(this.getPk().getApresentacaoData() == null ? "DATA MOBILIZACAO" : DateFormat.getDateInstance(DateFormat.MEDIUM).format(this.getPk().getApresentacaoData()))
       .toString();
   }
 
@@ -123,12 +125,11 @@ public final class CidMobilizacao implements Comparable<CidMobilizacao>, Seriali
   /** Chave primária (PK) de CidMobilizacao.
    * @author Abreu Lopes
    * @since 3.0
-   * @version $Id: CidMobilizacao.java 2428 2014-05-15 13:23:47Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<CidMobilizacao.PK>, Serializable {
 
-    /** serialVersionUID. */
     private static final long serialVersionUID = 2686055299438185483L;
 
     @Temporal(TemporalType.DATE)
@@ -142,7 +143,7 @@ public final class CidMobilizacao implements Comparable<CidMobilizacao>, Seriali
       super();
     }
     
-    public PK(final Long cidadaoRa, final Date apresentacaoData) {
+    public PK(final Long cidadaoRa, final Date apresentacaoData) throws SermilException {
       super();
       this.setApresentacaoData(apresentacaoData);
       this.setCidadaoRa(cidadaoRa);
@@ -161,12 +162,8 @@ public final class CidMobilizacao implements Comparable<CidMobilizacao>, Seriali
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime
-          * result
-          + ((this.apresentacaoData == null) ? 0 : this.apresentacaoData
-              .hashCode());
-      result = prime * result
-          + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
+      result = prime * result + ((this.apresentacaoData == null) ? 0 : this.apresentacaoData.hashCode());
+      result = prime * result + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
       return result;
     }
 
@@ -200,14 +197,14 @@ public final class CidMobilizacao implements Comparable<CidMobilizacao>, Seriali
       return this.cidadaoRa;
     }
 
-    public void setApresentacaoData(Date data) {
+    public void setApresentacaoData(Date data) throws SermilException {
       Calendar cal = Calendar.getInstance();
       if (cal.getTime().before(data)) {
-        throw new IllegalArgumentException("Data maior que a data atual.");
+        throw new SermilException("Data maior que a data atual.");
       } else {
         cal.set(1980, 0, 1); // 01-01-1980
         if (cal.getTime().after(data)) {
-          throw new IllegalArgumentException("Data menor que 01/01/1980.");
+          throw new SermilException("Data menor que 01/01/1980.");
         }
       }
       this.apresentacaoData = data;

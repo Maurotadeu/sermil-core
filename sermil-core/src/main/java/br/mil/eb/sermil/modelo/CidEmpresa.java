@@ -13,7 +13,7 @@ import javax.persistence.Table;
 /** Empregado em Empresa de Segurança Nacional (EDRSN).
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CidEmpresa.java 2428 2014-05-15 13:23:47Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "CID_EMPRESA")
@@ -125,7 +125,7 @@ public final class CidEmpresa implements Comparable<CidEmpresa>, Serializable {
   /** Chave primária (PK) de CidEmpresa.
    * @author Abreu Lopes
    * @since 3.0
-   * @version $Id: CidEmpresa.java 2428 2014-05-15 13:23:47Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<CidEmpresa.PK>, Serializable {
@@ -162,10 +162,8 @@ public final class CidEmpresa implements Comparable<CidEmpresa>, Serializable {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-          + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
-      result = prime * result
-          + ((this.empresaCodigo == null) ? 0 : this.empresaCodigo.hashCode());
+      result = prime * result + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
+      result = prime * result + ((this.empresaCodigo == null) ? 0 : this.empresaCodigo.hashCode());
       return result;
     }
 

@@ -15,10 +15,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/** Promoção de posto ou graduação.
+import br.mil.eb.sermil.core.exceptions.SermilException;
+
+/** Entidade CidPromocao.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CidPromocao.java 2426 2014-05-14 15:01:41Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "CID_PROMOCAO")
@@ -39,7 +41,7 @@ public final class CidPromocao implements Comparable<CidPromocao>, Serializable 
     this.setPk(new CidPromocao.PK());
   }
 
-  public CidPromocao(Long ra, Date data, String postoGraduacaoCodigo) {
+  public CidPromocao(final Long ra, final Date data, final String postoGraduacaoCodigo) throws SermilException {
     this.setPk(new CidPromocao.PK(ra, data, postoGraduacaoCodigo));
   }
 
@@ -111,12 +113,11 @@ public final class CidPromocao implements Comparable<CidPromocao>, Serializable 
   /** Chave primária (PK) de CidPromocao.
    * @author Abreu Lopes
    * @since 3.0
-   * @version $Id: CidPromocao.java 2426 2014-05-14 15:01:41Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<CidPromocao.PK>, Serializable {
 
-    /** serialVersionUID. */
     private static final long serialVersionUID = 7252812287797303248L;
 
     @Column(name = "CIDADAO_RA")
@@ -133,7 +134,7 @@ public final class CidPromocao implements Comparable<CidPromocao>, Serializable 
       super();
     }
     
-    public PK(final Long cidadaoRa, final Date data, final String postoGraduacaoCodigo) {
+    public PK(final Long cidadaoRa, final Date data, final String postoGraduacaoCodigo) throws SermilException {
       super();
       this.setCidadaoRa(cidadaoRa);
       this.setData(data);
@@ -156,14 +157,9 @@ public final class CidPromocao implements Comparable<CidPromocao>, Serializable 
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-          + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
-      result = prime * result
-          + ((this.data == null) ? 0 : this.data.hashCode());
-      result = prime
-          * result
-          + ((this.postoGraduacaoCodigo == null) ? 0
-              : this.postoGraduacaoCodigo.hashCode());
+      result = prime * result + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
+      result = prime * result + ((this.data == null) ? 0 : this.data.hashCode());
+      result = prime * result + ((this.postoGraduacaoCodigo == null) ? 0 : this.postoGraduacaoCodigo.hashCode());
       return result;
     }
 
@@ -210,14 +206,14 @@ public final class CidPromocao implements Comparable<CidPromocao>, Serializable 
       this.cidadaoRa = cidadaoRa;
     }
 
-    public void setData(Date data) {
+    public void setData(Date data) throws SermilException {
       Calendar cal = Calendar.getInstance();
       if (cal.getTime().before(data)) {
-        throw new IllegalArgumentException("Data maior que a data atual.");
+        throw new SermilException("Data maior que a data atual.");
       } else {
-        cal.set(1950, 0, 1); // 01-01-1980
+        cal.set(1900, 0, 1); // 01-01-1900
         if (cal.getTime().after(data)) {
-          throw new IllegalArgumentException("Data menor que 01/01/1950.");
+          throw new SermilException("Data menor que 01/01/1900.");
         }
       }
       this.data = data;

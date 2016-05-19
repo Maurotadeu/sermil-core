@@ -28,7 +28,7 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 /** Boletim de Necessidade de OM (DSTB_BOLNEC).
  * @author Abreu Lopes
  * @since 3.4
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @Table(name = "DSTB_BOLNEC")
@@ -38,7 +38,6 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
   @NamedQuery(name = "DstbBolNec.listarPorOm", query = "SELECT b FROM DstbBolNec b WHERE b.pk.omCodigo = ?1 ORDER BY b.pk.numero"),
 })
 @NamedStoredFunctionQuery(name="DstbBolNec.majorar", functionName="dis_bolnec.majorar", returnParameter=@StoredProcedureParameter(queryParameter="MSG"))
-//@NamedPLSQLStoredFunctionQuery(name="DstbBolNec.majorar", functionName="dis_bolnec.majorar", returnParameter=@PLSQLParameter(name="RESULT", databaseType="VARCHAR2(2000)"))
 public final class DstbBolNec implements Comparable<DstbBolNec>, Serializable {
 
   private static final long serialVersionUID = 2079976557988778936L;
@@ -184,7 +183,7 @@ public final class DstbBolNec implements Comparable<DstbBolNec>, Serializable {
   /** Chave primária (PK) de DstbBolNec.
    * @author Abreu Lopes
    * @since 3.4
-   * @version $Id: DstbBolNec.java 2433 2014-05-22 19:16:47Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<DstbBolNec.PK>, Serializable {
@@ -217,7 +216,7 @@ public final class DstbBolNec implements Comparable<DstbBolNec>, Serializable {
         .append(" - Gpt ")
         .append(this.getGptIncorp() == null ? "GPT" : this.getGptIncorp())
         .append(" - Bol Nr ")
-        .append(this.getNumero() == null ? "NR" : this.getNumero())
+        .append(this.getNumero() == null ? "NR BOL NEC" : this.getNumero())
         .toString();
     }
 

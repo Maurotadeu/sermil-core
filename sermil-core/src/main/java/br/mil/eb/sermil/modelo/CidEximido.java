@@ -13,16 +13,18 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-/** Informações de eximição.
+import br.mil.eb.sermil.core.exceptions.SermilException;
+
+/** Entidade CidEximido.
  * @author Abreu Lopes
  * @since 2.0
- * @version $Id: CidEximido.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name="CID_EXIMIDO")
 public final class CidEximido implements Serializable {
 
-  private static final long serialVersionUID = 2765503596949495988L;
+  private static final long serialVersionUID = -651731092926769901L;
 
   @Id
   @Column(name="CIDADAO_RA")
@@ -92,6 +94,31 @@ public final class CidEximido implements Serializable {
 
   public CidEximido() {
     super();
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((cidadaoRa == null) ? 0 : cidadaoRa.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    CidEximido other = (CidEximido) obj;
+    if (cidadaoRa == null) {
+      if (other.cidadaoRa != null)
+        return false;
+    } else if (!cidadaoRa.equals(other.cidadaoRa))
+      return false;
+    return true;
   }
 
   public Date getAbiRmData() {
@@ -202,15 +229,15 @@ public final class CidEximido implements Serializable {
     this.comparerSelAno = comparerSelAno;
   }
 
-  public void setDocCsmData(Date data) {
+  public void setDocCsmData(Date data) throws SermilException {
     if (data != null) {
       final Calendar cal = Calendar.getInstance();
       if (cal.getTime().before(data)) {
-        throw new IllegalArgumentException("Data maior que a data atual.");
+        throw new SermilException("Data maior que a data atual.");
       } else {
         cal.set(1980, 0, 1); // 01-01-1980
         if (cal.getTime().after(data)) {
-          throw new IllegalArgumentException("Data menor que 01/01/1980.");
+          throw new SermilException("Data menor que 01/01/1980.");
         }
       }
       this.docCsmData = data;
@@ -225,15 +252,15 @@ public final class CidEximido implements Serializable {
     this.docCsmTipo = docCsmTipo;
   }
 
-  public void setEximicaoDouData(Date data) {
+  public void setEximicaoDouData(Date data) throws SermilException {
     if (data != null) {
       final Calendar cal = Calendar.getInstance();
       if (cal.getTime().before(data)) {
-        throw new IllegalArgumentException("Data maior que a data atual.");
+        throw new SermilException("Data maior que a data atual.");
       } else {
         cal.set(1980, 0, 1); // 01-01-1980
         if (cal.getTime().after(data)) {
-          throw new IllegalArgumentException("Data menor que 01/01/1980.");
+          throw new SermilException("Data menor que 01/01/1980.");
         }
       }
       this.eximicaoDouData = data;
@@ -244,15 +271,15 @@ public final class CidEximido implements Serializable {
     this.eximicaoDouNr = eximicaoDouNr;
   }
 
-  public void setOfDsmJusticaData(Date data) {
+  public void setOfDsmJusticaData(Date data) throws SermilException {
     if (data != null) {
       final Calendar cal = Calendar.getInstance();
       if (cal.getTime().before(data)) {
-        throw new IllegalArgumentException("Data maior que a data atual.");
+        throw new SermilException("Data maior que a data atual.");
       } else {
         cal.set(1980, 0, 1); // 01-01-1980
         if (cal.getTime().after(data)) {
-          throw new IllegalArgumentException("Data menor que 01/01/1980.");
+          throw new SermilException("Data menor que 01/01/1980.");
         }
       }
       this.ofDsmJusticaData = data;
@@ -263,15 +290,15 @@ public final class CidEximido implements Serializable {
     this.ofDsmJusticaNr = ofDsmJusticaNr;
   }
 
-  public void setPdpDouData(Date data) {
+  public void setPdpDouData(Date data) throws SermilException {
     if (data != null) {
       final Calendar cal = Calendar.getInstance();
       if (cal.getTime().before(data)) {
-        throw new IllegalArgumentException("Data maior que a data atual.");
+        throw new SermilException("Data maior que a data atual.");
       } else {
         cal.set(1980, 0, 1); // 01-01-1980
         if (cal.getTime().after(data)) {
-          throw new IllegalArgumentException("Data menor que 01/01/1980.");
+          throw new SermilException("Data menor que 01/01/1980.");
         }
       }
       this.pdpDouData = data;
@@ -286,15 +313,15 @@ public final class CidEximido implements Serializable {
     this.procJsmNr = procJsmNr;
   }
 
-  public void setReabilitacaoDouData(Date data) {
+  public void setReabilitacaoDouData(Date data) throws SermilException {
     if (data != null) {
       final Calendar cal = Calendar.getInstance();
       if (cal.getTime().before(data)) {
-        throw new IllegalArgumentException("Data maior que a data atual.");
+        throw new SermilException("Data maior que a data atual.");
       } else {
         cal.set(1980, 0, 1); // 01-01-1980
         if (cal.getTime().after(data)) {
-          throw new IllegalArgumentException("Data menor que 01/01/1980.");
+          throw new SermilException("Data menor que 01/01/1980.");
         }
       }
       this.reabilitacaoDouData = data;
@@ -307,9 +334,7 @@ public final class CidEximido implements Serializable {
 
   @Override
   public String toString() {
-    return new StringBuilder("EXIMIÇÃO: ")
-           .append(this.getCidadao() == null ? "RA" : this.getCidadao())
-           .toString();
+    return new StringBuilder("EXIMIDO: ").append(this.getCidadao() == null ? "RA" : this.getCidadao()).toString();
   }
 
 }
