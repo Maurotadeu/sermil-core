@@ -1,14 +1,11 @@
 package br.mil.eb.sermil.core.servicos;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.TypedQuery;
 
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.SelJsmDao;
 import br.mil.eb.sermil.core.dao.SelTributacaoDao;
+import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.SelJsm;
 import br.mil.eb.sermil.modelo.SelTributacao;
@@ -23,10 +21,9 @@ import br.mil.eb.sermil.modelo.SelTributacao;
 /** Serviços de Pré-seleção (Tabelas SEL_JSM e SEL_TRIBUTACAO).
  * @author Abreu Lopes
  * @since 3.5
- * @version $Id: RmSelecaoServico.java 2458 2014-06-06 11:41:40Z wlopes $
+ * @version 5.4
  */
 @Named("rmSelecaoServico")
-@RemoteProxy(name="selecaoServico")
 public class RmSelecaoServico {
 
   protected static final Logger logger = LoggerFactory.getLogger(RmSelecaoServico.class);
@@ -42,29 +39,25 @@ public class RmSelecaoServico {
   }
 
   @PreAuthorize("hasAnyRole('adm','dsm','smr')")
-  @RemoteMethod
-  public Object[] listarCs(final Byte rm){
-    final List<Object[]> lista = selJsmDao.findBySQL("SELECT distinct(cs) FROM Cs where rm = ? order by cs", rm);
-    return lista.toArray();
-  }
-
-  @PreAuthorize("hasAnyRole('adm','dsm','smr')")
-  public List<SelJsm> listarJsm(Byte rm) throws SermilException {
+  public List<SelJsm> listarJsm(final Byte rm) throws SermilException {
     return this.selJsmDao.findByNamedQuery("SelJsm.listarJsmTributaria", rm);
   }
 
 
   @PreAuthorize("hasAnyRole('adm','dsm','smr')")
   @Transactional
-  public List<SelJsm> salvarPreSelecao(final List<SelJsm> preSelecao) throws SermilException {
-    final List<SelJsm> salvo = new ArrayList<SelJsm>();
-    for (SelJsm dispensa: preSelecao) {
-      if (dispensa.getAptos() == null) {
-        dispensa.setAptos(Short.valueOf("0"));
-      }
-      salvo.add(this.selJsmDao.save(dispensa));
+  public String salvarParamSelecao(final List<SelJsm> paramSelecao, final Byte rm) throws SermilException {
+    if (paramSelecao == null || paramSelecao.isEmpty()) {
+      throw new NoDataFoundException("Não há informações a serem processadas.");
     }
-    return salvo;
+    final List<SelJsm> lista = this.listarJsm(rm);
+    for (SelJsm paramJsm: paramSelecao) {
+      final SelJsm paramFinal = lista.get(lista.indexOf(paramJsm));
+      paramFinal.setAptos(paramJsm.getAptos() == null ? 0 : paramJsm.getAptos());
+      paramFinal.setDispensaEscolaridade(paramJsm.getDispensaEscolaridade());
+      this.selJsmDao.save(paramFinal);
+    }
+    return "Parametros salvos";
   }
 
   @PreAuthorize("hasAnyRole('adm','dsm')")
