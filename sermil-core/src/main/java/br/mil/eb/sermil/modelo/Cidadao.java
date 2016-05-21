@@ -21,7 +21,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -135,8 +134,7 @@ public final class Cidadao implements Serializable {
   @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
   private CidEximido cidEximido;
 
-  @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
-  @PrimaryKeyJoinColumn
+  @OneToOne(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
   private CidFoto cidFoto;
 
   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
