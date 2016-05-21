@@ -15,7 +15,7 @@ import javax.persistence.Table;
 /** Grupo de Distribuição de OM (DSTB_GD_OM).
  * @author Abreu Lopes
  * @since 3.4
- * @version $Id: DstbGdOm.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name="DSTB_GD_OM")
@@ -117,12 +117,11 @@ public final class DstbGdOm implements Comparable<DstbGdOm>, Serializable {
   /** Chave primária (PK) de DstbGdOm.
    * @author Abreu Lopes
    * @since 3.4
-   * @version $Id: DstbGdOm.java 1637 2011-11-25 13:52:11Z wlopes $
+   * @version 5.4
    */
 	@Embeddable
 	public static class PK implements Comparable<DstbGdOm.PK>, Serializable {
 	  
-    /** serialVersionUID. */
     private static final long serialVersionUID = 6264787477576617016L;
 
     @Column(name="RM_CODIGO")

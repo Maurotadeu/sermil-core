@@ -20,7 +20,6 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class QcpObservacao implements Serializable {
 
-  /** serialVersionUID. */
   private static final long serialVersionUID = 555971040195386288L;
 
   @Id

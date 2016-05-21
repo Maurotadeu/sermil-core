@@ -53,6 +53,7 @@ public final class CidArrecadacao implements Comparable<CidArrecadacao>, Seriali
 
   public CidArrecadacao(final Long ra, final Date data, final Short artigo, final Short numero) {
     this.setPk(new CidArrecadacao.PK(ra, data, artigo, numero));
+    this.setTaxaMulta(new TaxaMulta(this.getPk().getTaxaMultaArtigo(), this.getPk().getTaxaMultaNumero()));
   }
 
   @Override

@@ -63,46 +63,48 @@ public class ExarServico {
 
    @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob')")
    @Transactional
-   public Cidadao adicionarApresentacao(final CidExar apresentacao, final Usuario usr) throws SermilException {
+   public String adicionarApresentacao(final Cidadao cidadao, final CidExar apresentacao, final Usuario usr) throws SermilException {
       if (apresentacao == null || apresentacao.getPk() == null || apresentacao.getPk().getCidadaoRa() == null) {
          throw new SermilException("Informe o RA do cidadão para cadastrar uma apresentação do EXAR.");
       }
-      final Cidadao cid = this.cidadaoServico.recuperar(apresentacao.getPk().getCidadaoRa());
-      if (!isExarLiberado(cid)) {
+      if (!isExarLiberado(cidadao)) {
          throw new SermilException("Para cadastrar uma apresentação o cidadão deve estar na situação LICENCIADO, ou EXCESSO com CDI em Situação Especial cadastrado.");
       }
-
+      if (!cidadao.getCidExarCollection().isEmpty() && cidadao.getCidExarCollection().contains(apresentacao)) {
+        throw new SermilException("Apresentação já existe: Nr " + apresentacao.getPk().getApresentacaoQtd());
+      }
+      // Inclui as apresentações que faltam até o número informado (ajuda o usuário do sistema)      
       final List<CidExar> lista = new ArrayList<CidExar>(apresentacao.getPk().getApresentacaoQtd());
       for (int i = 1; i <= apresentacao.getPk().getApresentacaoQtd(); i++) {
          final CidExar apr = new CidExar();
          apr.getPk().setApresentacaoQtd((byte) i);
          apr.getPk().setCidadaoRa(apresentacao.getPk().getCidadaoRa());
          apr.setApresentacaoData(apresentacao.getApresentacaoData());
-         apr.setApresentacaoForma(apresentacao.getApresentacaoTipo());
+         apr.setApresentacaoForma(apresentacao.getApresentacaoForma());
          apr.setApresentacaoTipo(apresentacao.getApresentacaoTipo());
+         apr.setIp(apresentacao.getIp());
          apr.setMunicipio(apresentacao.getMunicipio());
          apr.setOm(apresentacao.getOm());
          apr.setPais(apresentacao.getPais());
-         apr.setIp(apresentacao.getIp());
          lista.add(apr);
       }
-      if (cid.getCidExarCollection().size() > 0) {
-         for (int i = 0; i < cid.getCidExarCollection().size(); i++) {
-            lista.remove(cid.getCidExarCollection().get(i));
-         }
-      }
       for (CidExar ce : lista) {
-         cid.addCidExar(ce);
+        try {
+          cidadao.addCidExar(ce);
+        } catch (Exception e) {
+          // ignora se apresentacao ja existir, adiciona as demais
+        }
       }
-      return this.cidadaoServico.salvar(cid, usr, new StringBuilder("APRESENTAÇÃO: ").append(apresentacao).toString());
+      this.cidadaoServico.salvar(cidadao, usr, new StringBuilder("APRESENTAÇÃO: ").append(apresentacao).toString());
+      return new StringBuilder(cidadao.toString()).append(": apresentação salva.").toString();
    }
 
    @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','del','jsm','om','mob')")
    @Transactional
-   public Cidadao excluirApresentacao(final CidExar apresentacao, final Usuario usr) throws SermilException {
-      final Cidadao cid = this.cidadaoServico.recuperar(apresentacao.getPk().getCidadaoRa());
-      cid.getCidExarCollection().remove(apresentacao);
-      return this.cidadaoServico.salvar(cid, usr, new StringBuilder("APRESENTAÇÃO EXCLUÍDA: ").append(apresentacao).toString());
+   public String excluirApresentacao(final Cidadao cidadao, final CidExar apresentacao, final Usuario usr) throws SermilException {
+      cidadao.getCidExarCollection().remove(apresentacao);
+      this.cidadaoServico.salvar(cidadao, usr, new StringBuilder("APRESENTAÇÃO EXCLUÍDA: ").append(apresentacao).toString());
+      return new StringBuilder(cidadao.toString()).append(": apresentação excluída.").toString();
    }
 
    private boolean isExarLiberado(final Cidadao cid) {

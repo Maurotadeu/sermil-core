@@ -16,9 +16,10 @@ import org.eclipse.persistence.annotations.NamedStoredFunctionQueries;
 import org.eclipse.persistence.annotations.NamedStoredFunctionQuery;
 import org.eclipse.persistence.annotations.StoredProcedureParameter;
 
-/** Parâmetro da Distribuição.
+/** Entidade DstbParametro.
  * @author Abreu Lopes
- * @version $Id: DstbParametro.java 1962 2012-05-30 16:05:59Z wlopes $
+ * @since 4.0
+ * @version 5.4
  */
 @Entity
 @Table(name = "DSTB_PARAMETRO")
@@ -31,7 +32,7 @@ import org.eclipse.persistence.annotations.StoredProcedureParameter;
 })
 public final class DstbParametro implements Comparable<DstbParametro>, Serializable {
 
-  private static final long serialVersionUID = -2309920208990037063L;
+  private static final long serialVersionUID = 2835566367775246960L;
 
   @EmbeddedId
   private PK pk;
@@ -75,6 +76,31 @@ public final class DstbParametro implements Comparable<DstbParametro>, Serializa
     return this.getPk().compareTo(o.getPk());
   }
   
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((pk == null) ? 0 : pk.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    DstbParametro other = (DstbParametro) obj;
+    if (pk == null) {
+      if (other.pk != null)
+        return false;
+    } else if (!pk.equals(other.pk))
+      return false;
+    return true;
+  }
+
   public PK getPk() {
     return this.pk;
   }
@@ -166,12 +192,11 @@ public final class DstbParametro implements Comparable<DstbParametro>, Serializa
   /** Chave primária (PK) de DstbParametro.
    * @author Abreu Lopes
    * @since 4.0
-   * @version $Id: DstbParametro.java 1962 2012-05-30 16:05:59Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<DstbParametro.PK>, Serializable {
     
-    /** serialVersionUID. */
     private static final long serialVersionUID = -5351741405715798235L;
 
     @Column(name="RM_CODIGO")
@@ -211,10 +236,8 @@ public final class DstbParametro implements Comparable<DstbParametro>, Serializa
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-          + ((this.omTipo == null) ? 0 : this.omTipo.hashCode());
-      result = prime * result
-          + ((this.rmCodigo == null) ? 0 : this.rmCodigo.hashCode());
+      result = prime * result + ((this.omTipo == null) ? 0 : this.omTipo.hashCode());
+      result = prime * result + ((this.rmCodigo == null) ? 0 : this.rmCodigo.hashCode());
       return result;
     }
 

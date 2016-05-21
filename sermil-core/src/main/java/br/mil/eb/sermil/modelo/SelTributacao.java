@@ -15,14 +15,14 @@ import javax.persistence.Table;
 /** Tributação de Junta de Serviço Militar.
  * @author Abreu Lopes
  * @since 3.4
- * @version $Id: SelTributacao.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "SEL_TRIBUTACAO")
 @NamedQuery(name = "SelTributacao.listarPorCsm", query = "SELECT t FROM SelTributacao t WHERE t.pk.csmCodigo = :csm ORDER BY t.pk.csmCodigo")
 public final class SelTributacao implements Serializable {
 
-  private static final long serialVersionUID = -4915828259202702428L;
+  private static final long serialVersionUID = -6094601616744082583L;
 
   @EmbeddedId
   private PK pk;
@@ -65,8 +65,33 @@ public final class SelTributacao implements Serializable {
   public String toString() {
     return new StringBuilder(this.getPk().toString())
       .append(" - ")
-      .append(this.descricao == null ? "NULO" : this.descricao)
+      .append(this.descricao == null ? "SEL TRIBUTACAO" : this.descricao)
       .toString();
+  }
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((pk == null) ? 0 : pk.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    SelTributacao other = (SelTributacao) obj;
+    if (pk == null) {
+      if (other.pk != null)
+        return false;
+    } else if (!pk.equals(other.pk))
+      return false;
+    return true;
   }
 
   public PK getPk() {
@@ -152,12 +177,11 @@ public final class SelTributacao implements Serializable {
   /** Chave primária (PK) de SelTributacao.
    * @author Abreu Lopes
    * @since 3.0
-   * @version $Id: SelTributacao.java 1637 2011-11-25 13:52:11Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Serializable {
 
-    /** serialVersionUID. */
     private static final long serialVersionUID = -6513320966430841701L;
 
     @Column(name = "CSM_CODIGO")
@@ -176,16 +200,45 @@ public final class SelTributacao implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-      if (o == this) {
+    public String toString() {
+      return new StringBuilder()
+        .append(this.getCsmCodigo() == null ? "00" : new DecimalFormat("00").format(this.getCsmCodigo()))
+        .append("/")
+        .append(this.getJsmCodigo() == null ? "000" : new DecimalFormat("000").format(this.getJsmCodigo()))
+        .toString();
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result
+          + ((csmCodigo == null) ? 0 : csmCodigo.hashCode());
+      result = prime * result
+          + ((jsmCodigo == null) ? 0 : jsmCodigo.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
         return true;
-      }
-      if (!(o instanceof PK)) {
+      if (obj == null)
         return false;
-      }
-      PK other = (PK) o;
-      return this.csmCodigo.equals(other.csmCodigo)
-          && this.jsmCodigo.equals(other.jsmCodigo);
+      if (getClass() != obj.getClass())
+        return false;
+      PK other = (PK) obj;
+      if (csmCodigo == null) {
+        if (other.csmCodigo != null)
+          return false;
+      } else if (!csmCodigo.equals(other.csmCodigo))
+        return false;
+      if (jsmCodigo == null) {
+        if (other.jsmCodigo != null)
+          return false;
+      } else if (!jsmCodigo.equals(other.jsmCodigo))
+        return false;
+      return true;
     }
 
     public Byte getCsmCodigo() {
@@ -202,20 +255,6 @@ public final class SelTributacao implements Serializable {
 
     public void setCsmCodigo(Byte csmCodigo) {
       this.csmCodigo = csmCodigo;
-    }
-
-    @Override
-    public int hashCode() {
-      return this.csmCodigo.hashCode() ^ this.jsmCodigo.hashCode();
-    }
-
-    @Override
-    public String toString() {
-      return new StringBuilder()
-        .append(this.getCsmCodigo() == null ? "00" : new DecimalFormat("00").format(this.getCsmCodigo()))
-        .append("/")
-        .append(this.getJsmCodigo() == null ? "000" : new DecimalFormat("000").format(this.getJsmCodigo()))
-        .toString();
     }
 
   }

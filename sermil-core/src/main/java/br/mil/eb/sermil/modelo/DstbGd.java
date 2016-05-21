@@ -20,7 +20,7 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 /** Grupo de Distribuição (DSTB_GD).
  * @author Abreu Lopes
  * @since 3.4
- * @version $Id: DstbGd.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name="DSTB_GD")
@@ -176,12 +176,11 @@ public final class DstbGd implements Comparable<DstbGd>, Serializable {
   /** Chave primária (PK) de DstbGd.
    * @author Abreu Lopes
    * @since 3.5
-   * @version $Id: DstbGd.java 1637 2011-11-25 13:52:11Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<DstbGd.PK>, Serializable {
 
-    /** serialVersionUID. */
     private static final long serialVersionUID = 8595581444880728765L;
 
     @Column(name="RM_CODIGO")
@@ -201,9 +200,9 @@ public final class DstbGd implements Comparable<DstbGd>, Serializable {
 
     @Override
     public String toString() {
-      return new StringBuilder(this.getRmCodigo() == null ? "NULO" : this.getRmCodigo().toString())
+      return new StringBuilder(this.getRmCodigo() == null ? "RM" : this.getRmCodigo().toString())
                  .append("ª RM - GD Nr ")
-                 .append(this.getCodigo() == null ? "NULO" : this.getCodigo())
+                 .append(this.getCodigo() == null ? "DSTB GD" : this.getCodigo())
                  .toString();
     }
 
@@ -220,10 +219,8 @@ public final class DstbGd implements Comparable<DstbGd>, Serializable {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-          + ((this.codigo == null) ? 0 : this.codigo.hashCode());
-      result = prime * result
-          + ((this.rmCodigo == null) ? 0 : this.rmCodigo.hashCode());
+      result = prime * result + ((this.codigo == null) ? 0 : this.codigo.hashCode());
+      result = prime * result + ((this.rmCodigo == null) ? 0 : this.rmCodigo.hashCode());
       return result;
     }
 

@@ -36,8 +36,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Qm implements Comparable<Qm>, Serializable {
 
-  /** serialVersionUID.*/
-  private static final long serialVersionUID = -6948713043263352229L;
+  private static final long serialVersionUID = -1119212672194025136L;
 
   @Id
   private String codigo;
@@ -60,7 +59,40 @@ public final class Qm implements Comparable<Qm>, Serializable {
   public int compareTo(Qm o) {
     return this.getDescricao().compareTo(o.getDescricao());
   }
+
+  @Override
+  public String toString() {
+    return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo())
+    .append(" - ")
+    .append(this.getDescricao() == null ? "QM" : this.getDescricao())
+    .toString();
+  }
   
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Qm other = (Qm) obj;
+    if (codigo == null) {
+      if (other.codigo != null)
+        return false;
+    } else if (!codigo.equals(other.codigo))
+      return false;
+    return true;
+  }
+
   public ArmaQdSv getArmaQdSv() {
     return this.armaQdSv;
   }
@@ -99,14 +131,6 @@ public final class Qm implements Comparable<Qm>, Serializable {
 
   public void setTipo(String tipo) {
     this.tipo = tipo;
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo())
-    .append(" - ")
-    .append(this.getDescricao() == null ? "QM" : this.getDescricao())
-    .toString();
   }
 
 }

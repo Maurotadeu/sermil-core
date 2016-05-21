@@ -20,7 +20,6 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class QcpLegenda implements Serializable {
 
-  /** serialVersionUID. */
   private static final long serialVersionUID = -8980635206735841396L;
 
   @Id

@@ -24,7 +24,7 @@ import javax.persistence.Transient;
 /** Pedido de RA.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: RaPedido.java 2019 2012-07-17 16:24:26Z gardino $
+ * @version 5.4
  */
 @Entity
 @Table(name = "RA_PEDIDO")
@@ -37,7 +37,7 @@ import javax.persistence.Transient;
 })
 public final class RaPedido implements Serializable {
 
-  private static final long serialVersionUID = -3430080544016118416L;
+  private static final long serialVersionUID = 7259444335089719189L;
 
   public static final String APROVADO_NAO  = "N";
   public static final String APROVADO_SIM  = "S";

@@ -33,74 +33,98 @@ import br.mil.eb.sermil.tipos.Utils;
 @PrimaryKey(validation = IdValidation.NULL)
 public final class Municipio implements Serializable {
 
-   /** serialVersionUID. */
-   private static final long serialVersionUID = -9051795322080254128L;
+  private static final long serialVersionUID = 2489552458772885274L;
 
-   @Id
-   private Integer codigo;
+  @Id
+  private Integer codigo;
 
-   private String ddd;
+  private String ddd;
 
-   private String descricao;
+  private String descricao;
 
-   private String sigla;
+  private String sigla;
 
-   @ManyToOne(cascade=CascadeType.REFRESH)
-   @JoinColumn(name = "UF_SIGLA", nullable = false)
-   private Uf uf;
+  @ManyToOne(cascade=CascadeType.REFRESH)
+  @JoinColumn(name="UF_SIGLA", updatable=false, nullable=false)
+  private Uf uf;
 
-   public Municipio() {
-   }
+  public Municipio() {
+  }
 
-   public Municipio(final Integer codigo, final String descricao, final Uf uf) {
-      this.setCodigo(codigo);
-      this.setDescricao(descricao);
-      this.setUf(uf);
-   }
+  public Municipio(final Integer codigo, final String descricao, final Uf uf) {
+    this.setCodigo(codigo);
+    this.setDescricao(descricao);
+    this.setUf(uf);
+  }
 
-   @Override
-   public String toString() {
-      return new StringBuilder(this.getDescricao() == null ? "MUNICIPIO" : this.getDescricao()).append(" - ").append(this.getUf() == null ? "UF" : this.getUf()).toString();
-   }
+  @Override
+  public String toString() {
+    return new StringBuilder(this.getDescricao() == null ? "MUNICIPIO" : this.getDescricao()).append(" - ").append(this.getUf() == null ? "UF" : this.getUf()).toString();
+  }
 
-   public Integer getCodigo() {
-      return this.codigo;
-   }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+    return result;
+  }
 
-   public String getDdd() {
-      return this.ddd;
-   }
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Municipio other = (Municipio) obj;
+    if (codigo == null) {
+      if (other.codigo != null)
+        return false;
+    } else if (!codigo.equals(other.codigo))
+      return false;
+    return true;
+  }
 
-   public String getDescricao() {
-      return this.descricao;
-   }
+  public Integer getCodigo() {
+    return this.codigo;
+  }
 
-   public String getSigla() {
-      return this.sigla;
-   }
+  public String getDdd() {
+    return this.ddd;
+  }
 
-   public Uf getUf() {
-      return this.uf;
-   }
+  public String getDescricao() {
+    return this.descricao;
+  }
 
-   public void setCodigo(Integer codigo) {
-      this.codigo = codigo;
-   }
+  public String getSigla() {
+    return this.sigla;
+  }
 
-   public void setDdd(String ddd) {
-      this.ddd = (ddd == null || ddd.trim().isEmpty() ? null : ddd.trim());
-   }
+  public Uf getUf() {
+    return this.uf;
+  }
 
-   public void setDescricao(String descricao) {
-      this.descricao = (descricao == null || descricao.trim().isEmpty() ? null : Utils.limpaAcento(descricao).toUpperCase());
-   }
+  public void setCodigo(Integer codigo) {
+    this.codigo = codigo;
+  }
 
-   public void setSigla(String sigla) {
-      this.sigla = (sigla == null || sigla.isEmpty() ? null : sigla.trim().toUpperCase());
-   }
+  public void setDdd(String ddd) {
+    this.ddd = (ddd == null || ddd.trim().isEmpty() ? null : ddd.trim());
+  }
 
-   public void setUf(Uf uf) {
-      this.uf = uf;
-   }
+  public void setDescricao(String descricao) {
+    this.descricao = (descricao == null || descricao.trim().isEmpty() ? null : Utils.limpaAcento(descricao).toUpperCase());
+  }
+
+  public void setSigla(String sigla) {
+    this.sigla = (sigla == null || sigla.isEmpty() ? null : sigla.trim().toUpperCase());
+  }
+
+  public void setUf(Uf uf) {
+    this.uf = uf;
+  }
 
 }

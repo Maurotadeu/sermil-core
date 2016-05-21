@@ -71,6 +71,12 @@ public class DelegaciaServico {
   @PreAuthorize("hasAnyRole('adm','dsm','del')")
   @Transactional
   public Delegacia salvar(final Delegacia del) throws SermilException {
+    if(del != null && del.getDelegado() != null && del.getDelegado().getCpf() == null) {
+      del.setDelegado(null);
+    }
+    if(del != null && del.getOm() != null && del.getOm().getCodigo() == null) {
+      del.setOm(null);
+    }
     return this.dsmDao.save(del);
   }
 

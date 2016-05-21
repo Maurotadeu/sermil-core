@@ -15,10 +15,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.mil.eb.sermil.core.exceptions.SermilException;
+
 /** Requerimento na CSM.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CidRequerimento.java 2426 2014-05-14 15:01:41Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "CID_REQUERIMENTO")
@@ -59,7 +61,7 @@ public final class CidRequerimento implements Comparable<CidRequerimento>, Seria
     .append(" - ")
     .append(this.getPk().getDocData() == null ? "DATA" : DateFormat.getDateInstance(DateFormat.MEDIUM).format(this.getPk().getDocData()))
     .append(" - ")
-    .append(this.getMotivo() == null ? "MOTIVO" : this.getMotivo())
+    .append(this.getMotivo() == null ? "MOTIVO REQUERIMENTO" : this.getMotivo())
     .toString();
   }
 
@@ -142,7 +144,7 @@ public final class CidRequerimento implements Comparable<CidRequerimento>, Seria
   /** Chave primária (PK) de CidRequerimento.
    * @author Abreu Lopes
    * @since 3.0
-   * @version $Id: CidRequerimento.java 2426 2014-05-14 15:01:41Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<CidRequerimento.PK>, Serializable {
@@ -180,12 +182,9 @@ public final class CidRequerimento implements Comparable<CidRequerimento>, Seria
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-          + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
-      result = prime * result
-          + ((this.docData == null) ? 0 : this.docData.hashCode());
-      result = prime * result
-          + ((this.docNr == null) ? 0 : this.docNr.hashCode());
+      result = prime * result + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
+      result = prime * result + ((this.docData == null) ? 0 : this.docData.hashCode());
+      result = prime * result + ((this.docNr == null) ? 0 : this.docNr.hashCode());
       return result;
     }
 
@@ -232,14 +231,14 @@ public final class CidRequerimento implements Comparable<CidRequerimento>, Seria
       this.cidadaoRa = cidadaoRa;
     }
 
-    public void setDocData(Date data) {
+    public void setDocData(Date data) throws SermilException {
       Calendar cal = Calendar.getInstance();
       if (cal.getTime().before(data)) {
-        throw new IllegalArgumentException("Data maior que a data atual.");
+        throw new SermilException("Data maior que a data atual.");
       } else {
         cal.set(1980, 0, 1); // 01-01-1980
         if (cal.getTime().after(data)) {
-          throw new IllegalArgumentException("Data menor que 01/01/1980.");
+          throw new SermilException("Data menor que 01/01/1980.");
         }
       }
       this.docData = data;

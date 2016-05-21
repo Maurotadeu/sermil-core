@@ -11,10 +11,10 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-/** Necessidades do Boletim de Necessidade de OM.
+/** Entidade DstbNecessidade.
  * @author Abreu Lopes
  * @since 3.4
- * @version $Id: DstbNecessidade.java 2433 2014-05-22 19:16:47Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "DSTB_NECESSIDADE")
@@ -149,12 +149,11 @@ public final class DstbNecessidade implements Comparable<DstbNecessidade>, Seria
   /** Chave primária (PK) de DstbNecessidade.
    * @author Abreu Lopes
    * @since 3.4
-   * @version $Id: DstbNecessidade.java 2433 2014-05-22 19:16:47Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<DstbNecessidade.PK>, Serializable {
 
-    /** serialVersionUID. */
     private static final long serialVersionUID = -8332077063488585338L;
 
     @Column(name = "OM_CODIGO")
@@ -169,17 +168,10 @@ public final class DstbNecessidade implements Comparable<DstbNecessidade>, Seria
     @Column(name="PADRAO_CODIGO")
     private String padraoCodigo;
 
-    /** Construtor. */
     public PK() {
       super();
     }
     
-    /** Construtor inicializando atributos com os parâmetros informados.
-     * @param omCodigo CODOM
-     * @param gptIncorp Grupamento de incorporação
-     * @param bolnecNr Número do Bol Nec
-     * @param padraoCodigo Padrão
-     */
     public PK(final Integer omCodigo, final String gptIncorp, final Short bolnecNr, final String padraoCodigo) {
       super();
       this.setOmCodigo(omCodigo);

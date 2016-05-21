@@ -12,7 +12,7 @@ import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
-/** Ocupação.
+/** Entidade Ocupacao.
  * @author Abreu Lopes
  * @since 3.0
  * @version 5.4
