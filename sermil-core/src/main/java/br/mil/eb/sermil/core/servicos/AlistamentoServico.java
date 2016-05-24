@@ -28,7 +28,6 @@ import br.mil.eb.sermil.modelo.CidDocumento;
 import br.mil.eb.sermil.modelo.CidEvento;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.Jsm;
-import br.mil.eb.sermil.modelo.Ocupacao;
 import br.mil.eb.sermil.modelo.PreAlistamento;
 import br.mil.eb.sermil.modelo.RaMestre;
 import br.mil.eb.sermil.tipos.Ra;
@@ -124,14 +123,14 @@ public class AlistamentoServico {
       cidadao.setEmail(alistamento.getEmail());
       cidadao.setTelefone(alistamento.getTelefone());
       cidadao.setDesejaServir(alistamento.getDesejaServir());
-      cidadao.setCs(alistamento.getJsm().getCs());
+      cidadao.setCs(jsm.getCs());
       cidadao.setAtualizacaoData(dataAtual);
-      cidadao.setMobDestino(Byte.decode("1")); // Flag indicando Alistamento Internet
-      if (alistamento.getOcupacao() == null || StringUtils.isBlank(alistamento.getOcupacao().getCodigo())) {
-        cidadao.setOcupacao(new Ocupacao("999999"));
-      } else {
-        cidadao.setOcupacao(alistamento.getOcupacao());
-      }      
+      cidadao.setMobSetor(1); // Flag indicando Alistamento Internet
+      if (alistamento.getOcupacao() != null && (StringUtils.isBlank(alistamento.getOcupacao().getCodigo()) || "-1".equals(alistamento.getOcupacao().getCodigo()) )) {
+        alistamento.setOcupacao(null);
+      }
+      cidadao.setOcupacao(alistamento.getOcupacao());
+      
       // Verifica os limites de idade
       if (cidadao.isForaLimiteIdade()) {
          throw new SermilException("Alistamento permitido somente dos 17 aos 45 anos. Procure a JSM se for o caso.");
@@ -150,7 +149,7 @@ public class AlistamentoServico {
       logger.debug("RA gerado: {} (JSM={} - MESTRE SEQUENCIAL: {})", cidadao.getRa(), cidadao.getJsm(), raMestre.getSequencial());
 
       // Configura PreAlistamento
-      if (alistamento.getDocApresMunicipio().getCodigo() == -1) {
+      if (alistamento.getDocApresMunicipio() != null && (alistamento.getDocApresMunicipio().getCodigo() == null || alistamento.getDocApresMunicipio().getCodigo() == -1)) {
          alistamento.setDocApresMunicipio(null);
       }
       if (alistamento.getDocApresTipo() == TipoDocApres.RG.ordinal()) {
@@ -164,7 +163,7 @@ public class AlistamentoServico {
       }
       alistamento.setProtocoloData(dataAtual);
       alistamento.setTipo(Byte.decode("0"));
-      
+
       // Documento apresentado
       final CidDocApres cda = new CidDocApres(cidadao.getRa(), alistamento.getDocApresNr());
       cda.setTipo(alistamento.getDocApresTipo());

@@ -10,15 +10,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Circunscrição de Serviço Militar.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
+@Cache(type=CacheType.FULL, size=30)
 @NamedQueries({
   @NamedQuery(name="Csm.listar", query="SELECT c FROM Csm c WHERE c.ativo = 'S' ORDER BY c.codigo"),
   @NamedQuery(name="Csm.listarPorRm", query="SELECT c FROM Csm c WHERE c.rm.codigo = ?1 AND c.ativo = 'S' ORDER BY c.codigo")
@@ -26,8 +29,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Csm implements Comparable<Csm>, Serializable {
 
-  /** serialVersionUID.*/
-  private static final long serialVersionUID = 1408657925141269864L;
+  private static final long serialVersionUID = -5025584683409331340L;
 
   @Id
   private Byte codigo;
@@ -43,6 +45,10 @@ public final class Csm implements Comparable<Csm>, Serializable {
   private Rm rm;
 
   public Csm() {
+  }
+
+  public Csm(Byte codigo) {
+    this.codigo = codigo;
   }
 
   @Override

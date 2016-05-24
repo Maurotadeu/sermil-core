@@ -10,15 +10,14 @@ import javax.persistence.Table;
 /** Posto ou Graduação.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: PostoGraduacao.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "POSTO_GRADUACAO")
 @NamedQuery(name = "PostoGraduacao.listar", query = "SELECT p FROM PostoGraduacao p ORDER BY p.codigo")
 public final class PostoGraduacao implements Comparable<PostoGraduacao>, Serializable {
 
-  /** serialVersionUID. */
-  private static final long serialVersionUID = -7903007662610302473L;
+  private static final long serialVersionUID = 2632965290986788963L;
 
   @Id
   private String codigo;
@@ -47,6 +46,31 @@ public final class PostoGraduacao implements Comparable<PostoGraduacao>, Seriali
     .append(" - ")
     .append(this.getDescricao() == null ? "P/G" : this.getDescricao())
     .toString();
+  }
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    PostoGraduacao other = (PostoGraduacao) obj;
+    if (codigo == null) {
+      if (other.codigo != null)
+        return false;
+    } else if (!codigo.equals(other.codigo))
+      return false;
+    return true;
   }
 
   public String getCodigo() {

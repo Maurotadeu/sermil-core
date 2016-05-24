@@ -16,7 +16,7 @@ import javax.persistence.Table;
 /** Grupo de Distribuição de JSM (DSTB_GD_JSM).
  * @author Abreu Lopes
  * @since 3.4
- * @version $Id: DstbGdJsm.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name="DSTB_GD_JSM")
@@ -121,7 +121,7 @@ public final class DstbGdJsm implements Comparable<DstbGdJsm>, Serializable {
   /** Chave primária (PK) de DstbGdJsm.
    * @author Abreu Lopes
    * @since 3.4
-   * @version $Id: DstbGdJsm.java 1637 2011-11-25 13:52:11Z wlopes $
+   * @version 5.4
    */
 	@Embeddable
 	public static class PK implements Comparable<DstbGdJsm.PK>, Serializable {
@@ -183,14 +183,10 @@ public final class DstbGdJsm implements Comparable<DstbGdJsm>, Serializable {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-          + ((this.csmCodigo == null) ? 0 : this.csmCodigo.hashCode());
-      result = prime * result
-          + ((this.dstbGdCodigo == null) ? 0 : this.dstbGdCodigo.hashCode());
-      result = prime * result
-          + ((this.jsmCodigo == null) ? 0 : this.jsmCodigo.hashCode());
-      result = prime * result
-          + ((this.rmCodigo == null) ? 0 : this.rmCodigo.hashCode());
+      result = prime * result + ((this.csmCodigo == null) ? 0 : this.csmCodigo.hashCode());
+      result = prime * result + ((this.dstbGdCodigo == null) ? 0 : this.dstbGdCodigo.hashCode());
+      result = prime * result + ((this.jsmCodigo == null) ? 0 : this.jsmCodigo.hashCode());
+      result = prime * result + ((this.rmCodigo == null) ? 0 : this.rmCodigo.hashCode());
       return result;
     }
 

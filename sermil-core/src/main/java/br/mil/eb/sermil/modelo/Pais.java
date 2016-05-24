@@ -7,21 +7,23 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Entidade País.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
-@NamedQuery(name = "Pais.listar", query = "SELECT p FROM Pais p ORDER BY p.descricao")
+@Cache(type=CacheType.FULL, size=260)
+@NamedQuery(name = "Pais.listar", query = "SELECT p.codigo, p.descricao FROM Pais p ORDER BY p.descricao")
 @PrimaryKey(validation = IdValidation.NULL)
 public final class Pais implements Comparable<Pais>, Serializable {
 
-  /** serialVersionUID.*/
-  private static final long serialVersionUID = 3623544886077852655L;
+  private static final long serialVersionUID = -6188376616817666259L;
 
   @Id
   private Short codigo;
@@ -55,6 +57,31 @@ public final class Pais implements Comparable<Pais>, Serializable {
       .append(" - ")
       .append(this.getDescricao() == null ? "PAIS" : this.getDescricao())
       .toString();
+  }
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Pais other = (Pais) obj;
+    if (codigo == null) {
+      if (other.codigo != null)
+        return false;
+    } else if (!codigo.equals(other.codigo))
+      return false;
+    return true;
   }
 
   public Short getCodigo() {

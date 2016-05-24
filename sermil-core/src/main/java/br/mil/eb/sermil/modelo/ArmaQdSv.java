@@ -9,12 +9,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
+
 /** Arma, Quadro e Serviço.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
+@Cache(type=CacheType.FULL, size=70)
 @Table(name = "ARMA_QD_SV")
 @NamedQuery(name = "ArmaQdSv.listar", query = "SELECT a FROM ArmaQdSv a ORDER BY a.sigla")
 public final class ArmaQdSv implements Comparable<ArmaQdSv>, Serializable {

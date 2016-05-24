@@ -5,13 +5,22 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Empresa diretamente relacionada a segurança nacional (EDRSN).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
+@NamedQueries({
+  @NamedQuery(name = "Empresa.listar", query = "SELECT DISTINCT e.codigo, e.descricao FROM Empresa e ORDER BY e.descricao")
+})
+@PrimaryKey(validation=IdValidation.NULL)
 public final class Empresa implements Comparable<Empresa>, Serializable {
 
   private static final long serialVersionUID = -2441628302226227645L;
@@ -53,6 +62,32 @@ public final class Empresa implements Comparable<Empresa>, Serializable {
       .toString();
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result
+        + ((this.codigo == null) ? 0 : this.codigo.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Empresa other = (Empresa) obj;
+    if (this.codigo == null) {
+      if (other.codigo != null)
+        return false;
+    } else if (!this.codigo.equals(other.codigo))
+      return false;
+    return true;
+  }
+  
   public Byte getAtividade() {
     return this.atividade;
   }
@@ -123,32 +158,6 @@ public final class Empresa implements Comparable<Empresa>, Serializable {
 
   public void setTelefone(String telefone) {
     this.telefone = telefone;
-  }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result
-        + ((this.codigo == null) ? 0 : this.codigo.hashCode());
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    Empresa other = (Empresa) obj;
-    if (this.codigo == null) {
-      if (other.codigo != null)
-        return false;
-    } else if (!this.codigo.equals(other.codigo))
-      return false;
-    return true;
   }
 
 }

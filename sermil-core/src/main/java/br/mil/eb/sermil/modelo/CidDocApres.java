@@ -10,7 +10,6 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,13 +20,11 @@ import br.mil.eb.sermil.tipos.Utils;
 /** Documento de apresentação no alistamento.
  * @author Abreu Lopes
  * @since 3.4
- * @version $Id: CidDocApres.java 2423 2014-05-13 17:00:54Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name="CID_DOC_APRES")
-@NamedQueries({
-  @NamedQuery(name = "CidDocApres.listarUnico", query = "SELECT c FROM CidDocApres c WHERE c.pk.cidadaoRa = :ra")
-})
+@NamedQuery(name = "CidDocApres.listarUnico", query = "SELECT c FROM CidDocApres c WHERE c.pk.cidadaoRa = :ra")
 public final class CidDocApres implements Comparable<CidDocApres>, Serializable {
 
   private static final long serialVersionUID = -7912788647684371606L;
@@ -73,7 +70,7 @@ public final class CidDocApres implements Comparable<CidDocApres>, Serializable 
     .append(" - ")
     .append(this.getEmissaoData() == null ? "DATA" : DateFormat.getDateInstance(DateFormat.MEDIUM).format(this.getEmissaoData()))
     .append(" - ")
-    .append(this.getPk().getNumero() == null ? "NUMERO" : this.getPk().getNumero())
+    .append(this.getPk().getNumero() == null ? "NR DOC APRES" : this.getPk().getNumero())
     .toString();
   }
 
@@ -172,7 +169,7 @@ public final class CidDocApres implements Comparable<CidDocApres>, Serializable 
   /** Chave primária (PK) de CidDocApres.
    * @author Abreu Lopes
    * @since 3.4
-   * @version $Id: CidDocApres.java 2423 2014-05-13 17:00:54Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<CidDocApres.PK>, Serializable {

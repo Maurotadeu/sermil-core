@@ -7,17 +7,20 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
-/** Habilitação.
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
+
+/** Entidade Habilitacaoo.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
-@NamedQuery(name = "Habilitacao.listar", query = "SELECT h FROM Habilitacao h ORDER BY h.descricao")
+@Cache(type=CacheType.FULL, size=3070)
+@NamedQuery(name = "Habilitacao.listar", query = "SELECT h.codigo, h.descricao FROM Habilitacao h ORDER BY h.descricao")
 public final class Habilitacao implements Comparable<Habilitacao>, Serializable {
 
-  /** serialVersionUID. */
-  private static final long serialVersionUID = -6018755254258650309L;
+  private static final long serialVersionUID = 1692506743473001003L;
 
   @Id
 	private String codigo;
@@ -54,8 +57,33 @@ public final class Habilitacao implements Comparable<Habilitacao>, Serializable 
                .append(this.getDescricao() == null ? "HABILITACAO" : this.getDescricao())
                .toString();
   }
+  
+	@Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+    return result;
+  }
 
-	public String getCodigo() {
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Habilitacao other = (Habilitacao) obj;
+    if (codigo == null) {
+      if (other.codigo != null)
+        return false;
+    } else if (!codigo.equals(other.codigo))
+      return false;
+    return true;
+  }
+
+  public String getCodigo() {
 		return this.codigo;
 	}
 

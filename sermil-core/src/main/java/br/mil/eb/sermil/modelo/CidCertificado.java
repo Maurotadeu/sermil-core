@@ -18,10 +18,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import br.mil.eb.sermil.core.exceptions.SermilException;
+
 /** Entidade CidCertificado. (TABELA CID_CERTIFICADO)
  * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @Table(name = "CID_CERTIFICADO")
@@ -64,7 +66,7 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
       this.setPk(new CidCertificado.PK());
    }
 
-   public CidCertificado(final Long ra, final Integer tipo, final Date data) {
+   public CidCertificado(final Long ra, final Integer tipo, final Date data) throws SermilException {
       this.setPk(new CidCertificado.PK(ra, tipo, data));
    }
 
@@ -200,12 +202,11 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
    /** Chave primária (PK) de CidCertificado.
     * @author Abreu Lopes
     * @since 3.0
-    * @version 5.2.6
+    * @version 5.4
     */
    @Embeddable
    public static class PK implements Comparable<CidCertificado.PK>, Serializable {
 
-      /** serialVersionUID. */
       private static final long serialVersionUID = 6039795906546448337L;
 
       @Column(name = "CIDADAO_RA")
@@ -222,7 +223,7 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
          super();
       }
 
-      public PK(final Long cidadaoRa, final Integer tipo, final Date data) {
+      public PK(final Long cidadaoRa, final Integer tipo, final Date data) throws SermilException {
          super();
          this.setCidadaoRa(cidadaoRa);
          this.setTipo(tipo);
@@ -302,14 +303,14 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
          this.cidadaoRa = cidadaoRa;
       }
 
-      public void setData(Date data) {
-         Calendar cal = Calendar.getInstance();
+      public void setData(Date data) throws SermilException {
+         final Calendar cal = Calendar.getInstance();
          if (cal.getTime().before(data)) {
-            throw new IllegalArgumentException("Data maior que a data atual.");
+            throw new SermilException("Data maior que a data atual.");
          } else {
-            cal.set(1950, 0, 1); // 01-01-1950
+            cal.set(1900, 0, 1); // 01-01-1900
             if (cal.getTime().after(data)) {
-               throw new IllegalArgumentException("Data menor que 01/01/1950.");
+               throw new SermilException("Data menor que 01/01/1900.");
             }
          }
          this.data = data;

@@ -19,17 +19,15 @@ import br.mil.eb.sermil.core.dao.UsuarioDao;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
-import br.mil.eb.sermil.core.exceptions.UserNotFoundException;
-import br.mil.eb.sermil.core.exceptions.UsuarioSalvarException;
 import br.mil.eb.sermil.core.security.Randomize;
 import br.mil.eb.sermil.modelo.CidAuditoria;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.modelo.UsuarioPerfil;
 
 /** Gerenciamento de usuário da aplicação.
- * @author Abreu Lopes, Anselmo Ribeiro <anselmo.sr@gmail.com>
+ * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
- * @version 5.3.1
+ * @version 5.4
  */
 @Named("usuarioServico")
 public class UsuarioServico {
@@ -166,28 +164,28 @@ public class UsuarioServico {
    }
 
    @Transactional
-   public void alterarUsuarios(List<Usuario> usuarios2, String[] perfis, Usuario usuarioPadrao) throws UsuarioSalvarException {
-      for (Usuario usu : usuarios2) {
+   public void alterarUsuarios(List<Usuario> usuarios2, String[] perfis, Usuario usuarioPadrao) throws SermilException {
+      for (Usuario usr : usuarios2) {
          // Perfis
-         String[] perfisDoUsu = {};
+         String[] perfisUsr = {};
          if (perfis.length > 0) {
-            perfisDoUsu = perfis;
+            perfisUsr = perfis;
          } else {
             List<String> ps = new ArrayList<String>();
-            for (int i = 0; i < usu.getUsuarioPerfilCollection().size(); i++) {
-               String p = usu.getUsuarioPerfilCollection().get(i).toString();
+            for (int i = 0; i < usr.getUsuarioPerfilCollection().size(); i++) {
+               String p = usr.getUsuarioPerfilCollection().get(i).toString();
                ps.add(p.substring(p.length() - 3, p.length()));
             }
-            perfisDoUsu = (String[]) ps.toArray(new String[ps.size()]);
+            perfisUsr = (String[]) ps.toArray(new String[ps.size()]);
          }
          // Ativo/Inativo
          if (usuarioPadrao != null) {
-            usu.setAtivo(usuarioPadrao.getAtivo());
+            usr.setAtivo(usuarioPadrao.getAtivo());
          }
          try {
-            this.salvar(usu, perfisDoUsu);
-         } catch (SermilException e) {
-            throw new UsuarioSalvarException("Não foi possível salvar informações referente ao CPF " + usu.getCpf().toString());
+            this.salvar(usr, perfisUsr);
+         } catch (Exception e) {
+            throw new SermilException("Não foi possível salvar informações referente ao CPF " + usr.getCpf().toString());
          }
       }
    }
@@ -216,18 +214,13 @@ public class UsuarioServico {
       }
    }
 
-   /** Busca usuário pelo CPF.
-    * @param cpf
-    * @return Usuario
-    * @throws SermilException
-    */
    public Usuario findByCPF(final String cpf) throws SermilException {
       if (StringUtils.isBlank(cpf)) {
          throw new SermilException("Informe um CPF válido.");
       }
       final Usuario usr = this.usuarioDao.findById(cpf);
       if (usr == null) {
-         throw new UserNotFoundException("O usuário referente ao CPF " + cpf + " não foi encontrado na base de dados.");
+         throw new NoDataFoundException("Usuário referente ao CPF " + cpf + " não foi encontrado na base de dados.");
       }
       return usr;
    }

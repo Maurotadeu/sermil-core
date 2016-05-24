@@ -1,12 +1,12 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.TypedQuery;
 
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,14 +14,14 @@ import br.mil.eb.sermil.core.dao.QmDao;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Qm;
+import br.mil.eb.sermil.tipos.Lista;
 
 /** Serviços de QM.
  * @author Abreu Lopes
  * @since 5.0
- * @version $Id: OmServico.java 2427 2014-05-15 13:23:38Z wlopes $
+ * @version 5.4
  */
 @Named("qmServico")
-@RemoteProxy(name="qmServico")
 public class QmServico {
 
   protected static final Logger logger = LoggerFactory.getLogger(QmServico.class);
@@ -33,14 +33,6 @@ public class QmServico {
     logger.debug("QmServico iniciado");
   }
 
-  public List<Qm> listar() throws SermilException {
-    final List<Qm> lista = this.qmDao.findAll();
-    if (lista == null || lista.isEmpty()) {
-      throw new NoDataFoundException();
-    }
-    return lista;
-  }
-
   public List<Qm> listar(String tipo) throws SermilException {
     final List<Qm> lista = this.qmDao.findByNamedQuery(tipo);
     logger.debug("QM:{}", lista);
@@ -50,9 +42,9 @@ public class QmServico {
     return lista;
   }
   
-  @RemoteMethod
-  public Qm[] listarQm() throws SermilException {
-    return this.listar().toArray(new Qm[0]);
+  public Lista[] listarQm() throws SermilException {
+    final TypedQuery<Object[]> query = this.qmDao.getEntityManager().createNamedQuery("Qm.listar", Object[].class);
+    return query.getResultList().stream().map(o -> new Lista((String)o[0], (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
   }
 
 	public Qm recuperar(String id) throws SermilException {

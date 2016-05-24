@@ -10,14 +10,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
+
 /** Qualificação Militar (QM).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
+@Cache(type=CacheType.FULL, size=600)
 @NamedQueries(value = {
-  @NamedQuery(name = "Qm.listar", query = "SELECT q FROM Qm q ORDER BY q.codigo"),
+  @NamedQuery(name = "Qm.listar", query = "SELECT q.codigo, CONCAT(q.codigo, ' - ', q.descricao) FROM Qm q ORDER BY q.codigo"),
   @NamedQuery(name = "Qm.listaCbSd", query = "SELECT q FROM Qm q WHERE SUBSTRING(q.codigo,1,1) IN ('0','1','2','3') ORDER BY q.codigo"),
   @NamedQuery(name = "Qm.listaStSgt", query = "SELECT q FROM Qm q WHERE SUBSTRING(q.codigo,1,1) = '5' ORDER BY q.codigo"),
   @NamedQuery(name = "Qm.listaQao", query = "SELECT q FROM Qm q WHERE SUBSTRING(q.codigo,1,1) = '6' ORDER BY q.codigo"),
@@ -27,10 +33,10 @@ import javax.persistence.NamedQuery;
   @NamedQuery(name = "Qm.listaOtt", query = "SELECT q FROM Qm q WHERE SUBSTRING(q.codigo,1,1) = 'T' ORDER BY q.codigo"),
   @NamedQuery(name = "Qm.listaStt", query = "SELECT q FROM Qm q WHERE SUBSTRING(q.codigo,1,1) = 'S' ORDER BY q.codigo")
 })
+@PrimaryKey(validation=IdValidation.NULL)
 public final class Qm implements Comparable<Qm>, Serializable {
 
-  /** serialVersionUID.*/
-  private static final long serialVersionUID = -6948713043263352229L;
+  private static final long serialVersionUID = -1119212672194025136L;
 
   @Id
   private String codigo;
@@ -53,7 +59,40 @@ public final class Qm implements Comparable<Qm>, Serializable {
   public int compareTo(Qm o) {
     return this.getDescricao().compareTo(o.getDescricao());
   }
+
+  @Override
+  public String toString() {
+    return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo())
+    .append(" - ")
+    .append(this.getDescricao() == null ? "QM" : this.getDescricao())
+    .toString();
+  }
   
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Qm other = (Qm) obj;
+    if (codigo == null) {
+      if (other.codigo != null)
+        return false;
+    } else if (!codigo.equals(other.codigo))
+      return false;
+    return true;
+  }
+
   public ArmaQdSv getArmaQdSv() {
     return this.armaQdSv;
   }
@@ -92,14 +131,6 @@ public final class Qm implements Comparable<Qm>, Serializable {
 
   public void setTipo(String tipo) {
     this.tipo = tipo;
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo())
-    .append(" - ")
-    .append(this.getDescricao() == null ? "QM" : this.getDescricao())
-    .toString();
   }
 
 }

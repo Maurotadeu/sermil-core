@@ -1,27 +1,21 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.TypedQuery;
 
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.env.Environment;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.CsDao;
 import br.mil.eb.sermil.core.dao.CsEnderecoDao;
-import br.mil.eb.sermil.core.dao.CsFuncionamentoDao;
-import br.mil.eb.sermil.core.dao.DominiosDao;
-import br.mil.eb.sermil.core.dao.DstbBolNecDao;
-import br.mil.eb.sermil.core.dao.JsmDao;
-import br.mil.eb.sermil.core.dao.OmDao;
-import br.mil.eb.sermil.core.dao.PgcDao;
-import br.mil.eb.sermil.core.dao.RmDao;
 import br.mil.eb.sermil.core.exceptions.ConsultaException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
@@ -29,11 +23,12 @@ import br.mil.eb.sermil.modelo.Cs;
 import br.mil.eb.sermil.modelo.CsEndereco;
 import br.mil.eb.sermil.modelo.CsExclusaoData;
 import br.mil.eb.sermil.modelo.CsFuncionamento;
+import br.mil.eb.sermil.tipos.Lista;
 
 /** Serviço de CS.
  * @author Anselmo Ribeiro, Abreu Lopes
- * @version 5.2.4
  * @since 5.3.2
+ * @version 5.4.0
  */
 @Named("csServico")
 @RemoteProxy(name = "csServico")
@@ -47,38 +42,14 @@ public class CsServico {
    @Inject
    CsEnderecoDao csEnderecoDao;
 
-   @Inject
-   CsFuncionamentoDao funcionamentoDao;
-
-   @Inject
-   RmDao rmDao;
-
-   @Inject
-   CsEnderecoDao enderecoDao;
-
-   @Inject
-   PgcDao pgcDao;
-
-   @Inject
-   JsmDao jsmDao;
-
-   @Inject
-   DstbBolNecDao bolNecDao;
-
-   @Inject
-   OmDao omDao;
-
-   @Inject
-   DominiosDao dominiosDao;
-
-   @Inject
-   PgcServico pgcServico;
-   
-   @Inject
-   Environment env;
-
    public CsServico() {
       logger.debug("CsServico iniciado");
+   }
+
+   public Lista[] listarCsPorRm(final Byte rm) throws SermilException {
+     final TypedQuery<Object[]> query = this.csDao.getEntityManager().createNamedQuery("Cs.listarCsPorRm", Object[].class);
+     query.setParameter(1, rm);
+     return query.getResultList().stream().map(o -> new Lista(((Integer)o[0]).toString(), (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
    }
 
    @RemoteMethod

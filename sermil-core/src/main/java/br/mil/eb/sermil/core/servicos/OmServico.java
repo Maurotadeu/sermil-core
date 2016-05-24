@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +24,14 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Om;
 import br.mil.eb.sermil.modelo.OmCabecalho;
 import br.mil.eb.sermil.modelo.Padrao;
+import br.mil.eb.sermil.tipos.Lista;
 
 /** Serviços de Organização Militar (OM).
  * @author Abreu Lopes
  * @since 3.0 
- * @version 5.3.2
+ * @version 5.4
  */
 @Named("omServico")
-@RemoteProxy(name = "omServico")
 public class OmServico {
 
    protected static final Logger logger = LoggerFactory.getLogger(OmServico.class);
@@ -68,14 +68,16 @@ public class OmServico {
       return lista;
    }
 
-   @RemoteMethod
-   public Om[] listarPorRm(final Byte rm) throws SermilException {
-      return this.omDao.findByNamedQuery("Om.listarPorRm", rm).toArray(new Om[0]);
+   public Lista[] listarPorRm(final Byte rm) throws SermilException {
+     final TypedQuery<Object[]> query = this.omDao.getEntityManager().createNamedQuery("Om.listarPorRm", Object[].class);
+     query.setParameter(1, rm);
+     return query.getResultList().stream().map(o -> new Lista(((Integer)o[0]).toString(), (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
    }
 
-   @RemoteMethod
-   public Om[] listarOmMob(final Byte rm) throws SermilException {
-      return this.omDao.findByNamedQuery("Om.listarOmMob", rm).toArray(new Om[0]);
+   public Lista[] listarOmMob(final Byte rm) throws SermilException {
+     final TypedQuery<Object[]> query = this.omDao.getEntityManager().createNamedQuery("Om.listarMob", Object[].class);
+     query.setParameter(1, rm);
+     return query.getResultList().stream().map(o -> new Lista((String)o[0], (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
    }
 
    public List<Om> listarDescricao(final String descricao) throws SermilException {
@@ -97,15 +99,18 @@ public class OmServico {
 
    @Transactional
    public String salvar(final Om om) throws SermilException {
-      if (om == null) {
+      if (om == null || om.getCodigo() == null) {
          throw new SermilException("Não há dados de OM a serem salvos");
       }
       logger.debug("OM = {}", om);
-      final OmCabecalho info = this.recuperar(om.getCodigo()).getOmCabecalho();
-      if (info != null && om.getOmCabecalho() == null) {
-         om.setOmCabecalho(info);
-      } else if (om.getOmCabecalho() == null) {
+      final Om omBd = this.omDao.findById(om.getCodigo());
+      if (omBd != null && omBd.getOmCabecalho() != null && om.getOmCabecalho() == null) {
+         logger.info("OM Cab = {}", om.getOmCabecalho());
+         om.setOmCabecalho(omBd.getOmCabecalho());
+      }
+      if (om.getOmCabecalho() == null) {
          om.setOmCabecalho(new OmCabecalho(om));
+         logger.info("OM Cab = {}", om.getOmCabecalho());
       }
       this.omDao.save(om);
       return new StringBuilder(om.toString()).append(" : informações de OM salvas").toString();

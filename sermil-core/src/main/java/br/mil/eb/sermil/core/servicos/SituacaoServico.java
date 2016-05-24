@@ -21,7 +21,7 @@ import br.mil.eb.sermil.modelo.CsAgendamento;
 /** Verificação de situação no serviço militar.
  * @author Abreu lopes
  * @since 5.1
- * @version 5.3.2
+ * @version 5.4
  */
 @Named("situacaoServico")
 public class SituacaoServico {
@@ -106,7 +106,7 @@ public class SituacaoServico {
       cid.setAnotacoes("Comparecer na Junta de Serviço Militar " + (cid.getJsm() != null ? cid.getJsm().toString() : "") + ", para solicitar, se necessário, a prorrogação do adiamento do Serviço Militar Inicial.");
       break;
     case 7:
-      cid.setAnotacoes("Comparecer no " + (cid.getOm() != null ? cid.getOm().getDescricao() : "Órgão de Serviço Militar") + ", na data agendada, para realizar a Seleção Complementar. <br>Em caso de falta será considerado REFRATÁRIO e ficará sujeito as penas previstas na Lei de Serviço Militar.");
+      cid.setAnotacoes("Comparecer no " + (cid.getOm() != null ? cid.getOm().getDescricao() : "Órgão de Serviço Militar") + ", para realizar a Seleção Complementar. <br>Em caso de falta será considerado REFRATÁRIO e ficará sujeito as penas previstas na Lei de Serviço Militar.");
       break;
     case 5:  
     case 8:
@@ -114,7 +114,7 @@ public class SituacaoServico {
       if ("N".equals(internet)) {
         cid.setAnotacoes("Caso ainda não tenha recebido seu Certificado de Dispensa de Incorporção (CDI), verifique no verso do seu documento de alistamento (CAM) a data de comparecimento na Junta de Serviço Militar.");
       } else {
-        cid.setAnotacoes("Comparecer na Junta de Serviço Militar " + (cid.getJsm() != null ? cid.getJsm().toString() : "") + ", na data agendada, para solicitar o Certificado de Dispensa de Incorporação (CDI).");
+        cid.setAnotacoes("Comparecer na Junta de Serviço Militar " + (cid.getJsm() != null ? cid.getJsm().toString() : "") + ", para solicitar o Certificado de Dispensa de Incorporação (CDI).");
       }
       break;
     case 12:

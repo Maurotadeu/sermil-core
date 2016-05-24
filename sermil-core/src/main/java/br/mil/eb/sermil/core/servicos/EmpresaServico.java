@@ -2,26 +2,26 @@ package br.mil.eb.sermil.core.servicos;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.TypedQuery;
 
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.mil.eb.sermil.core.dao.EmpresaDao;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Empresa;
+import br.mil.eb.sermil.tipos.Lista;
 
 /** Serviço de Empresas de Segurança Nacional (EDRSN).
  * @author Abreu Lopes
  * @since 4.0
- * @version $Id: EmpresaServico.java 2427 2014-05-15 13:23:38Z wlopes $
+ * @version 5.4
  */
 @Named("empresaServico")
-@RemoteProxy(name="empresaServico")
 public class EmpresaServico {
 
   protected static final Logger logger = LoggerFactory.getLogger(EmpresaServico.class);
@@ -39,9 +39,9 @@ public class EmpresaServico {
     return lista;
   }
 
-  @RemoteMethod
-  public Object[] listarEmpresas() {
-    return this.listar().toArray();
+  public Lista[] listarEmpresas() {
+    final TypedQuery<Object[]> query = this.empresaDao.getEntityManager().createNamedQuery("Empresa.listar", Object[].class);
+    return query.getResultList().stream().map(o -> new Lista((String)o[0], (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
   }
 
   public Empresa recuperar(String codigo) throws SermilException {
