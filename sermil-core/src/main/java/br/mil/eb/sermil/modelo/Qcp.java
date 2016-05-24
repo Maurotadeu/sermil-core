@@ -25,10 +25,9 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @Table(name="QCP") 
 @NamedQueries({
   @NamedQuery(name = "Qcp.listarPorPostoGraduacao", query = "SELECT q FROM Qcp q WHERE q.pk.omCodigo = :om AND q.postoGraduacao.codigo = :postoGraduacao ORDER BY q.postoGraduacao.codigo"),
-  @NamedQuery(name = "Qcp.listarPorOm", query =  "SELECT q FROM Qcp q WHERE q.pk.omCodigo = ?1 AND q.fracaoTipo = 2 ORDER BY q.pk.fracaoId "),
-  @NamedQuery(name = "Qcp.listarPorOm2", query =  "SELECT q.pk.fracaoId, q.cargoDescricao FROM Qcp q WHERE q.pk.omCodigo = ?1 AND q.fracaoTipo = 2 ORDER BY q.pk.fracaoId "),
-  @NamedQuery(name = "Qcp.listarPorOmTudo", query = "SELECT q FROM Qcp q WHERE q.pk.omCodigo = ?1 ORDER BY FUNC('TO_NUMBER',SUBSTRING(q.pk.fracaoId,1, CASE WHEN (SUBSTRING(q.pk.fracaoId,2,1) = '.') THEN 1 ELSE 2 END)), " +
-      "TRIM(' ' FROM TRIM('.' FROM SUBSTRING(q.pk.fracaoId,1,LENGTH(q.pk.fracaoId)))) ")
+  @NamedQuery(name = "Qcp.listarPorOm", query = "SELECT q FROM Qcp q WHERE q.pk.omCodigo = ?1 AND q.fracaoTipo = 2 ORDER BY q.pk.fracaoId"),
+  @NamedQuery(name = "Qcp.listarPorOm2", query = "SELECT q.pk.fracaoId, CONCAT(q.cargoDescricao, ' - ' ,q.qm.codigo) FROM Qcp q WHERE q.pk.omCodigo = ?1 AND q.fracaoTipo = 2 ORDER BY q.pk.fracaoId"),
+  @NamedQuery(name = "Qcp.listarPorOmTudo", query = "SELECT q FROM Qcp q WHERE q.pk.omCodigo = ?1 ORDER BY FUNC('TO_NUMBER',SUBSTRING(q.pk.fracaoId,1, CASE WHEN (SUBSTRING(q.pk.fracaoId,2,1) = '.') THEN 1 ELSE 2 END)), TRIM(' ' FROM TRIM('.' FROM SUBSTRING(q.pk.fracaoId,1,LENGTH(q.pk.fracaoId)))) ")
 })
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Qcp implements Comparable<Qcp>, Serializable {
