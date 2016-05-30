@@ -1,5 +1,6 @@
 package br.mil.eb.sermil.core.servicos;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,7 +15,9 @@ import br.mil.eb.sermil.core.exceptions.PgcNaoExisteException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Pgc;
 
-/** Serviço de PGC.
+/**
+ * Serviço de PGC.
+ * 
  * @author Anselmo Ribeiro, Abreu Lopes
  * @version 5.3.2
  * @since 5.3.2
@@ -44,7 +47,7 @@ public class PgcServico {
       }
       return lista;
    }
-   
+
    @Transactional
    public Pgc salvar(final Pgc pgc) throws SermilException {
       try {
@@ -57,6 +60,18 @@ public class PgcServico {
 
    public List<Pgc> getPgcList() {
       return this.pgcDao.findAll();
+   }
+
+   public boolean existePgcAnoAtual() {
+      int ano = Calendar.getInstance().get(Calendar.YEAR);
+      final List<Pgc> lista = this.pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, String.valueOf(ano));
+      return lista.size() > 0 ? true : false;
+   }
+
+   public boolean existePgcProximoAno() {
+      int ano = Calendar.getInstance().get(Calendar.YEAR);
+      final List<Pgc> lista = this.pgcDao.findByNamedQuery(Pgc.NQ_FINDBY_ANO_BASE, String.valueOf(ano + 1));
+      return lista.size() > 0 ? true : false;
    }
 
 }
