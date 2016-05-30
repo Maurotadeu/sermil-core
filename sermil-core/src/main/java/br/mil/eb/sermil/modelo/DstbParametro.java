@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -29,6 +31,9 @@ import org.eclipse.persistence.annotations.StoredProcedureParameter;
   @NamedStoredFunctionQuery(name="Distribuicao.reverte", functionName="dis_processamento.reverte", parameters={@StoredProcedureParameter(queryParameter = "P_RM",direction=Direction.IN), @StoredProcedureParameter(queryParameter = "P_CPF",direction=Direction.IN)}, returnParameter=@StoredProcedureParameter(queryParameter="MSG")),
   @NamedStoredFunctionQuery(name="Distribuicao.finaliza", functionName="dis_processamento.finaliza", parameters={@StoredProcedureParameter(queryParameter = "P_RM",direction=Direction.IN), @StoredProcedureParameter(queryParameter = "P_CPF",direction=Direction.IN)}, returnParameter=@StoredProcedureParameter(queryParameter="MSG")),
   @NamedStoredFunctionQuery(name="Distribuicao.verifica", functionName="dis_processamento.verifica", parameters={@StoredProcedureParameter(queryParameter = "P_RM",direction=Direction.IN)}, returnParameter=@StoredProcedureParameter(queryParameter="MSG"))
+})
+@NamedQueries({
+   @NamedQuery(name="Distribuicao.ParamtrosPorAno&Rm", query="select d from DstbParametro d where EXTRACT(year FROM d.gptAData) = ?1 and d.pk.rmCodigo = ?2"),
 })
 public final class DstbParametro implements Comparable<DstbParametro>, Serializable {
 
