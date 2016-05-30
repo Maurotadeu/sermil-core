@@ -142,7 +142,7 @@ public class CsServico {
    public String excluir(final Integer csCodigo) throws SermilException {
       final Cs cs = this.recuperar(csCodigo);
       this.csDao.delete(cs);
-      logger.info("Excluída: {}", cs);
+      logger.debug("Excluída: {}", cs);
       return new StringBuilder(cs.toString()).append(" excluida").toString();
    }
 
@@ -151,7 +151,7 @@ public class CsServico {
    public String excluirEndereco(final Integer codigo) throws SermilException {
       final CsEndereco csEnd = this.recuperarEndereco(codigo);
       this.csEnderecoDao.delete(csEnd);
-      logger.info("Excluído: {}", csEnd);
+      logger.debug("Excluído: {}", csEnd);
       return new StringBuilder(csEnd.toString()).append(" excluido").toString();
    }
 
@@ -159,7 +159,7 @@ public class CsServico {
    @PreAuthorize("hasAnyRole('adm','dsm','smr')")
    public String salvar(final Cs cs) throws SermilException {
       final Cs csSalva = this.csDao.save(cs);
-      logger.info("Salvo: {}", csSalva);
+      logger.debug("Salvo: {}", csSalva);
       return new StringBuilder(cs.toString()).append(" salva").toString();
    }
 
@@ -167,7 +167,7 @@ public class CsServico {
    @PreAuthorize("hasAnyRole('adm','dsm','smr')")
    public String salvarEndereco(final CsEndereco csEndereco) throws SermilException {
       final CsEndereco csEnd = this.csEnderecoDao.save(csEndereco);
-      logger.info("Salvo: {}", csEnd);
+      logger.debug("Salvo: {}", csEnd);
       return new StringBuilder(csEnd.toString()).append(" salvo").toString();
    }
 

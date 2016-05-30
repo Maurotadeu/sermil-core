@@ -67,7 +67,7 @@ public class JsmServico {
    public Lista[] listarCsmDotJsm(final Integer mun) throws SermilException {
      final TypedQuery<Object[]> query = this.jsmDao.getEntityManager().createNamedQuery("Jsm.listarPorMun", Object[].class);
      query.setParameter(1, mun);
-     return query.getResultList().stream().map(o -> new Lista(((Short)o[0]).toString() + "." + ((Short)o[1]).toString(), (String)o[2])).collect(Collectors.toList()).toArray(new Lista[0]);
+     return query.getResultList().stream().map(o -> new Lista(((Byte)o[0]).toString() + "." + ((Short)o[1]).toString(), (String)o[2])).collect(Collectors.toList()).toArray(new Lista[0]);
    }
 
    public Lista[] listarPorMun(final Integer mun) throws SermilException {
