@@ -9,12 +9,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
+
 /** Arma, Quadro e Serviço.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: ArmaQdSv.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
+@Cache(type=CacheType.FULL, size=70)
 @Table(name = "ARMA_QD_SV")
 @NamedQuery(name = "ArmaQdSv.listar", query = "SELECT a FROM ArmaQdSv a ORDER BY a.sigla")
 public final class ArmaQdSv implements Comparable<ArmaQdSv>, Serializable {
@@ -47,9 +51,9 @@ public final class ArmaQdSv implements Comparable<ArmaQdSv>, Serializable {
 
   @Override
   public String toString() {
-    return new StringBuilder(this.getCodigo() == null ? "COD" : this.getCodigo())
+    return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo())
       .append(" - ")
-      .append(this.getDescricao() == null ? "DESC" : this.getDescricao())
+      .append(this.getDescricao() == null ? "AQS DESCRICAO" : this.getDescricao())
       .toString();
   }
 

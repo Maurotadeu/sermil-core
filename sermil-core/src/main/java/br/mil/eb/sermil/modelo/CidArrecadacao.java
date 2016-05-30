@@ -2,16 +2,16 @@ package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.util.Calendar;
+import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
@@ -22,7 +22,7 @@ import javax.persistence.TemporalType;
 /** Arrecadação de Taxas e Multas.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CidArrecadacao.java 2426 2014-05-14 15:01:41Z wlopes $
+ * @version $Id: 5.4
  */
 @Entity
 @Table(name = "CID_ARRECADACAO")
@@ -36,11 +36,11 @@ public final class CidArrecadacao implements Comparable<CidArrecadacao>, Seriali
   @Column(name = "VALOR_TOTAL")
   private BigDecimal valorTotal;
 
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.REFRESH)
   @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
   private Cidadao cidadao;
 
-  @ManyToOne(fetch=FetchType.EAGER)
+  @ManyToOne(cascade = CascadeType.REFRESH)
   @JoinColumns({
     @JoinColumn(name = "TAXA_MULTA_ARTIGO", referencedColumnName = "ARTIGO", insertable = false, updatable = false, nullable = false),
     @JoinColumn(name = "TAXA_MULTA_NUMERO", referencedColumnName = "NUMERO", insertable = false, updatable = false, nullable = false)
@@ -53,6 +53,7 @@ public final class CidArrecadacao implements Comparable<CidArrecadacao>, Seriali
 
   public CidArrecadacao(final Long ra, final Date data, final Short artigo, final Short numero) {
     this.setPk(new CidArrecadacao.PK(ra, data, artigo, numero));
+    this.setTaxaMulta(new TaxaMulta(this.getPk().getTaxaMultaArtigo(), this.getPk().getTaxaMultaNumero()));
   }
 
   @Override

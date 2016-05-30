@@ -19,13 +19,12 @@ import javax.persistence.TemporalType;
 /** Mensagem do Portal.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: PortalMensagem.java 2401 2014-04-21 11:23:15Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "PORTAL_MENSAGEM")
 public final class PortalMensagem implements Comparable<PortalMensagem>, Serializable {
 
-  /** serialVersionUID.*/
   private static final long serialVersionUID = -5037900885209477967L;
 
   @Id

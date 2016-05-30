@@ -10,10 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.mil.eb.sermil.core.exceptions.CertificateNotFoundException;
-import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemDocApresException;
-import br.mil.eb.sermil.core.exceptions.CidadaoNaoTemEventoException;
-import br.mil.eb.sermil.core.exceptions.EventNotFoundException;
+import br.mil.eb.sermil.core.exceptions.DocApresNotFoundException;
+import br.mil.eb.sermil.core.exceptions.EventoNotFoundException;
+import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.OutOfSituationException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.CidCertificado;
@@ -26,7 +25,7 @@ import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 /** Gerenciamento dos certificados de cidadão.
  * @author Abreu lopes, Anselmo Ribeiro
  * @since 5.1
- * @version 5.3.2
+ * @version 5.4
  */
 @Named("certificadoServico")
 public class CertificadoServico {
@@ -73,8 +72,7 @@ public class CertificadoServico {
    }
 
    @Transactional
-   public Cidadao salvar(final CidCertificado certificado, final Usuario usuario) throws SermilException {
-      final Cidadao cidadao = this.cidadaoServico.recuperar(certificado.getPk().getCidadaoRa());
+   public String salvar(final Cidadao cidadao, final CidCertificado certificado, final Usuario usuario) throws SermilException {
       if ((certificado.getPk().getTipo() == TipoCertificado.CR1.ordinal() || certificado.getPk().getTipo() == TipoCertificado.CR1.ordinal()) &&
           cidadao.getSituacaoMilitar() != TipoSituacaoMilitar.LICENCIADO.ordinal()) {
          throw new SermilException("Somente LICENCIADOS possuem Certificado de Reservista.");
@@ -86,7 +84,8 @@ public class CertificadoServico {
       logger.debug("CERTIFICADO: {}", certificado);
       logger.debug("USUARIO: {}", usuario);
       logger.debug("CIDADAO: {}", cidadao);
-      return this.cidadaoServico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO: ").append(certificado).toString());
+      this.cidadaoServico.salvar(cidadao, usuario, new StringBuilder("CERTIFICADO: ").append(certificado).toString());
+      return new StringBuilder("Certificado salvo: ").append(certificado).toString();
    }
 
    public boolean podeImprimirCAM(final Cidadao cidadao) throws SermilException {
@@ -111,10 +110,10 @@ public class CertificadoServico {
          throw new SermilException("Cidadão não foi informado.");
       }
       if (!cidadao.hasEvento(TipoEvento.EXCESSO.getCodigo()) && !cidadao.hasEvento(TipoEvento.DISPENSA.getCodigo())) {
-         throw new EventNotFoundException();
+         throw new NoDataFoundException();
       }
       if (!cidadao.hasCertificado(TipoCertificado.CDI.ordinal())) {
-         throw new CertificateNotFoundException();
+         throw new NoDataFoundException();
       }
       if (!StringUtils.containsAny(cidadao.getSituacaoMilitar().toString(), "389")) {
          throw new OutOfSituationException();
@@ -129,11 +128,11 @@ public class CertificadoServico {
       if (cidadao.getSituacaoMilitar() != TipoSituacaoMilitar.LICENCIADO.ordinal()) {
          throw new SermilException("Cidadão não está na situação LICENCIADO (15).");
       }
-      if (!cidadao.hasEvento(TipoEvento.LICENCIAMENTO.ordinal())) {
-         throw new CidadaoNaoTemEventoException();
+      if (!cidadao.hasEvento(TipoEvento.LICENCIAMENTO.getCodigo())) {
+         throw new EventoNotFoundException();
       }
       if (cidadao.getCidDocApresColletion().size() <= 0) {
-         throw new CidadaoNaoTemDocApresException();
+         throw new DocApresNotFoundException();
       }
       return true;
    }

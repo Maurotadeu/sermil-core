@@ -10,7 +10,7 @@ import javax.persistence.Table;
 /** Cargo Militar.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CargoMilitar.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.3.2
  */
 @Entity
 @Table(name = "CARGO_MILITAR")
@@ -38,9 +38,9 @@ public final class CargoMilitar implements Comparable<CargoMilitar>, Serializabl
 
   @Override
   public String toString() {
-    return new StringBuilder(this.getCodigo() == null ? "COD" : this.getCodigo())
+    return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo())
       .append(" - ")
-      .append(this.getDescricao() == null ? "DESC" : this.getDescricao())
+      .append(this.getDescricao() == null ? "CARGO MILITAR" : this.getDescricao())
       .toString();
   }
 

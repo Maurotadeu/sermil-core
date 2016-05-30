@@ -7,17 +7,20 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
+
 /** QCP_HABILITACAO.
  * @author Neckel
  * @since 3.4
- * @version $Id: QcpHabilitacao.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "QCP_HABILITACAO")
 @NamedQuery(name = "QcpHabilitacao.listar", query = "SELECT a FROM QcpHabilitacao a ORDER BY a.codigo")
+@PrimaryKey(validation=IdValidation.NULL)
 public final class QcpHabilitacao implements Serializable {
 
-  /** serialVersionUID. */
   private static final long serialVersionUID = 8299663748487294314L;
 
   @Id
@@ -28,6 +31,11 @@ public final class QcpHabilitacao implements Serializable {
 	public QcpHabilitacao() {
 		super();
 	}
+
+  @Override
+  public String toString() {
+    return this.getDescricao() == null ? "NULO" : this.getDescricao();
+  }
 
 	public String getCodigo() {
 		return this.codigo;
@@ -43,11 +51,6 @@ public final class QcpHabilitacao implements Serializable {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
-	}
-
-	@Override
-	public String toString() {
-		return this.getDescricao() == null ? "NULO" : this.getDescricao();
 	}
 
 }

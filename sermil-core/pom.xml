@@ -2,9 +2,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>br.mil.eb.sermil</groupId>
   <artifactId>sermil-core</artifactId>
-  <version>5.3.2</version>
+  <version>5.4.0</version>
   <name>SERMIL CORE</name>
-  <description>SERMIL LIBRARY CORE SERVICES</description>
+  <description>SERMIL CORE LIBRARY</description>
   <properties>
     <!-- Generic properties -->
     <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
@@ -88,6 +88,12 @@
       <version>3.0.0-rc3-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
+<dependency>
+    <groupId>org.eclipse.persistence</groupId>
+    <artifactId>eclipselink</artifactId>
+    <version>2.6.3</version>
+</dependency>
+<!-- 
     <dependency>
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>org.eclipse.persistence.jpa</artifactId>
@@ -98,6 +104,7 @@
       <artifactId>org.eclipse.persistence.oracle</artifactId>
       <version>2.6.2</version>
     </dependency>
+-->    
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -220,5 +227,3 @@
     </developer>
   </developers>
 </project>
-
-

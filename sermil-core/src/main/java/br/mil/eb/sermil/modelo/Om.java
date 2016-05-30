@@ -25,8 +25,8 @@ import org.eclipse.persistence.annotations.PrimaryKey;
  */
 @Entity
 @NamedQueries({
-  @NamedQuery(name = "Om.listarMob", query = "SELECT o FROM Om o WHERE o.rm.codigo = ?1 AND o.omTipo = 9 ORDER BY o.sigla"),
-  @NamedQuery(name = "Om.listarPorRm", query = "SELECT o FROM Om o WHERE o.rm.codigo = ?1 AND o.omTipo BETWEEN 1 AND 9 ORDER BY o.sigla"),
+  @NamedQuery(name = "Om.listarMob", query = "SELECT  o.codigo, o.sigla  FROM Om o WHERE o.rm.codigo = ?1 AND o.omTipo = 9 ORDER BY o.sigla"),
+  @NamedQuery(name = "Om.listarPorRm", query = "SELECT o.codigo, o.sigla FROM Om o WHERE o.rm.codigo = ?1 AND o.omTipo BETWEEN 1 AND 9 ORDER BY o.sigla"),
   @NamedQuery(name = "Om.listarPorCriterio", query = "SELECT o FROM Om o WHERE o.omTipo BETWEEN 1 AND 9 AND o.sigla LIKE CONCAT(?1,'%') AND o.municipio.descricao LIKE CONCAT(?2,'%') ORDER BY o.sigla"),
   @NamedQuery(name = "Om.listarPorDescricao", query = "SELECT o FROM Om o WHERE o.omTipo BETWEEN 1 AND 9 AND o.descricao LIKE CONCAT(?1,'%')")
 })
@@ -52,11 +52,11 @@ public final class Om implements Comparable<Om>, Serializable {
   @Column(name = "CAIXA_POSTAL")
   private Integer caixaPostal;
 
-  @ManyToOne
+  @ManyToOne(cascade=CascadeType.REFRESH)
   @JoinColumn(name="MUNICIPIO_CODIGO", referencedColumnName="CODIGO")
   private Municipio municipio;
 
-  @ManyToOne
+  @ManyToOne(cascade=CascadeType.REFRESH)
   @JoinColumn(name="RM_CODIGO", referencedColumnName="CODIGO")
   private Rm rm;
 
@@ -118,7 +118,7 @@ public final class Om implements Comparable<Om>, Serializable {
   public String toString() {
     return new StringBuilder(this.getCodigo() == null ? "CODOM" : this.getCodigo().toString())
       .append(" - ")
-      .append(this.getSigla() == null ? "SIGLA" : this.getSigla())
+      .append(this.getSigla() == null ? "OM DESCRICAO" : this.getSigla())
       .toString();
   }
 

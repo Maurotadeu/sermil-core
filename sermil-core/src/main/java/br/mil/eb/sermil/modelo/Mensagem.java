@@ -9,14 +9,13 @@ import javax.persistence.NamedQuery;
 /** Mensagem de crítica.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Mensagem.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @NamedQuery(name = "Mensagem.listar", query = "SELECT m FROM Mensagem m")
 public final class Mensagem implements Serializable {
 
-  /** serialVersionUID. */
-  private static final long serialVersionUID = -6311317713566416152L;
+  private static final long serialVersionUID = 9186323130785851795L;
 
   @Id
   private Short codigo;
@@ -27,6 +26,39 @@ public final class Mensagem implements Serializable {
 
   public Mensagem() {
     super();
+  }
+
+  @Override
+  public String toString() {
+    return new StringBuilder(this.getCodigo() == null ? "CODIGO" : this.getCodigo().toString())
+      .append(" - ")
+      .append(this.getDescricao() == null ? "MENSAGEM" : this.getDescricao())
+      .toString();
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Mensagem other = (Mensagem) obj;
+    if (codigo == null) {
+      if (other.codigo != null)
+        return false;
+    } else if (!codigo.equals(other.codigo))
+      return false;
+    return true;
   }
 
   public Short getCodigo() {
@@ -51,14 +83,6 @@ public final class Mensagem implements Serializable {
 
   public void setTipo(String tipo) {
     this.tipo = tipo;
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder(this.getCodigo() == null ? "NULO" : this.getCodigo().toString())
-      .append(" - ")
-      .append(this.getDescricao() == null ? "NULO" : this.getDescricao())
-      .toString();
   }
 
 }

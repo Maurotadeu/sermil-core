@@ -2,7 +2,6 @@ package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -19,19 +18,19 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Junta de Serviço Militar - Informações complementares.
  * @author Abreu Lopes
  * @since 3.4
- * @version $Id: JsmInfo.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "JSM_INFO")
 @PrimaryKey(validation = IdValidation.NULL)
 public final class JsmInfo implements Serializable {
 
-  /** serialVersionUID.*/
-  private static final long serialVersionUID = -4916095032074170431L;
+  private static final long serialVersionUID = -1212315790442679823L;
 
   @EmbeddedId
   private PK pk;
 
+  @Column(insertable=false, updatable=false, nullable=false)
   private String internet;
 
   private String endereco;
@@ -46,8 +45,6 @@ public final class JsmInfo implements Serializable {
 
   private String autoridade;
 
-  private Date retorno;
-  
   @OneToOne
   @JoinColumns({
     @JoinColumn(name="CSM_CODIGO", referencedColumnName="CSM_CODIGO", insertable=false, updatable=false),
@@ -160,24 +157,15 @@ public final class JsmInfo implements Serializable {
   public void setAutoridade(String autoridade) {
     this.autoridade = autoridade;
   }
-
-  public Date getRetorno() {
-    return retorno;
-  }
-
-  public void setRetorno(Date retorno) {
-    this.retorno = retorno;
-  }
-
+  
   /** Chave primária (PK) de JsmInfo.
    * @author Abreu Lopes
    * @since 3.4
-   * @version $Id: JsmInfo.java 1637 2011-11-25 13:52:11Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Serializable {
 
-    /** serialVersionUID. */
     private static final long serialVersionUID = -537844181563261148L;
 
     @Column(name = "CSM_CODIGO")
@@ -196,29 +184,42 @@ public final class JsmInfo implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-      if (o == this) {
-        return true;
-      }
-      if (!(o instanceof PK)) {
-        return false;
-      }
-      PK other = (PK) o;
-      return this.csmCodigo.equals(other.csmCodigo)
-          && this.jsmCodigo.equals(other.jsmCodigo);
-    }
-
-    @Override
-    public int hashCode() {
-      return this.csmCodigo.hashCode() ^ this.jsmCodigo.hashCode();
-    }
-
-    @Override
     public String toString() {
       return new StringBuilder(this.getCsmCodigo() == null ? "00" : new DecimalFormat("00").format(this.getCsmCodigo()))
         .append("/")
         .append(this.getJsmCodigo() == null ? "000" : new DecimalFormat("000").format(this.getJsmCodigo()))
         .toString();
+    }
+    
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((csmCodigo == null) ? 0 : csmCodigo.hashCode());
+      result = prime * result + ((jsmCodigo == null) ? 0 : jsmCodigo.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      PK other = (PK) obj;
+      if (csmCodigo == null) {
+        if (other.csmCodigo != null)
+          return false;
+      } else if (!csmCodigo.equals(other.csmCodigo))
+        return false;
+      if (jsmCodigo == null) {
+        if (other.jsmCodigo != null)
+          return false;
+      } else if (!jsmCodigo.equals(other.jsmCodigo))
+        return false;
+      return true;
     }
 
     public Short getJsmCodigo() {

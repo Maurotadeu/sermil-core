@@ -9,14 +9,15 @@ import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.ParameterMode;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.PrimaryKeyJoinColumns;
 import javax.persistence.Table;
 
-import org.eclipse.persistence.annotations.Direction;
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.NamedStoredFunctionQueries;
 import org.eclipse.persistence.annotations.NamedStoredFunctionQuery;
 import org.eclipse.persistence.annotations.StoredProcedureParameter;
@@ -24,21 +25,19 @@ import org.eclipse.persistence.annotations.StoredProcedureParameter;
 /** Seleção de JSM (TABELA SEL_JSM).
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: SelJsm.java 2459 2014-06-06 11:41:50Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name="SEL_JSM")
-@NamedQueries({
-	  @NamedQuery(name = "SelJsm.listarJsmTributaria", query = "SELECT s FROM SelJsm s WHERE EXISTS(SELECT c FROM Csm c WHERE c.codigo = s.pk.csmCodigo AND c.rm.codigo = ?1) AND EXISTS (SELECT j FROM Jsm j WHERE j.pk.codigo = s.pk.jsmCodigo AND j.pk.csmCodigo = s.pk.csmCodigo AND j.tributacao BETWEEN 1 AND 4)  ORDER BY s.pk.csmCodigo,s.pk.jsmCodigo ")
-  //@NamedQuery(name = "SelJsm.listarPorJsm", query = "SELECT c.jsm.pk.csmCodigo, c.jsm.pk.codigo, c.escolaridade, COUNT(c.ra) FROM Cidadao c, CidEvento e WHERE c.ra = e.pk.cidadaoRa AND e.pk.codigo = 1 AND e.pk.data BETWEEN :data1 AND :data2 GROUP BY c.jsm.pk.csmCodigo, c.jsm.pk.codigo, c.escolaridade")
-})
+@Cache(type=CacheType.SOFT, size=1000, expiry=1200000)
+@NamedQuery(name = "SelJsm.listarJsmTributaria", query = "SELECT s FROM SelJsm s WHERE EXISTS(SELECT c FROM Csm c WHERE c.codigo = s.pk.csmCodigo AND c.rm.codigo = ?1) AND EXISTS (SELECT j FROM Jsm j WHERE j.pk.codigo = s.pk.jsmCodigo AND j.pk.csmCodigo = s.pk.csmCodigo AND j.tributacao BETWEEN 1 AND 4)  ORDER BY s.pk.csmCodigo,s.pk.jsmCodigo ")
 @NamedStoredFunctionQueries({
-  @NamedStoredFunctionQuery(name="SelJsm.executa", functionName="sel_processamento.executa", parameters={@StoredProcedureParameter(queryParameter = "P_RM",direction=Direction.IN), @StoredProcedureParameter(queryParameter = "P_CPF",direction=Direction.IN)}, returnParameter=@StoredProcedureParameter(queryParameter="MSG")),
-  @NamedStoredFunctionQuery(name="SelJsm.reverte", functionName="sel_processamento.reverte", parameters={@StoredProcedureParameter(queryParameter = "P_RM",direction=Direction.IN)}, returnParameter=@StoredProcedureParameter(queryParameter="MSG"))
+  @NamedStoredFunctionQuery(name="SelJsm.executa", functionName="sel_processamento.executa", parameters={@StoredProcedureParameter(queryParameter = "P_RM", mode=ParameterMode.IN), @StoredProcedureParameter(queryParameter = "P_CPF", mode=ParameterMode.IN)}, returnParameter=@StoredProcedureParameter(queryParameter="MSG")),
+  @NamedStoredFunctionQuery(name="SelJsm.reverte", functionName="sel_processamento.reverte", parameters={@StoredProcedureParameter(queryParameter = "P_RM", mode=ParameterMode.IN)}, returnParameter=@StoredProcedureParameter(queryParameter="MSG"))
 })
 public final class SelJsm implements Serializable {
 
-  private static final long serialVersionUID = -1102580263807345626L;
+  private static final long serialVersionUID = 55647247648237698L;
 
   @EmbeddedId
   private PK pk;
@@ -64,9 +63,10 @@ public final class SelJsm implements Serializable {
   private Short aptos;
 
   @OneToOne(fetch=FetchType.EAGER, cascade=CascadeType.REFRESH)
-  @JoinColumns({
-    @JoinColumn(name="CSM_CODIGO", referencedColumnName="CSM_CODIGO", insertable=false, updatable=false, nullable=false),
-    @JoinColumn(name="JSM_CODIGO", referencedColumnName="CODIGO", insertable=false, updatable=false, nullable=false)
+  @PrimaryKeyJoinColumns
+  ({
+    @PrimaryKeyJoinColumn(name="CSM_CODIGO", referencedColumnName="CSM_CODIGO"),
+    @PrimaryKeyJoinColumn(name="JSM_CODIGO", referencedColumnName="CODIGO")
   })
   private Jsm jsm;
 
@@ -80,7 +80,32 @@ public final class SelJsm implements Serializable {
 
   @Override
   public String toString() {
-    return this.getJsm() != null ? this.getJsm().toString() : this.getPk().toString();
+    return this.getJsm() != null ? this.getJsm().toString() : this.getPk().toString() + " [SelJsm]";
+  }
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((pk == null) ? 0 : pk.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    SelJsm other = (SelJsm) obj;
+    if (pk == null) {
+      if (other.pk != null)
+        return false;
+    } else if (!pk.equals(other.pk))
+      return false;
+    return true;
   }
 
   public PK getPk() {
@@ -155,15 +180,14 @@ public final class SelJsm implements Serializable {
     this.aptos = aptos;
   }
 
-/** Chave primária (PK) de SelJsm.
+  /** Chave primária (PK) de SelJsm.
    * @author Abreu Lopes
    * @since 3.0
-   * @version $Id: SelJsm.java 2459 2014-06-06 11:41:50Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Serializable {
 
-    /** serialVersionUID. */
     private static final long serialVersionUID = 6573419847324692853L;
 
     @Column(name="CSM_CODIGO")
@@ -181,6 +205,46 @@ public final class SelJsm implements Serializable {
       this.setJsmCodigo(jsmCodigo);
     }
 
+    @Override
+    public String toString() {
+      return new StringBuilder()
+        .append(this.getCsmCodigo() == null ? "CSM" : new DecimalFormat("00").format(this.getCsmCodigo()))
+        .append("/")
+        .append(this.getJsmCodigo() == null ? "JSM" : new DecimalFormat("000").format(this.getJsmCodigo()))
+        .toString();
+    }
+    
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((csmCodigo == null) ? 0 : csmCodigo.hashCode());
+      result = prime * result + ((jsmCodigo == null) ? 0 : jsmCodigo.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      PK other = (PK) obj;
+      if (csmCodigo == null) {
+        if (other.csmCodigo != null)
+          return false;
+      } else if (!csmCodigo.equals(other.csmCodigo))
+        return false;
+      if (jsmCodigo == null) {
+        if (other.jsmCodigo != null)
+          return false;
+      } else if (!jsmCodigo.equals(other.jsmCodigo))
+        return false;
+      return true;
+    }
+
     public Byte getCsmCodigo() {
       return this.csmCodigo;
     }
@@ -196,37 +260,7 @@ public final class SelJsm implements Serializable {
     public void setJsmCodigo(Short jsmCodigo) {
       this.jsmCodigo = jsmCodigo;
     }
-
-    @Override
-    public boolean equals(Object o) {
-      if (o == this) {
-        return true;
-      }
-      if ( ! (o instanceof PK)) {
-        return false;
-      }
-      PK other = (PK) o;
-      return (this.csmCodigo == other.csmCodigo) && (this.jsmCodigo == other.jsmCodigo);
-    }
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int hash = 17;
-      hash = hash * prime + ((int) (this.csmCodigo ^ (this.csmCodigo >>> 32)));
-      hash = hash * prime + ((int) (this.jsmCodigo ^ (this.jsmCodigo >>> 32)));
-      return hash;
-    }
-
-    @Override
-    public String toString() {
-      return new StringBuilder()
-        .append(this.getCsmCodigo() == null ? "CSM" : new DecimalFormat("00").format(this.getCsmCodigo()))
-        .append("/")
-        .append(this.getJsmCodigo() == null ? "JSM" : new DecimalFormat("000").format(this.getJsmCodigo()))
-        .toString();
-    }
-
+    
   }
 
 }

@@ -13,13 +13,12 @@ import javax.persistence.Table;
 /** Informações de pessoas de contatos do cidadão.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: CidContato.java 2426 2014-05-14 15:01:41Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "CID_CONTATO")
 public final class CidContato implements Comparable<CidContato>, Serializable {
 
-  /** serialVersionUID. */
   private static final long serialVersionUID = -3052283970947553631L;
 
   @EmbeddedId
@@ -179,12 +178,11 @@ public final class CidContato implements Comparable<CidContato>, Serializable {
   /** Chave primária (PK) de CidContato.
    * @author Abreu Lopes
    * @since 3.0
-   * @version $Id: CidContato.java 2426 2014-05-14 15:01:41Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<CidContato.PK>, Serializable {
 
-    /** serialVersionUID. */
     private static final long serialVersionUID = -4872493189199867881L;
 
     @Column(name = "CIDADAO_RA")
@@ -216,10 +214,8 @@ public final class CidContato implements Comparable<CidContato>, Serializable {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-          + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
-      result = prime * result
-          + ((this.prioridade == null) ? 0 : this.prioridade.hashCode());
+      result = prime * result + ((this.cidadaoRa == null) ? 0 : this.cidadaoRa.hashCode());
+      result = prime * result + ((this.prioridade == null) ? 0 : this.prioridade.hashCode());
       return result;
     }
 

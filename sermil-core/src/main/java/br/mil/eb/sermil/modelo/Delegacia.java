@@ -18,17 +18,16 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Delegacia de Serviço Militar.
  * @author Abreu Lopes
  * @since 4.0
- * @version 5.2.4
+ * @version 5.4
  */
 @Entity
 @NamedQueries({
-  @NamedQuery(name = "Del.listarPorCsm", query = "SELECT d FROM Delegacia d WHERE d.pk.csmCodigo = ?1"),
+  @NamedQuery(name = "Del.listarPorCsm", query = "SELECT d.pk.codigo, 1 FROM Delegacia d WHERE d.pk.csmCodigo = ?1"),
   @NamedQuery(name = "Del.listarPorMun", query = "SELECT d FROM Delegacia d WHERE d.om.municipio.codigo = ?1")
 })
 @PrimaryKey(validation=IdValidation.NULL)
 public class Delegacia implements Serializable {
 
-  /** serialVersionUID.*/
   private static final long serialVersionUID = 6148473059170164840L;
 
   @EmbeddedId
@@ -46,7 +45,7 @@ public class Delegacia implements Serializable {
   @JoinColumn(name = "DELEGADO", referencedColumnName="CPF")
   private Usuario delegado;
 
-  @OneToOne
+  @OneToOne(cascade = CascadeType.REFRESH)
   @JoinColumn(name="OM_CODIGO", referencedColumnName="CODIGO")
   private Om om;
 

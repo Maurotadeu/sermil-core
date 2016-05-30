@@ -1,8 +1,8 @@
-package br.mil.eb.sermil.modelo;
+package br.mil.eb.sermil.tipos;
 
-import javax.inject.Named;
+import br.mil.eb.sermil.modelo.Csm;
+import br.mil.eb.sermil.modelo.RaPedido;
 
-@Named
 public class Search {
 
    private RaPedido pedido;

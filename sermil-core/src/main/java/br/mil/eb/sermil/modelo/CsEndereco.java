@@ -2,6 +2,7 @@ package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,7 +21,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** Endereço de funcionamento de CS.
  * @author Anselmo Ribeiro, Abreu Lopes
  * @since 5.3.2
- * @version 5.3.2
+ * @version 5.4
  */
 @Entity
 @Table(name = "CS_ENDERECO")
@@ -31,7 +32,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation = IdValidation.NULL)
 public final class CsEndereco implements Serializable {
 
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = -6445362989470589360L;
 
    @Id
    @GeneratedValue(strategy = GenerationType.TABLE, generator = "CS_ENDERECO")
@@ -47,7 +48,7 @@ public final class CsEndereco implements Serializable {
    @Column(length = 8)
    private String cep;
 
-   @ManyToOne
+   @ManyToOne(cascade=CascadeType.REFRESH)
    @JoinColumn(name = "municipio_codigo", referencedColumnName = "codigo", nullable = false)
    private Municipio municipio;
 

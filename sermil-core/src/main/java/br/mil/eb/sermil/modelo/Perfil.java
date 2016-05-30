@@ -6,16 +6,20 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.IdValidation;
+import org.eclipse.persistence.annotations.PrimaryKey;
+
 /** Perfil de acesso.
  * @author Abreu Lopes
  * @since 3.5
- * @version $Id: Perfil.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
 @NamedQuery(name = "Perfil.listar", query = "SELECT p FROM Perfil p")
+@PrimaryKey(validation=IdValidation.NULL)
 public final class Perfil implements Comparable<Perfil>, Serializable {
 
-  private static final long serialVersionUID = -2139527113542785550L;
+  private static final long serialVersionUID = -7636313940403669612L;
 
   @Id
   private String codigo;
@@ -34,6 +38,31 @@ public final class Perfil implements Comparable<Perfil>, Serializable {
   @Override
   public String toString() {
     return this.getDescricao() == null ? "PERFIL" : this.getDescricao();
+  }
+  
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((codigo == null) ? 0 : codigo.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Perfil other = (Perfil) obj;
+    if (codigo == null) {
+      if (other.codigo != null)
+        return false;
+    } else if (!codigo.equals(other.codigo))
+      return false;
+    return true;
   }
 
   public String getCodigo() {

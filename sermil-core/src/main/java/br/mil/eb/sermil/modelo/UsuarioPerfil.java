@@ -14,7 +14,7 @@ import javax.persistence.Table;
 /** Perfil de usuário.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: UsuarioPerfil.java 1860 2012-05-09 20:00:11Z gardino $
+ * @version 5.4
  */
 @Entity
 @Table(name="USUARIO_PERFIL")
@@ -99,19 +99,15 @@ public final class UsuarioPerfil implements Serializable {
     this.perfil = perfil;
   }
 
-  //public String getAuthority() {
-  //  return this.getPk().getPerfil();
-  //}
-
   /** Chave primária (PK) de UsuarioPerfil.
    * @author Abreu Lopes
    * @since 3.0
-   * @version $Id: UsuarioPerfil.java 1860 2012-05-09 20:00:11Z gardino $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -4177056954993985864L;
 
     private String cpf;
 

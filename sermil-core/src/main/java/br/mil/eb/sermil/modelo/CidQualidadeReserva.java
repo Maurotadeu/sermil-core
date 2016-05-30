@@ -13,7 +13,7 @@ import javax.persistence.Table;
 /** Qualidade da Reserva.
  * @author Abreu Lopes
  * @since 3.4
- * @version $Id: CidQualidadeReserva.java 2426 2014-05-14 15:01:41Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name = "CID_QUALIDADE_RESERVA")
@@ -58,13 +58,38 @@ public final class CidQualidadeReserva implements Serializable {
   @ManyToOne
   @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
   private Cidadao cidadao;
-  
+
   public CidQualidadeReserva() {
     this.setPk(new CidQualidadeReserva.PK());
   }
 
-  public CidQualidadeReserva(Long ra, Integer ano) {
+  public CidQualidadeReserva(final Long ra, final Integer ano) {
     this.setPk(new CidQualidadeReserva.PK(ra, ano));
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((pk == null) ? 0 : pk.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    CidQualidadeReserva other = (CidQualidadeReserva) obj;
+    if (pk == null) {
+      if (other.pk != null)
+        return false;
+    } else if (!pk.equals(other.pk))
+      return false;
+    return true;
   }
 
   public Byte getEscolaridade() {
@@ -146,7 +171,7 @@ public final class CidQualidadeReserva implements Serializable {
   public void setScEfetividade(Byte scEfetividade) {
     this.scEfetividade = scEfetividade;
   }
-  
+
   public Byte getMeioComunicacao() {
     return this.meioComunicacao;
   }
@@ -166,40 +191,22 @@ public final class CidQualidadeReserva implements Serializable {
     }
   }
 
-  @Override
-  public int hashCode() {
-	final int prime = 31;
-	int result = 1;
-	result = prime * result + ((pk == null) ? 0 : pk.hashCode());
-	return result;
+  public CidQualidadeReserva.PK getPk() {
+    return pk;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-	if (this == obj)
-		return true;
-	if (obj == null)
-		return false;
-	if (getClass() != obj.getClass())
-		return false;
-	CidQualidadeReserva other = (CidQualidadeReserva) obj;
-	if (pk == null) {
-		if (other.pk != null)
-			return false;
-	} else if (!pk.equals(other.pk))
-		return false;
-	return true;
+  public void setPk(CidQualidadeReserva.PK pk) {
+    this.pk = pk;
   }
-
+  
   /** Chave primária (PK) de CidQualidadeReserva.
    * @author Abreu Lopes
    * @since 3.4
-   * @version $Id: CidQualidadeReserva.java 2426 2014-05-14 15:01:41Z wlopes $
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Serializable {
 
-    /** serialVersionUID. */
     private static final long serialVersionUID = 5628917229777511550L;
 
     @Column(name = "CIDADAO_RA")
@@ -210,7 +217,7 @@ public final class CidQualidadeReserva implements Serializable {
     public PK() {
       super();
     }
-    
+
     public PK(final Long cidadaoRa, final Integer ano) {
       super();
       this.setCidadaoRa(cidadaoRa);
@@ -222,8 +229,7 @@ public final class CidQualidadeReserva implements Serializable {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((ano == null) ? 0 : ano.hashCode());
-      result = prime * result
-          + ((cidadaoRa == null) ? 0 : cidadaoRa.hashCode());
+      result = prime * result + ((cidadaoRa == null) ? 0 : cidadaoRa.hashCode());
       return result;
     }
 
@@ -264,15 +270,7 @@ public final class CidQualidadeReserva implements Serializable {
     public void setAno(Integer ano) {
       this.ano = ano;
     }
-    
+
   }
 
-  public CidQualidadeReserva.PK getPk() {
-    return pk;
-  }
-
-  public void setPk(CidQualidadeReserva.PK pk) {
-    this.pk = pk;
-  }
-  
 }

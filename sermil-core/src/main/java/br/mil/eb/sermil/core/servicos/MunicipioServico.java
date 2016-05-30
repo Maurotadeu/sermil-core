@@ -1,13 +1,15 @@
 package br.mil.eb.sermil.core.servicos;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.TypedQuery;
 
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
@@ -21,11 +23,12 @@ import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Municipio;
+import br.mil.eb.sermil.tipos.Lista;
 
 /** Gerenciamento de informações de Municípios. (Tabela MUNICIPIO)
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.2.5
+ * @version 5.4
  */
 @Named("municipioServico")
 @RemoteProxy(name="municipioServico")
@@ -52,7 +55,7 @@ public class MunicipioServico {
       lista = new ArrayList<Municipio>(1);
       lista.add(this.municipioDao.findById(mun.getCodigo()));
     } else if (mun.getUf() != null && !mun.getUf().getSigla().isEmpty()) {
-      lista = this.municipioDao.findByNamedQuery("Municipio.listarPorUf", mun.getUf().getSigla());
+      lista = this.municipioDao.findByNamedQuery("Municipio.listar", mun.getUf().getSigla());
     } else if (mun.getDescricao() != null) {
       lista = this.municipioDao.findByNamedQuery("Municipio.listarPorDescricao", mun.getDescricao());
     }
@@ -60,6 +63,47 @@ public class MunicipioServico {
       throw new NoDataFoundException();
     }
     return lista;
+  }
+
+  public Lista[] listarPorUf(final String uf) throws SermilException {
+    final TypedQuery<Object[]> query = this.municipioDao.getEntityManager().createNamedQuery("Municipio.listarPorUf", Object[].class);
+    query.setParameter(1, uf);
+    return query.getResultList().stream().map(o -> new Lista(((Integer)o[0]).toString(), (String)o[1])).collect(Collectors.toList()).toArray(new Lista[0]);
+  }
+
+  public Municipio recuperar(final Integer codigo) throws SermilException {
+    return this.municipioDao.findById(codigo);
+  }
+
+  @Transactional
+  public Municipio salvar(Municipio municipio) throws SermilException {
+    return this.municipioDao.save(municipio);
+  }
+
+  @RemoteMethod
+  public Object[] listarAlistadoMunicipio(final Integer ano, final String uf) throws SermilException {
+    final List<Object[]> result = this.municipioDao.findBySQL("SELECT m.descricao, m.latitude, m.longitude, m.microregiao, m.mesoregiao, COUNT(*) FROM municipio_novo m JOIN cidadao c ON c.municipio_residencia_codigo = m.codigo WHERE vinculacao_ano = ? AND uf_sigla = ? GROUP BY m.descricao, m.latitude, m.longitude, m.microregiao, m.mesoregiao", ano == null ? Calendar.getInstance().get(Calendar.YEAR) : ano, uf);
+    return result.toArray(new Object[0]);
+  }
+
+  @RemoteMethod
+  public Object[] listarAlistadoMesoregiao(final Integer ano) throws SermilException {
+    final List<Object[]> result = this.municipioDao.findBySQL("SELECT m.mesoregiao mesoregiao, COUNT(*) total FROM cidadao c JOIN municipio_novo m ON c.municipio_residencia_codigo = m.codigo WHERE c.vinculacao_ano = ? GROUP BY m.mesoregiao order by 2 desc", ano == null ? Calendar.getInstance().get(Calendar.YEAR) : ano);
+    return result.toArray(new Object[0]);
+  }
+
+  @RemoteMethod
+  public Object[] listarAlistadoMicroregiao(final Integer ano) throws SermilException {
+    final List<Object[]> result = this.municipioDao.findBySQL("SELECT m.microregiao microregiao, COUNT(*) total FROM cidadao c JOIN municipio_novo m ON c.municipio_residencia_codigo = m.codigo WHERE c.vinculacao_ano = ? GROUP BY m.microregiao order by 2 desc", ano == null ? Calendar.getInstance().get(Calendar.YEAR) : ano);
+    return result.toArray(new Object[0]);
+  }
+  
+  @RemoteMethod
+  public List<Object[]> listarPorDescricao(final String descricao) throws SermilException {
+    if (descricao == null || descricao.isEmpty()) {
+      throw new CriterioException("Informe o nome do município para pesquisar.");
+    }
+    return this.municipioDao.findByNamedQueryArray("Municipio.listarPorDescricao", descricao);
   }
 
   @RemoteMethod
@@ -75,57 +119,4 @@ public class MunicipioServico {
     return result.toArray(new Object[0]);
   }
   
-  @RemoteMethod
-  public Object[] listarMun(final String uf) throws SermilException {
-    final List<Object[]> result = this.municipioDao.findBySQL("SELECT m.descricao, m.latitude, m.longitude, m.microregiao, m.mesoregiao, count(*) FROM municipio_novo m JOIN cidadao c ON c.municipio_residencia_codigo = m.codigo WHERE VINCULACAO_ANO = 2015 AND uf_sigla = ? GROUP BY m.descricao, m.latitude, m.longitude, m.microregiao, m.mesoregiao", uf);
-    return result.toArray(new Object[0]);
-  }
-
-  @RemoteMethod
-  public Object[] listarMesoregiao(final Integer ano) throws SermilException {
-    final List<Object[]> result = this.municipioDao.findBySQL("select m.mesoregiao mesoregiao, count(*) total from cidadao c join municipio_novo m on c.municipio_residencia_codigo = m.codigo where c.vinculacao_ano = ? group by m.mesoregiao order by 2 desc", ano);
-    return result.toArray(new Object[0]);
-  }
-
-  @RemoteMethod
-  public Object[] listarMicroregiao(final Integer ano) throws SermilException {
-    final List<Object[]> result = this.municipioDao.findBySQL("select m.microregiao microregiao, count(*) total from cidadao c join municipio_novo m on c.municipio_residencia_codigo = m.codigo where c.vinculacao_ano = ? group by m.microregiao order by 2 desc", ano);
-    return result.toArray(new Object[0]);
-  }
-  
-  @RemoteMethod
-  public Municipio[] listarPorUf(final String uf) throws SermilException {
-    final List<Object[]> result = this.municipioDao.findBySQL("SELECT codigo, descricao FROM municipio WHERE uf_sigla = ? ORDER BY descricao", uf);
-    final List<Municipio> lista = new ArrayList<>(result.size());
-    for(Object[] o: result){
-      final Municipio mun = new Municipio();
-      mun.setCodigo(((BigDecimal)o[0]).intValue());
-      mun.setDescricao((String) o[1]);
-      lista.add(mun);
-    }
-    return lista.toArray(new Municipio[0]);
-  }
-
-  /** Listagem de município por descrição, exibindo RM e CSM.
-   * @param descricao nome do município
-   * @return lista de Municípios
-   * @throws SermilException erro no processamento
-   */
-  @RemoteMethod
-  public List<Object[]> listarPorDescricao(final String descricao) throws SermilException {
-    if (descricao == null || descricao.isEmpty()) {
-      throw new CriterioException("Informe o nome do município para pesquisar.");
-    }
-    return this.municipioDao.findByNamedQueryArray("Municipio.listarPorDescricao", descricao);
-  }
-
-	public Municipio recuperar(final Integer codigo) throws SermilException {
-	  return this.municipioDao.findById(codigo);
-  }
-
-	@Transactional
-	public Municipio salvar(Municipio municipio) throws SermilException {
-	  return this.municipioDao.save(municipio);
-  }
-
 }

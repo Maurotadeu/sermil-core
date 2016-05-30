@@ -16,7 +16,7 @@ import br.mil.eb.sermil.tipos.Utils;
 /** Registro de BCC/IAP.
  * @author Abreu Lopes, Gardino
  * @since 5.0
- * @version $Id: SelBcc.java 2032 2012-07-21 13:26:20Z wlopes $
+ * @version 5.4
  */
 @Entity
 @Table(name="SEL_BCC")
@@ -117,12 +117,12 @@ public final class SelBcc implements Comparable<SelBcc>, Serializable {
   /** Chave primária (PK) de SelBcc.
    * @author Abreu Lopes
    * @since 5.0
-   * @version $Id$
+   * @version 5.4
    */
   @Embeddable
   public static class PK implements Comparable<SelBcc.PK>, Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6443077337580980246L;
 
     private Byte folha;
 

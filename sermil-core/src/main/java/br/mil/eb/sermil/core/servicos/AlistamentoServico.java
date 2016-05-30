@@ -39,7 +39,7 @@ import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 /** Alistamento de Cidadão.
  * @author Abreu Lopes
  * @since 5.2.7
- * @version 5.3.2
+ * @version 5.4
  */
 @Named("alistamentoServico")
 public class AlistamentoServico {
@@ -112,7 +112,6 @@ public class AlistamentoServico {
       cidadao.setEstadoCivil(alistamento.getEstadoCivil());
       cidadao.setSexo(alistamento.getSexo());
       cidadao.setEscolaridade(alistamento.getEscolaridade());
-      cidadao.setOcupacao(alistamento.getOcupacao());
       cidadao.setVinculacaoAno(Calendar.getInstance().get(Calendar.YEAR));
       cidadao.setZonaResidencial(alistamento.getZonaResidencial());
       cidadao.setMunicipioResidencia(alistamento.getMunicipioResidencia());
@@ -124,9 +123,13 @@ public class AlistamentoServico {
       cidadao.setEmail(alistamento.getEmail());
       cidadao.setTelefone(alistamento.getTelefone());
       cidadao.setDesejaServir(alistamento.getDesejaServir());
-      cidadao.setCs(alistamento.getJsm().getCs());
+      cidadao.setCs(jsm.getCs());
       cidadao.setAtualizacaoData(dataAtual);
-      cidadao.setMobDestino(Byte.decode("1")); // Flag indicando Alistamento Internet
+      cidadao.setMobSetor(1); // Flag indicando Alistamento Internet
+      if (alistamento.getOcupacao() != null && (StringUtils.isBlank(alistamento.getOcupacao().getCodigo()) || "-1".equals(alistamento.getOcupacao().getCodigo()) )) {
+        alistamento.setOcupacao(null);
+      }
+      cidadao.setOcupacao(alistamento.getOcupacao());
       
       // Verifica os limites de idade
       if (cidadao.isForaLimiteIdade()) {
@@ -146,7 +149,7 @@ public class AlistamentoServico {
       logger.debug("RA gerado: {} (JSM={} - MESTRE SEQUENCIAL: {})", cidadao.getRa(), cidadao.getJsm(), raMestre.getSequencial());
 
       // Configura PreAlistamento
-      if (alistamento.getDocApresMunicipio().getCodigo() == -1) {
+      if (alistamento.getDocApresMunicipio() != null && (alistamento.getDocApresMunicipio().getCodigo() == null || alistamento.getDocApresMunicipio().getCodigo() == -1)) {
          alistamento.setDocApresMunicipio(null);
       }
       if (alistamento.getDocApresTipo() == TipoDocApres.RG.ordinal()) {
@@ -160,7 +163,7 @@ public class AlistamentoServico {
       }
       alistamento.setProtocoloData(dataAtual);
       alistamento.setTipo(Byte.decode("0"));
-      
+
       // Documento apresentado
       final CidDocApres cda = new CidDocApres(cidadao.getRa(), alistamento.getDocApresNr());
       cda.setTipo(alistamento.getDocApresTipo());
@@ -179,7 +182,7 @@ public class AlistamentoServico {
       cidadao.addCidDocumento(cd);
 
       // Evento de alistamento
-      final CidEvento ce = new CidEvento(cidadao.getRa(), TipoEvento.ALISTAMENTO.ordinal(), dataAtual);
+      final CidEvento ce = new CidEvento(cidadao.getRa(), TipoEvento.ALISTAMENTO.getCodigo(), dataAtual);
       ce.setAnotacao("Alistado pela Internet");
       cidadao.addCidEvento(ce);
 

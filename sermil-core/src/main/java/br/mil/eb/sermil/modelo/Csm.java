@@ -2,6 +2,7 @@ package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -9,15 +10,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Circunscrição de Serviço Militar.
  * @author Abreu Lopes
  * @since 3.0
- * @version $Id: Csm.java 1637 2011-11-25 13:52:11Z wlopes $
+ * @version 5.4
  */
 @Entity
+@Cache(type=CacheType.FULL, size=30)
 @NamedQueries({
   @NamedQuery(name="Csm.listar", query="SELECT c FROM Csm c WHERE c.ativo = 'S' ORDER BY c.codigo"),
   @NamedQuery(name="Csm.listarPorRm", query="SELECT c FROM Csm c WHERE c.rm.codigo = ?1 AND c.ativo = 'S' ORDER BY c.codigo")
@@ -25,8 +29,7 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Csm implements Comparable<Csm>, Serializable {
 
-  /** serialVersionUID.*/
-  private static final long serialVersionUID = 1408657925141269864L;
+  private static final long serialVersionUID = -5025584683409331340L;
 
   @Id
   private Byte codigo;
@@ -37,11 +40,15 @@ public final class Csm implements Comparable<Csm>, Serializable {
 
   private String ativo;
   
-  @ManyToOne
+  @ManyToOne(cascade=CascadeType.REFRESH)
   @JoinColumn(name="RM_CODIGO", nullable=false)
   private Rm rm;
 
   public Csm() {
+  }
+
+  public Csm(Byte codigo) {
+    this.codigo = codigo;
   }
 
   @Override
@@ -76,7 +83,7 @@ public final class Csm implements Comparable<Csm>, Serializable {
 
   @Override
   public String toString() {
-    return this.getSigla() == null ? "SIGLA" : this.getSigla();
+    return this.getSigla() == null ? "CSM" : this.getSigla();
   }
 
   public Byte getCodigo() {
