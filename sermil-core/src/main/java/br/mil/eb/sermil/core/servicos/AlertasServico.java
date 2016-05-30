@@ -71,7 +71,13 @@ public class AlertasServico {
 		session.put("alertsCount", (int) session.get("alertsCount") + 1);
 	}
 
+	/**
+	 * 01 - Alistamento 
+	 */
 	public List<Alerta> getAlistamentoAlerta(Map<String, Object> session) {
+      final List<Alerta> alertas = new ArrayList<Alerta>(2);
+      
+      //PGC - Lançamento dos dados do PGC para o ano atual
 		final Alerta alerta = new Alerta();
 		alerta.setTitulo(this.env.getProperty("alistamento.lancamento.dados.ano.atual"));
 		alerta.setTipo(Alerta.TIPO_OK);
@@ -80,6 +86,9 @@ public class AlertasServico {
 			alerta.setTipo(Alerta.TIPO_ERROR);
 			incrementAlertsCount(session);
 		}
+      alertas.add(alerta);
+      
+      //PGC - Lançamento dos dados do PGC para o próximo ano
 		final Alerta alerta2 = new Alerta();
 		alerta2.setTitulo(this.env.getProperty("alistamento.lancamento.dados.proximo.ano"));
 		alerta2.setTipo(Alerta.TIPO_OK);
@@ -88,9 +97,8 @@ public class AlertasServico {
 			alerta2.setTipo(Alerta.TIPO_ERROR);
 			incrementAlertsCount(session);
 		}
-		final List<Alerta> alertas = new ArrayList<Alerta>(2);
-		alertas.add(alerta);
 		alertas.add(alerta2);
+		
 		return alertas;
 	}
 
