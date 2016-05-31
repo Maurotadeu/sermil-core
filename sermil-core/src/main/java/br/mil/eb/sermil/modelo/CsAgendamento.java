@@ -54,7 +54,7 @@ public final class CsAgendamento implements Serializable {
 
    @Override
    public String toString() {
-      return new StringBuilder("AGENDAMENTO: ").append(this.getPk()).append(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(this.getDataSelecao())).toString();
+      return new StringBuilder("AGENDAMENTO: ").append(this.getPk()).append(" - ").append(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(this.getDataSelecao())).toString();
    }
    
    @Override
@@ -111,6 +111,7 @@ public final class CsAgendamento implements Serializable {
       @Override
       public String toString() {
          return new StringBuilder(this.getCsCodigo() == null ? "CS" : this.getCsCodigo().toString())
+               .append(" - ")
                .append(this.getCidadaoRa() == null ? "RA" : this.getCidadaoRa().toString())
                .toString();
       }

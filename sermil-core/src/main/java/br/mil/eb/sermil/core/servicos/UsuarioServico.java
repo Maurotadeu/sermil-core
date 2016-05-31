@@ -10,6 +10,7 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,197 +33,227 @@ import br.mil.eb.sermil.modelo.UsuarioPerfil;
 @Named("usuarioServico")
 public class UsuarioServico {
 
-   protected static final Logger logger = LoggerFactory.getLogger(UsuarioServico.class);
+  protected static final Logger logger = LoggerFactory.getLogger(UsuarioServico.class);
 
-   @Inject
-   private UsuarioDao usuarioDao;
+  @Inject
+  private UsuarioDao usuarioDao;
 
-   @Inject
-   private CidAuditoriaDao cidAuditoriaDao;
+  @Inject
+  private CidAuditoriaDao cidAuditoriaDao;
 
-   @Inject
-   private EmailServico emailServico;
-   
-   public UsuarioServico() {
-      logger.debug("UsuarioServico iniciado");
-   }
+  @Inject
+  private EmailServico emailServico;
 
-   @Transactional
-   public void recadastrar(final Usuario usr) throws SermilException {
-      final Usuario u = (Usuario) this.usuarioDao.findById(usr.getCpf());
-      if (usr.getEmail() == null || usr.getEmail().isEmpty() || !usr.getEmail().matches(Constantes.EMAIL_REGEXP)) {
-         throw new SermilException("Informe um e-mail válido");
-      }
-      u.setEmail(usr.getEmail());
-      this.usuarioDao.save(u);
-   }
+  public UsuarioServico() {
+    logger.debug("UsuarioServico iniciado");
+  }
 
-   @Transactional
-   public void alterarSenha(final Usuario usr) throws SermilException {
-      final Usuario u = (Usuario) this.usuarioDao.findById(usr.getCpf());
-      u.setSenha(this.validarSenha(usr.getSenha(), usr.getConfirma()));
-      this.usuarioDao.save(u);
-      this.emailServico.confirmarAlteracaoUsuario(u, "emailSenha.vm", "******", 2);
-   }
-
-   @Transactional
-   public void recuperarSenha(final String cpf) throws SermilException {
-      final Usuario usr = (Usuario) usuarioDao.findById(cpf);
-      if (usr == null) {
-         throw new SermilException("CPF INEXISTENTE, entre em contato com a Região Militar para ser cadastrado no sistema.");
-      }
-      if ("N".equalsIgnoreCase(usr.getAtivo())) {
-         throw new SermilException("CPF BLOQUEADO, entre em contato com a Região Militar para desbloquear o acesso ao sistema.");
-      }
-      final String senha = new Randomize().execute();
-      usr.setSenha(new BCryptPasswordEncoder().encode(senha));
-      this.usuarioDao.save(usr);
-      this.emailServico.confirmarAlteracaoUsuario(usr, "emailSenha.vm", senha, 2);
-   }
-
-   public List<Usuario> listar(final Usuario usr) throws SermilException {
-      if (usr == null || (usr.getCpf() == null || usr.getCpf().isEmpty()) && (usr.getNome() == null || usr.getNome().isEmpty()) && (usr.getOm() == null || usr.getOm().getCodigo() == null)) {
-         throw new CriterioException();
-      }
-      List<Usuario> lista = null;
-      if (usr.getCpf() != null || usr.getNome() != null) {
-         if (usr.getCpf() != null) {
-            final Usuario u = this.usuarioDao.findById(usr.getCpf());
-            if (u != null) {
-               lista = new ArrayList<Usuario>(1);
-               lista.add(u);
-            }
-         } else {
-            lista = this.usuarioDao.findByNamedQuery("Usuario.listarPorNome", usr.getNome().concat("%"));
-         }
-      } else if (usr.getOm() != null && usr.getOm().getCodigo() != null) {
-         lista = this.usuarioDao.findByNamedQuery("Usuario.listarPorOm", usr.getOm().getCodigo());
-      }
-      if (lista == null || lista.isEmpty()) {
-         throw new NoDataFoundException();
-      }
-      return lista;
-   }
-
-   public List<CidAuditoria> listarAuditoria(final String cpf) throws SermilException {
-      final List<CidAuditoria> lista = this.cidAuditoriaDao.findByNamedQuery("CidAuditoria.listarPorCpf", cpf);
-      if (lista == null || lista.isEmpty()) {
-         throw new NoDataFoundException();
-      }
-      return lista;
-   }
-
-   @Transactional
-   public Usuario salvar(final Usuario usr, final String[] perfis) throws SermilException {
-      final Usuario usuario = (Usuario) this.usuarioDao.findById(usr.getCpf());
-      if (usr.getAtivo() != null && !usr.getAtivo().equals(usuario.getAtivo())) {
-         usuario.setAtivo(usr.getAtivo());
-      }
-      if (usr.getEmail() != null && !usr.getEmail().equals(usuario.getEmail())) {
-         usuario.setEmail(usr.getEmail());
-      }
-      if (usr.getNome() != null && !usr.getNome().equals(usuario.getNome())) {
-         usuario.setNome(usr.getNome());
-      }
-      if (usr.getOm() != null && usr.getOm().getCodigo() != null && !usr.getOm().getCodigo().equals(usuario.getOm().getCodigo())) {
-         usuario.setOm(usr.getOm());
-      }
-      if (usr.getPostoGraduacao() != null && usr.getPostoGraduacao().getCodigo() != null && !usr.getPostoGraduacao().getCodigo().equals(usuario.getPostoGraduacao().getCodigo())) {
-         usuario.setPostoGraduacao(usr.getPostoGraduacao());
-      }
-      if (usr.getTelefone() != null && !usr.getTelefone().equals(usuario.getTelefone())) {
-         usuario.setTelefone(usr.getTelefone());
-      }
-      if (perfis != null) {
-         final List<UsuarioPerfil> lista = new ArrayList<UsuarioPerfil>(perfis.length);
-         for (String perfil : perfis) {
-            lista.add(new UsuarioPerfil(usuario.getCpf(), perfil));
-         }
-         usuario.setUsuarioPerfilCollection(lista);
-      }
-      usuario.setTentativaslogin(0);
-      usuario.setAcessoData(new Date());
-      this.usuarioDao.save(usuario);
-      this.emailServico.confirmarAlteracaoUsuario(usuario, "emailCadastro.vm", null, 1);
-      return usuario;
-   }
-
-   @Transactional
-   public void solicitarCadastramento(final Usuario usr) throws SermilException {
-      if (this.usuarioDao.findById(usr.getCpf()) != null) {
-         throw new SermilException(new StringBuilder("ERRO: CPF ").append(usr.getCpf()).append(" já se encontra cadastrado no sistema.").toString());
-      } else if (!this.usuarioDao.findByNamedQuery("Usuario.listarPorEmail", usr.getEmail()).isEmpty()) {
-         throw new SermilException(new StringBuilder("ERRO: e-mail ").append(usr.getEmail()).append(" já se encontra cadastrado no sistema.").toString());
+  @PreAuthorize("hasAnyRole('adm','dsm')")
+  @Transactional
+  public void alterarUsuarios(final List<Usuario> listaUsuarios, final String[] listaPerfis, final String ativo) throws SermilException {
+    for (Usuario usr : listaUsuarios) {
+      String[] perfisUsr = {};
+      if (listaPerfis.length > 0) {
+        perfisUsr = listaPerfis;
       } else {
-         usr.setSenha(this.validarSenha(usr.getSenha(), usr.getConfirma()));
-         usr.setAcessoData(new Date());
-         usr.setAcessoQtd(0);
-         usr.setAtivo("N");
-         final Usuario novo = this.usuarioDao.save(usr);
-         this.emailServico.confirmarAlteracaoUsuario(novo, "emailCadastro.vm", null, 2);
+        final List<String> ps = new ArrayList<String>();
+        for (int i = 0; i < usr.getUsuarioPerfilCollection().size(); i++) {
+          String p = usr.getUsuarioPerfilCollection().get(i).toString();
+          ps.add(p.substring(p.length() - 3, p.length()));
+        }
+        perfisUsr = (String[]) ps.toArray(new String[ps.size()]);
       }
-   }
-
-   @Transactional
-   public void alterarUsuarios(List<Usuario> usuarios2, String[] perfis, Usuario usuarioPadrao) throws SermilException {
-      for (Usuario usr : usuarios2) {
-         // Perfis
-         String[] perfisUsr = {};
-         if (perfis.length > 0) {
-            perfisUsr = perfis;
-         } else {
-            List<String> ps = new ArrayList<String>();
-            for (int i = 0; i < usr.getUsuarioPerfilCollection().size(); i++) {
-               String p = usr.getUsuarioPerfilCollection().get(i).toString();
-               ps.add(p.substring(p.length() - 3, p.length()));
-            }
-            perfisUsr = (String[]) ps.toArray(new String[ps.size()]);
-         }
-         // Ativo/Inativo
-         if (usuarioPadrao != null) {
-            usr.setAtivo(usuarioPadrao.getAtivo());
-         }
-         try {
-            this.salvar(usr, perfisUsr);
-         } catch (Exception e) {
-            throw new SermilException("Não foi possível salvar informações referente ao CPF " + usr.getCpf().toString());
-         }
+      usr.setAtivo(ativo);
+      try {
+        this.salvar(usr, perfisUsr);
+      } catch (Exception e) {
+        throw new SermilException("Não foi possível salvar informações referente ao CPF = " + usr.getCpf().toString());
       }
-   }
+    }
+  }
 
-   @Transactional
-   public void excluir(final Usuario usr) throws SermilException {
-      this.usuarioDao.delete(this.usuarioDao.findById(usr.getCpf()));
-   }
+  @Transactional
+  public String alterarSenha(final String cpf, final String senhaAtual, final String senhaNova, final String senhaNova2) throws SermilException {
+    final Usuario usuario = (Usuario) this.usuarioDao.findById(cpf);
+    if (StringUtils.isBlank(senhaAtual) || !new BCryptPasswordEncoder().matches(senhaAtual, usuario.getSenha())) {
+      throw new SermilException("Senha atual inválida.");
+    }
+    if (new BCryptPasswordEncoder().matches(senhaNova, usuario.getSenha())) {
+      throw new SermilException("Nova Senha não pode ser igual a senha atual.");
+    }
+    usuario.setSenha(this.validarSenha(senhaAtual, senhaNova, senhaNova2));
+    this.usuarioDao.save(usuario);
+    this.emailServico.confirmarAlteracaoUsuario(usuario, "emailSenha.vm", "******", 2);
+    return "Senha alterada com sucesso.";
+  }
 
-   @Transactional
-   public void removerPerfis(final String cpf) throws SermilException {
-      this.usuarioDao.execute("UsuarioPerfil.excluirPorCpf", cpf);
-   }
+  @PreAuthorize("hasAnyRole('adm','dsm')")
+  @Transactional
+  public String bloquear(final String cpf) throws SermilException {
+    final Usuario usuario = this.usuarioDao.findById(cpf);
+    usuario.setAtivo("N");
+    this.usuarioDao.save(usuario);
+    return new StringBuilder("Usuário CPF = ").append(cpf).append(" bloqueado.").toString();
+  }
 
-   public Usuario recuperar(final String id) throws SermilException {
-      return this.usuarioDao.findById(id);
-   }
+  @Transactional
+  public String cadastrarUsuario(final Usuario usr) throws SermilException {
+    if (this.usuarioDao.findById(usr.getCpf()) != null) {
+      throw new SermilException(new StringBuilder("Usuario CPF = ").append(usr.getCpf()).append(" já se encontra cadastrado no sistema.").toString());
+    } else if (!this.usuarioDao.findByNamedQuery("Usuario.listarPorEmail", usr.getEmail()).isEmpty()) {
+      throw new SermilException(new StringBuilder("Usuario com e-mail ").append(usr.getEmail()).append(" já se encontra cadastrado no sistema.").toString());
+    } else {
+      usr.setSenha(this.validarSenha("NA", usr.getSenha(), usr.getConfirma()));
+      usr.setAcessoData(new Date());
+      usr.setAcessoQtd(0);
+      usr.setAtivo("N");
+      final Usuario novo = this.usuarioDao.save(usr);
+      this.emailServico.confirmarAlteracaoUsuario(novo, "emailCadastro.vm", null, 2);
+      return new StringBuilder("Usuário CPF = ").append(usr.getCpf()).append(" cadastrado.").toString();
+    }
+  }
 
-   private String validarSenha(final String senha1, final String senha2) throws SermilException {
-      if (senha1 == null || !senha1.matches(Constantes.SENHA_REGEXP)) {
-         throw new SermilException("Senha inválida, verifique abaixo as regras para a criação de senhas.");
-      } else if (!senha2.equals(senha1)) {
-         throw new SermilException("Senha diferente da confirmação.");
-      } else {
-         return new BCryptPasswordEncoder().encode(senha1);
+  @PreAuthorize("hasAnyRole('adm','dsm')")
+  @Transactional
+  public String excluir(final String cpf) throws SermilException {
+    final Usuario usuario = this.usuarioDao.findById(cpf);
+    this.usuarioDao.delete(usuario);
+    return new StringBuilder("Usuário CPF = ").append(cpf).append(" excluído.").toString();
+  }
+
+  public Usuario findByCPF(final String cpf) throws SermilException {
+    if (StringUtils.isBlank(cpf)) {
+      throw new SermilException("Informe um CPF válido.");
+    }
+    final Usuario usuario = this.usuarioDao.findById(cpf);
+    if (usuario == null) {
+      throw new NoDataFoundException(new StringBuilder("Usuário CPF = ").append(cpf).append(" não esta cadastrado no sistema.").toString());
+    }
+    return usuario;
+  }
+
+  @PreAuthorize("hasAnyRole('adm','dsm')")
+  public List<Usuario> listar(final Usuario usr) throws SermilException {
+    List<Usuario> lista = null;
+    if (!StringUtils.isBlank(usr.getCpf())) {
+      final Usuario usuario = this.usuarioDao.findById(usr.getCpf());
+      if (usuario != null) {
+        lista = new ArrayList<Usuario>(1);
+        lista.add(usuario);
       }
-   }
+    } else if (!StringUtils.isBlank(usr.getNome())) {
+      lista = this.usuarioDao.findByNamedQuery("Usuario.listarPorNome", usr.getNome());
+    } else if (usr.getOm() != null && usr.getOm().getCodigo() != null && usr.getOm().getCodigo() != -1) {
+      lista = this.usuarioDao.findByNamedQuery("Usuario.listarPorOm", usr.getOm().getCodigo());
+    } else {
+      throw new CriterioException();
+    }
+    if (lista == null || lista.isEmpty()) {
+      throw new NoDataFoundException();
+    }
+    return lista;
+  }
 
-   public Usuario findByCPF(final String cpf) throws SermilException {
-      if (StringUtils.isBlank(cpf)) {
-         throw new SermilException("Informe um CPF válido.");
+  @PreAuthorize("hasAnyRole('adm','dsm')")
+  public List<CidAuditoria> listarAuditoria(final String cpf) throws SermilException {
+    final List<CidAuditoria> lista = this.cidAuditoriaDao.findByNamedQuery("CidAuditoria.listarPorCpf", cpf);
+    if (lista == null || lista.isEmpty()) {
+      throw new NoDataFoundException();
+    }
+    return lista;
+  }
+
+  @Transactional
+  public String recadastrar(final String cpf, final String email) throws SermilException {
+    if (StringUtils.isBlank(email) || !email.matches(Constantes.EMAIL_REGEXP)) {
+      throw new SermilException("Informe um e-mail válido.");
+    }
+    final Usuario usuario = (Usuario) this.usuarioDao.findById(cpf);
+    usuario.setEmail(email);
+    this.usuarioDao.save(usuario);
+    return "Recadastramento efetuado com sucesso.";
+  }
+
+  @Transactional
+  public String recuperarSenha(final String cpf) throws SermilException {
+    final Usuario usuario = (Usuario) usuarioDao.findById(cpf);
+    if (usuario == null) {
+      throw new SermilException("CPF INEXISTENTE, entre em contato com sua Região Militar para efetuar o cadastramento no sistema.");
+    }
+    if ("N".equalsIgnoreCase(usuario.getAtivo())) {
+      throw new SermilException("Usuãrio BLOQUEADO, entre em contato com sua Região Militar para desbloquear o acesso ao sistema.");
+    }
+    final String senha = new Randomize().execute();
+    usuario.setSenha(new BCryptPasswordEncoder().encode(senha));
+    this.usuarioDao.save(usuario);
+    this.emailServico.confirmarAlteracaoUsuario(usuario, "emailSenha.vm", senha, 2);
+    return "Nova senha gerada e enviada para o e-mail cadastrado no sistema.";
+  }
+
+  @Transactional
+  public String salvar(final Usuario usr) throws SermilException {
+    final Usuario usuario = (Usuario) this.usuarioDao.findById(usr.getCpf());
+    if (!StringUtils.isBlank(usr.getEmail()) && !usr.getEmail().equals(usuario.getEmail())) {
+      usuario.setEmail(usr.getEmail());
+    }
+    if (!StringUtils.isBlank(usr.getNome()) && !usr.getNome().equals(usuario.getNome())) {
+      usuario.setNome(usr.getNome());
+    }
+    if (usr.getPostoGraduacao() != null && !StringUtils.isBlank(usr.getPostoGraduacao().getCodigo()) && !usr.getPostoGraduacao().getCodigo().equals(usuario.getPostoGraduacao().getCodigo())) {
+      usuario.setPostoGraduacao(usr.getPostoGraduacao());
+    }
+    if (!StringUtils.isBlank(usr.getTelefone()) && !usr.getTelefone().equals(usuario.getTelefone())) {
+      usuario.setTelefone(usr.getTelefone());
+    }
+    this.usuarioDao.save(usuario);
+    return "Usuário salvo.";
+  }
+
+  @PreAuthorize("hasAnyRole('adm','dsm')")
+  @Transactional
+  public String salvar(final Usuario usr, final String[] perfis) throws SermilException {
+    final Usuario usuario = (Usuario) this.usuarioDao.findById(usr.getCpf());
+    if (usr.getAtivo() != null && !usr.getAtivo().equals(usuario.getAtivo())) {
+      usuario.setAtivo(usr.getAtivo());
+    }
+    if (usr.getEmail() != null && !usr.getEmail().equals(usuario.getEmail())) {
+      usuario.setEmail(usr.getEmail());
+    }
+    if (usr.getNome() != null && !usr.getNome().equals(usuario.getNome())) {
+      usuario.setNome(usr.getNome());
+    }
+    if (usr.getOm() != null && usr.getOm().getCodigo() != null && !usr.getOm().getCodigo().equals(usuario.getOm().getCodigo())) {
+      usuario.setOm(usr.getOm());
+    }
+    if (usr.getPostoGraduacao() != null && usr.getPostoGraduacao().getCodigo() != null && !usr.getPostoGraduacao().getCodigo().equals(usuario.getPostoGraduacao().getCodigo())) {
+      usuario.setPostoGraduacao(usr.getPostoGraduacao());
+    }
+    if (usr.getTelefone() != null && !usr.getTelefone().equals(usuario.getTelefone())) {
+      usuario.setTelefone(usr.getTelefone());
+    }
+    if (perfis != null) {
+      final List<UsuarioPerfil> lista = new ArrayList<UsuarioPerfil>(perfis.length);
+      for (String perfil : perfis) {
+        lista.add(new UsuarioPerfil(usuario.getCpf(), perfil));
       }
-      final Usuario usr = this.usuarioDao.findById(cpf);
-      if (usr == null) {
-         throw new NoDataFoundException("Usuário referente ao CPF " + cpf + " não foi encontrado na base de dados.");
-      }
-      return usr;
-   }
+      usuario.setUsuarioPerfilCollection(lista);
+    }
+    usuario.setTentativaslogin(0);
+    usuario.setAcessoData(new Date());
+    this.usuarioDao.save(usuario);
+    return new StringBuilder("Usuário CPF = ").append(usuario.getCpf()).append(" salvo.").toString();
+  }
+
+  private String validarSenha(final String senhaAtual, final String senha1, final String senha2) throws SermilException {
+    if (senha1 == null || !senha1.matches(Constantes.SENHA_REGEXP)) {
+      throw new SermilException("Nova senha inválida, verifique abaixo as regras para a criação de senhas.");
+    } else if (!senha2.equals(senha1)) {
+      throw new SermilException("Nova senha diferente da confirmação.");
+    } else if (senha1.equals(senhaAtual)) {
+      throw new SermilException("Nova senha não pode ser igual a senha atual.");
+    } else {
+      return new BCryptPasswordEncoder().encode(senha1);
+    }
+  }
 
 }

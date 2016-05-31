@@ -17,6 +17,7 @@ import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.CsAgendamento;
+import br.mil.eb.sermil.modelo.CsEndereco;
 
 /** Verificação de situação no serviço militar.
  * @author Abreu lopes
@@ -77,11 +78,16 @@ public class SituacaoServico {
         cid.setAnotacoes("Verifique no verso do seu documento de alistamento (CAM) a data de comparecimento no Órgão de Serviço Militar (Junta ou Comissão de Seleção).");
       } else {
         if (csAgendamento != null) {
+          final CsEndereco end = cid.getCs().getCsFuncionamentoCollection().stream().findFirst().get().getCsEndereco();
+          final String endereco = new StringBuilder(end.getEndereco()).append(" - ").append(end.getBairro()).append(" - ").append(end.getMunicipio()).toString();
           final StringBuilder msg = new StringBuilder("Comparecer na Comissão de Seleção ")
               .append(cid.getCs())
               .append(" na data ")
               .append(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(csAgendamento.getDataSelecao()))
-              .append(", caso tenha perdido a data de comparecimento, apresentar-se o mais rapidamente possível na Comissão de Seleção.");
+              .append(", caso tenha perdido a data de comparecimento, apresentar-se o mais rapidamente possível na Comissão de Seleção.")
+              .append("<br/><b>Endereço: ")
+              .append(endereco)
+              .append("</b>");
           cid.setAnotacoes(msg.toString());
         } else {
           cid.setAnotacoes("Verifique no início do próximo mês a sua situação em http://www.alistamento.eb.mil.br.");
@@ -95,7 +101,15 @@ public class SituacaoServico {
         if (cid.getJsm().getPk().getCsmCodigo() == 99) {
           cid.setAnotacoes("Cidadão, no exterior compareça no Consulado para solicitar seu certificado, estando no Brasil compareça em uma Junta de Serviço Militar.");
         } else {
-          cid.setAnotacoes("Caso não possua Certificado de Dispensa de Incorporção (CDI), comparecer na Junta de Serviço Militar " + (cid.getJsm() != null ? cid.getJsm().toString() : "") + ", em " + definirRetorno(cid) + " (final de semana ou feriado, no dia útil seguinte).");
+          final StringBuilder msg = new StringBuilder("Caso não possua Certificado de Dispensa de Incorporção (CDI), comparecer na Junta de Serviço Militar ")
+              .append(cid.getJsm() != null ? cid.getJsm().toString() : " (JSM)")
+              .append(" na data ")
+              .append(definirRetorno(cid))
+              .append(" (final de semana ou feriado, no dia útil seguinte).")
+              .append("<br/><b>Endereço: ")
+              .append(cid.getJsm().getEndereco() != null ? cid.getJsm().getEndereco() : " N/D")
+              .append("</b>");
+          cid.setAnotacoes(msg.toString());
         }
       }
       break;

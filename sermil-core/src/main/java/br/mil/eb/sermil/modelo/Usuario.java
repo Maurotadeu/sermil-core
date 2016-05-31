@@ -28,18 +28,17 @@ import org.springframework.security.core.userdetails.User;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.tipos.Cpf;
 
-/** Usuário.
+/** Entidade Usuário.
  * @author Abreu Lopes, Daniel Gardino
  * @since 3.0
- * @version 5.3.1
+ * @version 5.4
  */
 @Entity
 @Table(name = "USUARIO")
 @NamedQueries({
-   @NamedQuery(name = "Usuario.listarPorNome", query = "SELECT u FROM Usuario u WHERE u.nome LIKE ?1"),
+   @NamedQuery(name = "Usuario.listarPorNome", query = "SELECT u FROM Usuario u WHERE u.nome LIKE CONCAT(?1,'%')"),
    @NamedQuery(name = "Usuario.listarPorEmail", query = "SELECT u FROM Usuario u WHERE u.email = ?1"),
-   @NamedQuery(name = "Usuario.listarPorOm", query = "SELECT u FROM Usuario u WHERE u.om.codigo = ?1"),
-   @NamedQuery(name = "Usuario.listarPorCPF", query = "SELECT u FROM Usuario u WHERE u.cpf = ?1 ")
+   @NamedQuery(name = "Usuario.listarPorOm", query = "SELECT u FROM Usuario u WHERE u.om.codigo = ?1")
 })
 public final class Usuario extends User implements Serializable {
 
