@@ -50,6 +50,7 @@ public class AlertasServico {
 
    public Map<String, List<Alerta>> getPgcAlertas(Map<String, Object> session) {
       final Map<String, List<Alerta>> alertas = new LinkedHashMap<String, List<Alerta>>(5);
+      
       alertas.put(this.env.getProperty("alistamento"), getAlistamentoAlerta(session));
       if (pgcServico.existePgcAnoAtual()) {
          alertas.put(this.env.getProperty("predispensa"), getPreDispensaAlerta(session));
@@ -139,9 +140,9 @@ public class AlertasServico {
          if (tot < 4) {
             alerta.setTipo(Alerta.TIPO_ERROR);
             incrementAlertsCount(session);
-            if (tot == 4)
+            if (tot == 0)
                alerta.addMessage(String.valueOf(i + 1) + " " + this.env.getProperty("predispensa.rm.nao.lancou.parametros.distribuicao"));
-            if (0 < tot && tot < 4)
+            else
                alerta.addMessage(String.valueOf(i + 1) + " " + this.env.getProperty("predispensa.rm.lancou.poucos.parametros.distribuicao"));
          }
       }
