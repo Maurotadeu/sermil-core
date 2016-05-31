@@ -64,9 +64,9 @@ public class AlistamentoServico {
    @Inject
    private RaMestreDao raMestreDao;
 
-   private static final String SQL_ANO = "select m.uf_sigla, count(*) from pre_alistamento p join municipio m on p.municipio_residencia_codigo = m.codigo where extract(year from protocolo_data) = ?1 group by m.uf_sigla order by 1";
+   private static final String SQL_ANO = "select m.uf_sigla, count(*) from cidadao c join cid_evento e on c.ra = cidadao_ra join municipio m on c.municipio_residencia_codigo = m.codigo where c.mob_setor = 1 and e.codigo = 1 and extract(year from e.data) = ?1 group by m.uf_sigla order by 1";
 
-   private static final String SQL_UF = "select m.descricao, count(*) from pre_alistamento p join municipio m on p.municipio_residencia_codigo = m.codigo where extract(year from protocolo_data) = ?1 and m.uf_sigla = ?2 group by m.descricao order by 1";
+   private static final String SQL_UF = "select m.descricao, count(*) from cidadao c join cid_evento e on c.ra = cidadao_ra join municipio m on c.municipio_residencia_codigo = m.codigo where c.mob_setor = 1 and e.codigo = 1 and extract(year from e.data) = ?1 and m.uf_sigla = ?2 group by m.descricao order by 1";
 
    public AlistamentoServico() {
       logger.debug("AlistamentoServico iniciado");
