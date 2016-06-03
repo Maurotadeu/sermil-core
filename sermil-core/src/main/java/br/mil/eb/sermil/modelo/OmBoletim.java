@@ -28,12 +28,12 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 @Entity
 @Table(name="OM_BOLETIM")
 @NamedQueries({
-   @NamedQuery(name = "OmBoletim.listarEfetivo",    query = "SELECT c FROM Cidadao c WHERE c.vinculacaoAno = ?1 AND c.om.codigo = ?2 AND c.gptIncorp= ?3 AND c.situacaoMilitar = 12 AND NOT EXISTS (SELECT o.pk.cidadaoRa FROM OmBoletimCidadao o JOIN Cidadao c1 ON o.pk.cidadaoRa = c1.ra WHERE c1.ra = c.ra AND o.omCodigo = ?2 AND o.ano = ?4)"),
    @NamedQuery(name = "OmBoletim.listarBoletimOm",  query = "SELECT b FROM OmBoletim b where b.pk.ano= ?1 and b.pk.omCodigo= ?2"),
    @NamedQuery(name = "OmBoletim.listarBoletimGpt", query = "SELECT b FROM OmBoletim b where b.pk.ano= ?1 and b.pk.omCodigo= ?2 and b.pk.gptIncorp= ?3"),
    @NamedQuery(name = "OmBoletim.listarBoletimSU",  query = "SELECT b FROM OmBoletim b where b.pk.ano= ?1 and b.pk.omCodigo= ?2 and b.pk.gptIncorp= ?3 and b.subunidade= ?4"),
    @NamedQuery(name = "OmBoletim.listarBoletimCod", query = "SELECT b FROM OmBoletim b where b.pk.ano= ?1 and b.pk.omCodigo= ?2 and b.pk.codigo= ?3")
 })
+//   @NamedQuery(name = "OmBoletim.listarEfetivo",    query = "SELECT c FROM Cidadao c WHERE c.vinculacaoAno = ?1 AND c.om.codigo = ?2 AND c.gptIncorp= ?3 AND c.situacaoMilitar = 12 AND NOT EXISTS (SELECT o.pk.cidadaoRa FROM OmBoletimCidadao o JOIN Cidadao c1 ON o.pk.cidadaoRa = c1.ra WHERE c1.ra = c.ra AND o.omCodigo = ?2 AND o.ano = ?4)"), Anselmo
 @PrimaryKey(validation=IdValidation.NULL)
 public final class OmBoletim implements Comparable<OmBoletim>, Serializable {
 
