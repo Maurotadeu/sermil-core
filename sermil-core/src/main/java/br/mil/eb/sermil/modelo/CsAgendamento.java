@@ -27,10 +27,10 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @PrimaryKey(validation=IdValidation.NULL)
 @NamedQueries({
    @NamedQuery(name = "CsAgendamento.listarPorCs", query = "SELECT c FROM CsAgendamento c WHERE c.pk.csCodigo = ?1"),
-   @NamedQuery(name = "CsAgendamento.listarPorCsData", query = "SELECT c.ra, c.nome, c.email, c.telefone, a.dataSelecao FROM Cidadao c JOIN CsAgendamento a ON c.ra = a.pk.cidadaoRa WHERE a.pk.csCodigo = ?1 AND a.dataSelecao = ?2"),
    @NamedQuery(name = "CsAgendamento.listarPorRa", query = "SELECT c FROM CsAgendamento c WHERE c.pk.cidadaoRa = ?1"),
    @NamedQuery(name = "CsAgendamento.gruparPorEmail", query = "SELECT c.email, COUNT(c) FROM CsAgendamento c GROUP BY c.email") 
 })
+//   @NamedQuery(name = "CsAgendamento.listarPorCsData", query = "SELECT c.ra, c.nome, c.email, c.telefone, a.dataSelecao FROM Cidadao c JOIN CsAgendamento a ON c.ra = a.pk.cidadaoRa WHERE a.pk.csCodigo = ?1 AND a.dataSelecao = ?2"),Anselmo
 public final class CsAgendamento implements Serializable {
 
    private static final long serialVersionUID = 4296531679466838124L;

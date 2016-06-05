@@ -27,8 +27,8 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 @Table(name = "CS_ENDERECO")
 @NamedQueries({
    @NamedQuery(name = "CsEndereco.listarPorMunicipio", query = "select e from CsEndereco e where e.municipio.codigo = ?1"),
-   @NamedQuery(name = "CsEndereco.listarPorRm", query = "select distinct(e) from CsEndereco e join Jsm j on e.municipio.codigo = j.municipio.codigo where j.csm.codigo in (select c.codigo from Csm c where c.rm.codigo = ?1)")
 })
+//   @NamedQuery(name = "CsEndereco.listarPorRm", query = "select distinct(e) from CsEndereco e join Jsm j on e.municipio.codigo = j.municipio.codigo where j.csm.codigo in (select c.codigo from Csm c where c.rm.codigo = ?1)")Anselmo
 @PrimaryKey(validation = IdValidation.NULL)
 public final class CsEndereco implements Serializable {
 
