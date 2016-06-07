@@ -31,6 +31,7 @@ public class EstatAlistamentoEsc implements Serializable {
 
   private String escd;
 
+  @Column(insertable=false, updatable=false)
   private Integer escolaridade;
 
   private Integer escr;

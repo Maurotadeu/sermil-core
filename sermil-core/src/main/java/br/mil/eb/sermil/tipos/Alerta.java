@@ -15,6 +15,12 @@ public class Alerta {
    public final static int TIPO_WARNING = 2;
    public final static int TIPO_ERROR = 3;
 
+   public Alerta(String titulo, int tipo) {
+      super();
+      this.titulo = titulo;
+      this.tipo = tipo;
+   }
+
    public String getTitulo() {
       return titulo;
    }
