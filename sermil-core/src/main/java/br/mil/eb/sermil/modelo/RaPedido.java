@@ -30,11 +30,11 @@ import javax.persistence.Transient;
 @Table(name = "RA_PEDIDO")
 @NamedQueries({
   @NamedQuery(name = "RaPedido.listarPorCsm", query = "SELECT p FROM RaPedido p WHERE p.csm.codigo = ?1 AND p.aprovado = ?2 order by p.numero desc"),
-  @NamedQuery(name = "RaPedido.listarPorCsmAberto", query = "SELECT p FROM RaPedido p WHERE p.csm.codigo = ?1 AND  p.aprovado = \"N\"  order by p.numero desc"),
   @NamedQuery(name = "RaPedido.listarPorStatus", query = "SELECT p FROM RaPedido p WHERE p.aprovado = ?1  order by p.numero desc"),
   @NamedQuery(name = "RaPedido.excluirItens", query = "DELETE FROM RaItens i WHERE i.pk.raPedidoNumero = ?1"),
-  @NamedQuery(name = "RaPedido.listarAprovadosPorAno", query = "SELECT p FROM RaPedido p WHERE p.aprovado = \"S\" order by p.numero desc"),
 })
+//  @NamedQuery(name = "RaPedido.listarAprovadosPorAno", query = "SELECT p FROM RaPedido p WHERE p.aprovado = \"S\" order by p.numero desc"),Anselmo
+//  @NamedQuery(name = "RaPedido.listarPorCsmAberto", query = "SELECT p FROM RaPedido p WHERE p.csm.codigo = ?1 AND  p.aprovado = \"N\"  order by p.numero desc"),Anselmo
 public final class RaPedido implements Serializable {
 
   private static final long serialVersionUID = 7259444335089719189L;

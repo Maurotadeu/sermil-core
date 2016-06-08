@@ -28,7 +28,7 @@ import br.mil.eb.sermil.tipos.Lista;
 /** Serviço de CS.
  * @author Anselmo Ribeiro, Abreu Lopes
  * @since 5.3.2
- * @version 5.4.0
+ * @version 5.4.1
  */
 @Named("csServico")
 @RemoteProxy(name = "csServico")
@@ -70,7 +70,7 @@ public class CsServico {
       }
       final List<Cs> lista = this.csDao.findByNamedQuery("Cs.listarPorNome", nome);
       if (lista == null || lista.isEmpty()) {
-         throw new ConsultaException("Não há CS cadastra com o nome " + nome + ".");
+         throw new ConsultaException("Não há CS cadastrada com o nome " + nome + ".");
       }
       return lista;
    }
@@ -104,9 +104,9 @@ public class CsServico {
          throw new ConsultaException("Informe o código da CS");
       }
       final List<CsFuncionamento> lista = this.recuperar(csCodigo).getCsFuncionamentoCollection();
-      if (lista == null || lista.isEmpty()) {
-         throw new ConsultaException("Não há funcionamentos cadastrados para a CS " + csCodigo);
-      }
+      //if (lista == null || lista.isEmpty()) {
+      //   throw new ConsultaException("Não há funcionamentos cadastrados para a CS " + csCodigo);
+      //}
       return lista;
    }
 
@@ -116,9 +116,9 @@ public class CsServico {
          throw new ConsultaException("Informe o código da CS");
       }
       final List<CsExclusaoData> lista = this.recuperar(csCodigo).getCsExclusaoDataCollection();
-      if (lista == null || lista.isEmpty()) {
-         throw new ConsultaException("Não há exclusões de data cadastradas para a CS " + csCodigo);
-      }
+      //if (lista == null || lista.isEmpty()) {
+      //   throw new ConsultaException("Não há exclusões de data cadastradas para a CS " + csCodigo);
+      //}
       return lista;
    }
 
