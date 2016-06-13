@@ -15,15 +15,18 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Organização Militar (OM).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4.2
  */
 @Entity
+@Cache(type=CacheType.SOFT, size=1000, expiry=360000)
 @NamedQueries({
   @NamedQuery(name = "Om.listarMob", query = "SELECT  o.codigo, o.sigla  FROM Om o WHERE o.rm.codigo = ?1 AND o.omTipo = 9 ORDER BY o.sigla"),
   @NamedQuery(name = "Om.listarPorRm", query = "SELECT o.codigo, o.sigla FROM Om o WHERE o.rm.codigo = ?1 AND o.omTipo BETWEEN 1 AND 9 ORDER BY o.sigla"),

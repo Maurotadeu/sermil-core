@@ -9,7 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -23,7 +22,7 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 /** Entidade CidCertificado. (TABELA CID_CERTIFICADO)
  * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
- * @version 5.4
+ * @version 5.4.2
  */
 @Entity
 @Table(name = "CID_CERTIFICADO")
@@ -58,7 +57,7 @@ public final class CidCertificado implements Comparable<CidCertificado>, Seriali
    @JoinColumn(name = "CIDADAO_RA", insertable = false, updatable = false, nullable = false)
    private Cidadao cidadao;
 
-   @ManyToOne(fetch = FetchType.LAZY)
+   @ManyToOne
    @JoinColumn(name = "OM_CODIGO", referencedColumnName = "CODIGO")
    private Om om;
 

@@ -28,14 +28,15 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 /** Entidade CS (Comissao de Selecao).
  * @author Anselmo Ribeiro, Abreu lopes
  * @since 5.2.3
- * @version 5.4
+ * @version 5.4.2
  */
 @Entity
 @Table(name = "CS")
 @NamedQueries({
-  @NamedQuery(name = "Cs.listarCsPorRm", query = "SELECT DISTINCT c.codigo, c.nome FROM Cs c WHERE c.rm.codigo = ?1"),
-  @NamedQuery(name = "Cs.listarPorRm", query = "select c from Cs c where c.rm.codigo = ?1"),
-  @NamedQuery(name = "Cs.listarPorNome", query = "select c from Cs c where c.nome = ?1") 
+  @NamedQuery(name = "Cs.listarCsPorRm",  query = "SELECT DISTINCT c.codigo, c.nome FROM Cs c WHERE c.rm.codigo = ?1"),
+  @NamedQuery(name = "Cs.listarPorRm",    query = "select c from Cs c where c.rm.codigo = ?1"),
+  @NamedQuery(name = "Cs.listarPorNome",  query = "select c from Cs c where c.nome = ?1"),
+  @NamedQuery(name = "Cs.listarPorRmEnd", query = "SELECT c.codigo, c.numero, c.nome, c.atende, f.inicioData, f.terminoData, CONCAT(e.endereco,', ',e.bairro,', ',e.cep), CONCAT(m.descricao,' - ',m.uf.sigla) FROM Cs c JOIN c.csFuncionamentoCollection f JOIN f.csEndereco e JOIN e.municipio m WHERE c.rm.codigo = ?1 ORDER BY c.numero, f.inicioData")
 })
 @PrimaryKey(validation=IdValidation.NULL)
 public final class Cs implements Serializable {
