@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.DigestUtils;
 
+import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Cidadao;
 
@@ -23,9 +24,9 @@ public class AutenticadorServico {
     logger.debug("AutenticadorServico iniciado.");
   }
 
-  public String gerar(final Cidadao cid) throws SermilException {
+  public String gerar(final Cidadao cid) throws CriterioException  {
     if (cid == null || cid.getRa() == null) {
-      throw new SermilException("Informe os dados do cidadão para gerar autenticador.");
+      throw new CriterioException("Informe os dados do cidadão para gerar autenticador.");
     }
     byte[] b = (cid.getRa().toString() + cid.getSituacaoMilitar() + cid.getNascimentoData().toString() + cid.getAtualizacaoData()).getBytes();
     final StringBuilder sb = new StringBuilder();

@@ -13,7 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.mil.eb.sermil.core.dao.CsAgendamentoDao;
+import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
+import br.mil.eb.sermil.core.exceptions.CsException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.CsAgendamento;
@@ -39,7 +41,7 @@ public class SituacaoServico {
     logger.debug("SituacaoServico iniciado.");
   }
 
-  public Cidadao verificar(final Cidadao cidadao) throws SermilException {
+  public Cidadao verificar(final Cidadao cidadao) throws CriterioException, CidadaoNotFoundException, CsException {
     if (cidadao == null || (cidadao.getRa() == null && StringUtils.isBlank(cidadao.getCpf()))) {
       throw new CriterioException("Informe um RA ou CPF válido.");
     }
@@ -78,6 +80,8 @@ public class SituacaoServico {
         cid.setAnotacoes("Verifique no verso do seu documento de alistamento (CAM) a data de comparecimento no Órgão de Serviço Militar (Junta ou Comissão de Seleção).");
       } else {
         if (csAgendamento != null) {
+           if(null==cid.getCs())
+              throw new CsException();
           final CsEndereco end = cid.getCs().getCsFuncionamentoCollection().stream().findFirst().get().getCsEndereco();
           final String endereco = new StringBuilder(end.getEndereco()).append(" - ").append(end.getBairro()).append(" - ").append(end.getMunicipio()).toString();
           final StringBuilder msg = new StringBuilder("Comparecer na Comissão de Seleção ")
