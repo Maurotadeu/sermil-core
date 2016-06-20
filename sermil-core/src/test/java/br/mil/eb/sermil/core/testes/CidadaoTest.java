@@ -8,7 +8,7 @@ public class CidadaoTest {
 
 	@Test
 	public void cidadaoTest(){
-		assertTrue(true);
+		assertTrue(true); 	
 	}
 	
-}
+} 
