@@ -1,5 +1,6 @@
 package br.mil.eb.sermil.core.servicos;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +29,7 @@ import br.mil.eb.sermil.tipos.Lista;
 /** Serviço de CS.
  * @author Anselmo Ribeiro, Abreu Lopes
  * @since 5.3.2
- * @version 5.4.1
+ * @version 5.4.2
  */
 @Named("csServico")
 @RemoteProxy(name = "csServico")
@@ -64,6 +65,13 @@ public class CsServico {
       return lista;
    }
 
+  @SuppressWarnings("unchecked")
+  public List<Object[]>[] listarPorRmEnd(final Byte rm) throws ConsultaException {
+     final TypedQuery<Object[]> query = this.csDao.getEntityManager().createNamedQuery("Cs.listarCsPorRmEnd", Object[].class);
+     query.setParameter(1, rm);
+     return query.getResultList().stream().collect(Collectors.toList()).toArray(new ArrayList[0]);
+   }
+   
    public List<Cs> listarPorNome(final String nome) throws ConsultaException {
       if (nome == null) {
          throw new ConsultaException("Informe o nome da CS");

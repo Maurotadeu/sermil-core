@@ -28,7 +28,7 @@ import br.mil.eb.sermil.modelo.UsuarioPerfil;
 /** Gerenciamento de usuário da aplicação.
  * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
- * @version 5.4
+ * @version 5.4.2
  */
 @Named("usuarioServico")
 public class UsuarioServico {
@@ -132,7 +132,7 @@ public class UsuarioServico {
     return usuario;
   }
 
-  @PreAuthorize("hasAnyRole('adm','dsm')")
+  @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','om','del','cs')")
   public List<Usuario> listar(final Usuario usr) throws SermilException {
     List<Usuario> lista = null;
     if (!StringUtils.isBlank(usr.getCpf())) {
@@ -154,7 +154,7 @@ public class UsuarioServico {
     return lista;
   }
 
-  @PreAuthorize("hasAnyRole('adm','dsm')")
+  @PreAuthorize("hasAnyRole('adm','dsm','smr','csm','om','del')")
   public List<CidAuditoria> listarAuditoria(final String cpf) throws SermilException {
     final List<CidAuditoria> lista = this.cidAuditoriaDao.findByNamedQuery("CidAuditoria.listarPorCpf", cpf);
     if (lista == null || lista.isEmpty()) {

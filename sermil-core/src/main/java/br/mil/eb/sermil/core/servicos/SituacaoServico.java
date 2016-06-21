@@ -24,7 +24,7 @@ import br.mil.eb.sermil.modelo.CsEndereco;
 /** Verificação de situação no serviço militar.
  * @author Abreu lopes
  * @since 5.1
- * @version 5.4
+ * @version 5.4.2
  */
 @Named("situacaoServico")
 public class SituacaoServico {
@@ -79,6 +79,9 @@ public class SituacaoServico {
       if ("N".equals(internet)) {
         cid.setAnotacoes("Verifique no verso do seu documento de alistamento (CAM) a data de comparecimento no Órgão de Serviço Militar (Junta ou Comissão de Seleção).");
       } else {
+        if (cid.getCs() == null) {
+          throw new SermilException("Compareça em uma Junta de Serviço Militar e verifique seu cadastro. (ERRO = Sem código de CS)");
+        }
         if (csAgendamento != null) {
            if(null==cid.getCs())
               throw new CsException();
