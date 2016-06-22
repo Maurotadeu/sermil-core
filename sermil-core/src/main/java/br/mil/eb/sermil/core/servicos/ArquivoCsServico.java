@@ -28,7 +28,7 @@ import br.mil.eb.sermil.modelo.Cs;
 /** Geração do arquivo de seleção para carregamento no Módulo CS.
  * @author Abreu Lopes, Daniel Gardino
  * @since 4.0
- * @version 5.3.2
+ * @version 5.4.2
  */
 @Named("arquivoCsServico")
 public class ArquivoCsServico {

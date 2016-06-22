@@ -2,6 +2,7 @@ package br.mil.eb.sermil.core.servicos;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -37,7 +38,7 @@ import br.mil.eb.sermil.tipos.CpfInfoSippes;
  * IMPORTANTE: Importar o certificado digital do SIPPES no cacerts da JVM do servidor SERMIL.
  * @author Abreu Lopes
  * @since 5.2.5
- * @version 5.4
+ * @version 5.4.2
  */
 @Named("CpfSippesServico")
 @RemoteProxy(name = "cpfSippesServico")
@@ -131,7 +132,7 @@ public class CpfSippesServico {
 
       @Override
       public void handleError(ClientHttpResponse response) throws IOException {
-         final String body = IOUtils.toString(response.getBody());
+         final String body = IOUtils.toString(response.getBody(), Charset.forName("UTF-8"));
          final CPFSippesException cpfException = new CPFSippesException();
          final Map<String, Object> properties = new HashMap<String, Object>();
          properties.put("code", response.getStatusCode().toString());

@@ -8,12 +8,16 @@ import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
+
 /** Domínios (ID/VALOR).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.4
+ * @version 5.4.2
  */
 @Entity
+@Cache(type=CacheType.FULL, size=450)
 @NamedQueries({
   @NamedQuery(name = "Dominios.listar", query = "SELECT DISTINCT d.pk.id, d.dominio FROM Dominios d ORDER BY d.dominio"),
   @NamedQuery(name = "Dominios.listarPorId", query = "SELECT d FROM Dominios d WHERE d.pk.id = ?1 ORDER BY d.pk.valor")
