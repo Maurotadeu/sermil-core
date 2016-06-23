@@ -79,12 +79,9 @@ public class SituacaoServico {
       if ("N".equals(internet)) {
         cid.setAnotacoes("Verifique no verso do seu documento de alistamento (CAM) a data de comparecimento no Órgão de Serviço Militar (Junta ou Comissão de Seleção).");
       } else {
-        if (cid.getCs() == null) {
-          throw new SermilException("Compareça em uma Junta de Serviço Militar e verifique seu cadastro. (ERRO = Sem código de CS)");
-        }
+        if(null==cid.getCs())
+           throw new CsException();
         if (csAgendamento != null) {
-           if(null==cid.getCs())
-              throw new CsException();
           final CsEndereco end = cid.getCs().getCsFuncionamentoCollection().stream().findFirst().get().getCsEndereco();
           final String endereco = new StringBuilder(end.getEndereco()).append(" - ").append(end.getBairro()).append(" - ").append(end.getMunicipio()).toString();
           final StringBuilder msg = new StringBuilder("Comparecer na Comissão de Seleção ")
