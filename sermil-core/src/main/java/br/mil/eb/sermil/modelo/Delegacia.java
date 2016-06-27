@@ -12,15 +12,18 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 
+import org.eclipse.persistence.annotations.Cache;
+import org.eclipse.persistence.annotations.CacheType;
 import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Delegacia de Serviço Militar.
  * @author Abreu Lopes
  * @since 4.0
- * @version 5.4
+ * @version 5.4.2
  */
 @Entity
+@Cache(type=CacheType.SOFT, size=300, expiry=360000)
 @NamedQueries({
   @NamedQuery(name = "Del.listarPorCsm", query = "SELECT d.pk.codigo, 1 FROM Delegacia d WHERE d.pk.csmCodigo = ?1"),
   @NamedQuery(name = "Del.listarPorMun", query = "SELECT d FROM Delegacia d WHERE d.om.municipio.codigo = ?1")
