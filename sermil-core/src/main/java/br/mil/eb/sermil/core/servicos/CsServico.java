@@ -1,7 +1,9 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -56,13 +58,22 @@ public class CsServico {
    @RemoteMethod
    public List<Cs> listarPorRm(final Byte rm) throws ConsultaException {
       if (rm == null) {
+         logger.error("Usuario nao informou o numero da RM para listar CS por RM");
          throw new ConsultaException("Informe o número da Região Militar");
       }
       final List<Cs> lista = this.csDao.findByNamedQuery("Cs.listarPorRm", rm);
       if (lista == null || lista.isEmpty()) {
+         logger.error("Não há CS cadastrada na " + rm + "ª Região Militar");
          throw new ConsultaException("Não há CS cadastrada na " + rm + "ª Região Militar");
       }
       return lista;
+   }
+   
+   public Map<String, String> listPorRm(final Byte rmCodigo) throws ConsultaException  {
+      HashMap<String, String> css = new HashMap<String, String>();
+      List<Cs> lista = listarPorRm(rmCodigo);
+      lista.forEach(l -> css.put(String.valueOf(l.getCodigo()), l.getNome()));
+      return css;
    }
 
   @SuppressWarnings("unchecked")
