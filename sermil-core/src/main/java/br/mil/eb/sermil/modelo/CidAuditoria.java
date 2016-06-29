@@ -19,7 +19,7 @@ import javax.persistence.TemporalType;
 /** Auditoria de Cidadão.
  * @author Abreu Lopes
  * @since 2.0
- * @version $Id: CidAuditoria.java 2423 2014-05-13 17:00:54Z wlopes $
+ * @version 5.4.3
  */
 @Entity
 @Table(name = "CID_AUDITORIA")
@@ -166,13 +166,12 @@ public final class CidAuditoria implements Comparable<CidAuditoria>, Serializabl
   /** Chave primária (PK) de CidAuditoria. 
    * @author Abreu Lopes
    * @since 2.0
-   * @version $Id: CidAuditoria.java 2423 2014-05-13 17:00:54Z wlopes $
+   * @version 5.4.3
    */
   @Embeddable
   public static class PK implements Comparable<CidAuditoria.PK>, Serializable {
 
-    /** serialVersionUID. */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3288529009668104230L;
 
     @Column(name = "CIDADAO_RA")
     private Long cidadaoRa;
@@ -203,11 +202,9 @@ public final class CidAuditoria implements Comparable<CidAuditoria>, Serializabl
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-          + ((cidadaoRa == null) ? 0 : cidadaoRa.hashCode());
+      result = prime * result + ((cidadaoRa == null) ? 0 : cidadaoRa.hashCode());
       result = prime * result + ((data == null) ? 0 : data.hashCode());
-      result = prime * result
-          + ((usuarioBd == null) ? 0 : usuarioBd.hashCode());
+      result = prime * result + ((usuarioBd == null) ? 0 : usuarioBd.hashCode());
       return result;
     }
 

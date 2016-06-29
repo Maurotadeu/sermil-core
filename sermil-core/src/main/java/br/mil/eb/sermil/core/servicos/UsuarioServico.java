@@ -28,7 +28,7 @@ import br.mil.eb.sermil.modelo.UsuarioPerfil;
 /** Gerenciamento de usuário da aplicação.
  * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
- * @version 5.4.2
+ * @version 5.4.3
  */
 @Named("usuarioServico")
 public class UsuarioServico {
@@ -87,13 +87,13 @@ public class UsuarioServico {
     return "Senha alterada com sucesso.";
   }
 
-  @PreAuthorize("hasAnyRole('adm','dsm')")
+  @PreAuthorize("hasAnyRole('adm','dsm','smr')")
   @Transactional
   public String bloquear(final String cpf) throws SermilException {
     final Usuario usuario = this.usuarioDao.findById(cpf);
     usuario.setAtivo("N");
     this.usuarioDao.save(usuario);
-    return new StringBuilder("Usuário CPF = ").append(cpf).append(" bloqueado.").toString();
+    return new StringBuilder("Usuário ").append(usuario).append(" bloqueado.").toString();
   }
 
   @Transactional
@@ -118,7 +118,7 @@ public class UsuarioServico {
   public String excluir(final String cpf) throws SermilException {
     final Usuario usuario = this.usuarioDao.findById(cpf);
     this.usuarioDao.delete(usuario);
-    return new StringBuilder("Usuário CPF = ").append(cpf).append(" excluído.").toString();
+    return new StringBuilder("Usuário ").append(usuario).append(" excluído.").toString();
   }
 
   public Usuario findByCPF(final String cpf) throws SermilException {
