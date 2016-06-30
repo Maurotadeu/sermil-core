@@ -100,12 +100,12 @@ public class SituacaoServico {
       break;
     case 3:
       if ("N".equals(internet)) {
-        cid.setAnotacoes("Caso não possua Certificado de Dispensa de Incorporção (CDI), verifique no verso do seu documento de alistamento (CAM) a data de comparecimento na Junta de Serviço Militar.");
+        cid.setAnotacoes("Caso não possua Certificado de Dispensa de Incorporação (CDI), verifique no verso do seu documento de alistamento (CAM) a data de comparecimento na Junta de Serviço Militar.");
       } else {
         if (cid.getJsm().getPk().getCsmCodigo() == 99) {
           cid.setAnotacoes("Cidadão, no exterior compareça no Consulado para solicitar seu certificado, estando no Brasil compareça em uma Junta de Serviço Militar.");
         } else {
-          final StringBuilder msg = new StringBuilder("Caso não possua Certificado de Dispensa de Incorporção (CDI), comparecer na Junta de Serviço Militar ")
+          final StringBuilder msg = new StringBuilder("Caso não possua Certificado de Dispensa de Incorporação (CDI), comparecer na Junta de Serviço Militar ")
               .append(cid.getJsm() != null ? cid.getJsm().toString() : " (JSM)")
               .append(" na data ")
               .append(definirRetorno(cid))
@@ -130,7 +130,7 @@ public class SituacaoServico {
     case 8:
     case 9:
       if ("N".equals(internet)) {
-        cid.setAnotacoes("Caso ainda não tenha recebido seu Certificado de Dispensa de Incorporção (CDI), verifique no verso do seu documento de alistamento (CAM) a data de comparecimento na Junta de Serviço Militar.");
+        cid.setAnotacoes("Caso ainda não tenha recebido seu Certificado de Dispensa de Incorporação (CDI), verifique no verso do seu documento de alistamento (CAM) a data de comparecimento na Junta de Serviço Militar.");
       } else {
         cid.setAnotacoes("Comparecer na Junta de Serviço Militar " + (cid.getJsm() != null ? cid.getJsm().toString() : "") + ", para solicitar o Certificado de Dispensa de Incorporação (CDI).");
       }
