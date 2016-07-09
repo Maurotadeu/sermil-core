@@ -86,7 +86,7 @@ public class CidadaoServico {
     return new StringBuilder("Cidadão excluído: ").append(ra).toString();
   }
 
-  public Cidadao recuperar(final Long ra) throws SermilException {
+  public Cidadao recuperar(final Long ra) throws CriterioException, CidadaoNotFoundException  {
     if (ra == null) {
       throw new CriterioException("Informe o RA do cidadão a ser pesquisado.");
     }
@@ -99,7 +99,7 @@ public class CidadaoServico {
     return cid;
   }
 
-  public Cidadao recuperar(final String cpf) throws SermilException {
+  public Cidadao recuperar(final String cpf) throws CriterioException, CidadaoNotFoundException  {
     if (StringUtils.isBlank(cpf)) {
       throw new CriterioException("Informe o CPF do cidadão a ser pesquisado.");
     }

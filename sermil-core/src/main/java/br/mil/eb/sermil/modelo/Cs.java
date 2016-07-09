@@ -62,11 +62,11 @@ public final class Cs implements Serializable {
    private Rm rm;
 
    @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, cascade = CascadeType.ALL , orphanRemoval = true)
-   @JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO")
+   //@JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO") Anselmo
    private List<CsExclusaoData> csExclusaoDataCollection;
 
    @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, cascade = CascadeType.ALL , orphanRemoval = true)
-   @JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO")
+   //@JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO") Anselmo
    private List<CsFuncionamento> csFuncionamentoCollection;
 
    public Cs() {

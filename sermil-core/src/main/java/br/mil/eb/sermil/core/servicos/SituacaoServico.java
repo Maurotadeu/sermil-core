@@ -13,7 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.mil.eb.sermil.core.dao.CsAgendamentoDao;
+import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
+import br.mil.eb.sermil.core.exceptions.CsException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.CsAgendamento;
@@ -39,7 +41,7 @@ public class SituacaoServico {
     logger.debug("SituacaoServico iniciado.");
   }
 
-  public Cidadao verificar(final Cidadao cidadao) throws SermilException {
+  public Cidadao verificar(final Cidadao cidadao) throws CriterioException, CidadaoNotFoundException, CsException {
     if (cidadao == null || (cidadao.getRa() == null && StringUtils.isBlank(cidadao.getCpf()))) {
       throw new CriterioException("Informe um RA ou CPF válido.");
     }
@@ -77,9 +79,8 @@ public class SituacaoServico {
       if ("N".equals(internet)) {
         cid.setAnotacoes("Verifique no verso do seu documento de alistamento (CAM) a data de comparecimento no Órgão de Serviço Militar (Junta ou Comissão de Seleção).");
       } else {
-        if (cid.getCs() == null) {
-          throw new SermilException("Compareça em uma Junta de Serviço Militar e verifique seu cadastro. (ERRO = Sem código de CS)");
-        }
+        if(null==cid.getCs())
+           throw new CsException();
         if (csAgendamento != null) {
           final CsEndereco end = cid.getCs().getCsFuncionamentoCollection().stream().findFirst().get().getCsEndereco();
           final String endereco = new StringBuilder(end.getEndereco()).append(" - ").append(end.getBairro()).append(" - ").append(end.getMunicipio()).toString();
@@ -99,12 +100,12 @@ public class SituacaoServico {
       break;
     case 3:
       if ("N".equals(internet)) {
-        cid.setAnotacoes("Caso não possua Certificado de Dispensa de Incorporção (CDI), verifique no verso do seu documento de alistamento (CAM) a data de comparecimento na Junta de Serviço Militar.");
+        cid.setAnotacoes("Caso não possua Certificado de Dispensa de Incorporação (CDI), verifique no verso do seu documento de alistamento (CAM) a data de comparecimento na Junta de Serviço Militar.");
       } else {
         if (cid.getJsm().getPk().getCsmCodigo() == 99) {
           cid.setAnotacoes("Cidadão, no exterior compareça no Consulado para solicitar seu certificado, estando no Brasil compareça em uma Junta de Serviço Militar.");
         } else {
-          final StringBuilder msg = new StringBuilder("Caso não possua Certificado de Dispensa de Incorporção (CDI), comparecer na Junta de Serviço Militar ")
+          final StringBuilder msg = new StringBuilder("Caso não possua Certificado de Dispensa de Incorporação (CDI), comparecer na Junta de Serviço Militar ")
               .append(cid.getJsm() != null ? cid.getJsm().toString() : " (JSM)")
               .append(" na data ")
               .append(definirRetorno(cid))
@@ -129,7 +130,7 @@ public class SituacaoServico {
     case 8:
     case 9:
       if ("N".equals(internet)) {
-        cid.setAnotacoes("Caso ainda não tenha recebido seu Certificado de Dispensa de Incorporção (CDI), verifique no verso do seu documento de alistamento (CAM) a data de comparecimento na Junta de Serviço Militar.");
+        cid.setAnotacoes("Caso ainda não tenha recebido seu Certificado de Dispensa de Incorporação (CDI), verifique no verso do seu documento de alistamento (CAM) a data de comparecimento na Junta de Serviço Militar.");
       } else {
         cid.setAnotacoes("Comparecer na Junta de Serviço Militar " + (cid.getJsm() != null ? cid.getJsm().toString() : "") + ", para solicitar o Certificado de Dispensa de Incorporação (CDI).");
       }

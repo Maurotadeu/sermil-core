@@ -1,4 +1,4 @@
-package br.mil.eb.sermil.core.testes;
+package br.mil.eb.sermil.core.testes.local;
 
 import org.junit.runner.RunWith;
 
