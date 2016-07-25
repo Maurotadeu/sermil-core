@@ -39,7 +39,7 @@ import br.mil.eb.sermil.tipos.TipoSituacaoMilitar;
 /** Alistamento de Cidadão.
  * @author Abreu Lopes
  * @since 5.2.7
- * @version 5.4
+ * @version 5.4.5
  */
 @Named("alistamentoServico")
 public class AlistamentoServico {

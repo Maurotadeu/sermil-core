@@ -13,7 +13,7 @@ import javax.persistence.Table;
 /** Estatística de Alistamento (TABELA ESTAT_ALISTAMENTO_ESC).
  * @author Abreu Lopes, Gardino
  * @since 4.6
- * @version 5.4
+ * @version 5.4.5
  */
 @Entity
 @Table(name="ESTAT_ALISTAMENTO_ESC")
@@ -31,7 +31,7 @@ public class EstatAlistamentoEsc implements Serializable {
 
   private String escd;
 
-  @Column(insertable=false, updatable=false)
+  @Column(insertable = false, updatable = false)
   private Integer escolaridade;
 
   private Integer escr;

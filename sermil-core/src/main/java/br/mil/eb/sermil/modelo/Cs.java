@@ -28,7 +28,7 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 /** Entidade CS (Comissao de Selecao).
  * @author Anselmo Ribeiro, Abreu lopes
  * @since 5.2.3
- * @version 5.4.2
+ * @version 5.4.5
  */
 @Entity
 @Table(name = "CS")
@@ -62,11 +62,11 @@ public final class Cs implements Serializable {
    private Rm rm;
 
    @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, cascade = CascadeType.ALL , orphanRemoval = true)
-   //@JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO") Anselmo
+   @JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO")
    private List<CsExclusaoData> csExclusaoDataCollection;
 
    @OneToMany(mappedBy = "cs", fetch = FetchType.EAGER, cascade = CascadeType.ALL , orphanRemoval = true)
-   //@JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO") Anselmo
+   @JoinColumn(name = "CS_CODIGO", referencedColumnName = "CODIGO")
    private List<CsFuncionamento> csFuncionamentoCollection;
 
    public Cs() {

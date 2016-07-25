@@ -37,7 +37,7 @@ import br.mil.eb.sermil.tipos.TipoEvento;
 /** Gerenciamento de informações de Cidadão.
  * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4.5
  */
 @Named("cidadaoServico")
 public class CidadaoServico {
@@ -86,7 +86,7 @@ public class CidadaoServico {
     return new StringBuilder("Cidadão excluído: ").append(ra).toString();
   }
 
-  public Cidadao recuperar(final Long ra) throws CriterioException, CidadaoNotFoundException  {
+  public Cidadao recuperar(final Long ra) throws SermilException {
     if (ra == null) {
       throw new CriterioException("Informe o RA do cidadão a ser pesquisado.");
     }
@@ -99,7 +99,7 @@ public class CidadaoServico {
     return cid;
   }
 
-  public Cidadao recuperar(final String cpf) throws CriterioException, CidadaoNotFoundException  {
+  public Cidadao recuperar(final String cpf) throws SermilException {
     if (StringUtils.isBlank(cpf)) {
       throw new CriterioException("Informe o CPF do cidadão a ser pesquisado.");
     }
