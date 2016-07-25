@@ -20,18 +20,17 @@ import org.eclipse.persistence.annotations.PrimaryKey;
 /** CS - Agendamento.
  * @author Abreu Lopes
  * @since 5.2.8
- * @version 5.4
+ * @version 5.4.5
  */
 @Entity
 @Table(name = "CS_AGENDAMENTO")
 @PrimaryKey(validation=IdValidation.NULL)
 @NamedQueries({
    @NamedQuery(name = "CsAgendamento.listarPorCs", query = "SELECT c FROM CsAgendamento c WHERE c.pk.csCodigo = ?1"),
+   @NamedQuery(name = "CsAgendamento.listarPorCsData", query = "SELECT c.ra, c.nome, c.email, c.telefone, a.dataSelecao FROM Cidadao c JOIN CsAgendamento a ON c.ra = a.pk.cidadaoRa WHERE a.pk.csCodigo = ?1 AND a.dataSelecao = ?2"),
    @NamedQuery(name = "CsAgendamento.listarPorRa", query = "SELECT c FROM CsAgendamento c WHERE c.pk.cidadaoRa = ?1"),
-   @NamedQuery(name = "CsAgendamento.gruparPorEmail", query = "SELECT c.email, COUNT(c) FROM CsAgendamento c GROUP BY c.email"),
-   @NamedQuery(name = "CsAgendamento.listarPorCsData", query = "SELECT c FROM CsAgendamento c WHERE c.pk.csCodigo = ?1 and c.dataSelecao = ?2 "),
+   @NamedQuery(name = "CsAgendamento.gruparPorEmail", query = "SELECT c.email, COUNT(c) FROM CsAgendamento c GROUP BY c.email")
 })
-//   @NamedQuery(name = "CsAgendamento.listarPorCsData", query = "SELECT c.ra, c.nome, c.email, c.telefone, a.dataSelecao FROM Cidadao c JOIN CsAgendamento a ON c.ra = a.pk.cidadaoRa WHERE a.pk.csCodigo = ?1 AND a.dataSelecao = ?2"),Anselmo
 public final class CsAgendamento implements Serializable {
 
    private static final long serialVersionUID = 4296531679466838124L;
@@ -55,7 +54,7 @@ public final class CsAgendamento implements Serializable {
 
    @Override
    public String toString() {
-      return new StringBuilder("AGENDAMENTO: ").append(this.getPk()).append(" - ").append(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(this.getDataSelecao())).toString();
+      return new StringBuilder("AGENDAMENTO: ").append(this.getPk()).append(new SimpleDateFormat("dd/MM/yyyy HH:mm").format(this.getDataSelecao())).toString();
    }
    
    @Override
@@ -112,9 +111,9 @@ public final class CsAgendamento implements Serializable {
       @Override
       public String toString() {
          return new StringBuilder(this.getCsCodigo() == null ? "CS" : this.getCsCodigo().toString())
-               .append(" - ")
-               .append(this.getCidadaoRa() == null ? "RA" : this.getCidadaoRa().toString())
-               .toString();
+             .append(" - ")
+             .append(this.getCidadaoRa() == null ? "RA" : this.getCidadaoRa().toString())
+             .toString();
       }
       
       @Override
