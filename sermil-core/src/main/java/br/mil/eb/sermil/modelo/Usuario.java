@@ -31,7 +31,7 @@ import br.mil.eb.sermil.tipos.Cpf;
 /** Entidade Usuário.
  * @author Abreu Lopes, Daniel Gardino
  * @since 3.0
- * @version 5.4
+ * @version 5.4.5
  */
 @Entity
 @Table(name = "USUARIO")
@@ -252,11 +252,11 @@ public final class Usuario extends User implements Serializable {
       this.confirma = confirma;
    }
 
-   public void setCpf(String cpf) {
+   public void setCpf(String cpf) throws SermilException {
       this.cpf = (cpf == null || cpf.isEmpty() ? null : cpf.trim());
       if (this.cpf != null) {
          if (!Cpf.isCpf(this.cpf)) {
-            throw new IllegalArgumentException("CPF inválido.");
+            throw new SermilException("CPF inválido.");
          }
       }
    }

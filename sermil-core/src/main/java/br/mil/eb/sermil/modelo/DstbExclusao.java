@@ -11,11 +11,11 @@ import javax.persistence.Table;
 /** DstbExclusao.
  * @author Abreu Lopes
  * @since 5.1
- * @version 5.4
+ * @version 5.4.5
  */
 @Entity
 @Table(name="DSTB_EXCLUSAO")
-//@NamedQuery(name = "Info.listar", query = "SELECT c.ra, c.nome, c.mae, c.nascimentoData, c.situacaoMilitar FROM Cidadao c JOIN DstbExclusao e ON c.ra = e.cidadaoRa ORDER BY c.nome")Anselmo
+@NamedQuery(name = "Info.listar", query = "SELECT c.ra, c.nome, c.mae, c.nascimentoData, c.situacaoMilitar FROM Cidadao c JOIN DstbExclusao e ON c.ra = e.cidadaoRa ORDER BY c.nome")
 public final class DstbExclusao implements Serializable {
 
   private static final long serialVersionUID = -4109244925667399632L;
