@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
-import br.mil.eb.sermil.core.exceptions.CsException;
 import br.mil.eb.sermil.core.exceptions.JsmException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
@@ -25,7 +24,7 @@ import br.mil.eb.sermil.tipos.Lista;
 /** Gerenciamento de Junta de Serviço Militar (JSM).
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.4
+ * @version 5.4.5
  */
 @Named("jsmServico")
 public class JsmServico {
@@ -118,16 +117,6 @@ public class JsmServico {
          throw new JsmException("JSM não realiza alistamento ONLINE.");
       }
       return j;
-   }
-
-   public boolean jsmTributariaTemCs(final Jsm jsm) throws CsException, CriterioException, JsmException {
-      if (jsm.getTributacao() == null) {
-         throw new CriterioException();
-      }
-      if (jsm.isTributaria() && jsm.getCs() == null) {
-         throw new CsException();
-      }
-      return true;
    }
 
 }

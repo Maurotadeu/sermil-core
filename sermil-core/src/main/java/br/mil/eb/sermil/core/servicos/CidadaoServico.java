@@ -25,6 +25,7 @@ import br.mil.eb.sermil.core.dao.CidAuditoriaDao;
 import br.mil.eb.sermil.core.dao.CidadaoDao;
 import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
+import br.mil.eb.sermil.core.exceptions.CsException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.CidAuditoria;
@@ -117,6 +118,7 @@ public class CidadaoServico {
   public Cidadao salvar(final Cidadao cid, final Usuario usr, final String msg) throws SermilException {
     final CidAuditoria aud = new CidAuditoria(cid.getRa(), new Date(), msg.substring(0, msg.length() > 500 ? 500 : msg.length()), usr.getAcessoIp(), usr.getCpf());
     cid.addCidAuditoria(aud);
+    cid.setCs(cid.getJsm().getCs());
     final Cidadao c = this.cidadaoDao.save(cid);
     logger.debug("{}: salvo", c);
     return c;
@@ -131,7 +133,15 @@ public class CidadaoServico {
     }
     cidBd.setDispensa(cidadao.getDispensa());
     cidBd.setAnotacoes(cidadao.getAnotacoes());
-    cidBd.setCs(cidadao.getCs());
+    // Verificando se a CS é a mesma da JSM
+    // TODO: melhorar o tratamento da vinculacao CSM/JSM/CS
+    if (!cidBd.getJsm().isTributaria()) {
+      throw new CsException("Cidadão está vinculado com JSM não tributária, corrija a JSM antes de salvar a seleção.");
+    } else if (cidadao.getCs().getCodigo() != cidBd.getJsm().getCs().getCodigo()) {
+      throw new CsException("CS é diferente da CS da JSM de vinculação, corrija a JSM antes de salvar a seleção.");
+    } else {
+      cidBd.setCs(cidadao.getCs());
+    }
     cidBd.setFsNr(cidadao.getFsNr());
     cidBd.setDiagnostico(cidadao.getDiagnostico());
     cidBd.setCid(cidadao.getCid());
@@ -252,5 +262,5 @@ public class CidadaoServico {
     }
     return lista;
   }
-
+  
 }

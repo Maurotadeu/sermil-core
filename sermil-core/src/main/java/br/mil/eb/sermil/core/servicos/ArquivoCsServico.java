@@ -17,18 +17,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
-import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.CsDao;
 import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.CriptoSermil;
+import br.mil.eb.sermil.core.utils.Constantes;
 import br.mil.eb.sermil.core.utils.ZlibHelper;
 import br.mil.eb.sermil.modelo.Cs;
 
 /** Geração do arquivo de seleção para carregamento no Módulo CS.
  * @author Abreu Lopes, Daniel Gardino
  * @since 4.0
- * @version 5.4.2
+ * @version 5.4.5
  */
 @Named("arquivoCsServico")
 public class ArquivoCsServico {
