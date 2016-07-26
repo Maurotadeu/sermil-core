@@ -131,14 +131,13 @@ public class CidadaoServico {
     if (cidadao.getDiagnostico() != null) {
       cidBd.setSituacaoMilitar(cidadao.getDiagnostico() == 1 ? 4 : 5);
     }
-    cidBd.setDispensa(cidadao.getDispensa());
+    cidBd.setDispensa(cidadao.getDispensa() == null ? 0 : cidadao.getDispensa());
     cidBd.setAnotacoes(cidadao.getAnotacoes());
     // Verificando se a CS é a mesma da JSM
-    // TODO: melhorar o tratamento da vinculacao CSM/JSM/CS
     if (!cidBd.getJsm().isTributaria()) {
-      throw new CsException("Cidadão está vinculado com JSM não tributária, corrija a JSM antes de salvar a seleção.");
+      throw new CsException("Atenção: o cidadão está vinculado a uma JSM não tributária, altere a vinculação de JSM (Editar Info Alistamento) antes de salvar as informações de seleção.");
     } else if (cidadao.getCs().getCodigo() != cidBd.getJsm().getCs().getCodigo()) {
-      throw new CsException("CS é diferente da CS da JSM de vinculação, corrija a JSM antes de salvar a seleção.");
+      throw new CsException("Atenção: a CS informada é diferente da CS da JSM de vinculação, corrija a CS ou a vinculação de JSM antes de salvar as informações de seleção.");
     } else {
       cidBd.setCs(cidadao.getCs());
     }
@@ -188,7 +187,8 @@ public class CidadaoServico {
       cidBd.getCidEventoCollection().remove(cidBd.getCidEventoCollection().indexOf(ce));
       cidBd.addCidEvento(ce);
     }
-    return this.salvar(cidBd, usr, "SELECAO " + dataAtual.get(Calendar.YEAR));
+    this.salvar(cidBd, usr, "SELECAO " + dataAtual.get(Calendar.YEAR));
+    return cidBd;
   }
 
   public Map<String, String> listarAtributos() throws SermilException {
