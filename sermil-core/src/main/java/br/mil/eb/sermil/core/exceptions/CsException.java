@@ -1,16 +1,20 @@
 package br.mil.eb.sermil.core.exceptions;
 
-/** Critério de pesquisa inválido.
+/** Exceção em Cs.
  * @author Abreu Lopes
- * @since 3.0
- * @version 5.3.2
+ * @since 5.4
+ * @version 5.4.5
  */
 public class CsException extends SermilException {
 
-    private static final long serialVersionUID = 2333659629255424743L;
+  private static final long serialVersionUID = -6315026852229132923L;
 
-    public CsException() {
-       super();
-    }
+  public CsException() {
+    super();
+  }
+
+  public CsException(String msg) {
+    super(msg);
+  }
 
 }

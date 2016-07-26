@@ -1,11 +1,11 @@
-package br.mil.eb.sermil.core;
+package br.mil.eb.sermil.core.utils;
 
 import java.util.Locale;
 
 /** Constantes simbólicas do sistema.
  * @author Abreu Lopes
  * @since 3.0
- * @version 5.2.8
+ * @version 5.4.5
  */
 public final class Constantes {
 

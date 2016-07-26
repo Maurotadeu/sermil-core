@@ -21,7 +21,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.RaItensDao;
 import br.mil.eb.sermil.core.dao.RaMestreDao;
 import br.mil.eb.sermil.core.dao.RaPedidoDao;
@@ -29,6 +28,7 @@ import br.mil.eb.sermil.core.exceptions.RaMestreException;
 import br.mil.eb.sermil.core.exceptions.RaPedidoJaProcessadoException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.CriptoSermil;
+import br.mil.eb.sermil.core.utils.Constantes;
 import br.mil.eb.sermil.modelo.RaItens;
 import br.mil.eb.sermil.modelo.RaMestre;
 import br.mil.eb.sermil.modelo.RaPedido;
@@ -37,7 +37,7 @@ import br.mil.eb.sermil.tipos.Ra;
 /** Serviços do processo de Pedido de RA.
  * @author Anselmo, Abreu Lopes
  * @since 5.0
- * @version 5.2.8
+ * @version 5.4.5
  */
 @Named("jsmRaPedidoProcessamentoServico")
 public class JsmRaPedidoProcessamentoServico {
