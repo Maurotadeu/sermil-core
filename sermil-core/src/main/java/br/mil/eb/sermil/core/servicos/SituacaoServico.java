@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.mil.eb.sermil.core.dao.CsAgendamentoDao;
+import br.mil.eb.sermil.core.dao.CsEnderecoDao;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Cidadao;
@@ -35,6 +36,9 @@ public class SituacaoServico {
   @Inject
   private CsAgendamentoDao csAgendamentoDao;
 
+  @Inject
+  CsEnderecoDao csEnderecoDao;
+  
   public SituacaoServico() {
     logger.debug("SituacaoServico iniciado.");
   }
@@ -81,7 +85,14 @@ public class SituacaoServico {
            throw new SermilException("Verifique na Junta de Serviço Militar qual a sua Comissão de Seleção onde deverá comparecer. (CADASTRO não está completo: CSM/JSM e CS devem ser verificados e atualizados)");
         }
         if (csAgendamento != null) {
-          final CsEndereco end = cid.getCs().getCsFuncionamentoCollection().stream().findFirst().get().getCsEndereco();
+          List<CsEndereco> listaEnd = this.csEnderecoDao.findByNamedQuery("CsEndereco.listarPorData", csAgendamento.getPk().getCsCodigo(), csAgendamento.getDataSelecao());
+          CsEndereco end = null;
+          if (listaEnd.size() != 1) {
+            logger.error("CsEndereco não é único: CS={}, DATA={}", csAgendamento.getPk().getCsCodigo(), csAgendamento.getDataSelecao());
+            throw new SermilException("Lista de endereços de CS inválida. Informe o Suporte imediatamente (Log gerado).");
+          } else {
+            end = listaEnd.get(0);
+          }
           final String endereco = new StringBuilder(end.getEndereco()).append(" - ").append(end.getBairro()).append(" - ").append(end.getMunicipio()).toString();
           final StringBuilder msg = new StringBuilder("Comparecer na Comissão de Seleção ")
               .append(cid.getCs())
