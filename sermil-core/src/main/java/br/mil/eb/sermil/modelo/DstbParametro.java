@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,19 +20,17 @@ import org.eclipse.persistence.annotations.StoredProcedureParameter;
 /** Entidade DstbParametro.
  * @author Abreu Lopes
  * @since 4.0
- * @version 5.4
+ * @version 5.4.5
  */
 @Entity
 @Table(name = "DSTB_PARAMETRO")
+@NamedQuery(name="DstbParametro.listarPorAnoRm", query="select d from DstbParametro d where EXTRACT(year FROM d.gptAData) = ?1 and d.pk.rmCodigo = ?2")
 @NamedStoredFunctionQueries({
   @NamedStoredFunctionQuery(name="Distribuicao.prepara", functionName="dis_processamento.prepara", parameters={@StoredProcedureParameter(queryParameter = "P_RM",direction=Direction.IN), @StoredProcedureParameter(queryParameter = "P_CPF",direction=Direction.IN)}, returnParameter=@StoredProcedureParameter(queryParameter="MSG")),
   @NamedStoredFunctionQuery(name="Distribuicao.executa", functionName="dis_processamento.executa", parameters={@StoredProcedureParameter(queryParameter = "P_RM",direction=Direction.IN), @StoredProcedureParameter(queryParameter = "P_CPF",direction=Direction.IN)}, returnParameter=@StoredProcedureParameter(queryParameter="MSG")),
   @NamedStoredFunctionQuery(name="Distribuicao.reverte", functionName="dis_processamento.reverte", parameters={@StoredProcedureParameter(queryParameter = "P_RM",direction=Direction.IN), @StoredProcedureParameter(queryParameter = "P_CPF",direction=Direction.IN)}, returnParameter=@StoredProcedureParameter(queryParameter="MSG")),
   @NamedStoredFunctionQuery(name="Distribuicao.finaliza", functionName="dis_processamento.finaliza", parameters={@StoredProcedureParameter(queryParameter = "P_RM",direction=Direction.IN), @StoredProcedureParameter(queryParameter = "P_CPF",direction=Direction.IN)}, returnParameter=@StoredProcedureParameter(queryParameter="MSG")),
   @NamedStoredFunctionQuery(name="Distribuicao.verifica", functionName="dis_processamento.verifica", parameters={@StoredProcedureParameter(queryParameter = "P_RM",direction=Direction.IN)}, returnParameter=@StoredProcedureParameter(queryParameter="MSG"))
-})
-@NamedQueries({
-   @NamedQuery(name="Distribuicao.ParamtrosPorAno&Rm", query="select d from DstbParametro d where EXTRACT(year FROM d.gptAData) = ?1 and d.pk.rmCodigo = ?2"),
 })
 public final class DstbParametro implements Comparable<DstbParametro>, Serializable {
 

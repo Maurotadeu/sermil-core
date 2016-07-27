@@ -17,17 +17,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
-import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.CriptoSermil;
+import br.mil.eb.sermil.core.utils.Constantes;
 import br.mil.eb.sermil.core.utils.ZlibHelper;
 import br.mil.eb.sermil.modelo.Jsm;
 
 /** Serviço de Averbações de JSM.
  * @author Abreu Lopes
  * @since 4.0
- * @version 5.2.8
+ * @version 5.4.5
  */
 @Named("arquivoAverbacoesJsmServico")
 public class ArquivoAverbacoesJsmServico {

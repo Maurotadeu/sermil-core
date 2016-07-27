@@ -21,7 +21,7 @@ import br.mil.eb.sermil.modelo.SelTributacao;
 /** Serviços de Pré-seleção (Tabelas SEL_JSM e SEL_TRIBUTACAO).
  * @author Abreu Lopes
  * @since 3.5
- * @version 5.4
+ * @version 5.4.5
  */
 @Named("rmSelecaoServico")
 public class RmSelecaoServico {
@@ -40,8 +40,7 @@ public class RmSelecaoServico {
 
   @PreAuthorize("hasAnyRole('adm','dsm','smr')")
   public List<SelJsm> listarJsm(final Byte rm) throws SermilException {
-    List<SelJsm> res = this.selJsmDao.findByNamedQuery("SelJsm.listarJsmTributaria", rm);
-    return res;
+    return this.selJsmDao.findByNamedQuery("SelJsm.listarJsmTributaria", rm);
   }
 
 
@@ -53,8 +52,7 @@ public class RmSelecaoServico {
     }
     final List<SelJsm> lista = this.listarJsm(rm);
     for (SelJsm paramJsm: paramSelecao) {
-      int res = lista.indexOf(paramJsm);
-      final SelJsm paramFinal = lista.get(res);
+      final SelJsm paramFinal = lista.get(lista.indexOf(paramJsm));
       paramFinal.setAptos(paramJsm.getAptos() == null ? 0 : paramJsm.getAptos());
       paramFinal.setDispensaEscolaridade(paramJsm.getDispensaEscolaridade());
       this.selJsmDao.save(paramFinal);

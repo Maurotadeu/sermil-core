@@ -18,13 +18,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.ImpServicoDao;
 import br.mil.eb.sermil.core.exceptions.ConsultaException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.CriptoSermil;
+import br.mil.eb.sermil.core.utils.Constantes;
 import br.mil.eb.sermil.core.utils.ZlibHelper;
 import br.mil.eb.sermil.modelo.ImpDocumento;
 import br.mil.eb.sermil.modelo.ImpServico;
@@ -37,7 +37,7 @@ import br.mil.eb.sermil.modelo.Usuario;
  * O layout dos arquivos está descrito na documentação do sistema.
  * @author Abreu Lopes, Gardino
  * @since 3.4
- * @version 5.2.8
+ * @version 5.4.5
  */
 @Named("entradaDadosServico")
 public class EntradaDadosServico {

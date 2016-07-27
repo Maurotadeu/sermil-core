@@ -25,6 +25,7 @@ import br.mil.eb.sermil.core.dao.CidAuditoriaDao;
 import br.mil.eb.sermil.core.dao.CidadaoDao;
 import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
+import br.mil.eb.sermil.core.exceptions.CsException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.CidAuditoria;
@@ -37,7 +38,7 @@ import br.mil.eb.sermil.tipos.TipoEvento;
 /** Gerenciamento de informações de Cidadão.
  * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
- * @version 5.3.2
+ * @version 5.4.5
  */
 @Named("cidadaoServico")
 public class CidadaoServico {
@@ -86,7 +87,7 @@ public class CidadaoServico {
     return new StringBuilder("Cidadão excluído: ").append(ra).toString();
   }
 
-  public Cidadao recuperar(final Long ra) throws CriterioException, CidadaoNotFoundException  {
+  public Cidadao recuperar(final Long ra) throws SermilException {
     if (ra == null) {
       throw new CriterioException("Informe o RA do cidadão a ser pesquisado.");
     }
@@ -99,7 +100,7 @@ public class CidadaoServico {
     return cid;
   }
 
-  public Cidadao recuperar(final String cpf) throws CriterioException, CidadaoNotFoundException  {
+  public Cidadao recuperar(final String cpf) throws SermilException {
     if (StringUtils.isBlank(cpf)) {
       throw new CriterioException("Informe o CPF do cidadão a ser pesquisado.");
     }
@@ -117,6 +118,7 @@ public class CidadaoServico {
   public Cidadao salvar(final Cidadao cid, final Usuario usr, final String msg) throws SermilException {
     final CidAuditoria aud = new CidAuditoria(cid.getRa(), new Date(), msg.substring(0, msg.length() > 500 ? 500 : msg.length()), usr.getAcessoIp(), usr.getCpf());
     cid.addCidAuditoria(aud);
+    cid.setCs(cid.getJsm().getCs());
     final Cidadao c = this.cidadaoDao.save(cid);
     logger.debug("{}: salvo", c);
     return c;
@@ -129,9 +131,16 @@ public class CidadaoServico {
     if (cidadao.getDiagnostico() != null) {
       cidBd.setSituacaoMilitar(cidadao.getDiagnostico() == 1 ? 4 : 5);
     }
-    cidBd.setDispensa(cidadao.getDispensa());
+    cidBd.setDispensa(cidadao.getDispensa() == null ? 0 : cidadao.getDispensa());
     cidBd.setAnotacoes(cidadao.getAnotacoes());
-    cidBd.setCs(cidadao.getCs());
+    // Verificando se a CS é a mesma da JSM
+    if (!cidBd.getJsm().isTributaria()) {
+      throw new CsException("Atenção: o cidadão está vinculado a uma JSM não tributária, altere a vinculação de JSM (Editar Info Alistamento) antes de salvar as informações de seleção.");
+    } else if (cidadao.getCs().getCodigo() != cidBd.getJsm().getCs().getCodigo()) {
+      throw new CsException("Atenção: a CS informada é diferente da CS da JSM de vinculação, corrija a CS ou a vinculação de JSM antes de salvar as informações de seleção.");
+    } else {
+      cidBd.setCs(cidadao.getCs());
+    }
     cidBd.setFsNr(cidadao.getFsNr());
     cidBd.setDiagnostico(cidadao.getDiagnostico());
     cidBd.setCid(cidadao.getCid());
@@ -178,7 +187,8 @@ public class CidadaoServico {
       cidBd.getCidEventoCollection().remove(cidBd.getCidEventoCollection().indexOf(ce));
       cidBd.addCidEvento(ce);
     }
-    return this.salvar(cidBd, usr, "SELECAO " + dataAtual.get(Calendar.YEAR));
+    this.salvar(cidBd, usr, "SELECAO " + dataAtual.get(Calendar.YEAR));
+    return cidBd;
   }
 
   public Map<String, String> listarAtributos() throws SermilException {
@@ -252,5 +262,5 @@ public class CidadaoServico {
     }
     return lista;
   }
-
+  
 }

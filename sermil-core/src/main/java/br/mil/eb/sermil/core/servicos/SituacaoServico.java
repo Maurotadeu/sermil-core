@@ -13,9 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.mil.eb.sermil.core.dao.CsAgendamentoDao;
-import br.mil.eb.sermil.core.exceptions.CidadaoNotFoundException;
+import br.mil.eb.sermil.core.dao.CsEnderecoDao;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
-import br.mil.eb.sermil.core.exceptions.CsException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.CsAgendamento;
@@ -24,7 +23,7 @@ import br.mil.eb.sermil.modelo.CsEndereco;
 /** Verificação de situação no serviço militar.
  * @author Abreu lopes
  * @since 5.1
- * @version 5.4.2
+ * @version 5.4.5
  */
 @Named("situacaoServico")
 public class SituacaoServico {
@@ -37,11 +36,14 @@ public class SituacaoServico {
   @Inject
   private CsAgendamentoDao csAgendamentoDao;
 
+  @Inject
+  CsEnderecoDao csEnderecoDao;
+  
   public SituacaoServico() {
     logger.debug("SituacaoServico iniciado.");
   }
 
-  public Cidadao verificar(final Cidadao cidadao) throws CriterioException, CidadaoNotFoundException, CsException {
+  public Cidadao verificar(final Cidadao cidadao) throws SermilException {
     if (cidadao == null || (cidadao.getRa() == null && StringUtils.isBlank(cidadao.getCpf()))) {
       throw new CriterioException("Informe um RA ou CPF válido.");
     }
@@ -79,10 +81,18 @@ public class SituacaoServico {
       if ("N".equals(internet)) {
         cid.setAnotacoes("Verifique no verso do seu documento de alistamento (CAM) a data de comparecimento no Órgão de Serviço Militar (Junta ou Comissão de Seleção).");
       } else {
-        if(null==cid.getCs())
-           throw new CsException();
+        if(cid.getCs() == null) {
+           throw new SermilException("Verifique na Junta de Serviço Militar qual a sua Comissão de Seleção onde deverá comparecer. (CADASTRO não está completo: CSM/JSM e CS devem ser verificados e atualizados)");
+        }
         if (csAgendamento != null) {
-          final CsEndereco end = cid.getCs().getCsFuncionamentoCollection().stream().findFirst().get().getCsEndereco();
+          List<CsEndereco> listaEnd = this.csEnderecoDao.findByNamedQuery("CsEndereco.listarPorData", csAgendamento.getPk().getCsCodigo(), csAgendamento.getDataSelecao());
+          CsEndereco end = null;
+          if (listaEnd.size() != 1) {
+            logger.error("CsEndereco não é único: CS={}, DATA={}", csAgendamento.getPk().getCsCodigo(), csAgendamento.getDataSelecao());
+            throw new SermilException("Lista de endereços de CS inválida. Informe o Suporte imediatamente (Log gerado).");
+          } else {
+            end = listaEnd.get(0);
+          }
           final String endereco = new StringBuilder(end.getEndereco()).append(" - ").append(end.getBairro()).append(" - ").append(end.getMunicipio()).toString();
           final StringBuilder msg = new StringBuilder("Comparecer na Comissão de Seleção ")
               .append(cid.getCs())

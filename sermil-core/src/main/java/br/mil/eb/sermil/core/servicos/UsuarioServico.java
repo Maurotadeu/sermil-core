@@ -14,13 +14,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.CidAuditoriaDao;
 import br.mil.eb.sermil.core.dao.UsuarioDao;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.NoDataFoundException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.Randomize;
+import br.mil.eb.sermil.core.utils.Constantes;
 import br.mil.eb.sermil.modelo.CidAuditoria;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.modelo.UsuarioPerfil;
@@ -28,7 +28,7 @@ import br.mil.eb.sermil.modelo.UsuarioPerfil;
 /** Gerenciamento de usuário da aplicação.
  * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
- * @version 5.4.3
+ * @version 5.4.5
  */
 @Named("usuarioServico")
 public class UsuarioServico {

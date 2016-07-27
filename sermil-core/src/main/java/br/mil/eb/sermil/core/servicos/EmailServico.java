@@ -23,9 +23,9 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
-import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.exceptions.SermilException;
+import br.mil.eb.sermil.core.utils.Constantes;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.Jsm;
 import br.mil.eb.sermil.modelo.Usuario;
@@ -33,7 +33,7 @@ import br.mil.eb.sermil.modelo.Usuario;
 /** Serviço de envio de e-mail.
  * @author Abreu Lopes
  * @since 5.2.5
- * @version 5.2.8
+ * @version 5.4.5
  */
 @Named("emailServico")
 public class EmailServico {

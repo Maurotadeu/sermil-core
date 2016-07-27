@@ -17,17 +17,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
-import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.JsmDao;
 import br.mil.eb.sermil.core.exceptions.CriterioException;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.CriptoSermil;
+import br.mil.eb.sermil.core.utils.Constantes;
 import br.mil.eb.sermil.modelo.Jsm;
 
 /** Geração do arquivo de carga de alistados para entrada no SASM.
  * @author Abreu Lopes, Gardino
  * @since 3.4
- * @version 5.2.8
+ * @version 5.4.5
  */
 @Named("arquivoAlistadosServico")
 public class ArquivoAlistadosServico {

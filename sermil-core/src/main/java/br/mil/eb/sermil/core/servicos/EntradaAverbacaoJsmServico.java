@@ -22,10 +22,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.mil.eb.sermil.core.Constantes;
 import br.mil.eb.sermil.core.dao.CidCertificadoDao;
 import br.mil.eb.sermil.core.exceptions.SermilException;
 import br.mil.eb.sermil.core.security.CriptoSermil;
+import br.mil.eb.sermil.core.utils.Constantes;
 import br.mil.eb.sermil.core.utils.ZlibHelper;
 import br.mil.eb.sermil.modelo.Usuario;
 import br.mil.eb.sermil.tipos.ArquivoCabecalho;
@@ -33,7 +33,7 @@ import br.mil.eb.sermil.tipos.ArquivoCabecalho;
 /** Processamento de carga do arquivo de averbações do Módulo JSM (SASM).
  * @author Abreu Lopes, Gardino
  * @since 4.0
- * @version 5.4
+ * @version 5.4.5
  */
 @Named("entradaAverbacaoJsmServico")
 public class EntradaAverbacaoJsmServico {
