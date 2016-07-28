@@ -1,6 +1,7 @@
 package br.mil.eb.sermil.core.servicos;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.TypedQuery;
 
+import org.directwebremoting.annotations.RemoteMethod;
+import org.directwebremoting.annotations.RemoteProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,13 +26,19 @@ import br.mil.eb.sermil.tipos.Lista;
 /** Serviços de Delegacia de Serviço Militar (DelSM).
  * @author Abreu Lopes
  * @since 5.0
- * @version 5.4
+ * @version 5.4.6
  */
 @Named("delegaciaServico")
+@RemoteProxy(name="delegaciaServico")
 public class DelegaciaServico {
 
   protected static final Logger logger = LoggerFactory.getLogger(DelegaciaServico.class);
 
+  private static final String SQL = "select d.codigo, d.csm_codigo, o.endereco||' - '||o.bairro||' - '||m.descricao||' - '||m.uf_sigla, d.latitude, d.longitude, decode(u.nome,null, null, p.sigla||' '||u.nome||' (CPF '||u.cpf||')'), d.telefone, d.email, count(c.ra)" +
+  " from delegacia d join jsm j on d.csm_codigo = j.csm_codigo and d.codigo = j.delsm join cidadao c on j.csm_codigo = c.csm_codigo and j.codigo = c.jsm_codigo join om o on d.om_codigo = o.codigo join municipio m on o.municipio_codigo = m.codigo left outer join usuario u on d.delegado = u.cpf left outer join posto_graduacao p on u.posto_graduacao_codigo = p.codigo" +
+  " where vinculacao_ano = ?1" +
+  " group by d.codigo, d.csm_codigo, o.endereco, o.bairro, m.descricao, m.uf_sigla, d.latitude, d.longitude, p.sigla, u.nome, u.cpf, d.telefone, d.email";
+  
   @Inject
   private DelegaciaDao dsmDao;
 
@@ -64,6 +73,12 @@ public class DelegaciaServico {
     return query.getResultList().stream().map(o -> new Lista(((Byte)o[0]).toString(), ((Byte)o[0]).toString())).collect(Collectors.toList()).toArray(new Lista[0]);
   }
 
+  @RemoteMethod
+  public Object[] listarCidadaosPorDelegacia(final Integer ano) throws SermilException {
+    final List<Object[]> result = this.dsmDao.findBySQL(SQL, ano == null ? Calendar.getInstance().get(Calendar.YEAR) : ano);
+    return result.toArray(new Object[0]);
+  }
+  
   public Delegacia recuperar(final Byte csmCodigo, final Byte codigo) throws SermilException {
     return this.dsmDao.findById(new Delegacia.PK(csmCodigo, codigo));
   }
