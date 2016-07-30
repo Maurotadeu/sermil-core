@@ -112,9 +112,6 @@ public class CsServico {
       throw new ConsultaException("Informe o código da CS");
     }
     final List<CsFuncionamento> lista = this.recuperar(csCodigo).getCsFuncionamentoCollection();
-    //if (lista == null || lista.isEmpty()) {
-    //   throw new ConsultaException("Não há funcionamentos cadastrados para a CS " + csCodigo);
-    //}
     return lista;
   }
 
@@ -124,9 +121,6 @@ public class CsServico {
       throw new ConsultaException("Informe o código da CS");
     }
     final List<CsExclusaoData> lista = this.recuperar(csCodigo).getCsExclusaoDataCollection();
-    //if (lista == null || lista.isEmpty()) {
-    //   throw new ConsultaException("Não há exclusões de data cadastradas para a CS " + csCodigo);
-    //}
     return lista;
   }
 

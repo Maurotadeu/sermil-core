@@ -28,20 +28,20 @@ import br.mil.eb.sermil.core.exceptions.SermilException;
 /** Entidade CS (Comissao de Selecao).
  * @author Anselmo Ribeiro, Abreu lopes
  * @since 5.2.3
- * @version 5.4.5
+ * @version 5.4.6
  */
 @Entity
 @Table(name = "CS")
 @NamedQueries({
-  @NamedQuery(name = "Cs.listarCsPorRm",  query = "SELECT DISTINCT c.codigo, c.nome FROM Cs c WHERE c.rm.codigo = ?1"),
-  @NamedQuery(name = "Cs.listarPorRm",    query = "select c from Cs c where c.rm.codigo = ?1"),
-  @NamedQuery(name = "Cs.listarPorNome",  query = "select c from Cs c where c.nome = ?1"),
+  @NamedQuery(name = "Cs.listarCsPorRm",  query = "SELECT DISTINCT c.codigo, c.nome FROM Cs c WHERE c.rm.codigo = ?1 ORDER BY c.numero"),
+  @NamedQuery(name = "Cs.listarPorRm",    query = "select c from Cs c where c.rm.codigo = ?1 ORDER BY c.numero"),
+  @NamedQuery(name = "Cs.listarPorNome",  query = "select c from Cs c where c.nome = ?1 ORDER BY c.nome"),
   @NamedQuery(name = "Cs.listarPorRmEnd", query = "SELECT c.codigo, c.numero, c.nome, c.atende, f.inicioData, f.terminoData, CONCAT(e.endereco,', ',e.bairro,', ',e.cep), CONCAT(m.descricao,' - ',m.uf.sigla) FROM Cs c JOIN c.csFuncionamentoCollection f JOIN f.csEndereco e JOIN e.municipio m WHERE c.rm.codigo = ?1 ORDER BY c.numero, f.inicioData")
 })
 @PrimaryKey(validation=IdValidation.NULL)
-public final class Cs implements Serializable {
+public final class Cs implements Comparable<Cs>, Serializable {
 
-  private static final long serialVersionUID = 8846493879279340834L;
+  private static final long serialVersionUID = -5282034949837118064L;
 
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE, generator="CS")
@@ -192,6 +192,11 @@ public final class Cs implements Serializable {
     }
     this.csFuncionamentoCollection.remove(csFuncionamento);
     csFuncionamento.setCs(null);
+  }
+
+  @Override
+  public int compareTo(Cs o) {
+    return this.getNumero() != null ? this.getNumero().compareTo(o.getNumero()) : this.getCodigo().compareTo(o.getCodigo());
   }
 
 }
