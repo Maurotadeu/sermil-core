@@ -38,7 +38,7 @@ import br.mil.eb.sermil.tipos.TipoEvento;
 /** Gerenciamento de informações de Cidadão.
  * @author Abreu Lopes, Anselmo Ribeiro
  * @since 3.0
- * @version 5.4.5
+ * @version 5.4.6
  */
 @Named("cidadaoServico")
 public class CidadaoServico {
@@ -136,7 +136,7 @@ public class CidadaoServico {
     // Verificando se a CS é a mesma da JSM
     if (!cidBd.getJsm().isTributaria()) {
       throw new CsException("Atenção: o cidadão está vinculado a uma JSM não tributária, altere a vinculação de JSM (Editar Info Alistamento) antes de salvar as informações de seleção.");
-    } else if (cidadao.getCs().getCodigo() != cidBd.getJsm().getCs().getCodigo()) {
+    } else if (!cidadao.getCs().equals(cidBd.getJsm().getCs())) {
       throw new CsException("Atenção: a CS informada é diferente da CS da JSM de vinculação, corrija a CS ou a vinculação de JSM antes de salvar as informações de seleção.");
     } else {
       cidBd.setCs(cidadao.getCs());
