@@ -26,6 +26,7 @@ import br.mil.eb.sermil.modelo.DstbGd;
 import br.mil.eb.sermil.modelo.DstbParametro;
 import br.mil.eb.sermil.modelo.Empresa;
 import br.mil.eb.sermil.modelo.CsEntrevista;
+import br.mil.eb.sermil.modelo.CsEntrevista2;
 import br.mil.eb.sermil.modelo.EstatAlistamentoEsc;
 import br.mil.eb.sermil.modelo.EstatArrecadacao;
 import br.mil.eb.sermil.modelo.EstatExar;
@@ -156,6 +157,11 @@ public class DaoFactoryJpaImpl extends DaoFactory {
   @Override
   public CsEntrevistaDao getCsEntrevistaDao() {
    return (CsEntrevistaDao) instanciarDao(CsEntrevistaDaoJpa.class);
+  }
+
+  @Override
+  public CsEntrevistaDao2 getCsEntrevistaDao2() {
+   return (CsEntrevistaDao2) instanciarDao(CsEntrevistaDao2Jpa.class);
   }
 
   @Override
@@ -405,6 +411,9 @@ public class DaoFactoryJpaImpl extends DaoFactory {
    }
 
    public static class CsEntrevistaDaoJpa extends GenericDaoJpaImpl<CsEntrevista, Long>implements CsEntrevistaDao {
+   }
+
+   public static class CsEntrevistaDao2Jpa extends GenericDaoJpaImpl<CsEntrevista2, Long>implements CsEntrevistaDao2 {
    }
 
    public static class CsExclusaoDataJpa extends GenericDaoJpaImpl<CsExclusaoData, Integer>implements CsExclusaoDataDao {
