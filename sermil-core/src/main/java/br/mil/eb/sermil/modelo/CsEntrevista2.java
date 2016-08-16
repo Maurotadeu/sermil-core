@@ -1,6 +1,7 @@
 package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -22,8 +23,8 @@ import org.eclipse.persistence.annotations.IdValidation;
 import org.eclipse.persistence.annotations.PrimaryKey;
 
 /** Entrevista de cidadao na Comissão de Seleção.
- * @author Anselmo Ribeiro, Abreu Lopes
- * @since 5.0
+ * @author Abreu Lopes
+ * @since 5.4.6
  * @version 5.4.6
  */
 @Entity
@@ -59,7 +60,7 @@ public final class CsEntrevista2 implements Serializable {
   private String i06b; // INDICADOR: Demonstrou apatia, desânimo, choro, indiferença, medo ou fobias? 
   private String i07b; // INDICADOR: Declarou intenção de acabar com a própria vida?
   private String i08b; // INDICADOR: Mencionou problemas emocionais ou internação psiquiátrica?
-  private String i09b; // INDICADOR: AVALIAÇÃO FINAL (APTO = S ou INAPTO = N)
+  private String i09b; // INDICADOR: AVALIAÇÃO FINAL (APTO = A ou INAPTO = I)
 
   private String q01b; // Q01: Você estuda atualmente?
 
@@ -727,7 +728,10 @@ public final class CsEntrevista2 implements Serializable {
   }
 
   public List<String> getQ06l() {
-    return Arrays.asList(this.q06l.split(","));
+    if (!StringUtils.isEmpty(this.q06l)) {
+      return Arrays.asList(this.q06l.split(","));
+    }
+    return new ArrayList<String>();
   }
 
   public void setQ06l(List<String> q06l) {
@@ -735,7 +739,10 @@ public final class CsEntrevista2 implements Serializable {
   }
 
   public List<String> getQ08l() {
-    return Arrays.asList(this.q08l.split(","));
+    if (!StringUtils.isEmpty(this.q08l)) {
+      return Arrays.asList(this.q08l.split(","));
+    }
+    return new ArrayList<String>();
   }
 
   public void setQ08l(List<String> q08l) {
@@ -743,7 +750,10 @@ public final class CsEntrevista2 implements Serializable {
   }
 
   public List<String> getQ09l() {
-    return Arrays.asList(this.q09l.split(","));
+    if (!StringUtils.isEmpty(this.q09l)) {
+      return Arrays.asList(this.q09l.split(","));
+    }
+    return new ArrayList<String>();
   }
 
   public void setQ09l(List<String> q09l) {
@@ -751,7 +761,10 @@ public final class CsEntrevista2 implements Serializable {
   }
 
   public List<String> getQ24l() {
-    return Arrays.asList(this.q24l.split(","));
+    if (!StringUtils.isEmpty(this.q24l)) {
+      return Arrays.asList(this.q24l.split(","));
+    }
+    return new ArrayList<String>();
   }
 
   public void setQ24l(List<String> q24l) {
