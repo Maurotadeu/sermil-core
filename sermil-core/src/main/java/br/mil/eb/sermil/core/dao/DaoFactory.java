@@ -65,6 +65,8 @@ public abstract class DaoFactory {
 
    public abstract CsEntrevistaDao getCsEntrevistaDao();
 
+   public abstract CsEntrevistaDao2 getCsEntrevistaDao2();
+
    public abstract CsExclusaoDataDao getCsExclusaoDataDao();
   
    public abstract CsFuncionamentoDao getCsFuncionamentoDao();

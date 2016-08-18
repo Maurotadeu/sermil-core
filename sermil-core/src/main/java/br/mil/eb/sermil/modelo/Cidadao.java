@@ -101,7 +101,7 @@ public final class Cidadao implements Serializable {
   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)
   private List<CidArrecadacao> cidArrecadacaoCollection;
 
-  @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   private List<CidAuditoria> cidAuditoriaCollection;
 
   @OneToMany(mappedBy = "cidadao", fetch = FetchType.EAGER, orphanRemoval = true)

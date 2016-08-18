@@ -44,7 +44,7 @@ public class CsEntrevistaServico {
     cid.setMunicipioResidencia(cidadao.getMunicipioResidencia());
     cid.setEmail(cidadao.getEmail());
     cid.setReligiao(cidadao.getReligiao());
-    cid.setOcupacao(cidadao.getOcupacao());
+    //cid.setOcupacao(cidadao.getOcupacao());
     cid.setEstadoCivil(cidadao.getEstadoCivil());
     cid.setEscolaridade(cidadao.getEscolaridade());
 
