@@ -1,5 +1,7 @@
 package br.mil.eb.sermil.core.servicos;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -9,8 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.mil.eb.sermil.core.dao.CsEntrevistaDao2;
 import br.mil.eb.sermil.core.exceptions.SermilException;
+import br.mil.eb.sermil.modelo.CidAuditoria;
 import br.mil.eb.sermil.modelo.Cidadao;
 import br.mil.eb.sermil.modelo.CsEntrevista2;
+import br.mil.eb.sermil.modelo.Municipio;
+import br.mil.eb.sermil.modelo.Pais;
+import br.mil.eb.sermil.tipos.TipoDispensa;
 
 /** Servico de Entrevista de Selecao.
  * @author Anselmo Ribeiro, Abreu Lopes
@@ -43,35 +49,55 @@ public class CsEntrevistaServico2 {
     if (entrevista == null || entrevista.getCidadao() == null || entrevista.getCidadao().getRa() == null) {
       throw new SermilException("Não é possível salvar entrevista sem informações ou sem cidadão.");
     }
-    // recuperando o cidadao completo do banco
+    // Recupera informações antigas do cidadao no banco
     final Cidadao cidadao = this.cidadaoServico.recuperar(entrevista.getCidadao().getRa());
-
-    // Alterando apenas as informacoes de cidadao que foram alteradas na entrevista
+    final Municipio mun = this.csEntrevistaDao.getEntityManager().find(Municipio.class, entrevista.getCidadao().getMunicipioResidencia().getCodigo());
+    final Pais pais = this.csEntrevistaDao.getEntityManager().find(Pais.class, entrevista.getCidadao().getPaisResidencia().getCodigo());
+        
+    // Alterando apenas as informações do cidadao que foram alteradas na entrevista
     cidadao.setEndereco(entrevista.getCidadao().getEndereco());
     cidadao.setBairro(entrevista.getCidadao().getBairro());
     cidadao.setCep(entrevista.getCidadao().getCep());
     cidadao.setTelefone(entrevista.getCidadao().getTelefone());
-    cidadao.setMunicipioResidencia(entrevista.getCidadao().getMunicipioResidencia());
+    cidadao.setMunicipioResidencia(mun);
+    cidadao.setPaisResidencia(pais);
     cidadao.setEmail(entrevista.getCidadao().getEmail());
     cidadao.setReligiao(entrevista.getCidadao().getReligiao());
-    cidadao.setOcupacao(entrevista.getCidadao().getOcupacao());
     cidadao.setEstadoCivil(entrevista.getCidadao().getEstadoCivil());
     cidadao.setEscolaridade(entrevista.getCidadao().getEscolaridade());
-
-    // Não Arrimo valida indicadores
-    if ("N".equals(entrevista.getQ11b())) {
+    //cidadao.setOcupacao(entrevista.getCidadao().getOcupacao());
+    cidadao.setPadraoPq1Codigo(entrevista.getCidadao().getPadraoPq1Codigo());
+    cidadao.setPadraoPq2Codigo(entrevista.getCidadao().getPadraoPq2Codigo());
+    cidadao.setSabeNadar(entrevista.getCidadao().getSabeNadar());
+    cidadao.setDesejaServir(entrevista.getCidadao().getDesejaServir());
+    cidadao.setExpressaoOral(entrevista.getCidadao().getExpressaoOral());
+    cidadao.setCseIndicacao(entrevista.getCidadao().getCseIndicacao());
+    // Arrimo de Família
+    if ("S".equals(entrevista.getQ11b())) {
+      cidadao.setDispensa(TipoDispensa.ARRIMO.getCodigo());
+    } else if ("N".equals(entrevista.getQ11b())) {
+      // Cidadão não arrimo são avaliados os indicadores de seleção
       entrevista.setI09b(this.avaliacaoFinal(entrevista));
+      if (cidadao.getDispensa().equals(TipoDispensa.ARRIMO.getCodigo())) {
+        cidadao.setDispensa(TipoDispensa.SEM_DISPENSA.getCodigo());
+      }
     }
-
-    // Associa Cidadao
-    entrevista.setCidadao(cidadao);
+    // Problema Social
+    if ("S".equals(entrevista.getQ25b())) {
+      cidadao.setDispensa(TipoDispensa.PROB_SOCIAL.getCodigo());
+    } else if ("N".equals(entrevista.getQ25b()) && cidadao.getDispensa().equals(TipoDispensa.PROB_SOCIAL.getCodigo())) {
+      cidadao.setDispensa(TipoDispensa.SEM_DISPENSA.getCodigo());
+    }
     
-    //this.csEntrevistaDao.save(entrevista);
-    //this.cidadaoServico.salvar(cidadao, entrevista.getUsuario(), "Alteração Entrevista Seleção.");
-    return entrevista;
+    // Associa Cidadao e salva Entrevista
+    final Date hoje = new Date();
+    cidadao.addCidAuditoria(new CidAuditoria(cidadao.getRa(), hoje, "Entrevista CS", entrevista.getUsuario().getAcessoIp(), entrevista.getUsuario().getCpf()));
+    entrevista.setCidadao(cidadao);
+    entrevista.setAtualizacaoData(hoje);
+    return this.csEntrevistaDao.save(entrevista);
   }
 
-  /** Se algum indicador 'S' o cidadao se torna Inapto K. */
+  /** Se algum Indicador de Seleção for SIM (S) o cidadao se torna Inapto K (I), senão será APTO (A). */
   private String avaliacaoFinal(final CsEntrevista2 e) {
     return ("S".equals(e.getI01b()) || "S".equals(e.getI02b()) || "S".equals(e.getI03b()) || "S".equals(e.getI04b()) ||
             "S".equals(e.getI05b()) || "S".equals(e.getI06b()) || "S".equals(e.getI07b()) || "S".equals(e.getI08b())) ? "I" : "A";
