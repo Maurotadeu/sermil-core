@@ -2,9 +2,11 @@ package br.mil.eb.sermil.modelo;
 
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -64,13 +66,14 @@ public final class RaPedido implements Serializable {
   @Transient
   private String ymd;
 
-  @OneToMany(mappedBy="raPedido", fetch=FetchType.LAZY, orphanRemoval=true)
+  @OneToMany(mappedBy="raPedido", fetch=FetchType.LAZY, cascade=CascadeType.ALL , orphanRemoval=true)
   private List<RaItens> raItensCollection;
 
   public RaPedido() {
-    this.setAprovado("N");
-    this.setProcessado("N");
-    this.setData(new Date());
+    this.aprovado = "N";
+    this.processado = "N";
+    this.data = new Date();
+    this.raItensCollection = new ArrayList<RaItens>();
   }
 
   public RaPedido(final Csm csm) {
