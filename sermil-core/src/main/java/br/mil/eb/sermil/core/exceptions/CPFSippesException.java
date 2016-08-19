@@ -3,46 +3,39 @@ package br.mil.eb.sermil.core.exceptions;
 import java.io.IOException;
 import java.util.Map;
 
+/** Exceção Web Service CPFSippes.
+ * @author Abreu Lopes
+ * @since 5.1.0
+ * @version 5.4.6
+ */
 public class CPFSippesException extends IOException {
 
-    /** serialVersionUID.*/
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = -4916543629786601730L;
 
-    private Map<String, Object> properties;
-    
-    /** Construtor. */
-    public CPFSippesException() {
-        super();
-    }
+  private Map<String, Object> properties;
 
-    /** Altera a mensagem padrão de erro.
-     * @param msg mensagem de erro
-     */
-    public CPFSippesException(String msg) {
-        super(msg);
-    }
+  public CPFSippesException() {
+    super();
+  }
 
-    /** Altera a mensagem de erro e define uma causa para o erro.
-     * @param msg mensagem de erro
-     * @param causa exceção que gerou o erro
-     */
-    public CPFSippesException(String msg, Throwable causa) {
-        super(msg, causa);
-    }
+  public CPFSippesException(String msg) {
+    super(msg);
+  }
 
-    /** Define uma exceção que causou o erro.
-     * @param causa exceção que causou o erro
-     */
-    public CPFSippesException(Throwable causa) {
-        super(causa);
-    }
+  public CPFSippesException(String msg, Throwable causa) {
+    super(msg, causa);
+  }
 
-   public Map<String, Object> getProperties() {
-      return properties;
-   }
+  public CPFSippesException(Throwable causa) {
+    super(causa);
+  }
 
-   public void setProperties(Map<String, Object> properties) {
-      this.properties = properties;
-   }
-    
+  public Map<String, Object> getProperties() {
+    return properties;
+  }
+
+  public void setProperties(Map<String, Object> properties) {
+    this.properties = properties;
+  }
+
 }
